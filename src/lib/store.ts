@@ -82,13 +82,15 @@ export const useAppStore = create<AppState>((set, get) => ({
       filters: { ...state.filters, [key]: value },
     })),
 
-  setRegion: (region) =>
+  setRegion: (region) => {
     set((state) => ({
       filters: { ...state.filters, region },
       selectedProperty: null,
-    })),
+    }))
+    get().updateStats()
+  },
 
-  setActiveTab: (tab) =>
+  setActiveTab: (tab) => {
     set((state) => ({
       filters: {
         ...state.filters,
@@ -96,7 +98,9 @@ export const useAppStore = create<AppState>((set, get) => ({
         propertyType: tab === 'rooftops' ? 'roof' : 'land',
       },
       selectedProperty: null,
-    })),
+    }))
+    get().updateStats()
+  },
 
   selectedProperty: null,
   setSelectedProperty: (property) => set({ selectedProperty: property }),
