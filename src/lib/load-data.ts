@@ -35,17 +35,17 @@ export async function loadGridData(): Promise<GeoJSON.FeatureCollection> {
 
 export async function loadRoofData(): Promise<Property[]> {
   // Load 21,724 buildings (Overture Maps satellite + existing rich data merged)
-  const response = await fetch('/data/buildings_all.json')
+  const response = await fetch('/data/buildings_validated.json')
   if (!response.ok) throw new Error(`Roof data: ${response.status}`)
   const buildings: BuildingLocal[] = await response.json()
 
   return buildings.map((b) => ({
     id: b.id,
     type: 'roof' as const,
-    status: 'private' as const,
-    region: 'koh_phangan' as Region,
+    status: (b.status || 'private') as Property['status'],
+    region: (b.region || 'koh_phangan') as Region,
     title: b.title || 'Building',
-    location: b.location || 'Ko Phangan',
+    location: b.location || (b.region === 'koh_samui' ? 'Koh Samui' : 'Ko Phangan'),
     lat: b.lat,
     lng: b.lng,
     area: b.area,
