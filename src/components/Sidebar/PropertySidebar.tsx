@@ -4,7 +4,7 @@ import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, Tre
 import { ProposalModal } from '../Proposal/ProposalModal'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../../lib/store'
-import { pushToCrm, isCrmConnected } from '../../lib/crm-service'
+import { pushToCrm, isCrmConnected, logProposalSent, getCrmProjects } from '../../lib/crm-service'
 import { openProposal } from '../../lib/open-proposal'
 import { calculateSolar } from '../../lib/solar-calc'
 import { REGIONS } from '../../lib/regions'
@@ -428,27 +428,41 @@ export function PropertySidebar() {
                 Compare Options (EPC / PPA / Lease)
               </button>
               <button
-                onClick={() =>
+                onClick={() => {
                   openProposal({
                     property,
                     financial,
                     regionId: region,
                   })
-                }
+                  // Log to CRM in background
+                  logProposalSent(property, 'full_proposal', 'web', {
+                    capacityKwp: financial.capacityKwp,
+                    annualSavings: financial.annualSavingsYear1,
+                    paybackYears: financial.paybackYears,
+                    dealValue: financial.epcCost,
+                  }).then(() => getCrmProjects().then(p => useAppStore.getState().setCrmProjects(p)))
+                }}
                 className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#E85D3A] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
               >
                 <Send size={16} />
                 Full Sales Proposal
               </button>
               <button
-                onClick={() =>
+                onClick={() => {
                   generateProposal({
                     property,
                     financial,
                     nasaData: nasaData ?? undefined,
                     regionName: regionConfig.nameEn,
                   })
-                }
+                  // Log to CRM in background
+                  logProposalSent(property, 'pdf_report', 'download', {
+                    capacityKwp: financial.capacityKwp,
+                    annualSavings: financial.annualSavingsYear1,
+                    paybackYears: financial.paybackYears,
+                    dealValue: financial.epcCost,
+                  }).then(() => getCrmProjects().then(p => useAppStore.getState().setCrmProjects(p)))
+                }}
                 className="w-full py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 text-xs flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
               >
                 <FileDown size={14} />

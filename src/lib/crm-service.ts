@@ -208,6 +208,59 @@ export async function getRecentActivity(limit = 20): Promise<(ActivityEntry & { 
   return (data || []) as (ActivityEntry & { project?: CrmProject })[]
 }
 
+// ── Log proposal sent + auto-create/advance CRM ──
+export async function logProposalSent(
+  property: Property,
+  proposalType: 'epc' | 'ppa' | 'lease' | 'full_proposal' | 'pdf_report',
+  channel: 'whatsapp' | 'copy' | 'download' | 'web',
+  financialSummary?: {
+    capacityKwp?: number
+    annualSavings?: number
+    paybackYears?: number
+    dealValue?: number
+  }
+): Promise<CrmProject | null> {
+  if (!supabase) return null
+
+  // Check if building already in CRM
+  let project = await findByBuildingId(property.id)
+
+  // Auto-create lead if not in CRM
+  if (!project) {
+    project = await pushToCrm(property)
+  }
+
+  if (!project) return null
+
+  // Log the proposal activity
+  await logActivity(project.id, 'proposal_sent', {
+    proposal_type: proposalType,
+    channel,
+    building_id: property.id,
+    building_title: property.title,
+    ...financialSummary,
+  })
+
+  // Auto-advance to "proposal" step if still in lead/evaluation
+  if (project.step_number < 3) {
+    await updateProjectStatus(project.id, 'proposal', 3)
+
+    // Update deal value if we have financial data
+    if (financialSummary?.dealValue || financialSummary?.capacityKwp) {
+      await updateProject(project.id, {
+        system_size_kwp: financialSummary.capacityKwp ?? project.system_size_kwp ?? undefined,
+        deal_value: financialSummary.dealValue ?? project.deal_value ?? undefined,
+        deal_type: proposalType === 'ppa' ? 'ppa' : proposalType === 'epc' ? 'epc' : project.deal_type ?? undefined,
+      })
+    }
+
+    // Return updated project
+    project = await getCrmProject(project.id)
+  }
+
+  return project
+}
+
 // ── Find by building ID ──
 export async function findByBuildingId(buildingId: string): Promise<CrmProject | null> {
   if (!supabase) return null

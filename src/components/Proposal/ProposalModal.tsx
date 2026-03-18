@@ -2,6 +2,9 @@ import { X, Zap, DollarSign, Calendar, Phone, Send, Check } from 'lucide-react'
 import { useState } from 'react'
 import type { Property } from '../../types'
 import type { FinancialAnalysis } from '../../lib/financial-calc'
+import { logProposalSent } from '../../lib/crm-service'
+import { useAppStore } from '../../lib/store'
+import { getCrmProjects } from '../../lib/crm-service'
 
 interface ProposalModalProps {
   property: Property
@@ -12,6 +15,28 @@ interface ProposalModalProps {
 export function ProposalModal({ property, financial, onClose }: ProposalModalProps) {
   const [activeTab, setActiveTab] = useState<'epc' | 'ppa' | 'lease'>('epc')
   const [copied, setCopied] = useState(false)
+  const [crmStatus, setCrmStatus] = useState<'idle' | 'logging' | 'done'>('idle')
+  const setCrmProjects = useAppStore((s) => s.setCrmProjects)
+  const user = useAppStore((s) => s.user)
+
+  const logToCrm = async (channel: 'whatsapp' | 'copy') => {
+    if (!user) return
+    setCrmStatus('logging')
+    try {
+      await logProposalSent(property, activeTab, channel, {
+        capacityKwp: financial.capacityKwp,
+        annualSavings: financial.annualSavingsYear1,
+        paybackYears: financial.paybackYears,
+        dealValue: financial.epcCost,
+      })
+      // Refresh CRM projects in store
+      const projects = await getCrmProjects()
+      setCrmProjects(projects)
+      setCrmStatus('done')
+    } catch {
+      setCrmStatus('idle')
+    }
+  }
 
   const proposalRef = `TM-${property.id.slice(0, 6).toUpperCase()}`
 
@@ -40,12 +65,14 @@ export function ProposalModal({ property, financial, onClose }: ProposalModalPro
       ? `https://wa.me/${phone}?text=${encodeURIComponent(shareText)}`
       : `https://wa.me/?text=${encodeURIComponent(shareText)}`
     window.open(url, '_blank')
+    logToCrm('whatsapp')
   }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareText)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+    logToCrm('copy')
   }
 
   return (
@@ -149,20 +176,39 @@ export function ProposalModal({ property, financial, onClose }: ProposalModalPro
         </div>
 
         {/* Actions */}
-        <div className="p-5 pt-0 flex gap-3">
-          <button
-            onClick={handleWhatsApp}
-            className="flex-1 py-2.5 rounded-xl bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#25D366]/30 transition-colors"
-          >
-            <Phone size={14} />
-            WhatsApp
-          </button>
-          <button
-            onClick={handleCopy}
-            className="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
-          >
-            {copied ? <><Check size={14} /> Copied!</> : <><Send size={14} /> Copy Summary</>}
-          </button>
+        <div className="p-5 pt-0 space-y-3">
+          <div className="flex gap-3">
+            <button
+              onClick={handleWhatsApp}
+              className="flex-1 py-2.5 rounded-xl bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#25D366]/30 transition-colors"
+            >
+              <Phone size={14} />
+              WhatsApp
+            </button>
+            <button
+              onClick={handleCopy}
+              className="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+            >
+              {copied ? <><Check size={14} /> Copied!</> : <><Send size={14} /> Copy Summary</>}
+            </button>
+          </div>
+
+          {/* CRM status feedback */}
+          {crmStatus === 'logging' && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#6366f1]/10 border border-[#6366f1]/20 text-[#6366f1] text-[11px]">
+              <div className="w-3 h-3 border-2 border-[#6366f1] border-t-transparent rounded-full animate-spin" />
+              Logging to CRM pipeline...
+            </div>
+          )}
+          {crmStatus === 'done' && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#2ED89A]/10 border border-[#2ED89A]/20 text-[#2ED89A] text-[11px]">
+              <Check size={12} />
+              Saved to CRM — auto-advanced to Proposal stage
+            </div>
+          )}
+          {!user && (
+            <p className="text-[10px] text-white/30 text-center">Sign in to auto-log proposals to CRM</p>
+          )}
         </div>
       </div>
     </div>
