@@ -1,4 +1,4 @@
-import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut } from 'lucide-react'
+import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppStore } from '../../lib/store'
@@ -6,7 +6,8 @@ import { supabase } from '../../lib/supabase'
 import { isCrmConnected } from '../../lib/crm-service'
 import { REGIONS } from '../../lib/regions'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
-import type { GridGrade, RoofPriority, SystemSizeRange, CategoryFilter } from '../../types'
+import { exportLeadsCSV } from '../../lib/csv-export'
+import type { GridGrade, RoofPriority, SystemSizeRange, CategoryFilter, PlatformView } from '../../types'
 
 const PRIORITY_CONFIG: Record<RoofPriority, { label: string; color: string; bg: string }> = {
   A: { label: 'A — Hot Lead', color: '#2ED89A', bg: '#2ED89A22' },
@@ -33,6 +34,13 @@ const CATEGORY_CONFIG: Record<CategoryFilter, { label: string; icon: string }> =
   other: { label: 'Other', icon: '📍' },
 }
 
+const VIEW_TABS: { view: PlatformView; icon: typeof Map; label: string }[] = [
+  { view: 'map', icon: Map, label: 'Map' },
+  { view: 'scanner', icon: Grid3X3, label: 'Scanner' },
+  { view: 'pipeline', icon: Kanban, label: 'Pipeline' },
+  { view: 'dashboard', icon: BarChart3, label: 'Dashboard' },
+]
+
 export function FilterBar() {
   const filters = useAppStore((s) => s.filters)
   const setFilter = useAppStore((s) => s.setFilter)
@@ -43,11 +51,17 @@ export function FilterBar() {
   const stats = useAppStore((s) => s.stats)
   const user = useAppStore((s) => s.user)
   const setShowLoginModal = useAppStore((s) => s.setShowLoginModal)
+  const platformView = useAppStore((s) => s.platformView)
+  const setPlatformView = useAppStore((s) => s.setPlatformView)
+  const crmProjects = useAppStore((s) => s.crmProjects)
   const filteredProperties = useFilteredProperties()
   const [showFilters, setShowFilters] = useState(false)
 
   const hasActiveFilters = filters.priority !== 'all' || filters.systemSize !== 'all' || filters.categoryFilter !== 'all'
   const filteredCount = filteredProperties.length
+  const isMapView = platformView === 'map'
+  const isScannerView = platformView === 'scanner'
+  const showMapControls = isMapView
 
   return (
     <div className="absolute top-0 left-0 right-0 z-10 pointer-events-none">
@@ -58,111 +72,148 @@ export function FilterBar() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E8A820] to-[#E85D3A] flex items-center justify-center text-sm font-bold">
             ☀
           </div>
-          <div>
+          <div className="hidden sm:block">
             <h1 className="text-sm font-semibold text-white leading-tight">Solar Intelligence</h1>
             <p className="text-[10px] text-white/50">TM Energy Platform</p>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
-          <TabButton
-            active={filters.activeTab === 'rooftops'}
-            onClick={() => setActiveTab('rooftops')}
-            icon="🏠"
-            label="Rooftops"
-          />
-          <TabButton
-            active={filters.activeTab === 'community-solar'}
-            onClick={() => setActiveTab('community-solar')}
-            icon="🌾"
-            label="Community Solar"
-          />
-        </div>
-
-        {/* Region selector */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
-          {Object.values(REGIONS).map((r) => (
+        {/* View Tabs (desktop) */}
+        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden hidden md:flex">
+          {VIEW_TABS.map(({ view, icon: Icon, label }) => (
             <button
-              key={r.id}
-              onClick={() => setRegion(r.id)}
-              className={`px-3 py-2.5 text-xs font-medium transition-colors ${
-                filters.region === r.id
-                  ? 'bg-[#E8A820]/20 text-[#E8A820]'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
+              key={view}
+              onClick={() => setPlatformView(view)}
+              className={`px-4 py-2.5 text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                platformView === view
+                  ? 'bg-[#00D68F]/15 text-[#00D68F]'
+                  : 'text-white/50 hover:text-white hover:bg-white/5'
               }`}
             >
-              {r.nameEn}
+              <Icon size={14} />
+              {label}
             </button>
           ))}
         </div>
 
-        {/* Search */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex items-center px-3 gap-2 flex-1 max-w-xs">
-          <Search size={14} className="text-white/40" />
-          <input
-            type="text"
-            placeholder="Search properties..."
-            value={filters.searchQuery}
-            onChange={(e) => setFilter('searchQuery', e.target.value)}
-            className="bg-transparent text-white text-xs py-2.5 w-full outline-none placeholder:text-white/30"
-          />
-        </div>
+        {/* Data Tabs (Rooftops / Community Solar) — only in map/scanner view */}
+        {(isMapView || isScannerView) && (
+          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
+            <TabButton
+              active={filters.activeTab === 'rooftops'}
+              onClick={() => setActiveTab('rooftops')}
+              icon="🏠"
+              label="Rooftops"
+            />
+            <TabButton
+              active={filters.activeTab === 'community-solar'}
+              onClick={() => setActiveTab('community-solar')}
+              icon="🌾"
+              label="Land"
+            />
+          </div>
+        )}
 
-        {/* Map controls + filter toggle */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
+        {/* Region selector — show for map/scanner */}
+        {(isMapView || isScannerView) && (
+          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden hidden lg:flex">
+            {Object.values(REGIONS).map((r) => (
+              <button
+                key={r.id}
+                onClick={() => setRegion(r.id)}
+                className={`px-3 py-2.5 text-xs font-medium transition-colors ${
+                  filters.region === r.id
+                    ? 'bg-[#E8A820]/20 text-[#E8A820]'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {r.nameEn}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Search — show for map/scanner */}
+        {(isMapView || isScannerView) && (
+          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex items-center px-3 gap-2 flex-1 max-w-xs hidden sm:flex">
+            <Search size={14} className="text-white/40" />
+            <input
+              type="text"
+              placeholder="Search properties..."
+              value={filters.searchQuery}
+              onChange={(e) => setFilter('searchQuery', e.target.value)}
+              className="bg-transparent text-white text-xs py-2.5 w-full outline-none placeholder:text-white/30"
+            />
+          </div>
+        )}
+
+        {/* Map controls — only in map view */}
+        {showMapControls && (
+          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
+            <button
+              onClick={cycleMapStyle}
+              className="px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1.5"
+              title={{ sentinel2024: 'Sentinel-2 (2024)', mapbox: 'Mapbox Satellite', satellite: 'Google Satellite', esri: 'ESRI World Imagery', street: 'Street Map' }[mapStyle]}
+            >
+              {mapStyle === 'street' ? <Map size={14} /> : mapStyle === 'sentinel2024' ? <Globe size={14} /> : <Satellite size={14} />}
+              <span className="text-[10px] font-medium uppercase tracking-wider hidden sm:inline">
+                {{ sentinel2024: '2024', mapbox: 'Mapbox', satellite: 'Google', esri: 'ESRI', street: 'Street' }[mapStyle]}
+              </span>
+            </button>
+            <button
+              onClick={() => setFilter('showGrid', !filters.showGrid)}
+              className={`px-3 py-2.5 transition-colors ${
+                filters.showGrid ? 'text-[#E8A820]' : 'text-white/40 hover:text-white'
+              }`}
+              title="Toggle Grid"
+            >
+              {filters.showGrid ? <Zap size={14} /> : <ZapOff size={14} />}
+            </button>
+            <button
+              onClick={() => setFilter('showBufferZones', !filters.showBufferZones)}
+              className={`px-3 py-2.5 transition-colors ${
+                filters.showBufferZones ? 'text-[#2ED89A]' : 'text-white/40 hover:text-white'
+              }`}
+              title="Toggle Buffer Zones"
+            >
+              <Circle size={14} />
+            </button>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`px-3 py-2.5 transition-colors relative ${
+                showFilters || hasActiveFilters ? 'text-[#2ED89A]' : 'text-white/40 hover:text-white'
+              }`}
+              title="Filters"
+            >
+              <SlidersHorizontal size={14} />
+              {hasActiveFilters && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#2ED89A]" />
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Pipeline/Dashboard CSV export */}
+        {platformView === 'pipeline' && crmProjects.length > 0 && (
           <button
-            onClick={cycleMapStyle}
-            className="px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1.5"
-            title={{ sentinel2024: 'Sentinel-2 (2024)', mapbox: 'Mapbox Satellite', satellite: 'Google Satellite', esri: 'ESRI World Imagery', street: 'Street Map' }[mapStyle]}
+            onClick={() => exportLeadsCSV(crmProjects)}
+            className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 px-3 py-2.5 text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors"
           >
-            {mapStyle === 'street' ? <Map size={14} /> : mapStyle === 'sentinel2024' ? <Globe size={14} /> : <Satellite size={14} />}
-            <span className="text-[10px] font-medium uppercase tracking-wider hidden sm:inline">
-              {{ sentinel2024: '2024', mapbox: 'Mapbox', satellite: 'Google', esri: 'ESRI', street: 'Street' }[mapStyle]}
-            </span>
+            <Download size={14} />
+            Export
           </button>
-          <button
-            onClick={() => setFilter('showGrid', !filters.showGrid)}
-            className={`px-3 py-2.5 transition-colors ${
-              filters.showGrid ? 'text-[#E8A820]' : 'text-white/40 hover:text-white'
-            }`}
-            title="Toggle Grid"
-          >
-            {filters.showGrid ? <Zap size={14} /> : <ZapOff size={14} />}
-          </button>
-          <button
-            onClick={() => setFilter('showBufferZones', !filters.showBufferZones)}
-            className={`px-3 py-2.5 transition-colors ${
-              filters.showBufferZones ? 'text-[#2ED89A]' : 'text-white/40 hover:text-white'
-            }`}
-            title="Toggle Buffer Zones"
-          >
-            <Circle size={14} />
-          </button>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`px-3 py-2.5 transition-colors relative ${
-              showFilters || hasActiveFilters ? 'text-[#2ED89A]' : 'text-white/40 hover:text-white'
-            }`}
-            title="Filters"
-          >
-            <SlidersHorizontal size={14} />
-            {hasActiveFilters && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#2ED89A]" />
-            )}
-          </button>
-        </div>
+        )}
 
         {/* CRM + Auth */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
-          {isCrmConnected() && (
+        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden ml-auto">
+          {isCrmConnected() && (isMapView || isScannerView) && (
             <Link
               to="/crm"
               className="px-3 py-2.5 transition-colors flex items-center gap-1.5 text-[#6366f1] hover:bg-[#6366f1]/10"
               title="CRM Pipeline"
             >
               <Building2 size={14} />
-              <span className="text-[11px] font-semibold">CRM</span>
+              <span className="text-[11px] font-semibold hidden sm:inline">CRM</span>
             </Link>
           )}
           {user ? (
@@ -174,7 +225,7 @@ export function FilterBar() {
               title="Sign Out"
             >
               <LogOut size={14} />
-              <span className="text-[11px] font-medium truncate max-w-[80px]">{user.email?.split('@')[0]}</span>
+              <span className="text-[11px] font-medium truncate max-w-[80px] hidden sm:inline">{user.email?.split('@')[0]}</span>
             </button>
           ) : (
             <button
@@ -183,91 +234,93 @@ export function FilterBar() {
               title="Sign In"
             >
               <LogIn size={14} />
-              <span className="text-[11px] font-medium">Sign In</span>
+              <span className="text-[11px] font-medium hidden sm:inline">Sign In</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Stats bar */}
-      <div className="pointer-events-auto mx-4 mt-2 bg-[#0D2137]/80 backdrop-blur-xl rounded-xl border border-white/10 px-4 py-2 flex items-center gap-6">
-        <Stat label="Showing" value={filteredCount} />
-        <Stat label="Roofs" value={stats.totalRoofs} color="#2ED89A" />
-        <Stat label="Land Plots" value={stats.totalLands} color="#E8A820" />
-        <Stat label="For Sale" value={stats.forSale} color="#00aaff" />
-        {stats.totalMwp > 0 && (
-          <Stat label="Total MWp" value={stats.totalMwp} color="#ff8800" />
-        )}
+      {/* Stats bar — only for map view */}
+      {isMapView && (
+        <div className="pointer-events-auto mx-4 mt-2 bg-[#0D2137]/80 backdrop-blur-xl rounded-xl border border-white/10 px-4 py-2 flex items-center gap-6">
+          <Stat label="Showing" value={filteredCount} />
+          <Stat label="Roofs" value={stats.totalRoofs} color="#2ED89A" />
+          <Stat label="Land Plots" value={stats.totalLands} color="#E8A820" />
+          <Stat label="For Sale" value={stats.forSale} color="#00aaff" />
+          {stats.totalMwp > 0 && (
+            <Stat label="Total MWp" value={stats.totalMwp} color="#ff8800" />
+          )}
 
-        {/* Quick priority badges for rooftops */}
-        {filters.activeTab === 'rooftops' && (
-          <div className="ml-auto flex items-center gap-1.5">
-            <span className="text-[10px] text-white/40 uppercase tracking-wider mr-1">Lead Quality:</span>
-            {(['all', 'A', 'B', 'C', 'D'] as const).map((grade) => (
-              <button
-                key={grade}
-                onClick={() => setFilter('priority', grade as RoofPriority | 'all')}
-                className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                  filters.priority === grade
-                    ? 'scale-110'
-                    : 'opacity-60 hover:opacity-100'
-                }`}
-                style={
-                  grade !== 'all'
-                    ? {
-                        backgroundColor: filters.priority === grade
-                          ? PRIORITY_CONFIG[grade].bg
-                          : 'transparent',
-                        color: PRIORITY_CONFIG[grade].color,
-                        border: filters.priority === grade
-                          ? `1px solid ${PRIORITY_CONFIG[grade].color}44`
-                          : '1px solid transparent',
-                      }
-                    : {
-                        backgroundColor: filters.priority === 'all' ? 'rgba(255,255,255,0.15)' : 'transparent',
-                        color: filters.priority === 'all' ? '#fff' : 'rgba(255,255,255,0.4)',
-                      }
-                }
-              >
-                {grade === 'all' ? 'All' : grade}
-              </button>
-            ))}
-          </div>
-        )}
+          {/* Quick priority badges for rooftops */}
+          {filters.activeTab === 'rooftops' && (
+            <div className="ml-auto flex items-center gap-1.5">
+              <span className="text-[10px] text-white/40 uppercase tracking-wider mr-1">Lead Quality:</span>
+              {(['all', 'A', 'B', 'C', 'D'] as const).map((grade) => (
+                <button
+                  key={grade}
+                  onClick={() => setFilter('priority', grade as RoofPriority | 'all')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    filters.priority === grade
+                      ? 'scale-110'
+                      : 'opacity-60 hover:opacity-100'
+                  }`}
+                  style={
+                    grade !== 'all'
+                      ? {
+                          backgroundColor: filters.priority === grade
+                            ? PRIORITY_CONFIG[grade].bg
+                            : 'transparent',
+                          color: PRIORITY_CONFIG[grade].color,
+                          border: filters.priority === grade
+                            ? `1px solid ${PRIORITY_CONFIG[grade].color}44`
+                            : '1px solid transparent',
+                        }
+                      : {
+                          backgroundColor: filters.priority === 'all' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                          color: filters.priority === 'all' ? '#fff' : 'rgba(255,255,255,0.4)',
+                        }
+                  }
+                >
+                  {grade === 'all' ? 'All' : grade}
+                </button>
+              ))}
+            </div>
+          )}
 
-        {/* Grid grade for community solar */}
-        {filters.activeTab === 'community-solar' && (
-          <div className="ml-auto flex items-center gap-2">
-            <span className="text-[10px] text-white/40 uppercase tracking-wider">Grid Grade:</span>
-            {(['all', 'A', 'B', 'C', 'D'] as const).map((grade) => (
-              <button
-                key={grade}
-                onClick={() => setFilter('gridGrade', grade as GridGrade | 'all')}
-                className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors ${
-                  filters.gridGrade === grade
-                    ? grade === 'all'
-                      ? 'bg-white/20 text-white'
-                      : 'text-white'
-                    : 'text-white/40 hover:text-white/70'
-                }`}
-                style={
-                  filters.gridGrade === grade && grade !== 'all'
-                    ? {
-                        backgroundColor: { A: '#2ED89A33', B: '#E8A82033', C: '#E87D2033', D: '#E85D3A33' }[grade],
-                        color: { A: '#2ED89A', B: '#E8A820', C: '#E87D20', D: '#E85D3A' }[grade],
-                      }
-                    : undefined
-                }
-              >
-                {grade === 'all' ? 'All' : grade}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+          {/* Grid grade for community solar */}
+          {filters.activeTab === 'community-solar' && (
+            <div className="ml-auto flex items-center gap-2">
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">Grid Grade:</span>
+              {(['all', 'A', 'B', 'C', 'D'] as const).map((grade) => (
+                <button
+                  key={grade}
+                  onClick={() => setFilter('gridGrade', grade as GridGrade | 'all')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors ${
+                    filters.gridGrade === grade
+                      ? grade === 'all'
+                        ? 'bg-white/20 text-white'
+                        : 'text-white'
+                      : 'text-white/40 hover:text-white/70'
+                  }`}
+                  style={
+                    filters.gridGrade === grade && grade !== 'all'
+                      ? {
+                          backgroundColor: { A: '#2ED89A33', B: '#E8A82033', C: '#E87D2033', D: '#E85D3A33' }[grade],
+                          color: { A: '#2ED89A', B: '#E8A820', C: '#E87D20', D: '#E85D3A' }[grade],
+                        }
+                      : undefined
+                  }
+                >
+                  {grade === 'all' ? 'All' : grade}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Expanded filter panel */}
-      {showFilters && filters.activeTab === 'rooftops' && (
+      {showFilters && isMapView && filters.activeTab === 'rooftops' && (
         <div className="pointer-events-auto mx-4 mt-2 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-semibold text-white/70 uppercase tracking-wider">Advanced Filters</h3>

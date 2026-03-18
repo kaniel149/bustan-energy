@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { FilterState, Property, Region, ActiveTab } from '../types'
+import type { FilterState, Property, Region, ActiveTab, PlatformView } from '../types'
 import type { CrmProject } from '../types/crm'
 import type { User } from '@supabase/supabase-js'
 
@@ -41,6 +41,10 @@ interface AppState {
   setUser: (user: User | null) => void
   showLoginModal: boolean
   setShowLoginModal: (show: boolean) => void
+
+  // Platform view
+  platformView: PlatformView
+  setPlatformView: (view: PlatformView) => void
 
   // CRM
   crmProjects: CrmProject[]
@@ -145,6 +149,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       },
     })
   },
+
+  // Platform view
+  platformView: 'map',
+  setPlatformView: (view) => set({ platformView: view }),
 
   // Auth
   user: null,

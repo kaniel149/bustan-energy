@@ -50,7 +50,7 @@ function PageRoutes() {
 const isCrmDomain = window.location.hostname === 'crm.energy-tm.com'
 
 export default function App() {
-  // crm.energy-tm.com → show only platform + CRM (no marketing site)
+  // crm.energy-tm.com → show platform with integrated views + CRM routes for deep links
   if (isCrmDomain) {
     return (
       <HelmetProvider>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight } from 'lucide-react'
+import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers } from 'lucide-react'
+import { ProposalModal } from '../Proposal/ProposalModal'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../../lib/store'
 import { pushToCrm, isCrmConnected } from '../../lib/crm-service'
@@ -38,6 +39,7 @@ export function PropertySidebar() {
   const [financial, setFinancial] = useState<FinancialAnalysis | null>(null)
   const [nasaLoading, setNasaLoading] = useState(false)
   const [nasaError, setNasaError] = useState<string | null>(null)
+  const [showProposalModal, setShowProposalModal] = useState(false)
 
   useEffect(() => {
     if (!property) {
@@ -419,6 +421,13 @@ export function PropertySidebar() {
           {financial && !nasaLoading && (
             <div className="flex flex-col gap-2">
               <button
+                onClick={() => setShowProposalModal(true)}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#00D68F] to-[#00B377] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+              >
+                <Layers size={16} />
+                Compare Options (EPC / PPA / Lease)
+              </button>
+              <button
                 onClick={() =>
                   openProposal({
                     property,
@@ -426,7 +435,7 @@ export function PropertySidebar() {
                     regionId: region,
                   })
                 }
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#E85D3A] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#E85D3A] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
               >
                 <Send size={16} />
                 Full Sales Proposal
@@ -446,6 +455,15 @@ export function PropertySidebar() {
                 Quick Report (PDF)
               </button>
             </div>
+          )}
+
+          {/* Proposal Modal */}
+          {showProposalModal && financial && (
+            <ProposalModal
+              property={property}
+              financial={financial}
+              onClose={() => setShowProposalModal(false)}
+            />
           )}
 
           {/* Push to CRM */}
