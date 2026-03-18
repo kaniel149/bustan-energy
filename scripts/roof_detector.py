@@ -442,7 +442,8 @@ def _classify_window(window: np.ndarray) -> str:
 
 def phase_discover(buildings: List[dict], fetcher: TileFetcher,
                    bbox: Tuple[float, float, float, float],
-                   max_tiles: int = MAX_CONCURRENT_TILES) -> Tuple[List[dict], dict]:
+                   max_tiles: int = MAX_CONCURRENT_TILES,
+                   region: str = "koh_phangan") -> Tuple[List[dict], dict]:
     """Scan satellite tiles to find buildings not in the dataset."""
     print("\n═══ PHASE 3: DISCOVER MISSING BUILDINGS ═══")
 
@@ -511,7 +512,7 @@ def phase_discover(buildings: List[dict], fetcher: TileFetcher,
                         break
 
                 if not has_nearby:
-                    discovered.append(_create_building(lat, lng, area_m2, "koh_phangan"))
+                    discovered.append(_create_building(lat, lng, area_m2, region))
 
         if tiles_scanned >= max_tiles:
             break
@@ -768,7 +769,7 @@ def main():
 
     # ── Phase 3: Discover Missing ──
     if args.phase in ("all", "discover") and not args.no_discover:
-        discovered, discover_stats = phase_discover(buildings, fetcher, bbox, max_tiles=args.max_tiles)
+        discovered, discover_stats = phase_discover(buildings, fetcher, bbox, max_tiles=args.max_tiles, region=args.region)
         if discovered:
             print(f"\n  Adding {len(discovered)} discovered buildings to dataset")
             buildings.extend(discovered)
