@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# TM Energy — Solar Intelligence Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Status: Live
+- **URL:** https://energy-tm.com
+- **CRM:** crm.energy-tm.com
+- **Supabase:** trvgpgpsqvvdsudpgwpm
+- **Vercel:** solar-intelligence
 
-Currently, two official plugins are available:
+## Quick Links
+- [App](./src/) — React + TypeScript platform
+- [Proposals](./sales/proposals/) — Beamtech templates (EN/TH/HE)
+- [Contracts](./business/legal/) — EPC, PPA
+- [Research](./business/research/) — 12 Thailand market reports
+- [Ads](./marketing/ads/) — 20 creatives + 8 HTML ads
+- [Brand Kit](./marketing/brand/) — 18 mockups + logo variants
+- [Podcasts](./marketing/content/) — 10 episodes
+- [CRM Steps](./tools/crm-steps/) — 10-step solar workflow
+- [PEA Permits](./pea-docs/) — Beamtech 32.5kWp
+- [GIS Data](./data/gis/) — 14 GeoJSON layers
+- [Drone Ops](./tools/drone/) — Flight plans + guides
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Data
+- 27,800 buildings | 3 regions | 625 MWp
+- Ko Phangan: 16,196 | Ko Samui: 8,350 | Surat Thani: 3,254
 
-## React Compiler
+## Scripts
+- `scripts/roof_detector.py` — 4-phase pipeline (dedup->validate->discover->score)
+- `scripts/download_osm_buildings.py` — Download buildings for new regions
+- `scripts/enrich_owners.py` — Google Places enrichment
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Directory Structure
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+solar-intelligence/
+├── src/                    # React app source
+├── public/                 # Static assets
+├── business/
+│   ├── legal/              # EPC, PPA, legal contracts
+│   ├── finance/            # P&L, financial dashboard, business plan
+│   ├── research/           # 12 Thailand market research reports
+│   └── strategy/           # Strategy, planning tracker, value chain
+├── marketing/
+│   ├── ads/                # 20 PNG creatives + 8 HTML ads
+│   ├── brand/              # 18 mockups, logo variants, print templates
+│   └── content/            # 10 podcast episodes (MP3)
+├── sales/
+│   ├── proposals/          # Beamtech proposal (EN/TH/HE) + renders
+│   ├── presentations/      # (empty — add decks here)
+│   └── playbooks/          # Sales process, customer avatars
+├── tools/
+│   ├── bill-scanner/       # Electricity bill analyzer
+│   ├── drone/              # Drone flight plans + guides
+│   ├── solar-atlas/        # Solar farm atlas + scout tools
+│   └── crm-steps/          # 10-step CRM workflow (HTML)
+├── data/
+│   └── gis/                # 14 GeoJSON layers + grid scripts
+├── pea-docs/               # PEA permit documents (Beamtech 32.5kWp)
+├── legacy/
+│   ├── roof-scanner-v1/    # Original roof scanner app
+│   ├── tm-energy-landing/  # Original landing page
+│   └── utils/              # Legacy utility scripts
+└── scripts/                # Python pipeline scripts
 ```
