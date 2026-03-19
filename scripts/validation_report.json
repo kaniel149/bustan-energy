@@ -1,29 +1,18 @@
 {
-  "input_count": 15898,
+  "input_count": 17264,
   "phases": {
-    "dedup": {
-      "input": 15898,
-      "exact_dupes": 0,
-      "proximity_dupes": 4,
-      "output": 15894,
-      "removed_pct": 0.0
-    },
-    "validate": {
-      "self_validated": true,
-      "output": 15894
-    },
     "discover": {
-      "tiles_scanned": 500,
-      "total_tiles": 500,
-      "discovered": 11
+      "tiles_scanned": 8000,
+      "total_tiles": 8000,
+      "discovered": 373
     }
   },
-  "output_count": 15905,
+  "output_count": 17637,
   "priority_distribution": {
-    "C": 5493,
-    "D": 6573,
-    "B": 3283,
-    "A": 556
+    "C": 5735,
+    "D": 7707,
+    "B": 3463,
+    "A": 732
   },
-  "total_mwp": 261.5
+  "total_mwp": 320.5
 }
