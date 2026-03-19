@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Ko Phangan Solar — רישוי מערכות סולאריות בתאילנד</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ocean: #0A3D5C;
+  --gold: #E8A820;
+  --sand: #FDF6E3;
+  --reef: #1A7A5A;
+  --coral: #E85D3A;
+  --sky: #E8F4F8;
+  --night: #0D2137;
+  --white: #FFFFFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Heebo', sans-serif; background: var(--night); color: var(--white); overflow: hidden; height: 100vh; }
+
+.slide-container { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+.slide {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  padding: 40px 60px; opacity: 0; transform: translateX(100px);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none; overflow-y: auto; padding-bottom: 80px;
+}
+.slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+.slide.exit { opacity: 0; transform: translateX(-100px); }
+
+.slide-cover { background: linear-gradient(135deg, var(--ocean) 0%, var(--night) 100%); justify-content: center; align-items: center; text-align: center; }
+.slide-dark { background: var(--night); }
+.slide-ocean { background: linear-gradient(180deg, var(--ocean) 0%, var(--night) 100%); }
+.slide-reef { background: linear-gradient(135deg, #0D3B2E 0%, var(--night) 100%); }
+.slide-gold { background: linear-gradient(135deg, #3D2E0A 0%, var(--night) 100%); }
+
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; display: flex;
+  justify-content: space-between; align-items: center; padding: 12px 30px;
+  background: rgba(13, 33, 55, 0.95); backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(232, 168, 32, 0.2); z-index: 100;
+}
+.nav-btn {
+  background: none; border: 2px solid var(--gold); color: var(--gold);
+  padding: 8px 24px; border-radius: 6px; cursor: pointer;
+  font-family: 'Heebo'; font-size: 14px; font-weight: 500; transition: all 0.3s;
+}
+.nav-btn:hover { background: var(--gold); color: var(--night); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+.nav-btn:disabled:hover { background: none; color: var(--gold); }
+.slide-counter { font-family: 'Space Grotesk'; color: rgba(255,255,255,0.5); font-size: 14px; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); transition: width 0.4s ease; z-index: 101; }
+
+.toc-btn {
+  position: fixed; top: 20px; left: 20px; background: rgba(232, 168, 32, 0.15);
+  border: 1px solid rgba(232, 168, 32, 0.3); color: var(--gold);
+  width: 40px; height: 40px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; cursor: pointer; font-size: 18px; z-index: 102; transition: all 0.3s;
+}
+.toc-btn:hover { background: var(--gold); color: var(--night); }
+.toc-panel {
+  position: fixed; top: 0; left: -350px; width: 350px; height: 100vh;
+  background: rgba(13, 33, 55, 0.98); backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(232, 168, 32, 0.2); z-index: 103;
+  transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1); padding: 60px 30px 30px; overflow-y: auto;
+}
+.toc-panel.open { left: 0; }
+.toc-item {
+  padding: 10px 16px; margin: 4px 0; border-radius: 8px; cursor: pointer;
+  font-size: 14px; color: rgba(255,255,255,0.7); transition: all 0.2s;
+  display: flex; align-items: center; gap: 10px;
+}
+.toc-item:hover { background: rgba(232, 168, 32, 0.1); color: var(--white); }
+.toc-item.active { background: rgba(232, 168, 32, 0.2); color: var(--gold); }
+.toc-num { font-family: 'Space Grotesk'; font-weight: 700; font-size: 12px; color: var(--gold); min-width: 24px; }
+
+h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 900; line-height: 1.1; margin-bottom: 16px; }
+h2 { font-size: clamp(24px, 3.5vw, 40px); font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
+h3 { font-size: clamp(18px, 2vw, 24px); font-weight: 700; margin-bottom: 8px; }
+.subtitle { font-size: clamp(16px, 2vw, 22px); font-weight: 300; opacity: 0.8; margin-bottom: 24px; }
+.gold { color: var(--gold); }
+.reef-text { color: #2ED89A; }
+.coral-text { color: var(--coral); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
+.card {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 20px; transition: all 0.3s;
+}
+.card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.card-icon { font-size: 28px; margin-bottom: 10px; }
+.card h3 { font-size: 16px; margin-bottom: 6px; }
+.card p { font-size: 13px; opacity: 0.7; line-height: 1.5; }
+
+.table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: rgba(232, 168, 32, 0.15); padding: 10px 14px; text-align: right; font-weight: 600; white-space: nowrap; }
+td { padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.06); }
+tr:hover td { background: rgba(255,255,255,0.03); }
+
+.timeline { margin: 20px 0; padding-right: 20px; }
+.timeline-item {
+  position: relative; padding: 16px 24px 16px 0;
+  border-right: 2px solid rgba(232, 168, 32, 0.3); margin-right: 12px;
+}
+.timeline-item::before {
+  content: ''; position: absolute; right: -7px; top: 20px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--gold);
+}
+.timeline-item h4 { font-size: 15px; color: var(--gold); margin-bottom: 4px; }
+.timeline-item p { font-size: 13px; opacity: 0.7; }
+.timeline-item .time { font-family: 'Space Grotesk'; font-size: 12px; color: var(--gold); opacity: 0.6; }
+
+.checklist { list-style: none; margin: 16px 0; }
+.checklist li {
+  padding: 8px 12px; margin: 4px 0; background: rgba(255,255,255,0.03);
+  border-radius: 8px; font-size: 14px; display: flex; align-items: center;
+  gap: 10px; cursor: pointer; transition: all 0.2s;
+}
+.checklist li:hover { background: rgba(255,255,255,0.06); }
+.checklist li .check {
+  width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.2s;
+}
+.checklist li.done .check { background: var(--reef); border-color: var(--reef); }
+.checklist li.done .check::after { content: '✓'; color: white; font-size: 12px; }
+
+.alert { padding: 16px 20px; border-radius: 10px; margin: 12px 0; font-size: 14px; line-height: 1.6; }
+.alert-warn { background: rgba(232, 93, 58, 0.15); border-right: 3px solid var(--coral); }
+.alert-info { background: rgba(232, 168, 32, 0.1); border-right: 3px solid var(--gold); }
+.alert-success { background: rgba(46, 216, 154, 0.1); border-right: 3px solid #2ED89A; }
+
+.tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.tag-required { background: rgba(232, 93, 58, 0.2); color: var(--coral); }
+.tag-optional { background: rgba(232, 168, 32, 0.2); color: var(--gold); }
+.tag-free { background: rgba(46, 216, 154, 0.2); color: #2ED89A; }
+.tag-new { background: rgba(100, 150, 255, 0.2); color: #6496FF; }
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin: 12px 0; }
+.link-card {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; font-size: 13px; transition: all 0.2s;
+}
+.link-card:hover { border-color: var(--gold); text-decoration: none; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+@media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } .slide { padding: 24px 20px; } }
+
+.slide::-webkit-scrollbar { width: 4px; }
+.slide::-webkit-scrollbar-thumb { background: rgba(232, 168, 32, 0.3); border-radius: 2px; }
+
+.section-num {
+  font-family: 'Space Grotesk'; font-size: 64px; font-weight: 700;
+  color: var(--gold); opacity: 0.15; position: absolute; top: 20px; left: 40px;
+}
+
+.big-num { font-family: 'Space Grotesk'; font-size: clamp(36px, 6vw, 72px); font-weight: 700; color: var(--gold); }
+.stat-label { font-size: 14px; opacity: 0.6; margin-top: 4px; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; margin: 20px 0; text-align: center; }
+
+.flow-step {
+  display: flex; align-items: flex-start; gap: 16px; padding: 16px;
+  background: rgba(255,255,255,0.03); border-radius: 12px; margin: 8px 0;
+  border-right: 3px solid var(--gold);
+}
+.flow-num {
+  font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700;
+  color: var(--gold); min-width: 40px; text-align: center;
+}
+.flow-content h4 { font-size: 15px; margin-bottom: 4px; }
+.flow-content p { font-size: 13px; opacity: 0.7; line-height: 1.5; }
+.flow-content .detail { font-size: 12px; opacity: 0.5; margin-top: 4px; }
+
+.slide-img{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:12px 0;border:1px solid rgba(232,168,32,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.slide-img-sm{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;border:1px solid rgba(255,255,255,.1)}
+.img-float{float:left;width:45%;max-height:240px;object-fit:cover;border-radius:12px;margin:0 20px 12px 0;border:1px solid rgba(232,168,32,.15)}
+.img-row{display:flex;gap:12px;margin:12px 0}.img-row img{flex:1;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+
+
+
+
+<div class="progress-bar" id="progress"></div>
+<button class="toc-btn" onclick="toggleTOC()">☰</button>
+<div class="toc-panel" id="tocPanel">
+  <h3 style="color:var(--gold);margin-bottom:20px;">תוכן עניינים</h3>
+  <div id="tocList"></div>
+</div>
+
+<div class="slide-container" id="slides">
+
+<!-- SLIDE 0: Cover -->
+<div class="slide slide-cover active" data-title="שער">
+  <div style="margin-bottom:30px;">
+    <div style="font-size:56px;margin-bottom:16px;">☀️</div>
+    <h1>רישוי מערכות סולאריות<br><span class="gold">בתאילנד 2026</span></h1>
+    <p class="subtitle">מדריך מעשי — מתכנון עד חיבור לרשת</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px;">
+      <span class="tag tag-new">עדכוני רגולציה 2024-2025</span>
+      <span class="tag tag-free">ללא היתר בנייה!</span>
+      <span class="tag tag-optional">Net Billing ฿2.70/kWh</span>
+    </div>
+  </div>
+  <p style="opacity:0.4;font-size:13px;">Ko Phangan Solar — TM Energy</p>
+</div>
+
+<!-- SLIDE 1: The Big Picture -->
+<div class="slide slide-ocean" data-title="מהפכת הרגולציה">
+  <h2>🎉 מהפכת הרגולציה — מה השתנה?</h2>
+  <p class="subtitle">תאילנד הסירה חסמים מרכזיים ב-2024-2025</p>
+
+  <div class="stat-grid">
+    <div>
+      <div class="big-num">0</div>
+      <div class="stat-label">היתרי בנייה נדרשים<br>(גגות ≤20 kg/m²)</div>
+    </div>
+    <div>
+      <div class="big-num">0</div>
+      <div class="stat-label">רישיון מפעל נדרש<br>(בוטל 12/2024)</div>
+    </div>
+    <div>
+      <div class="big-num">฿2.70</div>
+      <div class="stat-label">kWh — Net Billing<br>קבוע 10 שנים</div>
+    </div>
+    <div>
+      <div class="big-num">30-90</div>
+      <div class="stat-label">ימים מבקשה<br>לחיבור רשת</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>מה <span class="reef-text">בוטל</span> (חדשות טובות!)</h3>
+      <div class="card" style="margin:8px 0;">
+        <h3>רישיון מפעל (Ror.Ngor.4) <span class="tag tag-free">בוטל 12/2024</span></h3>
+        <p>בעבר נדרש למערכות >1MW. עכשיו: לא נדרש לשום מערכת סולארית על גג, בכל גודל.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>היתר בנייה <span class="tag tag-free">בוטל 11/2025</span></h3>
+        <p>Ministerial Regulation No. 72 — מערכות ≤20 kg/m² על כל סוג מבנה: אפס היתרים. פאנלים סטנדרטיים שוקלים 12-15 kg/m².</p>
+      </div>
+    </div>
+    <div>
+      <h3>מה <span class="gold">עדיין נדרש</span></h3>
+      <div class="card" style="margin:8px 0;">
+        <h3>תיאום עם PEA <span class="tag tag-required">לכל פרויקט</span></h3>
+        <p>Provincial Electricity Authority — אישור חיבור לרשת. הגורם המרכזי.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>תקני ציוד <span class="tag tag-required">חובה</span></h3>
+        <p>פאנלים: IEC 61215/61730. אינוורטרים: IEC 62109. חובה לחיבור PEA.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>מהנדס מוסמך (PE) <span class="tag tag-optional">מומלץ</span></h3>
+        <p>Council of Engineers. מומלץ לחתימה על תכניות מערכת ≥ מסוים.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Installation Flow -->
+<div class="slide slide-dark" data-title="תהליך התקנה — שלב אחר שלב">
+  <span class="section-num">01</span>
+  <h2>⚡ תהליך התקנת מערכת סולארית</h2>
+  <p class="subtitle">7 שלבים — מלקוח לחשמל</p>
+
+  <div class="flow-step">
+    <span class="flow-num">1</span>
+    <div class="flow-content">
+      <h4>סקר אתר + הערכת גג</h4>
+      <p>בדיקת כיוון גג, הצללה, מצב קונסטרוקציה, מרחק מלוח חשמל. מדידת צריכה חודשית.</p>
+      <div class="detail">כלים: drone, מד קרינה, גישה לחשבון PEA של הלקוח</div>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-num">2</span>
+    <div class="flow-content">
+      <h4>תכנון מערכת + הצעת מחיר</h4>
+      <p>Single-line diagram, בחירת פאנלים + אינוורטר, חישוב תפוקה צפויה, ROI ללקוח.</p>
+      <div class="detail">תוכנות: PVsyst, HelioScope, Aurora. PE חתימה אם נדרש.</div>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-num">3</span>
+    <div class="flow-content">
+      <h4>בקשת PEA — הגשה למשרד מקומי <span class="tag tag-required">חובה</span></h4>
+      <p>טופס בקשה + תכנית מערכת + single-line diagram + תעודות ציוד + ביטוח + רישיון מתקין.</p>
+      <div class="detail">PEA Koh Phangan: 077-377-084, Thong Sala | CD/USB עם כל המסמכים</div>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-num">4</span>
+    <div class="flow-content">
+      <h4>בדיקה טכנית PEA <span class="tag tag-optional">30-45 ימים</span></h4>
+      <p>PEA מאמתים קיבולת רשת באזור, בודקים שהמערכת עומדת בדרישות, מאשרים או מבקשים שינויים.</p>
+      <div class="detail">עקוב אונליין: ppim.pea.co.th</div>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-num">5</span>
+    <div class="flow-content">
+      <h4>התקנה פיזית</h4>
+      <p>מונטז' רכיבים, חיבור חשמלי, הארקה, בדיקות בטיחות, commissioning.</p>
+      <div class="detail">צילום לפני/אחרי | טופס קבלה חתום מלקוח | תיעוד מלא</div>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-num">6</span>
+    <div class="flow-content">
+      <h4>פיקוח PEA + התקנת מונה <span class="tag tag-required">חובה</span></h4>
+      <p>PEA מגיעים לאתר, בודקים התקנה, מתקינים מונה דו-כיווני (bidirectional meter).</p>
+      <div class="detail">עלות מונה: ~฿5,000-15,000 | לתאם מראש!</div>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <span class="flow-num">7</span>
+    <div class="flow-content">
+      <h4>חתימת הסכם + חיבור לרשת 🎉</h4>
+      <p>Power Purchase Agreement — 10 שנים. ฿2.70/kWh קבוע על עודפים. המערכת חיה!</p>
+      <div class="detail">הלקוח צורך ישירות + מוכר עודפים | חיסכון מיידי</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: PEA Deep Dive -->
+<div class="slide slide-ocean" data-title="PEA — חיבור לרשת">
+  <span class="section-num">PEA</span>
+  <h2>⚡ PEA — הגורם המרכזי</h2>
+  <p class="subtitle">Provincial Electricity Authority — כל מה שצריך לדעת</p>
+
+  <div class="two-col">
+    <div>
+      <h3>סוגי חיבור</h3>
+      <div class="card" style="margin:8px 0;">
+        <h3>Self-Consumption בלבד <span class="tag tag-free">פשוט</span></h3>
+        <p>צריכה עצמית, ללא מכירת עודפים. הודעה מראש 30 יום ל-PEA. ללא היתר.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>Net Billing (מכירת עודפים) <span class="tag tag-required">תהליך מלא</span></h3>
+        <p>הלקוח צורך + מוכר עודפים ל-PEA ב-฿2.70/kWh. דורש בקשה מלאה, מונה דו-כיווני, הסכם 10 שנים.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>VSPP (<10MW) <span class="tag tag-optional">גדול</span></h3>
+        <p>Very Small Power Producer. למערכות גדולות שמוכרות רוב החשמל. דורש רישיון ERC.</p>
+      </div>
+
+      <h3 style="margin-top:16px;">מסמכים לבקשת Net Billing</h3>
+      <ul class="checklist" onclick="toggleCheck(event)">
+        <li><span class="check"></span>טופס בקשת PEA</li>
+        <li><span class="check"></span>הוכחת בעלות/שכירות נכס</li>
+        <li><span class="check"></span>תכנון מערכת + מפרטים</li>
+        <li><span class="check"></span>Single-line diagram</li>
+        <li><span class="check"></span>תעודות ציוד (IEC 61215, 61730, 62109)</li>
+        <li><span class="check"></span>הסמכת מתקין</li>
+        <li><span class="check"></span>ביטוח</li>
+        <li><span class="check"></span>CD/USB עם כל המסמכים</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>ציר זמן Net Billing</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <span class="time">יום 1</span>
+          <h4>הגשת בקשה ל-PEA</h4>
+          <p>משרד PEA מקומי, Thong Sala</p>
+        </div>
+        <div class="timeline-item">
+          <span class="time">ימים 1-45</span>
+          <h4>בדיקה טכנית</h4>
+          <p>PEA בודק קיבולת רשת ותאימות. מעקב: ppim.pea.co.th</p>
+        </div>
+        <div class="timeline-item">
+          <span class="time">לאחר אישור</span>
+          <h4>התקנה</h4>
+          <p>התקנה פיזית של המערכת</p>
+        </div>
+        <div class="timeline-item">
+          <span class="time">1-2 שבועות אחרי</span>
+          <h4>פיקוח PEA</h4>
+          <p>בדיקת אתר + התקנת מונה דו-כיווני</p>
+        </div>
+        <div class="timeline-item">
+          <span class="time">סה"כ 30-90 ימים</span>
+          <h4>חיבור + הסכם PPA</h4>
+          <p>฿2.70/kWh קבוע, 10 שנים</p>
+        </div>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:12px;">
+        <strong>Net Billing vs Net Metering:</strong><br>
+        תאילנד עברה מ-net metering ל-<strong>net billing</strong>. ההבדל: עודפים לא "מחזירים" יחידות, אלא נמכרים בתעריף קבוע ฿2.70/kWh (נמוך מתעריף הקנייה ~฿6). לכן תמיד עדיף למקסם צריכה עצמית.
+      </div>
+
+      <div class="link-grid" style="margin-top:12px;">
+        <a href="https://www.pea.co.th/" target="_blank" class="link-card"><span class="link-icon">⚡</span> PEA Official</a>
+        <a href="tel:077-377-084" class="link-card"><span class="link-icon">📞</span> PEA Koh Phangan</a>
+        <a href="tel:1129" class="link-card"><span class="link-icon">📞</span> PEA Hotline: 1129</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Equipment Standards -->
+<div class="slide slide-dark" data-title="תקנים ותעודות ציוד">
+  <span class="section-num">04</span>
+  <h2>📋 תקנים + תעודות ציוד</h2>
+  <p class="subtitle">מה PEA דורש — ומה הלקוחות מצפים</p>
+
+  <div class="two-col">
+    <div>
+      <h3>תקנים חובה לציוד</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>ציוד</th><th>תקן</th><th>מה זה בודק</th></tr>
+          <tr><td>פאנלים סולאריים</td><td><strong>IEC 61215</strong></td><td>ביצועים + עמידות</td></tr>
+          <tr><td>פאנלים — בטיחות</td><td><strong>IEC 61730</strong></td><td>בטיחות חשמלית</td></tr>
+          <tr><td>אינוורטרים</td><td><strong>IEC 62109</strong></td><td>בטיחות ממירי מתח</td></tr>
+          <tr><td>אינוורטרים — רשת</td><td><strong>IEEE 1547</strong></td><td>חיבור לרשת</td></tr>
+          <tr><td>כבלים</td><td><strong>TIS 11-2553</strong></td><td>תקן תאילנדי לכבלים</td></tr>
+        </table>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:12px;">
+        <strong>טיפ:</strong> Longi, Huawei, Sungrow — כולם עומדים בכל התקנים. ודא שספק הציוד מספק תעודות מקוריות. PEA ידחה בקשות בלי תעודות.
+      </div>
+
+      <h3 style="margin-top:16px;">תקני TISI (Thai Industrial Standards)</h3>
+      <p style="font-size:13px;opacity:0.7;">חלק מהציוד דורש אישור TISI (มอก.) נוסף. בדוק עם PEA מקומי אם יש דרישות ספציפיות לסוראט תאני.</p>
+    </div>
+
+    <div>
+      <h3>דרישות בטיחות בהתקנה</h3>
+      <div class="card" style="margin:8px 0;">
+        <h3>DC Disconnect / Rapid Shutdown</h3>
+        <p>מנתק DC מהיר ליד הפאנלים + ליד האינוורטר. חובה בטיחותית.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>הארקה (Grounding)</h3>
+        <p>כל חלקי המתכת + מסגרות פאנלים מוארקים. בדיקת התנגדות הארקה.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>הגנה מפני ברקים</h3>
+        <p>SPD (Surge Protection Device) על DC + AC. קריטי באזור טרופי!</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>מעברי גישה על הגג</h3>
+        <p>שביל גישה לכבאים + מרווח מקצה גג. לא חובה רגולטורית בתאילנד — אבל best practice.</p>
+      </div>
+      <div class="card" style="margin:8px 0;">
+        <h3>חומרי הרכבה ימיים</h3>
+        <p>Koh Phangan = אוויר ים מלוח. <strong>חובה</strong> להשתמש בחומרה מנירוסטה/אלומיניום marine-grade!</p>
+      </div>
+
+      <div class="alert alert-warn" style="margin-top:12px;">
+        <strong>⚠️ ספציפי לקופנגן:</strong> קורוזיה מאוויר ים + לחות טרופית = אויב #1. חסוך בחומרי הרכבה = תשלם כפול בתחזוקה. אל תתפשר.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Taxation -->
+<div class="slide slide-gold" data-title="מיסוי — הטבות ותשלומים">
+  <span class="section-num">฿</span>
+  <h2>💰 מיסוי סולאר בתאילנד</h2>
+  <p class="subtitle">הטבות ללקוחות + חובות לחברה</p>
+
+  <div class="two-col">
+    <div>
+      <h3 class="reef-text">הטבות מס — כלי מכירה!</h3>
+      
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>ניכוי 50% על ציוד סולארי <span class="tag tag-new">2024-2025</span></h3>
+        <p>לקוחות עסקיים: ניכוי 50% מעלות ציוד + התקנה ממס חברות. עד ฿200K למגורים.</p>
+        <p style="margin-top:6px;color:#2ED89A;font-weight:600;">= מכירה קלה יותר! "המדינה משלמת חצי."</p>
+      </div>
+
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>פטור מכס על ייבוא</h3>
+        <p>פאנלים סולאריים: 0% מכס תחת הסכמי ASEAN. אינוורטרים: תלוי מקור.</p>
+      </div>
+
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>VAT על מכירת חשמל</h3>
+        <p>הכנסה מ-net billing (฿2.70/kWh) פטורה ממע"מ ללקוחות קטנים.</p>
+      </div>
+
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>הטבות ממשלתיות (אם זמין)</h3>
+        <p>פטור ממס חברות 8 שנים + פטור מכס על מכונות. שווה ฿7.78M+ לחברה גדולה.</p>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="gold">חובות מס — מה לדעת</h3>
+
+      <div class="card" style="margin:8px 0;">
+        <h3>מע"מ 7%</h3>
+        <p>חובה מעל ฿1.8M/שנה הכנסות. מומלץ להירשם מיום 1 — זיכוי מס תשומות על ציוד!</p>
+        <p style="font-size:12px;opacity:0.6;margin-top:4px;">דוגמה: קונה פאנלים ב-฿1M + 7% מע"מ = ฿70K שחוזרים אלייך</p>
+      </div>
+
+      <div class="card" style="margin:8px 0;">
+        <h3>מס חברות 20%</h3>
+        <p>שיעור סטנדרטי. SME (הון ≤฿5M): 15% על ฿300K ראשונים, 20% מעל.</p>
+      </div>
+
+      <div class="card" style="margin:8px 0;">
+        <h3>ניכוי במקור</h3>
+        <p>3% על תשלום לקבלני משנה, 5% על שכ"ד, 3% שירותים מקצועיים.</p>
+      </div>
+
+      <div class="table-wrap" style="margin-top:12px;">
+        <table>
+          <tr><th>הגשה</th><th>תדירות</th><th>מועד</th></tr>
+          <tr><td>מע"מ</td><td>חודשי</td><td>15 לחודש הבא</td></tr>
+          <tr><td>ניכוי במקור</td><td>חודשי</td><td>7 לחודש הבא</td></tr>
+          <tr><td>ביטוח לאומי</td><td>חודשי</td><td>15 לחודש הבא</td></tr>
+          <tr><td>מס חברות</td><td>חצי-שנתי + שנתי</td><td>PND 51 + PND 50</td></tr>
+          <tr><td>דו"ח מבוקר</td><td>שנתי</td><td>5 חודשים מסוף שנה</td></tr>
+        </table>
+      </div>
+
+      <div class="alert alert-warn" style="margin-top:12px;">
+        <strong>⚠️</strong> ביקורת שנתית (audit) חובה לכל חברה תאית! ฿15-50K/שנה. שכור רו"ח מיום 1.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: ESCO / PPA Model -->
+<div class="slide slide-reef" data-title="ESCO/PPA — מודל עסקי">
+  <span class="section-num">PPA</span>
+  <h2>מודל עסקי</h2>
+  <p class="subtitle">אפס השקעה ללקוח, הכנסה חוזרת לך</p>
+
+  <div class="two-col">
+    <div>
+      <h3>איך זה עובד?</h3>
+      <div class="flow-step">
+        <span class="flow-num">1</span>
+        <div class="flow-content">
+          <h4>אתה מתקין מערכת סולארית — על חשבונך</h4>
+          <p>הלקוח לא משלם שקל. אתה בעל המערכת.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-num">2</span>
+        <div class="flow-content">
+          <h4>הלקוח משלם לך על חשמל — בזול מ-PEA</h4>
+          <p>תעריף: ฿4.50/kWh (vs PEA ฿6-8). הלקוח חוסך 25-35% מיום 1. הצמדה CPI/PEA ~3%/שנה.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-num">3</span>
+        <div class="flow-content">
+          <h4>הסכם 15 שנים</h4>
+          <p>Recurring revenue. אחרי 5-7 שנים — רווח נקי על כל kWh.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-num">4</span>
+        <div class="flow-content">
+          <h4>סוף הסכם (15 שנים): העברה ב-฿1</h4>
+          <p>המערכת עוברת לבעלות הלקוח בתמורה סמלית של ฿1. או הארכת הסכם.</p>
+        </div>
+      </div>
+
+      <div class="alert alert-success" style="margin-top:12px;">
+        <strong>למה ESCO מנצח?</strong><br>
+        • הלקוח: אפס סיכון, חיסכון מיידי<br>
+        • אתה: הכנסה חוזרת, asset שעולה בערך<br>
+        • אידיאלי לרזורטים + עסקים גדולים
+      </div>
+    </div>
+
+    <div>
+      <h3>מספרים — 10 מערכות ESCO</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פרמטר</th><th>ערך</th></tr>
+          <tr><td>גודל ממוצע</td><td>50 kWp</td></tr>
+          <tr><td>עלות מערכת (฿12K/kWp)</td><td>฿600K</td></tr>
+          <tr><td>תפוקה שנתית</td><td>~82,125 kWh</td></tr>
+          <tr><td>הכנסה/מערכת/חודש (฿4.5/kWh)</td><td>฿30,375</td></tr>
+          <tr><td>החזר הלוואה/חודש</td><td>฿-22,300</td></tr>
+          <tr><td>O&M/חודש</td><td>฿-875</td></tr>
+          <tr><td><strong>רווח נקי/חודש</strong></td><td><strong class="reef-text">฿7,200</strong></td></tr>
+          <tr><td><strong>10 מערכות/חודש</strong></td><td><strong class="reef-text">฿72,000</strong></td></tr>
+          <tr><td><strong>שנתי (10)</strong></td><td><strong class="reef-text">฿864,000</strong></td></tr>
+          <tr><td>אחרי פירעון הלוואה</td><td class="gold"><strong>฿295K/חודש!</strong></td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:16px;">רישיון ESCO</h3>
+      <div class="alert alert-info">
+        <strong>לא חובה — אבל מומלץ:</strong> רישום ב-DEDE כ-ESCO מוסיף אמינות. חברות גדולות ידרשו את זה. רישום דרך <a href="https://www.dede.go.th/" target="_blank" style="color:var(--gold);">dede.go.th</a> או Thai ESCO Association.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Permits Summary -->
+<div class="slide slide-dark" data-title="מה צריך / מה לא">
+  <h2>📊 סיכום: מה צריך / מה לא צריך</h2>
+
+  <div class="table-wrap" style="margin-top:20px;">
+    <table style="font-size:14px;">
+      <tr><th>דרישה</th><th>סטטוס</th><th>גורם</th><th>פירוט</th></tr>
+      <tr><td><strong>היתר בנייה לגג</strong></td><td><span class="tag tag-free">לא נדרש!</span></td><td>—</td><td>בוטל 11/2025, ≤20 kg/m²</td></tr>
+      <tr><td><strong>רישיון מפעל</strong></td><td><span class="tag tag-free">לא נדרש!</span></td><td>—</td><td>בוטל 12/2024 לסולאר על גגות</td></tr>
+      <tr><td><strong>רישיון מתקין</strong></td><td><span class="tag tag-free">לא נדרש</span></td><td>DEDE</td><td>אין רישיון מתקין לאומי בתאילנד</td></tr>
+      <tr><td><strong>הודעה ל-PEA (self-use)</strong></td><td><span class="tag tag-optional">30 יום מראש</span></td><td>PEA</td><td>רק הודעה, לא היתר</td></tr>
+      <tr><td><strong>בקשת Net Billing</strong></td><td><span class="tag tag-required">חובה</span></td><td>PEA</td><td>30-90 ימים, כולל מונה</td></tr>
+      <tr><td><strong>תעודות ציוד IEC</strong></td><td><span class="tag tag-required">חובה</span></td><td>PEA</td><td>61215/61730 פאנלים, 62109 אינוורטר</td></tr>
+      <tr><td><strong>מהנדס מוסמך (PE)</strong></td><td><span class="tag tag-optional">מומלץ</span></td><td>COE</td><td>חתימה על תכניות גדולות</td></tr>
+      <tr><td><strong>רישיון ERC</strong></td><td><span class="tag tag-free">לא (בד"כ)</span></td><td>ERC</td><td>רק אם מוכר חשמל ישירות (לא Net Billing)</td></tr>
+      <tr><td><strong>ESCO רישום</strong></td><td><span class="tag tag-optional">מומלץ</span></td><td>DEDE</td><td>לאמינות, לא חובה</td></tr>
+      <tr><td><strong>ביטוח CAR</strong></td><td><span class="tag tag-required">מומלץ מאוד</span></td><td>ביטוח</td><td>Contractor's All Risk</td></tr>
+      <tr><td><strong>רישום מע"מ</strong></td><td><span class="tag tag-required">מומלץ מיום 1</span></td><td>Revenue</td><td>זיכוי תשומות על ציוד!</td></tr>
+    </table>
+  </div>
+
+  <div class="alert alert-success" style="margin-top:20px;">
+    <strong>שורה תחתונה:</strong> בפועל, כדי להתקין מערכת סולארית בתאילנד ב-2026, הדבר העיקרי הוא <strong>תיאום עם PEA</strong> + ציוד מתוקנן. הרגולציה פושטה דרמטית — החסם המרכזי הוא כבר לא ביורוקרטיה, אלא מציאת לקוחות.
+  </div>
+</div>
+
+<!-- SLIDE 8: Company Setup (Brief) -->
+<div class="slide slide-ocean" data-title="רישום חברה — תמצית">
+  <span class="section-num">Co.</span>
+  <h2>🏢 רישום חברה — תמצית</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🇹🇭</div>
+      <h3>מבנה חברה — ייקבע</h3>
+      <p>מבנה ההתאגדות ייקבע בשלב הבא.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📜</div>
+      <h3>Foreign Business License</h3>
+      <p>בעלות זרה מלאה. הון ฿3M+. 60-90 ימים. ללא הטבות מס.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <h3>הטבות ממשלתיות (אם זמין)</h3>
+      <p>100% זר + פטור מס 8 שנים. אבל: EPC סולארי לא רשום כפעילות מקודמת.</p>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:20px;">
+    <div>
+      <h3>Work Permit — תמצית</h3>
+      <div class="alert alert-info">
+        • הון ฿2M לכל עובד זר<br>
+        • 4 עובדים תאים לכל עובד זר<br>
+        • Non-B ויזה → Work Permit → הארכה שנתית<br>
+        • עלות: ~฿10K DIY, ~฿25-50K עם סוכן<br>
+        • <strong>עיסוקים אסורים:</strong> עבודה ידנית, נהיגה. ניהול + מכירות = OK.
+      </div>
+    </div>
+    <div>
+      <h3>עלויות הקמה כוללות</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>עלות (฿)</th></tr>
+          <tr><td>הון רשום (WP)</td><td>2,000,000</td></tr>
+          <tr><td>רישום + עו"ד</td><td>50-90K</td></tr>
+          <tr><td>ציוד + כלים</td><td>200-500K</td></tr>
+          <tr><td>רכב</td><td>300-800K</td></tr>
+          <tr><td>ביטוח שנה 1</td><td>50-200K</td></tr>
+          <tr><td>הון חוזר 3 חודשים</td><td>500K-1M</td></tr>
+          <tr><td><strong>סה"כ</strong></td><td><strong>฿3.2-4.9M</strong></td></tr>
+        </table>
+      </div>
+      <p style="font-size:12px;opacity:0.5;">~$92-141K USD. הון רשום נשאר בחברה.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Koh Phangan Specifics -->
+<div class="slide slide-reef" data-title="ספציפי לקופנגן">
+  <span class="section-num">🏝️</span>
+  <h2>🏝️ ספציפי ל-Koh Phangan</h2>
+  <p class="subtitle">מה ייחודי באי שלנו</p>
+
+  <div class="two-col">
+    <div>
+      <h3>יתרונות</h3>
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>4.5 שעות שיא שמש ביום</h3>
+        <p>אזור טרופי = תפוקה גבוהה כל השנה. אפילו בעונת הגשמים 3.5+ שעות.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>תעריף חשמל גבוה</h3>
+        <p>฿6-8/kWh (ממוצע ฿7). עסקים גדולים משלמים יותר. ROI מהיר יותר.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>אפס תחרות רצינית</h3>
+        <p>מתחרה אחד (Green Global Tech) — איכות נמוכה. אין נוכחות דיגיטלית.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:#2ED89A;">
+        <h3>בעיות רשת = מוטיבציה</h3>
+        <p>הפסקות חשמל תכופות. סולאר + סוללות = pitch מושלם.</p>
+      </div>
+    </div>
+
+    <div>
+      <h3>אתגרים</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--coral);">
+        <h3>לוגיסטיקה — פרי לאי</h3>
+        <p>כל הציוד מגיע בפרי מסוראט תאני. תכנון מראש + ביטוח מטען!</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:var(--coral);">
+        <h3>קורוזיה מאוויר ים</h3>
+        <p>חובה חומרה marine-grade. נירוסטה 316L. אלומיניום anodized.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:var(--coral);">
+        <h3>מאגר עובדים מוגבל</h3>
+        <p>חשמלאים מנוסים נדירים באי. גייס מסוראט + הכשר מקומיים.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:var(--coral);">
+        <h3>עונתיות</h3>
+        <p>רזורטים עובדים בעונתיות. high season (12-3) = זמן מכירות. low season = התקנות.</p>
+      </div>
+
+      <h3 style="margin-top:16px;">אנשי קשר מקומיים</h3>
+      <div class="link-grid">
+        <a href="tel:077-377-084" class="link-card"><span class="link-icon">⚡</span> PEA Koh Phangan</a>
+        <a href="tel:077-377-046" class="link-card"><span class="link-icon">🛂</span> Immigration KP</a>
+        <a href="tel:077-377-098" class="link-card"><span class="link-icon">🏛️</span> Municipality</a>
+        <a href="tel:077-377-474" class="link-card"><span class="link-icon">🏥</span> Hospital</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Action Checklist -->
+<div class="slide slide-dark" data-title="צ'קליסט פעולה">
+  <h2>✅ צ'קליסט — מאפס לפרויקט ראשון</h2>
+
+  <div class="two-col" style="margin-top:12px;">
+    <div>
+      <h3>שלב 1: הקמה (שבועות 1-6)</h3>
+      <ul class="checklist" onclick="toggleCheck(event)">
+        <li><span class="check"></span>שכור עו"ד תאי + רו"ח</li>
+        <li><span class="check"></span>הקמת מבנה עסקי מתאים</li>
+        <li><span class="check"></span>פתח חשבון בנק (Bangkok Bank / KBank)</li>
+        <li><span class="check"></span>רישום מס + מע"מ</li>
+        <li><span class="check"></span>Work Permit + ויזה</li>
+        <li><span class="check"></span>גייס 4+ עובדים תאים</li>
+        <li><span class="check"></span>ביטוח CAR + E&O</li>
+      </ul>
+
+      <h3 style="margin-top:16px;">שלב 2: תשתית (שבועות 4-10)</h3>
+      <ul class="checklist" onclick="toggleCheck(event)">
+        <li><span class="check"></span>הקם משרד בתונג סאלה</li>
+        <li><span class="check"></span>רכש ציוד בסיסי + רכב</li>
+        <li><span class="check"></span>חוזה ספק ציוד (BayWa/Longi/Huawei)</li>
+        <li><span class="check"></span>פגישת היכרות עם PEA מקומי</li>
+        <li><span class="check"></span>הכשרת צוות</li>
+        <li><span class="check"></span>הכן תבניות: הצעת מחיר, חוזה PPA, דו"ח התקנה</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>שלב 3: פרויקט ראשון (שבוע 10+)</h3>
+      <ul class="checklist" onclick="toggleCheck(event)">
+        <li><span class="check"></span>זכה בלקוח ראשון (רזורט / עסק גדול)</li>
+        <li><span class="check"></span>סקר אתר + תכנון מערכת</li>
+        <li><span class="check"></span>הגש בקשת PEA</li>
+        <li><span class="check"></span>רכש ציוד + העבר לאי</li>
+        <li><span class="check"></span>התקנה פיזית</li>
+        <li><span class="check"></span>commissioning + בדיקות</li>
+        <li><span class="check"></span>פיקוח PEA + מונה דו-כיווני</li>
+        <li><span class="check"></span>חיבור לרשת + PPA חתום 🎉</li>
+      </ul>
+
+      <h3 style="margin-top:16px;">שוטף</h3>
+      <ul class="checklist" onclick="toggleCheck(event)">
+        <li><span class="check"></span>הגשות מס חודשיות (VAT, WHT, SSO)</li>
+        <li><span class="check"></span>דיווח 90 יום (immigration)</li>
+        <li><span class="check"></span>ביקורת שנתית (auditor)</li>
+        <li><span class="check"></span>חידוש Work Permit + ויזה</li>
+        <li><span class="check"></span>O&M למערכות מותקנות</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert alert-success" style="margin-top:16px;">
+    <strong>ציר זמן ריאליסטי:</strong> מהחלטה ועד פרויקט ראשון חי: <strong>3-4 חודשים</strong>. חברה רשומה + Work Permit: 6-8 שבועות. PEA אישור: 30-90 ימים. התקנה: 1-2 שבועות.
+  </div>
+</div>
+
+<!-- SLIDE 11: Key Contacts -->
+<div class="slide slide-ocean" data-title="אנשי קשר + לינקים">
+  <h2>📞 אנשי קשר + לינקים</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>ממשלה — סולאר + אנרגיה</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>גורם</th><th>אתר</th><th>טלפון</th></tr>
+          <tr><td><strong>PEA</strong> (חשמל)</td><td><a href="https://www.pea.co.th/" target="_blank">pea.co.th</a></td><td>1129</td></tr>
+          <tr><td><strong>PEA Koh Phangan</strong></td><td>—</td><td>077-377-084</td></tr>
+          <tr><td><strong>DEDE</strong> (אנרגיה חלופית)</td><td><a href="https://www.dede.go.th/" target="_blank">dede.go.th</a></td><td>02-223-0021</td></tr>
+          <tr><td><strong>ERC</strong> (רגולטור)</td><td><a href="https://www.erc.or.th/" target="_blank">erc.or.th</a></td><td>02-207-3599</td></tr>
+          <tr><td><strong>COE</strong> (מהנדסים)</td><td><a href="https://www.coe.or.th/" target="_blank">coe.or.th</a></td><td>02-184-4600</td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:16px;">ממשלה — חברות + מס</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>גורם</th><th>אתר</th><th>טלפון</th></tr>
+          <tr><td><strong>DBD</strong> (רישום)</td><td><a href="https://www.dbd.go.th/" target="_blank">dbd.go.th</a></td><td>1570</td></tr>
+          <tr><td><strong>BOI</strong></td><td><a href="https://www.boi.go.th/" target="_blank">boi.go.th</a></td><td>1385</td></tr>
+          <tr><td><strong>Revenue</strong> (מס)</td><td><a href="https://www.rd.go.th/" target="_blank">rd.go.th</a></td><td>1161</td></tr>
+          <tr><td><strong>SSO</strong> (ביטוח לאומי)</td><td><a href="https://www.sso.go.th/" target="_blank">sso.go.th</a></td><td>1506</td></tr>
+          <tr><td><strong>MOL</strong> (עבודה)</td><td><a href="https://www.mol.go.th/" target="_blank">mol.go.th</a></td><td>1506</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <h3>מקומי — Koh Phangan</h3>
+      <div class="card-grid" style="grid-template-columns: 1fr;">
+        <div class="card">
+          <h3>⚡ PEA Koh Phangan — 077-377-084</h3>
+          <p>הגורם הכי חשוב. פגישת היכרות ראשונה!</p>
+        </div>
+        <div class="card">
+          <h3>🛂 Immigration — 077-377-046</h3>
+          <p>Thong Sala. 90-day reporting + visa extensions.</p>
+        </div>
+        <div class="card">
+          <h3>🏛️ Municipality — 077-377-098</h3>
+          <p>היתרים מוניציפליים (ground-mount, carports).</p>
+        </div>
+        <div class="card">
+          <h3>🛡️ BOI Surat Thani — 077-404-600</h3>
+          <p>surat@boi.go.th — ייעוץ חינמי.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:16px;">עו"ד מומלצים</h3>
+      <div class="link-grid">
+        <a href="https://belaws.com/" target="_blank" class="link-card"><span class="link-icon">⚖️</span> Belaws — SME</a>
+        <a href="https://www.konradlegal.com/" target="_blank" class="link-card"><span class="link-icon">⚖️</span> Konrad Legal</a>
+        <a href="https://www.siam-legal.com/" target="_blank" class="link-card"><span class="link-icon">⚖️</span> Siam Legal</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end slides -->
+
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">→ הקודם</button>
+  <span class="slide-counter" id="counter">1 / 12</span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">הבא ←</button>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function navigate(dir) {
+  const prev = current;
+  current = Math.max(0, Math.min(total - 1, current + dir));
+  if (prev === current) return;
+  slides[prev].classList.remove('active');
+  slides[prev].classList.add('exit');
+  setTimeout(() => slides[prev].classList.remove('exit'), 600);
+  slides[current].classList.add('active');
+  updateUI();
+}
+
+function goTo(idx) {
+  slides[current].classList.remove('active');
+  current = idx;
+  slides[current].classList.add('active');
+  updateUI();
+  toggleTOC();
+}
+
+function updateUI() {
+  document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === total - 1;
+  document.getElementById('progress').style.width = `${((current + 1) / total) * 100}%`;
+  document.querySelectorAll('.toc-item').forEach((el, i) => el.classList.toggle('active', i === current));
+}
+
+function toggleTOC() { document.getElementById('tocPanel').classList.toggle('open'); }
+function toggleCheck(e) { const li = e.target.closest('li'); if (li) li.classList.toggle('done'); }
+
+const tocList = document.getElementById('tocList');
+slides.forEach((slide, i) => {
+  const title = slide.dataset.title || `Slide ${i + 1}`;
+  const item = document.createElement('div');
+  item.className = 'toc-item' + (i === 0 ? ' active' : '');
+  item.innerHTML = `<span class="toc-num">${i + 1}</span>${title}`;
+  item.onclick = () => goTo(i);
+  tocList.appendChild(item);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') navigate(e.key === 'ArrowLeft' ? 1 : -1);
+  if (e.key === 'Escape') document.getElementById('tocPanel').classList.remove('open');
+});
+
+let touchStart = 0;
+document.addEventListener('touchstart', e => touchStart = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const diff = touchStart - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 60) navigate(diff > 0 ? 1 : -1);
+});
+
+updateUI();
+</script>
+
+
+
+
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "רישוי מערכות סולאריות": {en: "Solar System Licensing", th: "การออกใบอนุญาตระบบโซลาร์"},
+  "בתאילנד 2026": {en: "in Thailand 2026", th: "ในประเทศไทย 2026"},
+  "מדריך מעשי — מתכנון עד חיבור לרשת": {en: "Practical Guide — From Planning to Grid Connection", th: "คู่มือปฏิบัติ — ตั้งแต่การวางแผนจนถึงการเชื่อมต่อกริด"},
+  "עדכוני רגולציה 2024-2025": {en: "Regulatory Updates 2024-2025", th: "อัปเดตกฎระเบียบ 2024-2025"},
+  "ללא היתר בנייה!": {en: "No Building Permit!", th: "ไม่ต้องมีใบอนุญาตก่อสร้าง!"},
+  "Ko Phangan Solar — TM Energy": {en: "Ko Phangan Solar — TM Energy", th: "Ko Phangan Solar — TM Energy"},
+  "שער": {en: "Cover", th: "หน้าปก"},
+  "מהפכת הרגולציה": {en: "Regulatory Revolution", th: "การปฏิวัติกฎระเบียบ"},
+  "🎉 מהפכת הרגולציה — מה השתנה?": {en: "🎉 Regulatory Revolution — What Changed?", th: "🎉 การปฏิวัติกฎระเบียบ — อะไรเปลี่ยนไป?"},
+  "תאילנד הסירה חסמים מרכזיים ב-2024-2025": {en: "Thailand removed major barriers in 2024-2025", th: "ไทยได้ยกเลิกอุปสรรคสำคัญในปี 2024-2025"},
+  "היתרי בנייה נדרשים\n(גגות ≤20 kg/m²)": {en: "Building permits required\n(roofs ≤20 kg/m²)", th: "ใบอนุญาตก่อสร้างที่จำเป็น\n(หลังคา ≤20 kg/m²)"},
+  "היתרי בנייה נדרשים": {en: "Building permits required", th: "ใบอนุญาตก่อสร้างที่จำเป็น"},
+  "(גגות ≤20 kg/m²)": {en: "(roofs ≤20 kg/m²)", th: "(หลังคา ≤20 kg/m²)"},
+  "רישיון מפעל נדרש\n(בוטל 12/2024)": {en: "Factory license required\n(cancelled 12/2024)", th: "ใบอนุญาตโรงงานที่จำเป็น\n(ยกเลิก 12/2024)"},
+  "רישיון מפעל נדרש": {en: "Factory license required", th: "ใบอนุญาตโรงงานที่จำเป็น"},
+  "(בוטל 12/2024)": {en: "(cancelled 12/2024)", th: "(ยกเลิก 12/2024)"},
+  "kWh — Net Billing\nקבוע 10 שנים": {en: "kWh — Net Billing\nfixed 10 years", th: "kWh — Net Billing\nคงที่ 10 ปี"},
+  "kWh — Net Billing": {en: "kWh — Net Billing", th: "kWh — Net Billing"},
+  "קבוע 10 שנים": {en: "fixed 10 years", th: "คงที่ 10 ปี"},
+  "ימים מבקשה\nלחיבור רשת": {en: "days from application\nto grid connection", th: "วันจากการสมัคร\nถึงการเชื่อมต่อกริด"},
+  "ימים מבקשה": {en: "days from application", th: "วันจากการสมัคร"},
+  "לחיבור רשת": {en: "to grid connection", th: "ถึงการเชื่อมต่อกริด"},
+  "מה בוטל (חדשות טובות!)": {en: "What Was Cancelled (Good News!)", th: "อะไรถูกยกเลิก (ข่าวดี!)"},
+  "רישיון מפעל (Ror.Ngor.4)": {en: "Factory License (Ror.Ngor.4)", th: "ใบอนุญาตโรงงาน (Ror.Ngor.4)"},
+  "בוטל 12/2024": {en: "Cancelled 12/2024", th: "ยกเลิก 12/2024"},
+  "בעבר נדרש למערכות >1MW. עכשיו: לא נדרש לשום מערכת סולארית על גג, בכל גודל.": {en: "Previously required for systems >1MW. Now: not required for any rooftop solar system, of any size.", th: "เดิมจำเป็นสำหรับระบบ >1MW ปัจจุบัน: ไม่จำเป็นสำหรับระบบโซลาร์บนหลังคาใดๆ ทุกขนาด"},
+  "היתר בנייה": {en: "Building Permit", th: "ใบอนุญาตก่อสร้าง"},
+  "בוטל 11/2025": {en: "Cancelled 11/2025", th: "ยกเลิก 11/2025"},
+  "Ministerial Regulation No. 72 — מערכות ≤20 kg/m² על כל סוג מבנה: אפס היתרים. פאנלים סטנדרטיים שוקלים 12-15 kg/m².": {en: "Ministerial Regulation No. 72 — systems ≤20 kg/m² on any building type: zero permits. Standard panels weigh 12-15 kg/m².", th: "กฎกระทรวงฉบับที่ 72 — ระบบ ≤20 kg/m² บนอาคารทุกประเภท: ไม่ต้องขออนุญาต แผงมาตรฐานหนัก 12-15 kg/m²"},
+  "מה עדיין נדרש": {en: "What Is Still Required", th: "สิ่งที่ยังคงจำเป็น"},
+  "תיאום עם PEA": {en: "Coordination with PEA", th: "การประสานงานกับ PEA"},
+  "לכל פרויקט": {en: "for every project", th: "สำหรับทุกโครงการ"},
+  "Provincial Electricity Authority — אישור חיבור לרשת. הגורם המרכזי.": {en: "Provincial Electricity Authority — grid connection approval. The key authority.", th: "Provincial Electricity Authority — การอนุมัติเชื่อมต่อกริด หน่วยงานหลัก"},
+  "תקני ציוד": {en: "Equipment Standards", th: "มาตรฐานอุปกรณ์"},
+  "חובה": {en: "Required", th: "จำเป็น"},
+  "פאנלים: IEC 61215/61730. אינוורטרים: IEC 62109. חובה לחיבור PEA.": {en: "Panels: IEC 61215/61730. Inverters: IEC 62109. Required for PEA connection.", th: "แผง: IEC 61215/61730 อินเวอร์เตอร์: IEC 62109 จำเป็นสำหรับการเชื่อมต่อ PEA"},
+  "מהנדס מוסמך (PE)": {en: "Licensed Engineer (PE)", th: "วิศวกรที่ได้รับใบอนุญาต (PE)"},
+  "מומלץ": {en: "Recommended", th: "แนะนำ"},
+  "Council of Engineers. מומלץ לחתימה על תכניות מערכת ≥ מסוים.": {en: "Council of Engineers. Recommended to sign plans for systems above a certain size.", th: "สภาวิศวกร แนะนำให้เซ็นแบบแปลนระบบที่มีขนาดเกินกำหนด"},
+  "תהליך התקנה — שלב אחר שלב": {en: "Installation Process — Step by Step", th: "กระบวนการติดตั้ง — ทีละขั้นตอน"},
+  "⚡ תהליך התקנת מערכת סולארית": {en: "⚡ Solar System Installation Process", th: "⚡ กระบวนการติดตั้งระบบโซลาร์"},
+  "7 שלבים — מלקוח לחשמל": {en: "7 Steps — From Client to Electricity", th: "7 ขั้นตอน — จากลูกค้าสู่ไฟฟ้า"},
+  "סקר אתר + הערכת גג": {en: "Site Survey + Roof Assessment", th: "สำรวจพื้นที่ + ประเมินหลังคา"},
+  "בדיקת כיוון גג, הצללה, מצב קונסטרוקציה, מרחק מלוח חשמל. מדידת צריכה חודשית.": {en: "Check roof orientation, shading, structural condition, distance from electrical panel. Measure monthly consumption.", th: "ตรวจสอบทิศทางหลังคา ร่มเงา สภาพโครงสร้าง ระยะห่างจากแผงไฟฟ้า วัดการใช้ไฟฟ้ารายเดือน"},
+  "כלים: drone, מד קרינה, גישה לחשבון PEA של הלקוח": {en: "Tools: drone, irradiance meter, access to client's PEA account", th: "เครื่องมือ: โดรน, เครื่องวัดรังสี, เข้าถึงบัญชี PEA ของลูกค้า"},
+  "תכנון מערכת + הצעת מחיר": {en: "System Design + Quotation", th: "การออกแบบระบบ + ใบเสนอราคา"},
+  "Single-line diagram, בחירת פאנלים + אינוורטר, חישוב תפוקה צפויה, ROI ללקוח.": {en: "Single-line diagram, panel + inverter selection, expected output calculation, ROI for client.", th: "Single-line diagram, เลือกแผง + อินเวอร์เตอร์, คำนวณผลผลิตที่คาดหวัง, ROI สำหรับลูกค้า"},
+  "תוכנות: PVsyst, HelioScope, Aurora. PE חתימה אם נדרש.": {en: "Software: PVsyst, HelioScope, Aurora. PE signature if required.", th: "ซอฟต์แวร์: PVsyst, HelioScope, Aurora เซ็นชื่อ PE หากจำเป็น"},
+  "בקשת PEA — הגשה למשרד מקומי": {en: "PEA Application — Submit to Local Office", th: "การสมัคร PEA — ยื่นที่สำนักงานท้องถิ่น"},
+  "טופס בקשה + תכנית מערכת + single-line diagram + תעודות ציוד + ביטוח + רישיון מתקין.": {en: "Application form + system plan + single-line diagram + equipment certificates + insurance + installer license.", th: "แบบฟอร์มสมัคร + แผนระบบ + single-line diagram + ใบรับรองอุปกรณ์ + ประกัน + ใบอนุญาตผู้ติดตั้ง"},
+  "PEA Koh Phangan: 077-377-084, Thong Sala | CD/USB עם כל המסמכים": {en: "PEA Koh Phangan: 077-377-084, Thong Sala | CD/USB with all documents", th: "PEA เกาะพะงัน: 077-377-084, ท่องซาลา | CD/USB พร้อมเอกสารทั้งหมด"},
+  "בדיקה טכנית PEA": {en: "PEA Technical Review", th: "การตรวจสอบทางเทคนิคของ PEA"},
+  "30-45 ימים": {en: "30-45 days", th: "30-45 วัน"},
+  "PEA מאמתים קיבולת רשת באזור, בודקים שהמערכת עומדת בדרישות, מאשרים או מבקשים שינויים.": {en: "PEA verifies grid capacity in the area, checks system compliance, approves or requests changes.", th: "PEA ตรวจสอบความจุกริดในพื้นที่ ตรวจสอบการปฏิบัติตามข้อกำหนดของระบบ อนุมัติหรือขอการเปลี่ยนแปลง"},
+  "עקוב אונליין: ppim.pea.co.th": {en: "Track online: ppim.pea.co.th", th: "ติดตามออนไลน์: ppim.pea.co.th"},
+  "התקנה פיזית": {en: "Physical Installation", th: "การติดตั้งทางกายภาพ"},
+  "מונטז' רכיבים, חיבור חשמלי, הארקה, בדיקות בטיחות, commissioning.": {en: "Component assembly, electrical connection, grounding, safety tests, commissioning.", th: "การประกอบชิ้นส่วน การเชื่อมต่อไฟฟ้า การต่อดิน การทดสอบความปลอดภัย การ commissioning"},
+  "צילום לפני/אחרי | טופס קבלה חתום מלקוח | תיעוד מלא": {en: "Before/after photos | Signed acceptance form from client | Full documentation", th: "ภาพก่อน/หลัง | แบบฟอร์มการรับมอบที่ลูกค้าเซ็น | เอกสารครบถ้วน"},
+  "פיקוח PEA + התקנת מונה": {en: "PEA Inspection + Meter Installation", th: "การตรวจสอบ PEA + การติดตั้งมิเตอร์"},
+  "PEA מגיעים לאתר, בודקים התקנה, מתקינים מונה דו-כיווני (bidirectional meter).": {en: "PEA arrives on site, inspects installation, installs bidirectional meter.", th: "PEA มาที่สถานที่ ตรวจสอบการติดตั้ง ติดตั้งมิเตอร์สองทิศทาง (bidirectional meter)"},
+  "עלות מונה: ~฿5,000-15,000 | לתאם מראש!": {en: "Meter cost: ~฿5,000-15,000 | Coordinate in advance!", th: "ค่ามิเตอร์: ~฿5,000-15,000 | ประสานงานล่วงหน้า!"},
+  "חתימת הסכם + חיבור לרשת 🎉": {en: "Sign Agreement + Grid Connection 🎉", th: "เซ็นสัญญา + เชื่อมต่อกริด 🎉"},
+  "Power Purchase Agreement — 10 שנים. ฿2.70/kWh קבוע על עודפים. המערכת חיה!": {en: "Power Purchase Agreement — 10 years. ฿2.70/kWh fixed on surplus. The system is live!", th: "Power Purchase Agreement — 10 ปี ฿2.70/kWh คงที่สำหรับส่วนเกิน ระบบเริ่มทำงานแล้ว!"},
+  "הלקוח צורך ישירות + מוכר עודפים | חיסכון מיידי": {en: "Client consumes directly + sells surplus | Immediate savings", th: "ลูกค้าใช้ไฟโดยตรง + ขายส่วนเกิน | ประหยัดทันที"},
+  "PEA — חיבור לרשת": {en: "PEA — Grid Connection", th: "PEA — การเชื่อมต่อกริด"},
+  "⚡ PEA — הגורם המרכזי": {en: "⚡ PEA — The Key Authority", th: "⚡ PEA — หน่วยงานหลัก"},
+  "Provincial Electricity Authority — כל מה שצריך לדעת": {en: "Provincial Electricity Authority — Everything You Need to Know", th: "Provincial Electricity Authority — ทุกสิ่งที่คุณต้องรู้"},
+  "סוגי חיבור": {en: "Connection Types", th: "ประเภทการเชื่อมต่อ"},
+  "Self-Consumption בלבד": {en: "Self-Consumption Only", th: "การบริโภคเอง (Self-Consumption) เท่านั้น"},
+  "פשוט": {en: "Simple", th: "ง่าย"},
+  "צריכה עצמית, ללא מכירת עודפים. הודעה מראש 30 יום ל-PEA. ללא היתר.": {en: "Self-consumption, no surplus sales. 30-day advance notice to PEA. No permit.", th: "การบริโภคเอง ไม่ขายส่วนเกิน แจ้ง PEA ล่วงหน้า 30 วัน ไม่ต้องขออนุญาต"},
+  "Net Billing (מכירת עודפים)": {en: "Net Billing (Surplus Sales)", th: "Net Billing (การขายส่วนเกิน)"},
+  "תהליך מלא": {en: "Full Process", th: "กระบวนการเต็มรูปแบบ"},
+  "הלקוח צורך + מוכר עודפים ל-PEA ב-฿2.70/kWh. דורש בקשה מלאה, מונה דו-כיווני, הסכם 10 שנים.": {en: "Client consumes + sells surplus to PEA at ฿2.70/kWh. Requires full application, bidirectional meter, 10-year agreement.", th: "ลูกค้าใช้ไฟ + ขายส่วนเกินให้ PEA ที่ ฿2.70/kWh ต้องการใบสมัครครบถ้วน มิเตอร์สองทิศทาง สัญญา 10 ปี"},
+  "VSPP (<10MW)": {en: "VSPP (<10MW)", th: "VSPP (<10MW)"},
+  "גדול": {en: "Large", th: "ขนาดใหญ่"},
+  "Very Small Power Producer. למערכות גדולות שמוכרות רוב החשמל. דורש רישיון ERC.": {en: "Very Small Power Producer. For large systems selling most electricity. Requires ERC license.", th: "Very Small Power Producer สำหรับระบบขนาดใหญ่ที่ขายไฟฟ้าส่วนใหญ่ ต้องการใบอนุญาต ERC"},
+  "מסמכים לבקשת Net Billing": {en: "Documents for Net Billing Application", th: "เอกสารสำหรับการสมัคร Net Billing"},
+  "טופס בקשת PEA": {en: "PEA application form", th: "แบบฟอร์มสมัคร PEA"},
+  "הוכחת בעלות/שכירות נכס": {en: "Proof of property ownership/lease", th: "หลักฐานการเป็นเจ้าของ/เช่าทรัพย์สิน"},
+  "תכנון מערכת + מפרטים": {en: "System design + specifications", th: "การออกแบบระบบ + ข้อกำหนด"},
+  "תעודות ציוד (IEC 61215, 61730, 62109)": {en: "Equipment certificates (IEC 61215, 61730, 62109)", th: "ใบรับรองอุปกรณ์ (IEC 61215, 61730, 62109)"},
+  "הסמכת מתקין": {en: "Installer certification", th: "การรับรองผู้ติดตั้ง"},
+  "ביטוח": {en: "Insurance", th: "ประกันภัย"},
+  "CD/USB עם כל המסמכים": {en: "CD/USB with all documents", th: "CD/USB พร้อมเอกสารทั้งหมด"},
+  "ציר זמן Net Billing": {en: "Net Billing Timeline", th: "ไทม์ไลน์ Net Billing"},
+  "יום 1": {en: "Day 1", th: "วันที่ 1"},
+  "הגשת בקשה ל-PEA": {en: "Submit Application to PEA", th: "ยื่นใบสมัครต่อ PEA"},
+  "משרד PEA מקומי, Thong Sala": {en: "Local PEA office, Thong Sala", th: "สำนักงาน PEA ท้องถิ่น ท่องซาลา"},
+  "ימים 1-45": {en: "Days 1-45", th: "วันที่ 1-45"},
+  "בדיקה טכנית": {en: "Technical Review", th: "การตรวจสอบทางเทคนิค"},
+  "PEA בודק קיבולת רשת ותאימות. מעקב: ppim.pea.co.th": {en: "PEA checks grid capacity and compliance. Track: ppim.pea.co.th", th: "PEA ตรวจสอบความจุกริดและการปฏิบัติตามข้อกำหนด ติดตาม: ppim.pea.co.th"},
+  "לאחר אישור": {en: "After Approval", th: "หลังการอนุมัติ"},
+  "התקנה": {en: "Installation", th: "การติดตั้ง"},
+  "התקנה פיזית של המערכת": {en: "Physical installation of the system", th: "การติดตั้งระบบทางกายภาพ"},
+  "1-2 שבועות אחרי": {en: "1-2 weeks after", th: "1-2 สัปดาห์หลังจากนั้น"},
+  "פיקוח PEA": {en: "PEA Inspection", th: "การตรวจสอบ PEA"},
+  "בדיקת אתר + התקנת מונה דו-כיווני": {en: "Site inspection + bidirectional meter installation", th: "ตรวจสอบสถานที่ + ติดตั้งมิเตอร์สองทิศทาง"},
+  "סה\"כ 30-90 ימים": {en: "Total 30-90 days", th: "รวม 30-90 วัน"},
+  "חיבור + הסכם PPA": {en: "Connection + PPA Agreement", th: "การเชื่อมต่อ + สัญญา PPA"},
+  "฿2.70/kWh קבוע, 10 שנים": {en: "฿2.70/kWh fixed, 10 years", th: "฿2.70/kWh คงที่ 10 ปี"},
+  "Net Billing vs Net Metering:": {en: "Net Billing vs Net Metering:", th: "Net Billing vs Net Metering:"},
+  "תאילנד עברה מ-net metering ל-net billing. ההבדל: עודפים לא \"מחזירים\" יחידות, אלא נמכרים בתעריף קבוע ฿2.70/kWh (נמוך מתעריף הקנייה ~฿6). לכן תמיד עדיף למקסם צריכה עצמית.": {en: "Thailand switched from net metering to net billing. The difference: surplus is not \"returned\" as units but sold at a fixed rate ฿2.70/kWh (lower than purchase tariff ~฿6). Always better to maximize self-consumption.", th: "ไทยเปลี่ยนจาก net metering เป็น net billing ความแตกต่าง: ส่วนเกินไม่ได้ \"คืน\" เป็นหน่วย แต่ขายในอัตราคงที่ ฿2.70/kWh (ต่ำกว่าอัตราซื้อ ~฿6) ควรเพิ่มการบริโภคเองเสมอ"},
+  "תקנים ותעודות ציוד": {en: "Equipment Standards & Certificates", th: "มาตรฐานและใบรับรองอุปกรณ์"},
+  "📋 תקנים + תעודות ציוד": {en: "📋 Standards + Equipment Certificates", th: "📋 มาตรฐาน + ใบรับรองอุปกรณ์"},
+  "מה PEA דורש — ומה הלקוחות מצפים": {en: "What PEA requires — and what clients expect", th: "สิ่งที่ PEA ต้องการ — และสิ่งที่ลูกค้าคาดหวัง"},
+  "תקנים חובה לציוד": {en: "Mandatory Equipment Standards", th: "มาตรฐานอุปกรณ์ที่จำเป็น"},
+  "ציוד": {en: "Equipment", th: "อุปกรณ์"},
+  "תקן": {en: "Standard", th: "มาตรฐาน"},
+  "מה זה בודק": {en: "What It Tests", th: "สิ่งที่ทดสอบ"},
+  "פאנלים סולאריים": {en: "Solar Panels", th: "แผงโซลาร์"},
+  "ביצועים + עמידות": {en: "Performance + Durability", th: "ประสิทธิภาพ + ความทนทาน"},
+  "פאנלים — בטיחות": {en: "Panels — Safety", th: "แผง — ความปลอดภัย"},
+  "בטיחות חשמלית": {en: "Electrical Safety", th: "ความปลอดภัยทางไฟฟ้า"},
+  "אינוורטרים": {en: "Inverters", th: "อินเวอร์เตอร์"},
+  "בטיחות ממירי מתח": {en: "Power converter safety", th: "ความปลอดภัยของตัวแปลงกำลัง"},
+  "אינוורטרים — רשת": {en: "Inverters — Grid", th: "อินเวอร์เตอร์ — กริด"},
+  "חיבור לרשת": {en: "Grid connection", th: "การเชื่อมต่อกริด"},
+  "כבלים": {en: "Cables", th: "สายเคเบิล"},
+  "תקן תאילנדי לכבלים": {en: "Thai standard for cables", th: "มาตรฐานไทยสำหรับสายเคเบิล"},
+  "טיפ:": {en: "Tip:", th: "เคล็ดลับ:"},
+  "Longi, Huawei, Sungrow — כולם עומדים בכל התקנים. ודא שספק הציוד מספק תעודות מקוריות. PEA ידחה בקשות בלי תעודות.": {en: "Longi, Huawei, Sungrow — all meet all standards. Ensure your equipment supplier provides original certificates. PEA will reject applications without certificates.", th: "Longi, Huawei, Sungrow — ทุกรายผ่านมาตรฐานทั้งหมด ตรวจสอบว่าซัพพลายเออร์อุปกรณ์ให้ใบรับรองต้นฉบับ PEA จะปฏิเสธคำขอที่ไม่มีใบรับรอง"},
+  "תקני TISI (Thai Industrial Standards)": {en: "TISI Standards (Thai Industrial Standards)", th: "มาตรฐาน TISI (มาตรฐานอุตสาหกรรมไทย)"},
+  "חלק מהציוד דורש אישור TISI (מוก.) נוסף. בדוק עם PEA מקומי אם יש דרישות ספציפיות לסוראט תאני.": {en: "Some equipment requires additional TISI (มอก.) approval. Check with local PEA for any specific requirements for Surat Thani.", th: "อุปกรณ์บางรายการต้องได้รับการอนุมัติ TISI (มอก.) เพิ่มเติม ตรวจสอบกับ PEA ท้องถิ่นสำหรับข้อกำหนดเฉพาะของสุราษฎร์ธานี"},
+  "דרישות בטיחות בהתקנה": {en: "Installation Safety Requirements", th: "ข้อกำหนดความปลอดภัยในการติดตั้ง"},
+  "DC Disconnect / Rapid Shutdown": {en: "DC Disconnect / Rapid Shutdown", th: "DC Disconnect / Rapid Shutdown"},
+  "מנתק DC מהיר ליד הפאנלים + ליד האינוורטר. חובה בטיחותית.": {en: "Fast DC disconnect near panels + near inverter. Safety mandatory.", th: "ตัดการเชื่อมต่อ DC อย่างรวดเร็วใกล้แผง + ใกล้อินเวอร์เตอร์ จำเป็นด้านความปลอดภัย"},
+  "הארקה (Grounding)": {en: "Grounding", th: "การต่อดิน (Grounding)"},
+  "כל חלקי המתכת + מסגרות פאנלים מוארקים. בדיקת התנגדות הארקה.": {en: "All metal parts + panel frames grounded. Check grounding resistance.", th: "ส่วนโลหะทั้งหมด + กรอบแผงต้องต่อดิน ตรวจสอบความต้านทานการต่อดิน"},
+  "הגנה מפני ברקים": {en: "Lightning Protection", th: "การป้องกันฟ้าผ่า"},
+  "SPD (Surge Protection Device) על DC + AC. קריטי באזור טרופי!": {en: "SPD (Surge Protection Device) on DC + AC. Critical in tropical areas!", th: "SPD (Surge Protection Device) บน DC + AC สำคัญมากในเขตร้อน!"},
+  "מעברי גישה על הגג": {en: "Roof Access Pathways", th: "ทางเดินบนหลังคา"},
+  "שביל גישה לכבאים + מרווח מקצה גג. לא חובה רגולטורית בתאילנד — אבל best practice.": {en: "Firefighter access path + clearance from roof edge. Not a regulatory requirement in Thailand — but best practice.", th: "เส้นทางเข้าถึงสำหรับนักดับเพลิง + ระยะห่างจากขอบหลังคา ไม่ใช่ข้อกำหนดด้านกฎระเบียบในไทย — แต่เป็น best practice"},
+  "חומרי הרכבה ימיים": {en: "Marine-Grade Mounting Hardware", th: "วัสดุติดตั้งระดับทางทะเล"},
+  "Koh Phangan = אוויר ים מלוח. חובה להשתמש בחומרה מנירוסטה/אלומיניום marine-grade!": {en: "Koh Phangan = salty sea air. Mandatory to use marine-grade stainless steel/aluminium hardware!", th: "เกาะพะงัน = อากาศทะเลที่มีเกลือ จำเป็นต้องใช้วัสดุสแตนเลส/อลูมิเนียม marine-grade!"},
+  "⚠️ ספציפי לקופנגן:": {en: "⚠️ Koh Phangan specific:", th: "⚠️ เฉพาะเกาะพะงัน:"},
+  "קורוזיה מאוויר ים + לחות טרופית = אויב #1. חסוך בחומרי הרכבה = תשלם כפול בתחזוקה. אל תתפשר.": {en: "Corrosion from sea air + tropical humidity = enemy #1. Skimp on mounting hardware = pay double in maintenance. Don't compromise.", th: "การกัดกร่อนจากอากาศทะเล + ความชื้นในเขตร้อน = ศัตรู #1 ประหยัดวัสดุติดตั้ง = จ่ายสองเท่าในการบำรุงรักษา อย่าประนีประนอม"},
+  "מיסוי — הטבות ותשלומים": {en: "Taxation — Benefits & Obligations", th: "ภาษี — สิทธิประโยชน์และภาระผูกพัน"},
+  "💰 מיסוי סולאר בתאילנד": {en: "💰 Solar Taxation in Thailand", th: "💰 ภาษีโซลาร์ในประเทศไทย"},
+  "הטבות ללקוחות + חובות לחברה": {en: "Benefits for clients + obligations for the company", th: "สิทธิประโยชน์สำหรับลูกค้า + ภาระผูกพันของบริษัท"},
+  "הטבות מס — כלי מכירה!": {en: "Tax Benefits — Sales Tool!", th: "สิทธิประโยชน์ทางภาษี — เครื่องมือการขาย!"},
+  "ניכוי 50% על ציוד סולארי": {en: "50% Deduction on Solar Equipment", th: "หักลดหย่อน 50% สำหรับอุปกรณ์โซลาร์"},
+  "2024-2025": {en: "2024-2025", th: "2024-2025"},
+  "לקוחות עסקיים: ניכוי 50% מעלות ציוד + התקנה ממס חברות. עד ฿200K למגורים.": {en: "Business clients: 50% deduction of equipment + installation cost from corporate tax. Up to ฿200K for residential.", th: "ลูกค้าธุรกิจ: หักลดหย่อน 50% จากต้นทุนอุปกรณ์ + การติดตั้งจากภาษีนิติบุคคล สูงสุด ฿200K สำหรับที่อยู่อาศัย"},
+  "= מכירה קלה יותר! \"המדינה משלמת חצי.\"": {en: "= Easier sale! \"The government pays half.\"", th: "= ขายง่ายขึ้น! \"รัฐบาลจ่ายครึ่งหนึ่ง\""},
+  "פטור מכס על ייבוא": {en: "Import Duty Exemption", th: "การยกเว้นภาษีนำเข้า"},
+  "פאנלים סולאריים: 0% מכס תחת הסכמי ASEAN. אינוורטרים: תלוי מקור.": {en: "Solar panels: 0% duty under ASEAN agreements. Inverters: depends on origin.", th: "แผงโซลาร์: 0% ภาษีนำเข้าภายใต้ข้อตกลง ASEAN อินเวอร์เตอร์: ขึ้นอยู่กับแหล่งกำเนิด"},
+  "VAT על מכירת חשמל": {en: "VAT on Electricity Sales", th: "VAT จากการขายไฟฟ้า"},
+  "הכנסה מ-net billing (฿2.70/kWh) פטורה ממע\"מ ללקוחות קטנים.": {en: "Net billing revenue (฿2.70/kWh) VAT-exempt for small clients.", th: "รายได้ net billing (฿2.70/kWh) ได้รับการยกเว้น VAT สำหรับลูกค้ารายเล็ก"},
+  "הטבות ממשלתיות (אם זמין)": {en: "Government Incentives (if available)", th: "สิทธิประโยชน์จากรัฐบาล (หากมี)"},
+  "פטור ממס חברות 8 שנים + פטור מכס על מכונות. שווה ฿7.78M+ לחברה גדולה.": {en: "8-year corporate tax exemption + duty exemption on machines. Worth ฿7.78M+ for a large company.", th: "ยกเว้นภาษีนิติบุคคล 8 ปี + ยกเว้นภาษีนำเข้าเครื่องจักร มูลค่า ฿7.78M+ สำหรับบริษัทขนาดใหญ่"},
+  "חובות מס — מה לדעת": {en: "Tax Obligations — What to Know", th: "ภาระผูกพันทางภาษี — สิ่งที่ต้องรู้"},
+  "מע\"מ 7%": {en: "VAT 7%", th: "VAT 7%"},
+  "חובה מעל ฿1.8M/שנה הכנסות. מומלץ להירשם מיום 1 — זיכוי מס תשומות על ציוד!": {en: "Required above ฿1.8M/year revenue. Recommended to register from day 1 — input tax credit on equipment!", th: "จำเป็นเมื่อรายได้เกิน ฿1.8M/ปี แนะนำให้จดทะเบียนตั้งแต่วันแรก — เครดิตภาษีซื้อสำหรับอุปกรณ์!"},
+  "דוגמה: קונה פאנלים ב-฿1M + 7% מע\"מ = ฿70K שחוזרים אלייך": {en: "Example: buy panels at ฿1M + 7% VAT = ฿70K returned to you", th: "ตัวอย่าง: ซื้อแผงที่ ฿1M + 7% VAT = ฿70K คืนให้คุณ"},
+  "מס חברות 20%": {en: "Corporate Tax 20%", th: "ภาษีนิติบุคคล 20%"},
+  "שיעור סטנדרטי. SME (הון ≤฿5M): 15% על ฿300K ראשונים, 20% מעל.": {en: "Standard rate. SME (capital ≤฿5M): 15% on first ฿300K, 20% above.", th: "อัตรามาตรฐาน SME (ทุน ≤฿5M): 15% สำหรับ ฿300K แรก, 20% ที่เกินนั้น"},
+  "ניכוי במקור": {en: "Withholding Tax", th: "ภาษีหัก ณ ที่จ่าย"},
+  "3% על תשלום לקבלני משנה, 5% על שכ\"ד, 3% שירותים מקצועיים.": {en: "3% on payments to subcontractors, 5% on rent, 3% professional services.", th: "3% สำหรับการชำระเงินแก่ผู้รับเหมาช่วง, 5% สำหรับค่าเช่า, 3% บริการวิชาชีพ"},
+  "הגשה": {en: "Filing", th: "การยื่น"},
+  "תדירות": {en: "Frequency", th: "ความถี่"},
+  "מועד": {en: "Deadline", th: "กำหนดเวลา"},
+  "מע\"מ": {en: "VAT", th: "VAT"},
+  "חודשי": {en: "Monthly", th: "รายเดือน"},
+  "15 לחודש הבא": {en: "15th of next month", th: "วันที่ 15 ของเดือนถัดไป"},
+  "ניכוי במקור": {en: "Withholding Tax", th: "ภาษีหัก ณ ที่จ่าย"},
+  "7 לחודש הבא": {en: "7th of next month", th: "วันที่ 7 ของเดือนถัดไป"},
+  "ביטוח לאומי": {en: "Social Security", th: "ประกันสังคม"},
+  "מס חברות": {en: "Corporate Tax", th: "ภาษีนิติบุคคล"},
+  "חצי-שנתי + שנתי": {en: "Semi-annual + annual", th: "ครึ่งปี + ประจำปี"},
+  "דו\"ח מבוקר": {en: "Audited Report", th: "รายงานที่ตรวจสอบแล้ว"},
+  "שנתי": {en: "Annual", th: "ประจำปี"},
+  "5 חודשים מסוף שנה": {en: "5 months from year end", th: "5 เดือนนับจากสิ้นปี"},
+  "ביקורת שנתית (audit) חובה לכל חברה תאית! ฿15-50K/שנה. שכור רו\"ח מיום 1.": {en: "Annual audit mandatory for every Thai company! ฿15-50K/year. Hire an accountant from day 1.", th: "การตรวจสอบบัญชีประจำปีเป็นข้อบังคับสำหรับทุกบริษัทไทย! ฿15-50K/ปี จ้างนักบัญชีตั้งแต่วันแรก"},
+  "ESCO/PPA — מודל עסקי": {en: "ESCO/PPA — Business Model", th: "ESCO/PPA — รูปแบบธุรกิจ"},
+  "מודל עסקי": {en: "Business Model", th: "รูปแบบธุรกิจ"},
+  "אפס השקעה ללקוח, הכנסה חוזרת לך": {en: "Zero investment for the client, recurring revenue for you", th: "ลงทุนศูนย์สำหรับลูกค้า รายได้ประจำสำหรับคุณ"},
+  "איך זה עובד?": {en: "How Does It Work?", th: "มันทำงานอย่างไร?"},
+  "אתה מתקין מערכת סולארית — על חשבונך": {en: "You install a solar system — at your expense", th: "คุณติดตั้งระบบโซลาร์ — ด้วยค่าใช้จ่ายของคุณ"},
+  "הלקוח לא משלם שקל. אתה בעל המערכת.": {en: "The client pays nothing. You own the system.", th: "ลูกค้าไม่จ่ายอะไร คุณเป็นเจ้าของระบบ"},
+  "הלקוח משלם לך על חשמל — בזול מ-PEA": {en: "The client pays you for electricity — cheaper than PEA", th: "ลูกค้าจ่ายเงินให้คุณสำหรับไฟฟ้า — ถูกกว่า PEA"},
+  "תעריף: ฿4.50/kWh (vs PEA ฿6-8). הלקוח חוסך 25-35% מיום 1. הצמדה CPI/PEA ~3%/שנה.": {en: "Rate: ฿4.50/kWh (vs PEA ฿6-8). Client saves 25-35% from day 1. CPI/PEA indexation ~3%/year.", th: "อัตรา: ฿4.50/kWh (vs PEA ฿6-8) ลูกค้าประหยัด 25-35% ตั้งแต่วันแรก การปรับ CPI/PEA ~3%/ปี"},
+  "הסכם 15 שנים": {en: "15-Year Agreement", th: "สัญญา 15 ปี"},
+  "Recurring revenue. אחרי 5-7 שנים — רווח נקי על כל kWh.": {en: "Recurring revenue. After 5-7 years — net profit on every kWh.", th: "รายได้ประจำ หลังจาก 5-7 ปี — กำไรสุทธิจากทุก kWh"},
+  "סוף הסכם (15 שנים): העברה ב-฿1": {en: "End of Agreement (15 years): Transfer for ฿1", th: "สิ้นสุดสัญญา (15 ปี): โอนกรรมสิทธิ์ที่ ฿1"},
+  "המערכת עוברת לבעלות הלקוח בתמורה סמלית של ฿1. או הארכת הסכם.": {en: "The system transfers to the client's ownership for a symbolic ฿1. Or agreement renewal.", th: "ระบบโอนไปยังเจ้าของลูกค้าด้วยค่าตอบแทนเชิงสัญลักษณ์ ฿1 หรือต่ออายุสัญญา"},
+  "למה ESCO מנצח?": {en: "Why ESCO Wins?", th: "ทำไม ESCO ถึงชนะ?"},
+  "הלקוח: אפס סיכון, חיסכון מיידי": {en: "Client: zero risk, immediate savings", th: "ลูกค้า: ความเสี่ยงเป็นศูนย์ ประหยัดทันที"},
+  "אתה: הכנסה חוזרת, asset שעולה בערך": {en: "You: recurring revenue, appreciating asset", th: "คุณ: รายได้ประจำ สินทรัพย์ที่เพิ่มมูลค่า"},
+  "אידיאלי לרזורטים + עסקים גדולים": {en: "Ideal for resorts + large businesses", th: "เหมาะสำหรับรีสอร์ท + ธุรกิจขนาดใหญ่"},
+  "מספרים — 10 מערכות ESCO": {en: "Numbers — 10 ESCO Systems", th: "ตัวเลข — 10 ระบบ ESCO"},
+  "פרמטר": {en: "Parameter", th: "พารามิเตอร์"},
+  "ערך": {en: "Value", th: "มูลค่า"},
+  "גודל ממוצע": {en: "Average size", th: "ขนาดเฉลี่ย"},
+  "עלות מערכת (฿12K/kWp)": {en: "System cost (฿12K/kWp)", th: "ต้นทุนระบบ (฿12K/kWp)"},
+  "תפוקה שנתית": {en: "Annual output", th: "ผลผลิตประจำปี"},
+  "הכנסה/מערכת/חודש (฿4.5/kWh)": {en: "Revenue/system/month (฿4.5/kWh)", th: "รายได้/ระบบ/เดือน (฿4.5/kWh)"},
+  "החזר הלוואה/חודש": {en: "Loan repayment/month", th: "การชำระคืนเงินกู้/เดือน"},
+  "O&M/חודש": {en: "O&M/month", th: "O&M/เดือน"},
+  "רווח נקי/חודש": {en: "Net profit/month", th: "กำไรสุทธิ/เดือน"},
+  "10 מערכות/חודש": {en: "10 systems/month", th: "10 ระบบ/เดือน"},
+  "שנתי (10)": {en: "Annual (10)", th: "ประจำปี (10)"},
+  "אחרי פירעון הלוואה": {en: "After loan repayment", th: "หลังชำระหนี้เงินกู้"},
+  "רישיון ESCO": {en: "ESCO License", th: "ใบอนุญาต ESCO"},
+  "לא חובה — אבל מומלץ:": {en: "Not required — but recommended:", th: "ไม่จำเป็น — แต่แนะนำ:"},
+  "רישום ב-DEDE כ-ESCO מוסיף אמינות. חברות גדולות ידרשו את זה. רישום דרך": {en: "Registration with DEDE as ESCO adds credibility. Large companies will require it. Register via", th: "การจดทะเบียนกับ DEDE ในฐานะ ESCO เพิ่มความน่าเชื่อถือ บริษัทขนาดใหญ่จะต้องการสิ่งนี้ จดทะเบียนผ่าน"},
+  "או Thai ESCO Association.": {en: "or Thai ESCO Association.", th: "หรือ Thai ESCO Association"},
+  "מה צריך / מה לא": {en: "What's Needed / What's Not", th: "สิ่งที่ต้องการ / สิ่งที่ไม่ต้องการ"},
+  "📊 סיכום: מה צריך / מה לא צריך": {en: "📊 Summary: What's Required / What's Not", th: "📊 สรุป: สิ่งที่จำเป็น / สิ่งที่ไม่จำเป็น"},
+  "דרישה": {en: "Requirement", th: "ข้อกำหนด"},
+  "סטטוס": {en: "Status", th: "สถานะ"},
+  "גורם": {en: "Authority", th: "หน่วยงาน"},
+  "פירוט": {en: "Details", th: "รายละเอียด"},
+  "היתר בנייה לגג": {en: "Roof Building Permit", th: "ใบอนุญาตก่อสร้างหลังคา"},
+  "לא נדרש!": {en: "Not Required!", th: "ไม่จำเป็น!"},
+  "בוטל 11/2025, ≤20 kg/m²": {en: "Cancelled 11/2025, ≤20 kg/m²", th: "ยกเลิก 11/2025, ≤20 kg/m²"},
+  "רישיון מפעל": {en: "Factory License", th: "ใบอนุญาตโรงงาน"},
+  "לא נדרש": {en: "Not Required", th: "ไม่จำเป็น"},
+  "בוטל 12/2024 לסולאר על גגות": {en: "Cancelled 12/2024 for rooftop solar", th: "ยกเลิก 12/2024 สำหรับโซลาร์บนหลังคา"},
+  "רישיון מתקין": {en: "Installer License", th: "ใบอนุญาตผู้ติดตั้ง"},
+  "אין רישיון מתקין לאומי בתאילנד": {en: "No national installer license in Thailand", th: "ไม่มีใบอนุญาตผู้ติดตั้งระดับชาติในประเทศไทย"},
+  "הודעה ל-PEA (self-use)": {en: "Notice to PEA (self-use)", th: "แจ้ง PEA (ใช้เอง)"},
+  "30 יום מראש": {en: "30 days advance", th: "ล่วงหน้า 30 วัน"},
+  "רק הודעה, לא היתר": {en: "Notice only, not a permit", th: "แจ้งเท่านั้น ไม่ใช่การอนุญาต"},
+  "בקשת Net Billing": {en: "Net Billing Application", th: "การสมัคร Net Billing"},
+  "30-90 ימים, כולל מונה": {en: "30-90 days, including meter", th: "30-90 วัน รวมมิเตอร์"},
+  "תעודות ציוד IEC": {en: "IEC Equipment Certificates", th: "ใบรับรองอุปกรณ์ IEC"},
+  "61215/61730 פאנלים, 62109 אינוורטר": {en: "61215/61730 panels, 62109 inverter", th: "61215/61730 แผง, 62109 อินเวอร์เตอร์"},
+  "מהנדס מוסמך (PE)": {en: "Licensed Engineer (PE)", th: "วิศวกรที่ได้รับใบอนุญาต (PE)"},
+  "חתימה על תכניות גדולות": {en: "Sign plans for large systems", th: "เซ็นแบบแปลนสำหรับระบบขนาดใหญ่"},
+  "רישיון ERC": {en: "ERC License", th: "ใบอนุญาต ERC"},
+  "לא (בד\"כ)": {en: "No (usually)", th: "ไม่ (โดยปกติ)"},
+  "רק אם מוכר חשמל ישירות (לא Net Billing)": {en: "Only if selling electricity directly (not Net Billing)", th: "เฉพาะถ้าขายไฟฟ้าโดยตรง (ไม่ใช่ Net Billing)"},
+  "ESCO רישום": {en: "ESCO Registration", th: "การจดทะเบียน ESCO"},
+  "לאמינות, לא חובה": {en: "For credibility, not mandatory", th: "เพื่อความน่าเชื่อถือ ไม่บังคับ"},
+  "ביטוח CAR": {en: "CAR Insurance", th: "ประกัน CAR"},
+  "מומלץ מאוד": {en: "Highly Recommended", th: "แนะนำอย่างยิ่ง"},
+  "Contractor's All Risk": {en: "Contractor's All Risk", th: "Contractor's All Risk"},
+  "רישום מע\"מ": {en: "VAT Registration", th: "การจดทะเบียน VAT"},
+  "מומלץ מיום 1": {en: "Recommended from day 1", th: "แนะนำตั้งแต่วันแรก"},
+  "זיכוי תשומות על ציוד!": {en: "Input tax credit on equipment!", th: "เครดิตภาษีซื้อสำหรับอุปกรณ์!"},
+  "שורה תחתונה:": {en: "Bottom Line:", th: "สรุป:"},
+  "בפועל, כדי להתקין מערכת סולארית בתאילנד ב-2026, הדבר העיקרי הוא תיאום עם PEA + ציוד מתוקנן. הרגולציה פושטה דרמטית — החסם המרכזי הוא כבר לא ביורוקרטיה, אלא מציאת לקוחות.": {en: "In practice, to install a solar system in Thailand in 2026, the main thing is coordination with PEA + certified equipment. Regulation has been dramatically simplified — the main barrier is no longer bureaucracy, but finding clients.", th: "ในทางปฏิบัติ การติดตั้งระบบโซลาร์ในประเทศไทยในปี 2026 สิ่งหลักคือการประสานงานกับ PEA + อุปกรณ์ที่ผ่านมาตรฐาน กฎระเบียบได้รับการลดความซับซ้อนอย่างมาก — อุปสรรคหลักไม่ใช่ระบบราชการอีกต่อไป แต่เป็นการหาลูกค้า"},
+  "רישום חברה — תמצית": {en: "Company Registration — Summary", th: "การจดทะเบียนบริษัท — สรุป"},
+  "🏢 רישום חברה — תמצית": {en: "🏢 Company Registration — Summary", th: "🏢 การจดทะเบียนบริษัท — สรุป"},
+  "מבנה חברה — ייקבע": {en: "Company Structure — To Be Determined", th: "โครงสร้างบริษัท — จะกำหนดในภายหลัง"},
+  "מבנה ההתאגדות ייקבע בשלב הבא.": {en: "The incorporation structure will be determined in the next stage.", th: "โครงสร้างการจดทะเบียนจะกำหนดในขั้นตอนถัดไป"},
+  "Foreign Business License": {en: "Foreign Business License", th: "Foreign Business License"},
+  "בעלות זרה מלאה. הון ฿3M+. 60-90 ימים. ללא הטבות מס.": {en: "Full foreign ownership. Capital ฿3M+. 60-90 days. No tax benefits.", th: "กรรมสิทธิ์ต่างชาติเต็มรูปแบบ ทุน ฿3M+ 60-90 วัน ไม่มีสิทธิประโยชน์ทางภาษี"},
+  "100% זר + פטור מס 8 שנים. אבל: EPC סולארי לא רשום כפעילות מקודמת.": {en: "100% foreign + 8-year tax exemption. But: Solar EPC not listed as promoted activity.", th: "100% ต่างชาติ + ยกเว้นภาษี 8 ปี แต่: Solar EPC ไม่ได้อยู่ในรายการกิจกรรมที่ส่งเสริม"},
+  "Work Permit — תמצית": {en: "Work Permit — Summary", th: "ใบอนุญาตทำงาน — สรุป"},
+  "הון ฿2M לכל עובד זר": {en: "Capital ฿2M per foreign worker", th: "ทุน ฿2M ต่อพนักงานต่างชาติ"},
+  "4 עובדים תאים לכל עובד זר": {en: "4 Thai employees per foreign worker", th: "พนักงานไทย 4 คนต่อพนักงานต่างชาติ 1 คน"},
+  "Non-B ויזה → Work Permit → הארכה שנתית": {en: "Non-B visa → Work Permit → annual renewal", th: "วีซ่า Non-B → ใบอนุญาตทำงาน → ต่ออายุประจำปี"},
+  "עלות: ~฿10K DIY, ~฿25-50K עם סוכן": {en: "Cost: ~฿10K DIY, ~฿25-50K with agent", th: "ค่าใช้จ่าย: ~฿10K ด้วยตัวเอง, ~฿25-50K ผ่านตัวแทน"},
+  "עיסוקים אסורים:": {en: "Prohibited occupations:", th: "อาชีพที่ต้องห้าม:"},
+  "עבודה ידנית, נהיגה. ניהול + מכירות = OK.": {en: "Manual labor, driving. Management + sales = OK.", th: "งานด้วยมือ, การขับรถ การบริหาร + การขาย = OK"},
+  "עלויות הקמה כוללות": {en: "Total Setup Costs", th: "ต้นทุนการจัดตั้งรวม"},
+  "פריט": {en: "Item", th: "รายการ"},
+  "עלות (฿)": {en: "Cost (฿)", th: "ราคา (฿)"},
+  "הון רשום (WP)": {en: "Registered capital (WP)", th: "ทุนจดทะเบียน (WP)"},
+  "רישום + עו\"ד": {en: "Registration + lawyer", th: "การจดทะเบียน + ทนายความ"},
+  "ציוד + כלים": {en: "Equipment + tools", th: "อุปกรณ์ + เครื่องมือ"},
+  "רכב": {en: "Vehicle", th: "ยานพาหนะ"},
+  "ביטוח שנה 1": {en: "Year 1 insurance", th: "ประกันปีที่ 1"},
+  "הון חוזר 3 חודשים": {en: "Working capital 3 months", th: "เงินทุนหมุนเวียน 3 เดือน"},
+  "סה\"כ": {en: "Total", th: "รวม"},
+  "~$92-141K USD. הון רשום נשאר בחברה.": {en: "~$92-141K USD. Registered capital stays in the company.", th: "~$92-141K USD ทุนจดทะเบียนยังคงอยู่ในบริษัท"},
+  "ספציפי לקופנגן": {en: "Koh Phangan Specific", th: "เฉพาะเกาะพะงัน"},
+  "🏝️ ספציפי ל-Koh Phangan": {en: "🏝️ Koh Phangan Specific", th: "🏝️ เฉพาะเกาะพะงัน"},
+  "מה ייחודי באי שלנו": {en: "What Makes Our Island Unique", th: "สิ่งที่ทำให้เกาะของเราแตกต่าง"},
+  "יתרונות": {en: "Advantages", th: "ข้อดี"},
+  "4.5 שעות שיא שמש ביום": {en: "4.5 Peak Sun Hours per Day", th: "4.5 ชั่วโมงแสงอาทิตย์สูงสุดต่อวัน"},
+  "אזור טרופי = תפוקה גבוהה כל השנה. אפילו בעונת הגשמים 3.5+ שעות.": {en: "Tropical zone = high output all year. Even in rainy season 3.5+ hours.", th: "เขตร้อน = ผลผลิตสูงตลอดทั้งปี แม้ในฤดูฝนยังได้ 3.5+ ชั่วโมง"},
+  "תעריף חשמל גבוה": {en: "High Electricity Tariff", th: "อัตราค่าไฟฟ้าสูง"},
+  "฿6-8/kWh (ממוצע ฿7). עסקים גדולים משלמים יותר. ROI מהיר יותר.": {en: "฿6-8/kWh (average ฿7). Large businesses pay more. Faster ROI.", th: "฿6-8/kWh (เฉลี่ย ฿7) ธุรกิจขนาดใหญ่จ่ายมากกว่า ROI เร็วกว่า"},
+  "אפס תחרות רצינית": {en: "Zero Serious Competition", th: "ไม่มีการแข่งขันที่จริงจัง"},
+  "מתחרה אחד (Green Global Tech) — איכות נמוכה. אין נוכחות דיגיטלית.": {en: "One competitor (Green Global Tech) — low quality. No digital presence.", th: "คู่แข่งหนึ่งราย (Green Global Tech) — คุณภาพต่ำ ไม่มีการปรากฏตัวดิจิทัล"},
+  "בעיות רשת = מוטיבציה": {en: "Grid Problems = Motivation", th: "ปัญหาสายไฟ = แรงจูงใจ"},
+  "הפסקות חשמל תכופות. סולאר + סוללות = pitch מושלם.": {en: "Frequent power outages. Solar + batteries = perfect pitch.", th: "ไฟดับบ่อยครั้ง โซลาร์ + แบตเตอรี่ = pitch ที่สมบูรณ์แบบ"},
+  "אתגרים": {en: "Challenges", th: "ความท้าทาย"},
+  "לוגיסטיקה — פרי לאי": {en: "Logistics — Ferry to Island", th: "โลจิสติกส์ — เรือเฟอร์รี่ไปยังเกาะ"},
+  "כל הציוד מגיע בפרי מסוראט תאני. תכנון מראש + ביטוח מטען!": {en: "All equipment arrives by ferry from Surat Thani. Plan ahead + cargo insurance!", th: "อุปกรณ์ทั้งหมดมาทางเรือเฟอร์รี่จากสุราษฎร์ธานี วางแผนล่วงหน้า + ประกันสินค้า!"},
+  "קורוזיה מאוויר ים": {en: "Corrosion from Sea Air", th: "การกัดกร่อนจากอากาศทะเล"},
+  "חובה חומרה marine-grade. נירוסטה 316L. אלומיניום anodized.": {en: "Marine-grade hardware mandatory. Stainless steel 316L. Anodized aluminium.", th: "วัสดุ marine-grade บังคับ สแตนเลส 316L อลูมิเนียม anodized"},
+  "מאגר עובדים מוגבל": {en: "Limited Labour Pool", th: "แหล่งแรงงานจำกัด"},
+  "חשמלאים מנוסים נדירים באי. גייס מסוראט + הכשר מקומיים.": {en: "Experienced electricians are rare on the island. Recruit from Surat + train locals.", th: "ช่างไฟฟ้าที่มีประสบการณ์หายากบนเกาะ รับสมัครจากสุราษฎร์ + ฝึกอบรมคนในพื้นที่"},
+  "עונתיות": {en: "Seasonality", th: "ตามฤดูกาล"},
+  "רזורטים עובדים בעונתיות. high season (12-3) = זמן מכירות. low season = התקנות.": {en: "Resorts operate seasonally. High season (12-3) = sales time. Low season = installations.", th: "รีสอร์ทดำเนินงานตามฤดูกาล High season (12-3) = เวลาขาย Low season = การติดตั้ง"},
+  "אנשי קשר מקומיים": {en: "Local Contacts", th: "ผู้ติดต่อท้องถิ่น"},
+  "PEA Koh Phangan — 077-377-084": {en: "PEA Koh Phangan — 077-377-084", th: "PEA เกาะพะงัน — 077-377-084"},
+  "הגורם הכי חשוב. פגישת היכרות ראשונה!": {en: "The most important authority. First introduction meeting!", th: "หน่วยงานที่สำคัญที่สุด การประชุมแนะนำตัวครั้งแรก!"},
+  "Immigration — 077-377-046": {en: "Immigration — 077-377-046", th: "ตรวจคนเข้าเมือง — 077-377-046"},
+  "Municipality — 077-377-098": {en: "Municipality — 077-377-098", th: "เทศบาล — 077-377-098"},
+  "היתרים מוניציפליים (ground-mount, carports).": {en: "Municipal permits (ground-mount, carports).", th: "ใบอนุญาตเทศบาล (ground-mount, carports)"},
+  "BOI Surat Thani — 077-404-600": {en: "BOI Surat Thani — 077-404-600", th: "BOI สุราษฎร์ธานี — 077-404-600"},
+  "surat@boi.go.th — ייעוץ חינמי.": {en: "surat@boi.go.th — free consulting.", th: "surat@boi.go.th — ปรึกษาฟรี"},
+  "צ'קליסט פעולה": {en: "Action Checklist", th: "รายการตรวจสอบการดำเนินการ"},
+  "✅ צ'קליסט — מאפס לפרויקט ראשון": {en: "✅ Checklist — From Zero to First Project", th: "✅ รายการตรวจสอบ — จากศูนย์สู่โครงการแรก"},
+  "שלב 1: הקמה (שבועות 1-6)": {en: "Phase 1: Setup (Weeks 1-6)", th: "ระยะที่ 1: การจัดตั้ง (สัปดาห์ที่ 1-6)"},
+  "שכור עו\"ד תאי + רו\"ח": {en: "Hire Thai lawyer + accountant", th: "จ้างทนายความไทย + นักบัญชี"},
+  "הקמת מבנה עסקי מתאים": {en: "Establish appropriate business structure", th: "จัดตั้งโครงสร้างธุรกิจที่เหมาะสม"},
+  "פתח חשבון בנק (Bangkok Bank / KBank)": {en: "Open bank account (Bangkok Bank / KBank)", th: "เปิดบัญชีธนาคาร (Bangkok Bank / KBank)"},
+  "רישום מס + מע\"מ": {en: "Tax + VAT registration", th: "จดทะเบียนภาษี + VAT"},
+  "Work Permit + ויזה": {en: "Work Permit + visa", th: "ใบอนุญาตทำงาน + วีซ่า"},
+  "גייס 4+ עובדים תאים": {en: "Recruit 4+ Thai employees", th: "รับสมัครพนักงานไทย 4+ คน"},
+  "ביטוח CAR + E&O": {en: "CAR + E&O insurance", th: "ประกัน CAR + E&O"},
+  "שלב 2: תשתית (שבועות 4-10)": {en: "Phase 2: Infrastructure (Weeks 4-10)", th: "ระยะที่ 2: โครงสร้างพื้นฐาน (สัปดาห์ที่ 4-10)"},
+  "הקם משרד בתונג סאלה": {en: "Set up office in Thong Sala", th: "จัดตั้งสำนักงานที่ท่องซาลา"},
+  "רכש ציוד בסיסי + רכב": {en: "Purchase basic equipment + vehicle", th: "ซื้ออุปกรณ์พื้นฐาน + ยานพาหนะ"},
+  "חוזה ספק ציוד (BayWa/Longi/Huawei)": {en: "Equipment supplier contract (BayWa/Longi/Huawei)", th: "สัญญาซัพพลายเออร์อุปกรณ์ (BayWa/Longi/Huawei)"},
+  "פגישת היכרות עם PEA מקומי": {en: "Introduction meeting with local PEA", th: "การประชุมแนะนำตัวกับ PEA ท้องถิ่น"},
+  "הכשרת צוות": {en: "Team training", th: "การฝึกอบรมทีม"},
+  "הכן תבניות: הצעת מחיר, חוזה PPA, דו\"ח התקנה": {en: "Prepare templates: quote, PPA contract, installation report", th: "จัดเตรียมแบบแผน: ใบเสนอราคา, สัญญา PPA, รายงานการติดตั้ง"},
+  "שלב 3: פרויקט ראשון (שבוע 10+)": {en: "Phase 3: First Project (Week 10+)", th: "ระยะที่ 3: โครงการแรก (สัปดาห์ที่ 10+)"},
+  "זכה בלקוח ראשון (רזורט / עסק גדול)": {en: "Win first client (resort / large business)", th: "ชนะลูกค้ารายแรก (รีสอร์ท / ธุรกิจขนาดใหญ่)"},
+  "סקר אתר + תכנון מערכת": {en: "Site survey + system design", th: "สำรวจพื้นที่ + ออกแบบระบบ"},
+  "הגש בקשת PEA": {en: "Submit PEA application", th: "ยื่นใบสมัคร PEA"},
+  "רכש ציוד + העבר לאי": {en: "Purchase equipment + transfer to island", th: "ซื้ออุปกรณ์ + ขนส่งไปยังเกาะ"},
+  "התקנה פיזית": {en: "Physical installation", th: "การติดตั้งทางกายภาพ"},
+  "commissioning + בדיקות": {en: "commissioning + testing", th: "commissioning + การทดสอบ"},
+  "פיקוח PEA + מונה דו-כיווני": {en: "PEA inspection + bidirectional meter", th: "การตรวจสอบ PEA + มิเตอร์สองทิศทาง"},
+  "חיבור לרשת + PPA חתום 🎉": {en: "Grid connection + signed PPA 🎉", th: "เชื่อมต่อกริด + PPA ที่เซ็นแล้ว 🎉"},
+  "שוטף": {en: "Ongoing", th: "ต่อเนื่อง"},
+  "הגשות מס חודשיות (VAT, WHT, SSO)": {en: "Monthly tax filings (VAT, WHT, SSO)", th: "การยื่นภาษีรายเดือน (VAT, WHT, SSO)"},
+  "דיווח 90 יום (immigration)": {en: "90-day reporting (immigration)", th: "รายงาน 90 วัน (ตรวจคนเข้าเมือง)"},
+  "ביקורת שנתית (auditor)": {en: "Annual audit (auditor)", th: "การตรวจสอบบัญชีประจำปี (ผู้ตรวจสอบ)"},
+  "חידוש Work Permit + ויזה": {en: "Work Permit + visa renewal", th: "ต่ออายุใบอนุญาตทำงาน + วีซ่า"},
+  "O&M למערכות מותקנות": {en: "O&M for installed systems", th: "O&M สำหรับระบบที่ติดตั้งแล้ว"},
+  "ציר זמן ריאליסטי:": {en: "Realistic timeline:", th: "ไทม์ไลน์ที่สมจริง:"},
+  "מהחלטה ועד פרויקט ראשון חי: 3-4 חודשים. חברה רשומה + Work Permit: 6-8 שבועות. PEA אישור: 30-90 ימים. התקנה: 1-2 שבועות.": {en: "From decision to first live project: 3-4 months. Registered company + Work Permit: 6-8 weeks. PEA approval: 30-90 days. Installation: 1-2 weeks.", th: "จากการตัดสินใจถึงโครงการแรกที่ใช้งานได้: 3-4 เดือน บริษัทจดทะเบียน + ใบอนุญาตทำงาน: 6-8 สัปดาห์ การอนุมัติ PEA: 30-90 วัน การติดตั้ง: 1-2 สัปดาห์"},
+  "אנשי קשר + לינקים": {en: "Contacts + Links", th: "ผู้ติดต่อ + ลิงก์"},
+  "📞 אנשי קשר + לינקים": {en: "📞 Contacts + Links", th: "📞 ผู้ติดต่อ + ลิงก์"},
+  "ממשלה — סולאר + אנרגיה": {en: "Government — Solar + Energy", th: "รัฐบาล — โซลาร์ + พลังงาน"},
+  "גורם": {en: "Authority", th: "หน่วยงาน"},
+  "אתר": {en: "Website", th: "เว็บไซต์"},
+  "טלפון": {en: "Phone", th: "โทรศัพท์"},
+  "PEA (חשמל)": {en: "PEA (Electricity)", th: "PEA (ไฟฟ้า)"},
+  "DEDE (אנרגיה חלופית)": {en: "DEDE (Alternative Energy)", th: "DEDE (พลังงานทดแทน)"},
+  "ERC (רגולטור)": {en: "ERC (Regulator)", th: "ERC (หน่วยงานกำกับดูแล)"},
+  "COE (מהנדסים)": {en: "COE (Engineers)", th: "COE (วิศวกร)"},
+  "ממשלה — חברות + מס": {en: "Government — Companies + Tax", th: "รัฐบาล — บริษัท + ภาษี"},
+  "DBD (רישום)": {en: "DBD (Registration)", th: "DBD (การจดทะเบียน)"},
+  "Revenue (מס)": {en: "Revenue (Tax)", th: "Revenue (ภาษี)"},
+  "SSO (ביטוח לאומי)": {en: "SSO (Social Security)", th: "SSO (ประกันสังคม)"},
+  "MOL (עבודה)": {en: "MOL (Labour)", th: "MOL (แรงงาน)"},
+  "מקומי — Koh Phangan": {en: "Local — Koh Phangan", th: "ท้องถิ่น — เกาะพะงัน"},
+  "עו\"ד מומלצים": {en: "Recommended Lawyers", th: "ทนายความที่แนะนำ"},
+  "תוכן עניינים": {en: "Table of Contents", th: "สารบัญ"},
+  "→ הקודם": {en: "→ Previous", th: "→ ก่อนหน้า"},
+  "הבא ←": {en: "Next ←", th: "ถัดไป ←"},
+};
+</script>
+<script src="tm-translations.js"></script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

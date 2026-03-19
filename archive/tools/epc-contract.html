@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ko Phangan Solar — חוזה EPC להקמת מערכת סולארית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);line-height:1.8;padding:0}
+
+/* Screen layout */
+.contract{max-width:900px;margin:0 auto;padding:60px 60px 100px;background:var(--night)}
+
+/* Print styles */
+@media print{
+  body{background:#fff;color:#111}
+  .contract{padding:40px;max-width:100%}
+  h1,h2,h3{color:#0A3D5C !important}
+  .header-bar,.gold,.section-title{color:#0A3D5C !important}
+  .clause{border-color:#ddd !important}
+  .signature-box{border-color:#333 !important;background:#f9f9f9 !important}
+  .no-print{display:none}
+  .contract-badge{border-color:#0A3D5C !important;color:#0A3D5C !important}
+}
+
+.header-bar{text-align:center;border-bottom:3px solid var(--gold);padding-bottom:30px;margin-bottom:40px}
+.header-bar h1{font-size:28px;font-weight:900;color:var(--gold);margin-bottom:8px}
+.header-bar .contract-type{font-size:18px;font-weight:300;opacity:.8;margin-bottom:16px}
+.contract-badge{display:inline-block;border:2px solid var(--gold);color:var(--gold);padding:6px 20px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:1px}
+
+.section-title{font-size:20px;font-weight:700;color:var(--gold);margin:36px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(232,168,32,.3)}
+.section-title span{font-family:'Space Grotesk';font-weight:400;font-size:14px;opacity:.6;margin-right:8px}
+
+.clause{padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:15px}
+.clause-num{font-family:'Space Grotesk';font-weight:700;color:var(--gold);margin-left:8px}
+.clause strong{font-weight:600}
+.sub-clause{padding:4px 24px;font-size:14px;opacity:.85;line-height:1.7}
+
+.fill-field{border-bottom:2px dotted var(--gold);padding:0 8px;min-width:120px;display:inline-block;color:var(--gold);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+th{background:rgba(232,168,32,.12);padding:10px 14px;text-align:right;font-weight:600;border:1px solid rgba(255,255,255,.1)}
+td{padding:10px 14px;border:1px solid rgba(255,255,255,.06)}
+
+.payment-table td:first-child{font-weight:600;color:var(--gold)}
+
+.signature-box{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:50px;padding-top:30px;border-top:2px solid rgba(232,168,32,.3)}
+.sig-party{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:24px;text-align:center}
+.sig-party h3{font-size:16px;margin-bottom:20px;color:var(--gold)}
+.sig-line{border-bottom:1px solid rgba(255,255,255,.3);height:60px;margin:12px 0}
+.sig-label{font-size:12px;opacity:.5;margin-top:4px}
+
+.appendix{margin-top:40px;padding:20px;background:rgba(232,168,32,.05);border:1px solid rgba(232,168,32,.2);border-radius:12px}
+.appendix h3{color:var(--gold);margin-bottom:12px}
+
+.print-btn{position:fixed;bottom:20px;left:20px;background:var(--gold);color:var(--night);border:none;padding:12px 28px;border-radius:8px;font-family:'Heebo';font-size:15px;font-weight:600;cursor:pointer;z-index:100;box-shadow:0 4px 20px rgba(232,168,32,.3)}
+.print-btn:hover{transform:scale(1.05)}
+
+.back-btn{position:fixed;bottom:20px;right:20px;background:rgba(255,255,255,.1);color:var(--white);border:1px solid rgba(255,255,255,.2);padding:10px 24px;border-radius:8px;font-family:'Heebo';font-size:14px;cursor:pointer;z-index:100;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,.15)}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+
+<a href="assets.html" class="back-btn no-print">חזרה לנכסים</a>
+<button class="print-btn no-print" onclick="window.print()">הדפס / PDF</button>
+
+<div class="contract">
+
+<div class="header-bar">
+  <h1>Ko Phangan Solar Co., Ltd.</h1>
+  <div class="contract-type">חוזה הקמת מערכת סולארית (EPC)</div>
+  <div class="contract-badge">SOLAR EPC AGREEMENT</div>
+</div>
+
+<!-- ===== PREAMBLE ===== -->
+<div class="section-title"><span>A</span>הגדרות וצדדים</div>
+
+<div class="clause">
+  <span class="clause-num">1.</span>
+  <strong>חוזה זה</strong> ("ההסכם") נחתם ביום <span class="fill-field">___/___/______</span> בין:
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.1</span>
+  <strong>"הקבלן"</strong> — Ko Phangan Solar Co., Ltd., רישום מספר <span class="fill-field">_____________</span>,
+  כתובת: <span class="fill-field">_________________________________</span>, Ko Phangan, Surat Thani, Thailand.
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.2</span>
+  <strong>"המזמין"</strong> — <span class="fill-field">____________________________</span>,
+  ת.ז./רישום חברה מספר <span class="fill-field">_____________</span>,
+  כתובת: <span class="fill-field">_________________________________</span>.
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.3</span>
+  <strong>"האתר"</strong> — הנכס שבו תוקם המערכת הסולארית, בכתובת:
+  <span class="fill-field">_________________________________</span>,
+  גוש <span class="fill-field">________</span> חלקה <span class="fill-field">________</span>.
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.4</span>
+  <strong>הגדרות נוספות:</strong>
+  <div class="sub-clause">"PEA" — Provincial Electricity Authority (רשות החשמל התאילנדית)</div>
+  <div class="sub-clause">"kWp" — קילוואט-פיק (הספק שיא של המערכת)</div>
+  <div class="sub-clause">"Commissioning" — הפעלה ראשונית מלאה של המערכת וחיבור לרשת</div>
+  <div class="sub-clause">"SLD" — Single Line Diagram (תרשים חד-קווי)</div>
+  <div class="sub-clause">"Performance Ratio" — יחס ביצועים בפועל מול תיאורטי</div>
+</div>
+
+<!-- ===== PROJECT SCOPE ===== -->
+<div class="section-title"><span>B</span>היקף הפרויקט</div>
+
+<div class="clause">
+  <span class="clause-num">2.</span>
+  <strong>תיאור המערכת:</strong>
+  <table>
+    <tr><th>פרמטר</th><th>פירוט</th></tr>
+    <tr><td>גודל מערכת</td><td><span class="fill-field">_____</span> kWp</td></tr>
+    <tr><td>פאנלים</td><td><span class="fill-field">_____</span> יח' × <span class="fill-field">_____</span>W — יצרן: <span class="fill-field">___________</span></td></tr>
+    <tr><td>אינוורטר</td><td><span class="fill-field">_____</span> יח' × <span class="fill-field">_____</span>kW — יצרן: <span class="fill-field">___________</span></td></tr>
+    <tr><td>קונסטרוקציה</td><td>סוג: <span class="fill-field">___________</span> (גג רעפים / שטוח / קרקע)</td></tr>
+    <tr><td>ייצור שנתי צפוי</td><td>~<span class="fill-field">_____</span> kWh/שנה</td></tr>
+  </table>
+</div>
+
+<div class="clause">
+  <span class="clause-num">3.</span>
+  <strong>היקף עבודה — הקבלן מתחייב לבצע:</strong>
+  <div class="sub-clause">3.1 סקר אתר, תכנון מערכת, הכנת SLD ומסמכי הנדסה</div>
+  <div class="sub-clause">3.2 רכש כל הציוד (פאנלים, אינוורטר, קונסטרוקציה, כבלים, הגנות)</div>
+  <div class="sub-clause">3.3 הובלת ציוד לאתר (באמצעות TM Energy — לוגיסטיקה)</div>
+  <div class="sub-clause">3.4 הרכבת קונסטרוקציה, פאנלים, אינוורטר, חיווט AC/DC</div>
+  <div class="sub-clause">3.5 התקנת מערכת ניטור (monitoring)</div>
+  <div class="sub-clause">3.6 בדיקות בטיחות: megger, grounding, IR scan</div>
+  <div class="sub-clause">3.7 הגשת מסמכים ל-PEA וליווי עד אישור חיבור</div>
+  <div class="sub-clause">3.8 Commissioning — הפעלה ראשונית ובדיקת ביצועים</div>
+  <div class="sub-clause">3.9 הדרכת המזמין על תפעול המערכת וגישה למוניטורינג</div>
+  <div class="sub-clause">3.10 מסירת תיעוד מלא: as-built, מפרטים, אחריות יצרנים, SLD סופי</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">4.</span>
+  <strong>עבודות שאינן כלולות:</strong>
+  <div class="sub-clause">4.1 שדרוג לוח חשמל ראשי (אם נדרש — יתומחר בנפרד)</div>
+  <div class="sub-clause">4.2 חיזוק גג / עבודות בנייה מבניות</div>
+  <div class="sub-clause">4.3 גיזום עצים או הסרת מכשולים</div>
+  <div class="sub-clause">4.4 עלויות PEA (אגרות חיבור, מונה — על חשבון המזמין)</div>
+</div>
+
+<!-- ===== PRICING ===== -->
+<div class="section-title"><span>C</span>מחיר ותנאי תשלום</div>
+
+<div class="clause">
+  <span class="clause-num">5.</span>
+  <strong>מחיר החוזה:</strong>
+  <table>
+    <tr><th>פריט</th><th>סכום</th></tr>
+    <tr><td>מחיר מערכת (<span class="fill-field">___</span> kWp × ฿30,000/kWp)</td><td><span class="fill-field">฿___________</span></td></tr>
+    <tr><td>מע"מ 7%</td><td><span class="fill-field">฿___________</span></td></tr>
+    <tr><td><strong>סה"כ לתשלום</strong></td><td><strong><span class="fill-field">฿___________</span></strong></td></tr>
+  </table>
+  <div class="sub-clause">המחיר כולל את כל הציוד, עבודה, הובלה, ביטוח CAR, חיבור PEA, ותיעוד.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">6.</span>
+  <strong>תנאי תשלום:</strong>
+  <table class="payment-table">
+    <tr><th>שלב</th><th>אחוז</th><th>סכום</th><th>תנאי</th></tr>
+    <tr><td>מקדמה</td><td>30%</td><td><span class="fill-field">฿________</span></td><td>עם חתימת החוזה — מממן הזמנת ציוד</td></tr>
+    <tr><td>אמצע עבודה</td><td>40%</td><td><span class="fill-field">฿________</span></td><td>לאחר השלמת קונסטרוקציה + פאנלים על הגג</td></tr>
+    <tr><td>השלמה</td><td>30%</td><td><span class="fill-field">฿________</span></td><td>לאחר Commissioning + אישור PEA + מסירת תיעוד</td></tr>
+  </table>
+  <div class="sub-clause">6.1 תשלום בהעברה בנקאית לחשבון הקבלן תוך 7 ימי עסקים מאישור האבן דרך.</div>
+  <div class="sub-clause">6.2 איחור בתשלום מעל 14 יום יישא ריבית של 1.5% לחודש על הסכום שבאיחור.</div>
+</div>
+
+<!-- ===== TIMELINE ===== -->
+<div class="section-title"><span>D</span>לוח זמנים</div>
+
+<div class="clause">
+  <span class="clause-num">7.</span>
+  <strong>לוח זמנים להקמה:</strong>
+  <table>
+    <tr><th>שלב</th><th>משך</th><th>תאריך יעד</th></tr>
+    <tr><td>סקר אתר + עיצוב מערכת</td><td>3-5 ימים</td><td><span class="fill-field">___/___/___</span></td></tr>
+    <tr><td>הזמנת ציוד + הגעה לאי</td><td>14-21 ימים</td><td><span class="fill-field">___/___/___</span></td></tr>
+    <tr><td>הרכבה</td><td>3-7 ימים</td><td><span class="fill-field">___/___/___</span></td></tr>
+    <tr><td>בדיקות + Commissioning</td><td>1-2 ימים</td><td><span class="fill-field">___/___/___</span></td></tr>
+    <tr><td>אישור PEA + חיבור לרשת</td><td>7-14 ימים</td><td><span class="fill-field">___/___/___</span></td></tr>
+    <tr><td><strong>סה"כ</strong></td><td><strong>28-49 ימים</strong></td><td></td></tr>
+  </table>
+</div>
+
+<div class="clause">
+  <span class="clause-num">8.</span>
+  <strong>איחורים ופיצויים:</strong>
+  <div class="sub-clause">8.1 איחור מצד הקבלן מעבר ללוח הזמנים המוסכם (לא כולל עיכובי PEA או כוח עליון) — פיצוי של ฿<span class="fill-field">_____</span>/יום, עד מקסימום 10% ממחיר החוזה.</div>
+  <div class="sub-clause">8.2 איחור מצד המזמין (אי-מתן גישה, אי-תשלום) — לוח הזמנים יידחה בהתאם.</div>
+</div>
+
+<!-- ===== PERFORMANCE ===== -->
+<div class="section-title"><span>E</span>ביצועים ואחריות</div>
+
+<div class="clause">
+  <span class="clause-num">9.</span>
+  <strong>ביצועים מובטחים:</strong>
+  <div class="sub-clause">9.1 <strong>Performance Ratio:</strong> לא פחות מ-75% בשנה הראשונה.</div>
+  <div class="sub-clause">9.2 <strong>ייצור שנתי מינימלי:</strong> <span class="fill-field">_____</span> kWh (85% מהייצור הצפוי).</div>
+  <div class="sub-clause">9.3 אם הייצור בפועל נמוך ב-15%+ מהמובטח בשנה הראשונה (שלא עקב צריכה, הצללה חדשה, או כוח עליון) — הקבלן יתקן על חשבונו או יפצה באופן יחסי.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">10.</span>
+  <strong>אחריות:</strong>
+  <table>
+    <tr><th>רכיב</th><th>תקופה</th><th>אחראי</th></tr>
+    <tr><td>עבודת התקנה (חיווט, קונסטרוקציה)</td><td>10 שנים</td><td>הקבלן</td></tr>
+    <tr><td>פאנלים סולאריים</td><td>25 שנים (ביצועים), 12 שנים (מוצר)</td><td>יצרן — הקבלן מתווך</td></tr>
+    <tr><td>אינוורטר</td><td>10 שנים (אופציה: 15 בהרחבה)</td><td>יצרן — הקבלן מתווך</td></tr>
+    <tr><td>קונסטרוקציה</td><td>10 שנים</td><td>הקבלן</td></tr>
+  </table>
+  <div class="sub-clause">10.1 אחריות הקבלן מכסה: תיקון או החלפה של כל רכיב שנמצא פגום עקב חומרים או עבודה לקויה.</div>
+  <div class="sub-clause">10.2 אחריות אינה מכסה: נזק מכוון, שימוש לא-סביר, שינויים שבוצעו ע"י צד שלישי, או כוח עליון.</div>
+  <div class="sub-clause">10.3 זמן תגובה לתקלות באחריות: 48 שעות (ימי עסקים).</div>
+</div>
+
+<!-- ===== INSURANCE ===== -->
+<div class="section-title"><span>F</span>ביטוח</div>
+
+<div class="clause">
+  <span class="clause-num">11.</span>
+  <strong>ביטוח — אחריות הקבלן:</strong>
+  <div class="sub-clause">11.1 <strong>CAR (Contractor's All Risk):</strong> ביטוח במהלך תקופת ההתקנה — מכסה נזק לציוד, לאתר ולצד שלישי.</div>
+  <div class="sub-clause">11.2 <strong>אחריות צד ג':</strong> כיסוי של לפחות ฿1,000,000 לאירוע.</div>
+  <div class="sub-clause">11.3 <strong>ביטוח עובדים:</strong> Workmen's Compensation Act — כל עובדי הקבלן מבוטחים.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">12.</span>
+  <strong>ביטוח — אחריות המזמין:</strong>
+  <div class="sub-clause">12.1 ביטוח מבנה (גג) — נדרש אישור שהגג מתאים לעומס נוסף.</div>
+  <div class="sub-clause">12.2 מומלץ: ביטוח רכוש המכסה את המערכת הסולארית לאחר Commissioning.</div>
+</div>
+
+<!-- ===== SUBCONTRACTORS ===== -->
+<div class="section-title"><span>G</span>קבלני משנה</div>
+
+<div class="clause">
+  <span class="clause-num">13.</span>
+  <strong>שימוש בקבלני משנה:</strong>
+  <div class="sub-clause">13.1 הקבלן רשאי להשתמש בקבלני משנה מאושרים לביצוע חלק מהעבודות.</div>
+  <div class="sub-clause">13.2 <strong>לוגיסטיקה והובלות:</strong> מבוצעות באמצעות TM Energy Co., Ltd. — חברת האם.</div>
+  <div class="sub-clause">13.3 הקבלן נושא באחריות מלאה לעבודת קבלני המשנה כאילו ביצע את העבודה בעצמו.</div>
+  <div class="sub-clause">13.4 המזמין רשאי לדרוש החלפת קבלן משנה שאינו עומד בסטנדרטים — בהודעה בכתב.</div>
+</div>
+
+<!-- ===== OBLIGATIONS ===== -->
+<div class="section-title"><span>H</span>חובות המזמין</div>
+
+<div class="clause">
+  <span class="clause-num">14.</span>
+  <strong>המזמין מתחייב:</strong>
+  <div class="sub-clause">14.1 לספק גישה חופשית ובטוחה לאתר בכל ימי העבודה.</div>
+  <div class="sub-clause">14.2 לוודא שהגג/שטח מתאים לעומס המערכת (אישור מהנדס אם נדרש).</div>
+  <div class="sub-clause">14.3 לשלם בהתאם ללוח הזמנים המוסכם.</div>
+  <div class="sub-clause">14.4 לא לבצע שינויים במערכת ללא אישור בכתב מהקבלן.</div>
+  <div class="sub-clause">14.5 לדווח על תקלות תוך 48 שעות מגילוי.</div>
+</div>
+
+<!-- ===== TERMINATION ===== -->
+<div class="section-title"><span>I</span>סיום והפרה</div>
+
+<div class="clause">
+  <span class="clause-num">15.</span>
+  <strong>סיום מצד המזמין:</strong>
+  <div class="sub-clause">15.1 המזמין רשאי לבטל את החוזה בהודעה בכתב של 14 יום.</div>
+  <div class="sub-clause">15.2 ביטול לפני הזמנת ציוד — החזר מלא של המקדמה בניכוי 5% דמי ביטול.</div>
+  <div class="sub-clause">15.3 ביטול לאחר הזמנת ציוד — המזמין ישלם עבור ציוד שהוזמן + עבודה שבוצעה.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">16.</span>
+  <strong>סיום מצד הקבלן:</strong>
+  <div class="sub-clause">16.1 אי-תשלום מעבר ל-30 יום — הקבלן רשאי להשעות עבודה בהודעה של 7 ימים.</div>
+  <div class="sub-clause">16.2 אי-תשלום מעבר ל-60 יום — הקבלן רשאי לבטל את החוזה ולדרוש פיצוי מלא.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">17.</span>
+  <strong>הפרה מהותית:</strong>
+  <div class="sub-clause">17.1 הפרה מהותית מצד כל צד מקנה לצד השני זכות ביטול בהודעה של 14 יום.</div>
+  <div class="sub-clause">17.2 הפרה מהותית כוללת: אי-תשלום, אי-עמידה בלוחות זמנים (מעל 30 יום), הפרת בטיחות.</div>
+</div>
+
+<!-- ===== FORCE MAJEURE ===== -->
+<div class="section-title"><span>J</span>כוח עליון</div>
+
+<div class="clause">
+  <span class="clause-num">18.</span>
+  <strong>כוח עליון:</strong> אף צד לא יישא באחריות לעיכוב או אי-ביצוע עקב אירועים שאינם בשליטתו, לרבות:
+  <div class="sub-clause">18.1 אסונות טבע (סופות, הצפות, רעידות אדמה)</div>
+  <div class="sub-clause">18.2 מגפות, מלחמות, חסימות ממשלתיות</div>
+  <div class="sub-clause">18.3 עיכוב ברשויות (PEA) שאינו בשליטת הקבלן</div>
+  <div class="sub-clause">18.4 הצד המושפע יודיע תוך 7 ימים ויפעל למזער את ההשפעה.</div>
+  <div class="sub-clause">18.5 כוח עליון מעבר ל-90 יום — כל צד רשאי לבטל בהודעה של 14 יום.</div>
+</div>
+
+<!-- ===== CHANGE ORDERS ===== -->
+<div class="section-title"><span>K</span>שינויים והוספות</div>
+
+<div class="clause">
+  <span class="clause-num">19.</span>
+  <strong>שינויים בהיקף העבודה:</strong>
+  <div class="sub-clause">19.1 כל שינוי יתועד בנספח חתום ע"י שני הצדדים ("Change Order").</div>
+  <div class="sub-clause">19.2 הקבלן יספק הצעת מחיר לשינוי תוך 3 ימי עסקים.</div>
+  <div class="sub-clause">19.3 שינוי יבוצע רק לאחר אישור בכתב מהמזמין.</div>
+</div>
+
+<!-- ===== DISPUTE ===== -->
+<div class="section-title"><span>L</span>יישוב סכסוכים</div>
+
+<div class="clause">
+  <span class="clause-num">20.</span>
+  <strong>יישוב סכסוכים:</strong>
+  <div class="sub-clause">20.1 <strong>שלב 1 — משא ומתן:</strong> הצדדים ינסו לפתור כל מחלוקת במשא ומתן ישיר תוך 14 יום.</div>
+  <div class="sub-clause">20.2 <strong>שלב 2 — גישור:</strong> אם לא נפתר — גישור באמצעות מגשר מוסכם, תוך 30 יום.</div>
+  <div class="sub-clause">20.3 <strong>שלב 3 — בוררות:</strong> אם לא נפתר — בוררות בהתאם לחוק הבוררות התאילנדי. מקום הבוררות: Surat Thani.</div>
+</div>
+
+<!-- ===== GENERAL ===== -->
+<div class="section-title"><span>M</span>הוראות כלליות</div>
+
+<div class="clause">
+  <span class="clause-num">21.</span>
+  <strong>דין חל:</strong> חוזה זה כפוף לחוקי ממלכת תאילנד.
+</div>
+
+<div class="clause">
+  <span class="clause-num">22.</span>
+  <strong>שפה:</strong> חוזה זה ייחתם בגרסה <strong>דו-לשונית (אנגלית + תאילנדית)</strong>. במקרה של סתירה — הגרסה התאילנדית גוברת.
+</div>
+
+<div class="clause">
+  <span class="clause-num">23.</span>
+  <strong>שלמות ההסכם:</strong> חוזה זה מהווה את ההסכם המלא בין הצדדים ומחליף כל הסכם, הבנה או מצג קודם.
+</div>
+
+<div class="clause">
+  <span class="clause-num">24.</span>
+  <strong>העברה:</strong> אין צד רשאי להעביר את זכויותיו או חובותיו על-פי חוזה זה ללא הסכמה בכתב של הצד השני.
+</div>
+
+<div class="clause">
+  <span class="clause-num">25.</span>
+  <strong>הודעות:</strong> כל הודעה על-פי חוזה זה תישלח בכתב לכתובות שצוינו לעיל, או בדוא"ל שאושר ע"י שני הצדדים.
+</div>
+
+<!-- ===== SIGNATURES ===== -->
+<div class="signature-box">
+  <div class="sig-party">
+    <h3>הקבלן — Ko Phangan Solar Co., Ltd.</h3>
+    <div class="sig-line"></div>
+    <div class="sig-label">שם מורשה חתימה</div>
+    <div class="sig-line"></div>
+    <div class="sig-label">חתימה</div>
+    <div class="sig-line" style="height:30px"></div>
+    <div class="sig-label">תאריך</div>
+  </div>
+  <div class="sig-party">
+    <h3>המזמין</h3>
+    <div class="sig-line"></div>
+    <div class="sig-label">שם מורשה חתימה</div>
+    <div class="sig-line"></div>
+    <div class="sig-label">חתימה</div>
+    <div class="sig-line" style="height:30px"></div>
+    <div class="sig-label">תאריך</div>
+  </div>
+</div>
+
+<!-- ===== APPENDICES ===== -->
+<div class="appendix">
+  <h3>נספחים</h3>
+  <table>
+    <tr><th>נספח</th><th>תוכן</th></tr>
+    <tr><td>A</td><td>מפרט טכני מפורט — פאנלים, אינוורטר, כבלים, הגנות</td></tr>
+    <tr><td>B</td><td>SLD (Single Line Diagram) — תרשים חד-קווי</td></tr>
+    <tr><td>C</td><td>תוכנית הצבה (Layout) — מיקום פאנלים על הגג/שטח</td></tr>
+    <tr><td>D</td><td>דו"ח סקר אתר + תמונות</td></tr>
+    <tr><td>E</td><td>אחריות יצרנים (Manufacturer Warranties) — פאנלים + אינוורטר</td></tr>
+    <tr><td>F</td><td>אישור ביטוח CAR</td></tr>
+    <tr><td>G</td><td>תנאי O&M מומלצים (אופציונלי — חוזה נפרד)</td></tr>
+  </table>
+</div>
+
+</div>
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "חזרה לנכסים": {en: "Back to Assets", th: "กลับไปยังสินทรัพย์"},
+  "הדפס / PDF": {en: "Print / PDF", th: "พิมพ์ / PDF"},
+  "חוזה הקמת מערכת סולארית (EPC)": {en: "Solar System Installation Agreement (EPC)", th: "สัญญาติดตั้งระบบพลังงานแสงอาทิตย์ (EPC)"},
+  "הגדרות וצדדים": {en: "Definitions and Parties", th: "คำนิยามและคู่สัญญา"},
+  "חוזה זה": {en: "This Agreement", th: "สัญญานี้"},
+  "ההסכם": {en: "the Agreement", th: "ข้อตกลง"},
+  "נחתם ביום": {en: "entered into on", th: "ทำขึ้นเมื่อวันที่"},
+  "בין": {en: "between", th: "ระหว่าง"},
+  '"הקבלן"': {en: '"The Contractor"', th: '"ผู้รับเหมา"'},
+  "רישום מספר": {en: "Registration No.", th: "เลขทะเบียน"},
+  "כתובת": {en: "Address", th: "ที่อยู่"},
+  '"המזמין"': {en: '"The Client"', th: '"ผู้ว่าจ้าง"'},
+  "ת.ז./רישום חברה מספר": {en: "ID / Company Registration No.", th: "เลขบัตรประชาชน / เลขทะเบียนบริษัท"},
+  '"האתר"': {en: '"The Site"', th: '"สถานที่"'},
+  "הנכס שבו תוקם המערכת הסולארית, בכתובת:": {en: "The property where the solar system will be installed, at address:", th: "อสังหาริมทรัพย์ที่จะติดตั้งระบบโซลาร์ ณ ที่อยู่:"},
+  "גוש": {en: "Block", th: "แปลงที่ดิน"},
+  "חלקה": {en: "Parcel", th: "โฉนดที่ดิน"},
+  "הגדרות נוספות:": {en: "Additional Definitions:", th: "คำนิยามเพิ่มเติม:"},
+  "רשות החשמל התאילנדית": {en: "Thai Provincial Electricity Authority", th: "การไฟฟ้าส่วนภูมิภาค"},
+  "קילוואט-פיק (הספק שיא של המערכת)": {en: "Kilowatt-Peak (peak power output of the system)", th: "กิโลวัตต์พีค (กำลังการผลิตสูงสุดของระบบ)"},
+  "הפעלה ראשונית מלאה של המערכת וחיבור לרשת": {en: "Full initial commissioning of the system and grid connection", th: "การเปิดใช้งานระบบครั้งแรกและการเชื่อมต่อกับสายส่ง"},
+  "תרשים חד-קווי": {en: "Single Line Diagram", th: "ผังวงจรเส้นเดียว"},
+  "יחס ביצועים בפועל מול תיאורטי": {en: "Actual vs. theoretical performance ratio", th: "อัตราส่วนผลการดำเนินงานจริงเทียบกับทางทฤษฎี"},
+  "היקף הפרויקט": {en: "Project Scope", th: "ขอบเขตโครงการ"},
+  "תיאור המערכת:": {en: "System Description:", th: "รายละเอียดระบบ:"},
+  "פרמטר": {en: "Parameter", th: "พารามิเตอร์"},
+  "פירוט": {en: "Detail", th: "รายละเอียด"},
+  "גודל מערכת": {en: "System Size", th: "ขนาดระบบ"},
+  "פאנלים": {en: "Panels", th: "แผงโซลาร์"},
+  "יח' ×": {en: "units ×", th: "หน่วย ×"},
+  "יצרן:": {en: "Manufacturer:", th: "ผู้ผลิต:"},
+  "אינוורטר": {en: "Inverter", th: "อินเวอร์เตอร์"},
+  "קונסטרוקציה": {en: "Mounting Structure", th: "โครงสร้างติดตั้ง"},
+  "סוג:": {en: "Type:", th: "ประเภท:"},
+  "גג רעפים / שטוח / קרקע": {en: "Tile roof / Flat roof / Ground", th: "หลังคากระเบื้อง / หลังคาแบน / พื้นดิน"},
+  "ייצור שנתי צפוי": {en: "Expected Annual Output", th: "กำลังผลิตรายปีที่คาดไว้"},
+  "היקף עבודה — הקבלן מתחייב לבצע:": {en: "Scope of Work — The Contractor undertakes to perform:", th: "ขอบเขตงาน — ผู้รับเหมาตกลงดำเนินการ:"},
+  "סקר אתר, תכנון מערכת, הכנת SLD ומסמכי הנדסה": {en: "Site survey, system design, preparation of SLD and engineering documents", th: "สำรวจพื้นที่ ออกแบบระบบ จัดทำ SLD และเอกสารวิศวกรรม"},
+  "רכש כל הציוד (פאנלים, אינוורטר, קונסטרוקציה, כבלים, הגנות)": {en: "Procurement of all equipment (panels, inverter, mounting structure, cables, protection devices)", th: "จัดซื้ออุปกรณ์ทั้งหมด (แผงโซลาร์ อินเวอร์เตอร์ โครงสร้าง สายไฟ อุปกรณ์ป้องกัน)"},
+  "הובלת ציוד לאתר (באמצעות TM Energy — לוגיסטיקה)": {en: "Transportation of equipment to site (via TM Energy — logistics)", th: "ขนส่งอุปกรณ์ไปยังสถานที่ (ผ่าน TM Energy — โลจิสติกส์)"},
+  "הרכבת קונסטרוקציה, פאנלים, אינוורטר, חיווט AC/DC": {en: "Assembly of mounting structure, panels, inverter, AC/DC wiring", th: "ติดตั้งโครงสร้าง แผงโซลาร์ อินเวอร์เตอร์ การเดินสาย AC/DC"},
+  "התקנת מערכת ניטור (monitoring)": {en: "Installation of monitoring system", th: "ติดตั้งระบบตรวจสอบ (monitoring)"},
+  "בדיקות בטיחות: megger, grounding, IR scan": {en: "Safety tests: megger, grounding, IR scan", th: "การทดสอบความปลอดภัย: megger, grounding, IR scan"},
+  "הגשת מסמכים ל-PEA וליווי עד אישור חיבור": {en: "Submission of documents to PEA and follow-up until connection approval", th: "ยื่นเอกสารต่อ PEA และดำเนินการจนได้รับอนุมัติเชื่อมต่อ"},
+  "Commissioning — הפעלה ראשונית ובדיקת ביצועים": {en: "Commissioning — Initial startup and performance testing", th: "Commissioning — การเปิดใช้งานครั้งแรกและทดสอบประสิทธิภาพ"},
+  "הדרכת המזמין על תפעול המערכת וגישה למוניטורינג": {en: "Training the Client on system operation and monitoring access", th: "อบรมผู้ว่าจ้างเรื่องการใช้งานระบบและการเข้าถึงระบบตรวจสอบ"},
+  "מסירת תיעוד מלא: as-built, מפרטים, אחריות יצרנים, SLD סופי": {en: "Delivery of complete documentation: as-built drawings, specifications, manufacturer warranties, final SLD", th: "ส่งมอบเอกสารครบถ้วน: แบบ as-built มาตรฐาน การรับประกันจากผู้ผลิต SLD ฉบับสุดท้าย"},
+  "עבודות שאינן כלולות:": {en: "Works Not Included:", th: "งานที่ไม่รวมอยู่ในสัญญา:"},
+  "שדרוג לוח חשמל ראשי (אם נדרש — יתומחר בנפרד)": {en: "Upgrade of main electrical panel (if required — quoted separately)", th: "การอัปเกรดตู้ไฟหลัก (หากจำเป็น — จะเสนอราคาแยก)"},
+  "חיזוק גג / עבודות בנייה מבניות": {en: "Roof reinforcement / structural construction works", th: "การเสริมความแข็งแรงหลังคา / งานก่อสร้างโครงสร้าง"},
+  "גיזום עצים או הסרת מכשולים": {en: "Tree trimming or removal of obstructions", th: "การตัดแต่งต้นไม้หรือการกำจัดสิ่งกีดขวาง"},
+  "עלויות PEA (אגרות חיבור, מונה — על חשבון המזמין)": {en: "PEA costs (connection fees, meter — at Client's expense)", th: "ค่าใช้จ่าย PEA (ค่าธรรมเนียมการเชื่อมต่อ มิเตอร์ — เป็นค่าใช้จ่ายของผู้ว่าจ้าง)"},
+  "מחיר ותנאי תשלום": {en: "Price and Payment Terms", th: "ราคาและเงื่อนไขการชำระเงิน"},
+  "מחיר החוזה:": {en: "Contract Price:", th: "ราคาสัญญา:"},
+  "פריט": {en: "Item", th: "รายการ"},
+  "סכום": {en: "Amount", th: "จำนวนเงิน"},
+  "מחיר מערכת": {en: "System Price", th: "ราคาระบบ"},
+  'מע"מ 7%': {en: "VAT 7%", th: "ภาษีมูลค่าเพิ่ม 7%"},
+  'סה"כ לתשלום': {en: "Total Payable", th: "ยอดรวมที่ต้องชำระ"},
+  "המחיר כולל את כל הציוד, עבודה, הובלה, ביטוח CAR, חיבור PEA, ותיעוד.": {en: "The price includes all equipment, labor, transportation, CAR insurance, PEA connection, and documentation.", th: "ราคานี้รวมอุปกรณ์ทั้งหมด แรงงาน การขนส่ง ประกัน CAR การเชื่อมต่อ PEA และเอกสาร"},
+  "תנאי תשלום:": {en: "Payment Terms:", th: "เงื่อนไขการชำระเงิน:"},
+  "שלב": {en: "Stage", th: "ขั้นตอน"},
+  "אחוז": {en: "Percentage", th: "เปอร์เซ็นต์"},
+  "תנאי": {en: "Condition", th: "เงื่อนไข"},
+  "מקדמה": {en: "Advance Payment", th: "เงินมัดจำ"},
+  "עם חתימת החוזה — מממן הזמנת ציוד": {en: "Upon contract signing — funds equipment order", th: "เมื่อลงนามสัญญา — เพื่อสั่งซื้ออุปกรณ์"},
+  "אמצע עבודה": {en: "Mid-Work", th: "ระหว่างการก่อสร้าง"},
+  "לאחר השלמת קונסטרוקציה + פאנלים על הגג": {en: "After completion of mounting structure + panels on roof", th: "หลังจากติดตั้งโครงสร้างและแผงโซลาร์บนหลังคาเสร็จ"},
+  "השלמה": {en: "Completion", th: "งวดสุดท้าย"},
+  "לאחר Commissioning + אישור PEA + מסירת תיעוד": {en: "After Commissioning + PEA approval + documentation handover", th: "หลัง Commissioning + อนุมัติ PEA + ส่งมอบเอกสาร"},
+  "תשלום בהעברה בנקאית לחשבון הקבלן תוך 7 ימי עסקים מאישור האבן דרך.": {en: "Payment by bank transfer to the Contractor's account within 7 business days of milestone approval.", th: "ชำระเงินโดยการโอนเงินผ่านธนาคารไปยังบัญชีผู้รับเหมาภายใน 7 วันทำการนับจากการอนุมัติเหตุการณ์สำคัญ"},
+  "איחור בתשלום מעל 14 יום יישא ריבית של 1.5% לחודש על הסכום שבאיחור.": {en: "Payment delay of more than 14 days shall bear interest of 1.5% per month on the overdue amount.", th: "การชำระเงินล่าช้าเกิน 14 วันจะคิดดอกเบี้ย 1.5% ต่อเดือนบนยอดค้างชำระ"},
+  "לוח זמנים": {en: "Timeline", th: "ตารางเวลา"},
+  "לוח זמנים להקמה:": {en: "Construction Timeline:", th: "ตารางเวลาการก่อสร้าง:"},
+  "משך": {en: "Duration", th: "ระยะเวลา"},
+  "תאריך יעד": {en: "Target Date", th: "วันที่เป้าหมาย"},
+  "סקר אתר + עיצוב מערכת": {en: "Site survey + system design", th: "สำรวจพื้นที่ + ออกแบบระบบ"},
+  "ימים": {en: "days", th: "วัน"},
+  "3-5 ימים": {en: "3–5 days", th: "3–5 วัน"},
+  "14-21 ימים": {en: "14–21 days", th: "14–21 วัน"},
+  "3-7 ימים": {en: "3–7 days", th: "3–7 วัน"},
+  "הזמנת ציוד + הגעה לאי": {en: "Equipment order + arrival to island", th: "สั่งซื้ออุปกรณ์ + ขนส่งมายังเกาะ"},
+  "הרכבה": {en: "Assembly", th: "การติดตั้ง"},
+  "בדיקות + Commissioning": {en: "Testing + Commissioning", th: "ทดสอบ + Commissioning"},
+  "אישור PEA + חיבור לרשת": {en: "PEA approval + grid connection", th: "อนุมัติ PEA + เชื่อมต่อสายส่ง"},
+  'סה"כ': {en: "Total", th: "รวม"},
+  "28-49 ימים": {en: "28–49 days", th: "28–49 วัน"},
+  "איחורים ופיצויים:": {en: "Delays and Penalties:", th: "การล่าช้าและค่าปรับ:"},
+  "איחור מצד הקבלן מעבר ללוח הזמנים המוסכם (לא כולל עיכובי PEA או כוח עליון) — פיצוי של ฿": {en: "Delay by the Contractor beyond the agreed schedule (excluding PEA delays or force majeure) — penalty of ฿", th: "การล่าช้าโดยผู้รับเหมาเกินกว่าตารางที่ตกลงกัน (ไม่รวมความล่าช้าจาก PEA หรือเหตุสุดวิสัย) — ค่าปรับ ฿"},
+  "/יום, עד מקסימום 10% ממחיר החוזה.": {en: "/day, up to a maximum of 10% of the contract price.", th: "/วัน ไม่เกิน 10% ของมูลค่าสัญญา"},
+  "איחור מצד המזמין (אי-מתן גישה, אי-תשלום) — לוח הזמנים יידחה בהתאם.": {en: "Delay by the Client (failure to provide access, non-payment) — the schedule shall be extended accordingly.", th: "การล่าช้าโดยผู้ว่าจ้าง (ไม่อนุญาตให้เข้าพื้นที่ ไม่ชำระเงิน) — ตารางเวลาจะเลื่อนออกไปตามนั้น"},
+  "ביצועים ואחריות": {en: "Performance and Warranty", th: "ประสิทธิภาพและการรับประกัน"},
+  "ביצועים מובטחים:": {en: "Guaranteed Performance:", th: "ประสิทธิภาพที่รับประกัน:"},
+  "לא פחות מ-75% בשנה הראשונה.": {en: "Not less than 75% in the first year.", th: "ไม่ต่ำกว่า 75% ในปีแรก"},
+  "ייצור שנתי מינימלי:": {en: "Minimum Annual Output:", th: "กำลังผลิตรายปีขั้นต่ำ:"},
+  "kWh (85% מהייצור הצפוי).": {en: "kWh (85% of expected output).", th: "kWh (85% ของกำลังผลิตที่คาดไว้)"},
+  "אם הייצור בפועל נמוך ב-15%+ מהמובטח בשנה הראשונה (שלא עקב צריכה, הצללה חדשה, או כוח עליון) — הקבלן יתקן על חשבונו או יפצה באופן יחסי.": {en: "If actual output is 15%+ below the guaranteed level in the first year (not due to consumption, new shading, or force majeure) — the Contractor shall repair at its own cost or provide proportional compensation.", th: "หากกำลังผลิตจริงต่ำกว่าที่รับประกันมากกว่า 15% ในปีแรก (ไม่ใช่เนื่องจากการใช้งาน การบังเงาใหม่ หรือเหตุสุดวิสัย) — ผู้รับเหมาจะแก้ไขโดยค่าใช้จ่ายตัวเองหรือชดเชยตามสัดส่วน"},
+  "אחריות:": {en: "Warranty:", th: "การรับประกัน:"},
+  "רכיב": {en: "Component", th: "ส่วนประกอบ"},
+  "תקופה": {en: "Period", th: "ระยะเวลา"},
+  "אחראי": {en: "Responsible Party", th: "ผู้รับผิดชอบ"},
+  "עבודת התקנה (חיווט, קונסטרוקציה)": {en: "Installation work (wiring, mounting structure)", th: "งานติดตั้ง (การเดินสาย โครงสร้าง)"},
+  "10 שנים": {en: "10 years", th: "10 ปี"},
+  "הקבלן": {en: "The Contractor", th: "ผู้รับเหมา"},
+  "פאנלים סולאריים": {en: "Solar Panels", th: "แผงโซลาร์เซลล์"},
+  "25 שנים (ביצועים), 12 שנים (מוצר)": {en: "25 years (performance), 12 years (product)", th: "25 ปี (ประสิทธิภาพ), 12 ปี (ผลิตภัณฑ์)"},
+  "יצרן — הקבלן מתווך": {en: "Manufacturer — Contractor acts as intermediary", th: "ผู้ผลิต — ผู้รับเหมาเป็นตัวกลาง"},
+  "10 שנים (אופציה: 15 בהרחבה)": {en: "10 years (option: 15 with extension)", th: "10 ปี (ตัวเลือก: 15 ปีพร้อมการขยาย)"},
+  "אחריות הקבלן מכסה: תיקון או החלפה של כל רכיב שנמצא פגום עקב חומרים או עבודה לקויה.": {en: "Contractor's warranty covers: repair or replacement of any component found defective due to materials or poor workmanship.", th: "การรับประกันของผู้รับเหมาครอบคลุม: การซ่อมแซมหรือเปลี่ยนทดแทนส่วนประกอบใดๆ ที่พบว่าชำรุดเนื่องจากวัสดุหรืองานฝีมือที่บกพร่อง"},
+  "אחריות אינה מכסה: נזק מכוון, שימוש לא-סביר, שינויים שבוצעו ע\"י צד שלישי, או כוח עליון.": {en: "Warranty does not cover: intentional damage, unreasonable use, modifications made by a third party, or force majeure.", th: "การรับประกันไม่ครอบคลุม: ความเสียหายโดยเจตนา การใช้งานที่ไม่เหมาะสม การแก้ไขโดยบุคคลที่สาม หรือเหตุสุดวิสัย"},
+  "זמן תגובה לתקלות באחריות: 48 שעות (ימי עסקים).": {en: "Response time for warranty faults: 48 hours (business days).", th: "เวลาตอบสนองต่อข้อบกพร่องภายใต้การรับประกัน: 48 ชั่วโมง (วันทำการ)"},
+  "ביטוח": {en: "Insurance", th: "ประกันภัย"},
+  "ביטוח — אחריות הקבלן:": {en: "Insurance — Contractor's Responsibility:", th: "ประกันภัย — ความรับผิดชอบของผู้รับเหมา:"},
+  "ביטוח במהלך תקופת ההתקנה — מכסה נזק לציוד, לאתר ולצד שלישי.": {en: "Insurance during the installation period — covers damage to equipment, the site, and third parties.", th: "ประกันภัยในระหว่างช่วงการติดตั้ง — ครอบคลุมความเสียหายต่ออุปกรณ์ สถานที่ และบุคคลที่สาม"},
+  "אחריות צד ג':": {en: "Third-Party Liability:", th: "ความรับผิดต่อบุคคลที่สาม:"},
+  "כיסוי של לפחות ฿1,000,000 לאירוע.": {en: "Coverage of at least ฿1,000,000 per incident.", th: "ความคุ้มครองอย่างน้อย ฿1,000,000 ต่อเหตุการณ์"},
+  "ביטוח עובדים:": {en: "Workers' Insurance:", th: "ประกันคนงาน:"},
+  "כל עובדי הקבלן מבוטחים.": {en: "All Contractor's employees are insured.", th: "พนักงานทุกคนของผู้รับเหมาได้รับการประกัน"},
+  "ביטוח — אחריות המזמין:": {en: "Insurance — Client's Responsibility:", th: "ประกันภัย — ความรับผิดชอบของผู้ว่าจ้าง:"},
+  "ביטוח מבנה (גג) — נדרש אישור שהגג מתאים לעומס נוסף.": {en: "Building insurance (roof) — approval required that the roof can bear the additional load.", th: "ประกันอาคาร (หลังคา) — ต้องได้รับการรับรองว่าหลังคารองรับน้ำหนักเพิ่มเติมได้"},
+  "מומלץ: ביטוח רכוש המכסה את המערכת הסולארית לאחר Commissioning.": {en: "Recommended: Property insurance covering the solar system after Commissioning.", th: "แนะนำ: ประกันทรัพย์สินที่ครอบคลุมระบบโซลาร์หลัง Commissioning"},
+  "קבלני משנה": {en: "Subcontractors", th: "ผู้รับเหมาช่วง"},
+  "שימוש בקבלני משנה:": {en: "Use of Subcontractors:", th: "การใช้ผู้รับเหมาช่วง:"},
+  "הקבלן רשאי להשתמש בקבלני משנה מאושרים לביצוע חלק מהעבודות.": {en: "The Contractor may use approved subcontractors to perform part of the works.", th: "ผู้รับเหมาอาจใช้ผู้รับเหมาช่วงที่ได้รับอนุมัติเพื่อดำเนินงานบางส่วน"},
+  "לוגיסטיקה והובלות:": {en: "Logistics and Transportation:", th: "โลจิสติกส์และการขนส่ง:"},
+  "מבוצעות באמצעות TM Energy Co., Ltd. — חברת האם.": {en: "Carried out by TM Energy Co., Ltd. — the parent company.", th: "ดำเนินการโดย TM Energy Co., Ltd. — บริษัทแม่"},
+  "הקבלן נושא באחריות מלאה לעבודת קבלני המשנה כאילו ביצע את העבודה בעצמו.": {en: "The Contractor bears full responsibility for subcontractors' work as if it performed the work itself.", th: "ผู้รับเหมารับผิดชอบเต็มที่ต่องานของผู้รับเหมาช่วงเสมือนว่าตนเองได้ดำเนินการนั้น"},
+  "המזמין רשאי לדרוש החלפת קבלן משנה שאינו עומד בסטנדרטים — בהודעה בכתב.": {en: "The Client may demand replacement of a subcontractor who does not meet standards — by written notice.", th: "ผู้ว่าจ้างอาจเรียกร้องการเปลี่ยนผู้รับเหมาช่วงที่ไม่ตรงตามมาตรฐาน — โดยแจ้งเป็นลายลักษณ์อักษร"},
+  "חובות המזמין": {en: "Client's Obligations", th: "ภาระผูกพันของผู้ว่าจ้าง"},
+  "המזמין מתחייב:": {en: "The Client undertakes:", th: "ผู้ว่าจ้างตกลงว่า:"},
+  "לספק גישה חופשית ובטוחה לאתר בכל ימי העבודה.": {en: "To provide free and safe access to the site on all working days.", th: "จัดให้มีการเข้าถึงสถานที่อย่างอิสระและปลอดภัยในทุกวันทำงาน"},
+  "לוודא שהגג/שטח מתאים לעומס המערכת (אישור מהנדס אם נדרש).": {en: "To ensure the roof/area can bear the system load (engineer's approval if required).", th: "ตรวจสอบให้แน่ใจว่าหลังคา/พื้นที่รองรับน้ำหนักระบบได้ (การอนุมัติจากวิศวกรหากจำเป็น)"},
+  "לשלם בהתאם ללוח הזמנים המוסכם.": {en: "To pay in accordance with the agreed payment schedule.", th: "ชำระเงินตามตารางที่ตกลงกัน"},
+  "לא לבצע שינויים במערכת ללא אישור בכתב מהקבלן.": {en: "Not to make changes to the system without written approval from the Contractor.", th: "ไม่ดำเนินการเปลี่ยนแปลงระบบโดยไม่ได้รับอนุมัติเป็นลายลักษณ์อักษรจากผู้รับเหมา"},
+  "לדווח על תקלות תוך 48 שעות מגילוי.": {en: "To report faults within 48 hours of discovery.", th: "รายงานข้อบกพร่องภายใน 48 ชั่วโมงนับจากการค้นพบ"},
+  "סיום והפרה": {en: "Termination and Breach", th: "การสิ้นสุดสัญญาและการผิดสัญญา"},
+  "סיום מצד המזמין:": {en: "Termination by the Client:", th: "การสิ้นสุดสัญญาโดยผู้ว่าจ้าง:"},
+  "המזמין רשאי לבטל את החוזה בהודעה בכתב של 14 יום.": {en: "The Client may cancel the contract with 14 days' written notice.", th: "ผู้ว่าจ้างอาจยกเลิกสัญญาโดยแจ้งเป็นลายลักษณ์อักษร 14 วัน"},
+  "ביטול לפני הזמנת ציוד — החזר מלא של המקדמה בניכוי 5% דמי ביטול.": {en: "Cancellation before equipment order — full refund of advance payment less 5% cancellation fee.", th: "การยกเลิกก่อนสั่งซื้ออุปกรณ์ — คืนเงินมัดจำทั้งหมดหักค่าธรรมเนียมการยกเลิก 5%"},
+  "ביטול לאחר הזמנת ציוד — המזמין ישלם עבור ציוד שהוזמן + עבודה שבוצעה.": {en: "Cancellation after equipment order — the Client shall pay for ordered equipment + work performed.", th: "การยกเลิกหลังสั่งซื้ออุปกรณ์ — ผู้ว่าจ้างต้องชำระค่าอุปกรณ์ที่สั่งซื้อ + งานที่ดำเนินการแล้ว"},
+  "סיום מצד הקבלן:": {en: "Termination by the Contractor:", th: "การสิ้นสุดสัญญาโดยผู้รับเหมา:"},
+  "אי-תשלום מעבר ל-30 יום — הקבלן רשאי להשעות עבודה בהודעה של 7 ימים.": {en: "Non-payment beyond 30 days — the Contractor may suspend work with 7 days' notice.", th: "ไม่ชำระเงินเกิน 30 วัน — ผู้รับเหมาอาจระงับงานโดยแจ้ง 7 วัน"},
+  "אי-תשלום מעבר ל-60 יום — הקבלן רשאי לבטל את החוזה ולדרוש פיצוי מלא.": {en: "Non-payment beyond 60 days — the Contractor may cancel the contract and demand full compensation.", th: "ไม่ชำระเงินเกิน 60 วัน — ผู้รับเหมาอาจยกเลิกสัญญาและเรียกร้องค่าชดเชยเต็มจำนวน"},
+  "הפרה מהותית:": {en: "Material Breach:", th: "การผิดสัญญาอย่างร้ายแรง:"},
+  "הפרה מהותית מצד כל צד מקנה לצד השני זכות ביטול בהודעה של 14 יום.": {en: "A material breach by either party gives the other party the right of cancellation with 14 days' notice.", th: "การผิดสัญญาอย่างร้ายแรงโดยฝ่ายใดฝ่ายหนึ่งให้สิทธิ์แก่อีกฝ่ายในการยกเลิกสัญญาโดยแจ้ง 14 วัน"},
+  "הפרה מהותית כוללת: אי-תשלום, אי-עמידה בלוחות זמנים (מעל 30 יום), הפרת בטיחות.": {en: "Material breach includes: non-payment, failure to meet schedules (over 30 days), safety violations.", th: "การผิดสัญญาอย่างร้ายแรงรวมถึง: การไม่ชำระเงิน การไม่ปฏิบัติตามตารางเวลา (เกิน 30 วัน) การละเมิดความปลอดภัย"},
+  "כוח עליון": {en: "Force Majeure", th: "เหตุสุดวิสัย"},
+  "כוח עליון:": {en: "Force Majeure:", th: "เหตุสุดวิสัย:"},
+  "אף צד לא יישא באחריות לעיכוב או אי-ביצוע עקב אירועים שאינם בשליטתו, לרבות:": {en: "Neither party shall bear liability for delay or non-performance due to events beyond its control, including:", th: "ไม่มีฝ่ายใดรับผิดชอบต่อความล่าช้าหรือการไม่ปฏิบัติงานอันเนื่องมาจากเหตุการณ์ที่อยู่นอกเหนือการควบคุม รวมถึง:"},
+  "אסונות טבע (סופות, הצפות, רעידות אדמה)": {en: "Natural disasters (storms, floods, earthquakes)", th: "ภัยธรรมชาติ (พายุ น้ำท่วม แผ่นดินไหว)"},
+  "מגפות, מלחמות, חסימות ממשלתיות": {en: "Pandemics, wars, government blockades", th: "โรคระบาด สงคราม การปิดกั้นของรัฐบาล"},
+  "עיכוב ברשויות (PEA) שאינו בשליטת הקבלן": {en: "Delays by authorities (PEA) beyond the Contractor's control", th: "ความล่าช้าจากหน่วยงาน (PEA) ที่อยู่นอกเหนือการควบคุมของผู้รับเหมา"},
+  "הצד המושפע יודיע תוך 7 ימים ויפעל למזער את ההשפעה.": {en: "The affected party shall notify within 7 days and act to minimize the impact.", th: "ฝ่ายที่ได้รับผลกระทบต้องแจ้งภายใน 7 วันและดำเนินการเพื่อลดผลกระทบ"},
+  "כוח עליון מעבר ל-90 יום — כל צד רשאי לבטל בהודעה של 14 יום.": {en: "Force majeure beyond 90 days — either party may cancel with 14 days' notice.", th: "เหตุสุดวิสัยเกิน 90 วัน — ฝ่ายใดฝ่ายหนึ่งอาจยกเลิกโดยแจ้ง 14 วัน"},
+  "שינויים והוספות": {en: "Changes and Additions", th: "การเปลี่ยนแปลงและการเพิ่มเติม"},
+  "שינויים בהיקף העבודה:": {en: "Changes to Scope of Work:", th: "การเปลี่ยนแปลงขอบเขตงาน:"},
+  "כל שינוי יתועד בנספח חתום ע\"י שני הצדדים (\"Change Order\").": {en: "Any change shall be documented in an annex signed by both parties (\"Change Order\").", th: "การเปลี่ยนแปลงใดๆ ต้องบันทึกไว้ในภาคผนวกที่ลงนามโดยทั้งสองฝ่าย (\"Change Order\")"},
+  "הקבלן יספק הצעת מחיר לשינוי תוך 3 ימי עסקים.": {en: "The Contractor shall provide a price quote for the change within 3 business days.", th: "ผู้รับเหมาต้องเสนอราคาสำหรับการเปลี่ยนแปลงภายใน 3 วันทำการ"},
+  "שינוי יבוצע רק לאחר אישור בכתב מהמזמין.": {en: "A change shall be carried out only after written approval from the Client.", th: "การเปลี่ยนแปลงจะดำเนินการหลังจากได้รับอนุมัติเป็นลายลักษณ์อักษรจากผู้ว่าจ้างเท่านั้น"},
+  "יישוב סכסוכים": {en: "Dispute Resolution", th: "การระงับข้อพิพาท"},
+  "יישוב סכסוכים:": {en: "Dispute Resolution:", th: "การระงับข้อพิพาท:"},
+  "שלב 1 — משא ומתן:": {en: "Stage 1 — Negotiation:", th: "ขั้นที่ 1 — การเจรจา:"},
+  "הצדדים ינסו לפתור כל מחלוקת במשא ומתן ישיר תוך 14 יום.": {en: "The parties shall attempt to resolve any dispute through direct negotiation within 14 days.", th: "คู่สัญญาจะพยายามแก้ไขข้อพิพาทใดๆ ผ่านการเจรจาโดยตรงภายใน 14 วัน"},
+  "שלב 2 — גישור:": {en: "Stage 2 — Mediation:", th: "ขั้นที่ 2 — การไกล่เกลี่ย:"},
+  "אם לא נפתר — גישור באמצעות מגשר מוסכם, תוך 30 יום.": {en: "If unresolved — mediation through an agreed mediator, within 30 days.", th: "หากยังไม่ได้รับการแก้ไข — การไกล่เกลี่ยผ่านผู้ไกล่เกลี่ยที่ตกลงกัน ภายใน 30 วัน"},
+  "שלב 3 — בוררות:": {en: "Stage 3 — Arbitration:", th: "ขั้นที่ 3 — อนุญาโตตุลาการ:"},
+  "אם לא נפתר — בוררות בהתאם לחוק הבוררות התאילנדי. מקום הבוררות: Surat Thani.": {en: "If unresolved — arbitration in accordance with Thai Arbitration Law. Place of arbitration: Surat Thani.", th: "หากยังไม่ได้รับการแก้ไข — อนุญาโตตุลาการตามกฎหมายอนุญาโตตุลาการไทย สถานที่: สุราษฎร์ธานี"},
+  "הוראות כלליות": {en: "General Provisions", th: "บทบัญญัติทั่วไป"},
+  "דין חל:": {en: "Governing Law:", th: "กฎหมายที่ใช้บังคับ:"},
+  "חוזה זה כפוף לחוקי ממלכת תאילנד.": {en: "This agreement is subject to the laws of the Kingdom of Thailand.", th: "สัญญานี้อยู่ภายใต้กฎหมายของราชอาณาจักรไทย"},
+  "שפה:": {en: "Language:", th: "ภาษา:"},
+  "חוזה זה ייחתם בגרסה": {en: "This agreement shall be signed in a", th: "สัญญานี้จะลงนามในฉบับ"},
+  "דו-לשונית (אנגלית + תאילנדית)": {en: "bilingual version (English + Thai)", th: "สองภาษา (อังกฤษ + ไทย)"},
+  "במקרה של סתירה — הגרסה התאילנדית גוברת.": {en: "In case of conflict — the Thai version prevails.", th: "ในกรณีที่ขัดแย้งกัน — ฉบับภาษาไทยจะมีผลบังคับใช้"},
+  "שלמות ההסכם:": {en: "Entire Agreement:", th: "ข้อตกลงฉบับสมบูรณ์:"},
+  "חוזה זה מהווה את ההסכם המלא בין הצדדים ומחליף כל הסכם, הבנה או מצג קודם.": {en: "This agreement constitutes the entire agreement between the parties and supersedes all prior agreements, understandings, or representations.", th: "สัญญานี้ถือเป็นข้อตกลงฉบับสมบูรณ์ระหว่างคู่สัญญาและแทนที่ข้อตกลง ความเข้าใจ หรือการแถลงใดๆ ก่อนหน้านี้"},
+  "העברה:": {en: "Assignment:", th: "การโอนสิทธิ์:"},
+  "אין צד רשאי להעביר את זכויותיו או חובותיו על-פי חוזה זה ללא הסכמה בכתב של הצד השני.": {en: "Neither party may assign its rights or obligations under this agreement without written consent of the other party.", th: "ไม่มีฝ่ายใดอาจโอนสิทธิ์หรือภาระผูกพันภายใต้สัญญานี้โดยไม่ได้รับความยินยอมเป็นลายลักษณ์อักษรจากอีกฝ่าย"},
+  "הודעות:": {en: "Notices:", th: "การแจ้งเตือน:"},
+  "כל הודעה על-פי חוזה זה תישלח בכתב לכתובות שצוינו לעיל, או בדוא\"ל שאושר ע\"י שני הצדדים.": {en: "All notices under this agreement shall be sent in writing to the addresses stated above, or by email approved by both parties.", th: "การแจ้งเตือนทั้งหมดภายใต้สัญญานี้ต้องส่งเป็นลายลักษณ์อักษรไปยังที่อยู่ที่ระบุไว้ข้างต้น หรือทางอีเมลที่ได้รับอนุมัติจากทั้งสองฝ่าย"},
+  "הקבלן — Ko Phangan Solar Co., Ltd.": {en: "The Contractor — Ko Phangan Solar Co., Ltd.", th: "ผู้รับเหมา — Ko Phangan Solar Co., Ltd."},
+  "שם מורשה חתימה": {en: "Authorized Signatory Name", th: "ชื่อผู้มีอำนาจลงนาม"},
+  "חתימה": {en: "Signature", th: "ลายเซ็น"},
+  "תאריך": {en: "Date", th: "วันที่"},
+  "המזמין": {en: "The Client", th: "ผู้ว่าจ้าง"},
+  "נספחים": {en: "Appendices", th: "ภาคผนวก"},
+  "נספח": {en: "Appendix", th: "ภาคผนวก"},
+  "תוכן": {en: "Content", th: "เนื้อหา"},
+  "מפרט טכני מפורט — פאנלים, אינוורטר, כבלים, הגנות": {en: "Detailed Technical Specifications — panels, inverter, cables, protection devices", th: "ข้อมูลจำเพาะทางเทคนิคโดยละเอียด — แผงโซลาร์ อินเวอร์เตอร์ สายไฟ อุปกรณ์ป้องกัน"},
+  "SLD (Single Line Diagram) — תרשים חד-קווי": {en: "SLD (Single Line Diagram)", th: "SLD (ผังวงจรเส้นเดียว)"},
+  "תוכנית הצבה (Layout) — מיקום פאנלים על הגג/שטח": {en: "Layout Plan — panel placement on roof/ground", th: "แผนผังการจัดวาง — ตำแหน่งแผงโซลาร์บนหลังคา/พื้นที่"},
+  'דו"ח סקר אתר + תמונות': {en: "Site survey report + photos", th: "รายงานการสำรวจพื้นที่ + รูปถ่าย"},
+  "אחריות יצרנים (Manufacturer Warranties) — פאנלים + אינוורטר": {en: "Manufacturer Warranties — panels + inverter", th: "การรับประกันจากผู้ผลิต — แผงโซลาร์ + อินเวอร์เตอร์"},
+  "אישור ביטוח CAR": {en: "CAR Insurance Certificate", th: "ใบรับรองประกัน CAR"},
+  "תנאי O&M מומלצים (אופציונלי — חוזה נפרד)": {en: "Recommended O&M Terms (Optional — separate contract)", th: "เงื่อนไข O&M ที่แนะนำ (ทางเลือก — สัญญาแยก)"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

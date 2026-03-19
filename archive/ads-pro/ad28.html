@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:1080px;height:1080px;overflow:hidden;font-family:"Inter",sans-serif;position:relative;background:url("bg28.png") center/cover;}
+.overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(13,33,55,.9),rgba(10,25,41,.88));}
+.logo{position:absolute;top:40px;left:40px;display:flex;align-items:center;gap:12px;z-index:2;}
+.logo-circle{width:44px;height:44px;border-radius:50%;background:#1A1A1A;border:2px solid #E8A820;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#E8A820;}
+.logo-text{font-weight:700;font-size:16px;color:#E8A820;letter-spacing:2px;}
+.headline{position:absolute;top:100px;left:60px;right:60px;text-align:center;}
+.headline h1{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;color:#fff;line-height:1.15;}
+.headline h1 span{color:#E8A820;}
+.headline p{font-size:20px;color:rgba(255,255,255,.5);margin-top:12px;}
+.chart{position:absolute;top:280px;left:60px;right:60px;height:480px;}
+.chart-header{display:flex;gap:32px;margin-bottom:24px;justify-content:center;}
+.legend{display:flex;align-items:center;gap:8px;font-size:14px;color:rgba(255,255,255,.6);}
+.legend-dot{width:12px;height:12px;border-radius:3px;}
+.bars{display:flex;align-items:flex-end;gap:24px;height:400px;padding:0 20px;}
+.year-col{flex:1;display:flex;flex-direction:column;align-items:center;}
+.bar-group{display:flex;gap:4px;align-items:flex-end;height:320px;width:100%;}
+.bar{border-radius:6px 6px 0 0;position:relative;flex:1;}
+.bar-pea{background:linear-gradient(180deg,#E53935,#B71C1C);}
+.bar-solar{background:linear-gradient(180deg,#E8A820,#D4922A);}
+.bar-label{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;white-space:nowrap;color:rgba(255,255,255,.6);}
+.year-label{font-size:14px;color:rgba(255,255,255,.5);margin-top:8px;font-weight:600;}
+.bottom{position:absolute;bottom:60px;left:60px;right:60px;display:flex;align-items:center;justify-content:space-between;}
+.savings-total{font-size:18px;color:rgba(255,255,255,.6);}
+.savings-total b{font-family:'Playfair Display',serif;font-size:36px;color:#E8A820;display:block;margin-top:4px;}
+.cta-btn{background:#E8A820;color:#0D2137;font-weight:800;font-size:18px;padding:16px 36px;border-radius:12px;}
+</style></head>
+<body>
+<div class="overlay"></div>
+<div class="logo"><div class="logo-circle">TM</div><div class="logo-text">TM ENERGY</div></div>
+<div class="headline">
+<h1>PEA Grid vs <span>TM Energy Solar</span></h1>
+<p>10-year cost comparison for a 30kWp system</p>
+</div>
+<div class="chart">
+<div class="chart-header">
+<div class="legend"><div class="legend-dot" style="background:#E53935;"></div> PEA Grid Cost</div>
+<div class="legend"><div class="legend-dot" style="background:#E8A820;"></div> TM Energy Solar</div>
+</div>
+<div class="bars">
+<div class="year-col"><div class="bar-group"><div class="bar bar-pea" style="height:40%;"><div class="bar-label">฿420K</div></div><div class="bar bar-solar" style="height:30%;"><div class="bar-label">฿315K</div></div></div><div class="year-label">Year 1</div></div>
+<div class="year-col"><div class="bar-group"><div class="bar bar-pea" style="height:48%;"><div class="bar-label">฿880K</div></div><div class="bar bar-solar" style="height:30%;"><div class="bar-label">฿315K</div></div></div><div class="year-label">Year 2</div></div>
+<div class="year-col"><div class="bar-group"><div class="bar bar-pea" style="height:56%;"><div class="bar-label">฿1.4M</div></div><div class="bar bar-solar" style="height:30%;"><div class="bar-label">฿315K</div></div></div><div class="year-label">Year 3</div></div>
+<div class="year-col"><div class="bar-group"><div class="bar bar-pea" style="height:72%;"><div class="bar-label">฿2.5M</div></div><div class="bar bar-solar" style="height:30%;"><div class="bar-label">฿315K</div></div></div><div class="year-label">Year 5</div></div>
+<div class="year-col"><div class="bar-group"><div class="bar bar-pea" style="height:100%;"><div class="bar-label">฿5.0M</div></div><div class="bar bar-solar" style="height:30%;"><div class="bar-label">฿315K</div></div></div><div class="year-label">Year 10</div></div>
+</div>
+</div>
+<div class="bottom">
+<div class="savings-total">10-Year Savings<b>฿4,685,000</b></div>
+<div class="cta-btn">STOP OVERPAYING →</div>
+</div>
+</body></html>

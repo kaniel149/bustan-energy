@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tm-energy.co.th/sitemap.xml

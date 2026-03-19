@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solar Farm Development Guide — Koh Phangan (up to 9 MW) | TM Energy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a1929;
+      color: #c8d6e5
+    }
+
+    .slide {
+      min-height: 100vh;
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      border-bottom: 1px solid rgba(232, 168, 32, .1)
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 12px
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #E8A820;
+      margin-bottom: 20px
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin: 20px 0 10px
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 14px;
+      color: rgba(255, 255, 255, .7)
+    }
+
+    .accent {
+      color: #E8A820
+    }
+
+    .green {
+      color: #1A7A5A
+    }
+
+    .red {
+      color: #E85D3A
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(232, 168, 32, .15);
+      color: #E8A820;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 16px
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 20px 0
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0
+    }
+
+    .card {
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 12px;
+      padding: 20px
+    }
+
+    .card h4 {
+      color: #E8A820;
+      font-size: 14px;
+      margin-bottom: 8px
+    }
+
+    .card p {
+      font-size: 13px;
+      margin-bottom: 6px
+    }
+
+    .stat {
+      text-align: center;
+      padding: 20px
+    }
+
+    .stat .num {
+      font-size: 36px;
+      font-weight: 900;
+      color: #E8A820
+    }
+
+    .stat .label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .4);
+      margin-top: 4px
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+      margin: 20px 0
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(232, 168, 32, .3)
+    }
+
+    .step {
+      position: relative;
+      margin-bottom: 20px
+    }
+
+    .step::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #E8A820;
+      border: 2px solid #0a1929
+    }
+
+    .step h4 {
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 4px
+    }
+
+    .step p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .5);
+      margin-bottom: 0
+    }
+
+    .step .time {
+      color: #E8A820;
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px
+    }
+
+    th {
+      background: rgba(232, 168, 32, .1);
+      color: #E8A820;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03)
+    }
+
+    tr:hover td {
+      background: rgba(232, 168, 32, .03)
+    }
+
+    .highlight-box {
+      background: rgba(232, 168, 32, .08);
+      border: 1px solid rgba(232, 168, 32, .2);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0
+    }
+
+    .warn-box {
+      background: rgba(232, 93, 58, .08);
+      border: 1px solid rgba(232, 93, 58, .2);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0
+    }
+
+    .success-box {
+      background: rgba(26, 122, 90, .08);
+      border: 1px solid rgba(26, 122, 90, .2);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 25, 41, .95);
+      backdrop-filter: blur(12px);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 100;
+      border-bottom: 1px solid rgba(232, 168, 32, .15)
+    }
+
+    .nav .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #E8A820;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #E8A820;
+      font-weight: 900;
+      font-size: 9px
+    }
+
+    .nav span {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    .nav .pg {
+      margin-left: auto;
+      color: rgba(255, 255, 255, .3);
+      font-size: 11px
+    }
+
+    .toc {
+      list-style: none;
+      padding: 0
+    }
+
+    .toc li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .03)
+    }
+
+    .toc li a {
+      color: rgba(255, 255, 255, .6);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color .2s
+    }
+
+    .toc li a:hover {
+      color: #E8A820
+    }
+
+    .toc li .num {
+      color: #E8A820;
+      font-weight: 700;
+      margin-right: 8px
+    }
+
+    .footer {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255, 255, 255, .2);
+      font-size: 11px
+    }
+
+    @media(max-width:768px) {
+      .slide {
+        padding: 30px 20px
+      }
+
+      h1 {
+        font-size: 28px
+      }
+
+      h2 {
+        font-size: 22px
+      }
+
+      .grid2,
+      .grid3 {
+        grid-template-columns: 1fr
+      }
+
+      .stat .num {
+        font-size: 28px
+      }
+    }
+
+    @media print {
+      .nav {
+        display: none
+      }
+
+      .slide {
+        page-break-after: always;
+        min-height: auto;
+        padding: 20px
+      }
+
+      body {
+        background: #fff;
+        color: #333
+      }
+
+      h1,
+      h2,
+      h3,
+      .accent,
+      .card h4,
+      th {
+        color: #0D2137 !important
+      }
+
+      .card,
+      .highlight-box,
+      .warn-box,
+      .success-box {
+        border: 1px solid #ddd;
+        background: #f9f9f9
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="nav">
+    <div class="logo">TM</div>
+    <span>Solar Farm Development Guide — Koh Phangan</span>
+    <span class="pg">Up to 9 MW · 2026</span>
+  </div>
+
+  <!-- SLIDE 1: COVER -->
+  <div class="slide" id="cover" style="justify-content:center;text-align:center;">
+    <div class="badge">TM Energy · Confidential</div>
+    <h1>Solar Farm + Storage<br>Development Guide</h1>
+    <p style="font-size:20px;color:rgba(255,255,255,.5);margin-top:12px;">Koh Phangan, Surat Thani · Up to 9 MW</p>
+    <p style="font-size:14px;color:rgba(255,255,255,.3);margin-top:24px;">Regulation · Permits · Timeline · Costs ·
+      Financial Model</p>
+    <p style="font-size:12px;color:rgba(255,255,255,.2);margin-top:40px;">Prepared by G · TM Energy · March 2026</p>
+  </div>
+
+  <!-- SLIDE 2: TABLE OF CONTENTS -->
+  <div class="slide" id="toc">
+    <h2>Contents</h2>
+    <ul class="toc">
+      <li><a href="#opportunity"><span class="num">01</span> The Opportunity — Why Koh Phangan?</a></li>
+      <li><a href="#regulatory"><span class="num">02</span> Regulatory Framework (VSPP, ERC, NEPC)</a></li>
+      <li><a href="#permits"><span class="num">03</span> Permits & Approval Process — Step by Step</a></li>
+      <li><a href="#grid"><span class="num">04</span> Grid Connection — PEA Requirements</a></li>
+      <li><a href="#land"><span class="num">05</span> Land Acquisition & Zoning</a></li>
+      <li><a href="#technical"><span class="num">06</span> Technical Specifications — 9 MW Design</a></li>
+      <li><a href="#storage"><span class="num">07</span> Battery Storage (BESS) — Island Advantage</a></li>
+      <li><a href="#costs"><span class="num">08</span> CapEx, OpEx & Cost Breakdown</a></li>
+      <li><a href="#revenue"><span class="num">09</span> Revenue Model — PPA, FiT & Self-Consumption</a></li>
+      <li><a href="#financial"><span class="num">10</span> Financial Model — ROI, IRR, NPV</a></li>
+      <li><a href="#risks"><span class="num">11</span> Risks & Mitigation</a></li>
+      <li><a href="#timeline"><span class="num">12</span> Project Timeline — 18 Months to COD</a></li>
+      <li><a href="#nextsteps"><span class="num">13</span> Next Steps & Action Items</a></li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 3: OPPORTUNITY -->
+  <div class="slide" id="opportunity">
+    <div class="badge">01 · Opportunity</div>
+    <h2>Why Koh Phangan for Solar Farms?</h2>
+    <div class="grid3">
+      <div class="stat">
+        <div class="num">174</div>
+        <div class="label">MW shared capacity<br>(with Koh Samui)</div>
+      </div>
+      <div class="stat">
+        <div class="num">6.0</div>
+        <div class="label">THB/kWh avg PEA rate<br>(among highest in TH)</div>
+      </div>
+      <div class="stat">
+        <div class="num">1,600</div>
+        <div class="label">kWh/m²/yr<br>solar irradiance</div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h4>Grid Vulnerability</h4>
+        <p>Single 115kV submarine cable from mainland via Koh Samui. 2023: navy ship anchor damaged cable → blackouts on
+          both islands. Peak season shortages (April-May). Grid upgrade to 230kV planned for 2028-2029.</p>
+        <p><span class="accent">Solar + Storage = grid stability insurance</span></p>
+      </div>
+      <div class="card">
+        <h4>Demand Growth</h4>
+        <p>Tourism-driven electricity demand growing 5-8%/year. Full Moon Party draws 30K+ visitors monthly. Hotels,
+          resorts, bars = high AC consumption. Island grid at capacity during peak.</p>
+        <p><span class="accent">Local generation reduces submarine cable dependency</span></p>
+      </div>
+      <div class="card">
+        <h4>High Electricity Costs</h4>
+        <p>PEA rate: ฿5-7/kWh (among highest in Thailand). Island premium due to transmission losses. Businesses pay
+          ฿7-9/kWh peak. PPA at ฿4.50 = immediate 25-40% savings.</p>
+      </div>
+      <div class="card">
+        <h4>Government Push</h4>
+        <p>NEPC approved 1,500 MW community solar (Oct 2025). VSPP program: up to 10 MW per site. Factory license
+          exemption for solar. Thailand targeting 64 GW renewables by 2037.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: REGULATORY -->
+  <div class="slide" id="regulatory">
+    <div class="badge">02 · Regulation</div>
+    <h2>Regulatory Framework</h2>
+
+    <h3>VSPP Classification (≤10 MW)</h3>
+    <p>Our 9 MW farm falls under <span class="accent">Very Small Power Producer (VSPP)</span> — the most accessible tier
+      for solar development in Thailand.</p>
+
+    <table>
+      <tr>
+        <th>Category</th>
+        <th>Capacity</th>
+        <th>Regulator</th>
+        <th>Grid Buyer</th>
+      </tr>
+      <tr>
+        <td><strong>VSPP</strong> ← Our project</td>
+        <td>≤10 MW</td>
+        <td>ERC</td>
+        <td>PEA (Provincial)</td>
+      </tr>
+      <tr>
+        <td>SPP</td>
+        <td>10-90 MW</td>
+        <td>ERC</td>
+        <td>EGAT</td>
+      </tr>
+      <tr>
+        <td>IPP</td>
+        <td>>90 MW</td>
+        <td>ERC/Cabinet</td>
+        <td>EGAT</td>
+      </tr>
+    </table>
+
+    <h3>Key Regulations (2025-2026)</h3>
+    <div class="grid2">
+      <div class="card">
+        <h4>Community Solar Framework (NEPC)</h4>
+        <p>• 1,500 MW national target<br>• Ground-mount, max 10 MW/site<br>• One VSPP per grid connection point<br>• One
+          project per community<br>• 25-year non-firm PPA<br>• FiT: ฿2.25/kWh (from PEA)</p>
+      </div>
+      <div class="card">
+        <h4>Self-Consumption Model</h4>
+        <p>• No FiT — sell directly to customer<br>• PPA rate: ฿4.50/kWh (25% discount)<br>• No Ror. Ngor. 4 factory
+          license needed (2025+)<br>• Simpler permitting, faster timeline<br>• Better economics than FiT<br>• <span
+            class="accent">Our preferred model</span></p>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <h4 style="color:#E85D3A;">⚠️ BOI Alert (Important!)</h4>
+      <p style="font-size:13px;">BOI investment promotion for solar-only generation <strong>ended June 30,
+          2025</strong>. No 8-year CIT exemption for new solar farms. Alternative: hybrid models, or apply corporate tax
+        deduction (50% of high-efficiency equipment costs, valid until Dec 2028).</p>
+    </div>
+
+    <h3>Foreign Ownership</h3>
+    <p>Foreigners (>49% foreign shares) <span class="red">cannot own land directly</span>. Options:</p>
+    <table>
+      <tr>
+        <th>Structure</th>
+        <th>Pros</th>
+        <th>Cons</th>
+      </tr>
+      <tr>
+        <td>Thai majority company (51/49)</td>
+        <td>Can own land, standard approach</td>
+        <td>Need trusted Thai partners</td>
+      </tr>
+      <tr>
+        <td>Long-term lease (30yr + 30yr)</td>
+        <td>No Thai partner needed</td>
+        <td>No land ownership, renewal risk</td>
+      </tr>
+      <tr>
+        <td>BOI certificate (if eligible)</td>
+        <td>100% foreign ownership + land</td>
+        <td>Solar-only no longer eligible</td>
+      </tr>
+      <tr>
+        <td><span class="accent">TM Developers partnership</span></td>
+        <td>Local entity exists, construction crew</td>
+        <td>Partnership terms needed</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SLIDE 5: PERMITS -->
+  <div class="slide" id="permits">
+    <div class="badge">03 · Permits</div>
+    <h2>Approval Process — Step by Step</h2>
+
+    <div class="timeline">
+      <div class="step">
+        <h4>1. Land Acquisition & Title Verification</h4>
+        <p>Secure Chanote (Nor. Sor. 4) title deed. Verify zoning allows energy/industrial use. Agricultural land OK
+          under agrivoltaic rules (up to 23-year installations).</p>
+        <div class="time">Timeline: 1-3 months</div>
+      </div>
+      <div class="step">
+        <h4>2. LAO Community Consent</h4>
+        <p>Submit ERC-specified consent form to Local Administrative Organization (อบต./เทศบาล). Community hearing may
+          be required. One project per community.</p>
+        <div class="time">Timeline: 1-2 months</div>
+      </div>
+      <div class="step">
+        <h4>3. Environmental Review (IEE)</h4>
+        <p>Solar farms typically need Initial Environmental Examination (IEE), not full EIA. Covers land use, drainage,
+          visual impact. Near Than Sadet National Park = extra scrutiny.</p>
+        <div class="time">Timeline: 2-4 months</div>
+      </div>
+      <div class="step">
+        <h4>4. ERC License Application</h4>
+        <p>Apply for VSPP license from Energy Regulatory Commission. Submit: technical design, financial plan, site
+          readiness proof, LAO consent, IEE report.</p>
+        <div class="time">Timeline: 2-3 months</div>
+      </div>
+      <div class="step">
+        <h4>5. PEA Grid Connection Agreement</h4>
+        <p>Apply to PEA for grid connection. Technical assessment of local grid capacity. One VSPP per connection point.
+          33kV or 22kV interconnection.</p>
+        <div class="time">Timeline: 2-4 months</div>
+      </div>
+      <div class="step">
+        <h4>6. Construction Permits</h4>
+        <p>Building permit from local authority. Structural engineering approval for mounting systems. Electrical
+          installation permit. Road access permits if needed.</p>
+        <div class="time">Timeline: 1-2 months</div>
+      </div>
+      <div class="step">
+        <h4>7. PPA Execution</h4>
+        <p>Sign Power Purchase Agreement with PEA (FiT model) or directly with customers (self-consumption). 25-year PPA
+          for FiT; flexible for private PPA.</p>
+        <div class="time">Timeline: 1 month</div>
+      </div>
+      <div class="step">
+        <h4>8. Construction</h4>
+        <p>Site preparation, foundation, mounting, panel installation, inverter/transformer, BESS, grid interconnection,
+          testing.</p>
+        <div class="time">Timeline: 6-9 months</div>
+      </div>
+      <div class="step">
+        <h4>9. Commissioning & COD</h4>
+        <p>PEA inspection and testing. Grid synchronization test. Commercial Operation Date (COD). Must achieve within
+          18 months of PPA signing.</p>
+        <div class="time">Timeline: 1-2 months</div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <h4 style="color:#E8A820;">Total Timeline: 14-22 months from land acquisition to COD</h4>
+      <p style="font-size:13px;">Critical path: LAO consent + PEA grid assessment (can run in parallel with IEE).
+        Construction starts ~month 8-10 after all permits secured.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: GRID -->
+  <div class="slide" id="grid">
+    <div class="badge">04 · Grid</div>
+    <h2>Grid Connection — PEA Requirements</h2>
+
+    <h3>Koh Phangan Grid Infrastructure</h3>
+    <table>
+      <tr>
+        <th>Component</th>
+        <th>Details</th>
+      </tr>
+      <tr>
+        <td>Main Supply</td>
+        <td>115kV submarine cable from Khanom → Koh Samui → Koh Phangan</td>
+      </tr>
+      <tr>
+        <td>Total Capacity</td>
+        <td>~174 MW (shared with Koh Samui, 4 circuits)</td>
+      </tr>
+      <tr>
+        <td>Distribution</td>
+        <td>33kV and 22kV local distribution (PEA)</td>
+      </tr>
+      <tr>
+        <td>Substation</td>
+        <td>115kV substation near Thongsala (9.7066°N, 99.9948°E)</td>
+      </tr>
+      <tr>
+        <td>PEA Office</td>
+        <td>Koh Phangan Branch: 077-377072 / 077-377073</td>
+      </tr>
+      <tr>
+        <td>Planned Upgrade</td>
+        <td>New 230kV submarine cable — 2028 (Circuit 1) / 2029 (Circuit 2)</td>
+      </tr>
+    </table>
+
+    <h3>Grid Connection Options for 9 MW</h3>
+    <div class="grid2">
+      <div class="card">
+        <h4>Option A: 33kV Direct</h4>
+        <p>• Connect at 33kV to local distribution<br>• Step-up transformer: 0.4kV → 33kV<br>• Shorter distance if near
+          existing line<br>• Cost: ฿200K-500K per km<br>• <span class="accent">Preferred for sites < 2km from
+              line</span>
+        </p>
+      </div>
+      <div class="card">
+        <h4>Option B: Substation Direct</h4>
+        <p>• Dedicated line to 115kV substation<br>• Higher capacity, more reliable<br>• Cost: ฿500K-1M per km<br>• Only
+          practical for Thongsala South site<br>• Best for full 9 MW capacity</p>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <h4 style="color:#E85D3A;">⚠️ Island Grid Constraint</h4>
+      <p style="font-size:13px;">9 MW on an island with 174 MW shared capacity is significant (~5%). PEA may require:
+        grid stability study, frequency response equipment, mandatory storage. This actually <span
+          class="accent">strengthens the case for BESS</span> — storage addresses PEA concerns AND creates additional
+        revenue.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: LAND -->
+  <div class="slide" id="land">
+    <div class="badge">05 · Land</div>
+    <h2>Land Acquisition & Zoning</h2>
+
+    <h3>Land Requirements for 9 MW</h3>
+    <div class="grid3">
+      <div class="stat">
+        <div class="num">56</div>
+        <div class="label">rai minimum<br>(~90,000 m²)</div>
+      </div>
+      <div class="stat">
+        <div class="num">80</div>
+        <div class="label">rai recommended<br>(with buffer + BESS)</div>
+      </div>
+      <div class="stat">
+        <div class="num">฿64M</div>
+        <div class="label">est. land cost<br>(at ฿800K/rai)</div>
+      </div>
+    </div>
+
+    <p>Calculation: 9,000 kWp × 5.5 m²/kWp ÷ 0.70 usable ratio = 70,714 m² = 44.2 rai solar area + buffer + roads + BESS
+      pad ≈ 56-80 rai.</p>
+
+    <h3>Zoning Requirements</h3>
+    <table>
+      <tr>
+        <th>Zone</th>
+        <th>Solar Farm OK?</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td class="green">Agricultural (Green)</td>
+        <td>✅ Yes — Agrivoltaic</td>
+        <td>Up to 23-year installation. Dual use encouraged.</td>
+      </tr>
+      <tr>
+        <td class="accent">Residential/Commercial (Yellow)</td>
+        <td>✅ Yes — with permit</td>
+        <td>70% buildable area. LAO approval needed.</td>
+      </tr>
+      <tr>
+        <td class="red">National Park / Forest</td>
+        <td>❌ No</td>
+        <td>Than Sadet-Ko Pha-ngan NP covers ~70% of interior.</td>
+      </tr>
+      <tr>
+        <td style="color:#666;">Coastal (Blue)</td>
+        <td>⚠️ Restricted</td>
+        <td>Setback requirements. Visual impact review.</td>
+      </tr>
+    </table>
+
+    <h3>Title Deed Types</h3>
+    <table>
+      <tr>
+        <th>Type</th>
+        <th>Full Ownership?</th>
+        <th>Bankable?</th>
+        <th>Recommendation</th>
+      </tr>
+      <tr>
+        <td><strong>Chanote (Nor. Sor. 4)</strong></td>
+        <td>✅ Yes</td>
+        <td>✅ Yes</td>
+        <td><span class="accent">Required for solar farm</span></td>
+      </tr>
+      <tr>
+        <td>Nor. Sor. 3 Gor</td>
+        <td>~Yes (accurate survey)</td>
+        <td>⚠️ Some banks</td>
+        <td>Upgradeable to Chanote</td>
+      </tr>
+      <tr>
+        <td>Nor. Sor. 3</td>
+        <td>~Yes (less accurate)</td>
+        <td>❌ No</td>
+        <td>Avoid — boundary disputes</td>
+      </tr>
+      <tr>
+        <td>Sor. Kor. 1</td>
+        <td>❌ Possession only</td>
+        <td>❌ No</td>
+        <td>Avoid — cannot sell/mortgage</td>
+      </tr>
+    </table>
+
+    <h3>Top Candidate Sites (Scouted)</h3>
+    <div class="grid3">
+      <div class="card" style="cursor:pointer" onclick="window.open('solar-farm-scout.html?site=1','_blank')">
+        <h4>🥇 Ban Tai Coconut Flats</h4>
+        <p>40 rai · 0.8km to grid · Score: 9.2</p>
+        <p class="accent">Scout on Map →</p>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="window.open('solar-farm-scout.html?site=2','_blank')">
+        <h4>🥈 Thongsala South</h4>
+        <p>25 rai · 0.3km to grid · Score: 8.9</p>
+        <p class="accent">Scout on Map →</p>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="window.open('solar-farm-scout.html?site=3','_blank')">
+        <h4>🥉 Sri Thanu Inland</h4>
+        <p>30 rai · 1.2km to grid · Score: 8.8</p>
+        <p class="accent">Scout on Map →</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: TECHNICAL -->
+  <div class="slide" id="technical">
+    <div class="badge">06 · Technical</div>
+    <h2>Technical Specifications — 9 MW Design</h2>
+
+    <div class="grid2">
+      <div class="card">
+        <h4>☀️ Solar Array</h4>
+        <p><strong>DC Capacity:</strong> 9,000 kWp (9 MWp)<br>
+          <strong>Panels:</strong> 15,517× LONGi Hi-MO X6 580W<br>
+          <strong>Panel Area:</strong> 2.28m × 1.13m = 2.58 m² each<br>
+          <strong>Total Array Area:</strong> ~40,000 m²<br>
+          <strong>Mounting:</strong> Ground-mount, fixed-tilt 15°<br>
+          <strong>Orientation:</strong> South-facing (0° azimuth)<br>
+          <strong>Row Spacing:</strong> 5-6m (no inter-row shading)
+        </p>
+      </div>
+      <div class="card">
+        <h4>⚡ Inverters & Electrical</h4>
+        <p><strong>Inverters:</strong> Huawei SUN2000-185KTL-H3 × 48<br>
+          <strong>AC Capacity:</strong> 8,880 kW (DC:AC = 1.01:1)<br>
+          <strong>String Design:</strong> 24 panels per string<br>
+          <strong>Combiner Boxes:</strong> 48× (one per inverter)<br>
+          <strong>Transformer:</strong> 10 MVA step-up (0.4kV → 33kV)<br>
+          <strong>Metering:</strong> PEA-approved bi-directional
+        </p>
+      </div>
+      <div class="card">
+        <h4>📊 Performance</h4>
+        <p><strong>Annual Production:</strong> ~12,150 MWh<br>
+          <strong>Capacity Factor:</strong> ~15.4% (tropical, no tracking)<br>
+          <strong>Specific Yield:</strong> 1,350 kWh/kWp/yr<br>
+          <strong>PR (Performance Ratio):</strong> ~80%<br>
+          <strong>Degradation:</strong> 0.4%/yr (LONGi warranty)<br>
+          <strong>25-year output:</strong> ~280,000 MWh total
+        </p>
+      </div>
+      <div class="card">
+        <h4>🏗️ Civil Works</h4>
+        <p><strong>Site Area:</strong> 80 rai (128,000 m²)<br>
+          <strong>Fencing:</strong> 2.4m chain-link, 1.6 km perimeter<br>
+          <strong>Access Roads:</strong> 4m wide gravel/concrete<br>
+          <strong>Drainage:</strong> Retention pond + swales<br>
+          <strong>Foundation:</strong> Driven steel piles (no concrete)<br>
+          <strong>Security:</strong> CCTV, 24/7 monitoring
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: STORAGE -->
+  <div class="slide" id="storage">
+    <div class="badge">07 · Storage</div>
+    <h2>Battery Energy Storage (BESS)</h2>
+
+    <div class="highlight-box">
+      <p style="font-size:16px;color:#E8A820;font-weight:600;">On an island with a vulnerable submarine cable, storage
+        isn't optional — it's a competitive advantage.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h4>🔋 BESS Specifications</h4>
+        <p><strong>Capacity:</strong> 4,500 kWh (50% solar:storage)<br>
+          <strong>Power:</strong> 2,250 kW (2-hour discharge)<br>
+          <strong>Technology:</strong> Huawei LUNA2000-215kWh × 21<br>
+          <strong>Chemistry:</strong> LFP (Lithium Iron Phosphate)<br>
+          <strong>Cycles:</strong> 6,000+ (15-year warranty)<br>
+          <strong>Round-trip Efficiency:</strong> 95%<br>
+          <strong>Footprint:</strong> ~300 m² (containerized)
+        </p>
+      </div>
+      <div class="card">
+        <h4>💰 Revenue Streams from Storage</h4>
+        <p><strong>1. Peak Shaving:</strong> Charge at midday (low demand), discharge at evening peak. Value:
+          ~฿2.5M/yr<br>
+          <strong>2. Arbitrage:</strong> Buy low (฿3/kWh off-peak) sell high (฿7/kWh peak). Value: ~฿3.3M/yr<br>
+          <strong>3. Grid Stability:</strong> Frequency regulation for PEA. Value: ~฿1.0M/yr<br>
+          <strong>4. Backup Power:</strong> Premium service during cable outages. Value: negotiable<br>
+          <strong>Total BESS Revenue:</strong> <span class="accent">~฿6.8M/yr</span>
+        </p>
+      </div>
+    </div>
+
+    <h3>Why PEA Will Favor Our Project (with BESS)</h3>
+    <p>9 MW solar on a 174 MW island grid = 5% of capacity. Without storage, PEA may reject due to intermittency
+      concerns. <span class="accent">With BESS, we offer grid stability, peak shaving, and backup — making PEA an ally,
+        not a gatekeeper.</span></p>
+  </div>
+
+  <!-- SLIDE 10: COSTS -->
+  <div class="slide" id="costs">
+    <div class="badge">08 · Costs</div>
+    <h2>CapEx & OpEx Breakdown</h2>
+
+    <h3>Capital Expenditure (CapEx)</h3>
+    <table>
+      <tr>
+        <th>Item</th>
+        <th>Unit Cost</th>
+        <th>Total (฿)</th>
+        <th>% of Total</th>
+      </tr>
+      <tr>
+        <td>Solar Panels (15,517× LONGi 580W)</td>
+        <td>฿5,500/panel</td>
+        <td>85,344,000</td>
+        <td>29%</td>
+      </tr>
+      <tr>
+        <td>Inverters (48× Huawei 185kW)</td>
+        <td>฿350,000/unit</td>
+        <td>16,800,000</td>
+        <td>6%</td>
+      </tr>
+      <tr>
+        <td>Mounting Structure (ground-mount)</td>
+        <td>฿1,200/kWp</td>
+        <td>10,800,000</td>
+        <td>4%</td>
+      </tr>
+      <tr>
+        <td>Electrical (cables, combiner, switchgear)</td>
+        <td>฿1,500/kWp</td>
+        <td>13,500,000</td>
+        <td>5%</td>
+      </tr>
+      <tr>
+        <td>Transformer (10 MVA, 0.4→33kV)</td>
+        <td>lump sum</td>
+        <td>8,000,000</td>
+        <td>3%</td>
+      </tr>
+      <tr>
+        <td>BESS (4,500 kWh Huawei LUNA)</td>
+        <td>฿18,000/kWh</td>
+        <td>81,000,000</td>
+        <td>28%</td>
+      </tr>
+      <tr>
+        <td>Civil Works (fencing, roads, drainage)</td>
+        <td>lump sum</td>
+        <td>12,000,000</td>
+        <td>4%</td>
+      </tr>
+      <tr>
+        <td>Grid Connection (33kV, ~2km)</td>
+        <td>฿300K/km</td>
+        <td>600,000</td>
+        <td>0.2%</td>
+      </tr>
+      <tr>
+        <td>Land (80 rai @ ฿800K)</td>
+        <td>฿800K/rai</td>
+        <td>64,000,000</td>
+        <td>22%</td>
+      </tr>
+      <tr>
+        <td><strong>Total CapEx</strong></td>
+        <td></td>
+        <td><strong class="accent">฿292,044,000</strong></td>
+        <td><strong>100%</strong></td>
+      </tr>
+      <tr>
+        <td colspan="2">Per MW (solar only)</td>
+        <td colspan="2">~฿23.4M/MW (excl. land & BESS)</td>
+      </tr>
+      <tr>
+        <td colspan="2">Per MW (all-in)</td>
+        <td colspan="2">~฿32.4M/MW (~$900K/MW)</td>
+      </tr>
+    </table>
+
+    <h3>Annual Operating Expenditure (OpEx)</h3>
+    <table>
+      <tr>
+        <th>Item</th>
+        <th>Annual Cost (฿)</th>
+      </tr>
+      <tr>
+        <td>O&M (1.5% of solar CapEx)</td>
+        <td>2,317,000</td>
+      </tr>
+      <tr>
+        <td>BESS maintenance</td>
+        <td>810,000</td>
+      </tr>
+      <tr>
+        <td>Insurance</td>
+        <td>1,500,000</td>
+      </tr>
+      <tr>
+        <td>Land lease / property tax</td>
+        <td>500,000</td>
+      </tr>
+      <tr>
+        <td>Security & monitoring</td>
+        <td>600,000</td>
+      </tr>
+      <tr>
+        <td>Administrative</td>
+        <td>300,000</td>
+      </tr>
+      <tr>
+        <td><strong>Total Annual OpEx</strong></td>
+        <td><strong class="accent">฿6,027,000</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SLIDE 11: REVENUE -->
+  <div class="slide" id="revenue">
+    <div class="badge">09 · Revenue</div>
+    <h2>Revenue Model</h2>
+
+    <div class="grid3">
+      <div class="card">
+        <h4>Model A: Community Solar FiT</h4>
+        <p><strong>Rate:</strong> ฿2.25/kWh (fixed)<br>
+          <strong>Annual:</strong> ฿27.3M<br>
+          <strong>25-year:</strong> ฿683M<br>
+          <strong>Buyer:</strong> PEA<br>
+          <strong>Risk:</strong> Low (guaranteed)<br>
+          <span style="color:rgba(255,255,255,.3)">Lower rate but zero off-take risk</span>
+        </p>
+      </div>
+      <div class="card" style="border-color:rgba(232,168,32,.3);">
+        <h4>Model B: Private PPA ⭐</h4>
+        <p><strong>Rate:</strong> ฿4.50/kWh (+2%/yr)<br>
+          <strong>Year 1:</strong> ฿54.7M<br>
+          <strong>25-year:</strong> ฿1.75B<br>
+          <strong>Buyer:</strong> Hotels, resorts, businesses<br>
+          <strong>Risk:</strong> Medium (customer credit)<br>
+          <span class="accent">2x the FiT revenue — our target model</span>
+        </p>
+      </div>
+      <div class="card">
+        <h4>Model C: Hybrid</h4>
+        <p><strong>Rate:</strong> Mixed<br>
+          <strong>Split:</strong> 5 MW PPA + 4 MW FiT<br>
+          <strong>Year 1:</strong> ฿41.4M<br>
+          <strong>25-year:</strong> ฿1.24B<br>
+          <strong>Risk:</strong> Low-Medium<br>
+          <span style="color:rgba(255,255,255,.3)">Balanced approach</span>
+        </p>
+      </div>
+    </div>
+
+    <h3>Additional Revenue (BESS)</h3>
+    <table>
+      <tr>
+        <th>Stream</th>
+        <th>Annual (฿)</th>
+        <th>25-year (฿)</th>
+      </tr>
+      <tr>
+        <td>Peak Shaving</td>
+        <td>2,500,000</td>
+        <td>62,500,000</td>
+      </tr>
+      <tr>
+        <td>Arbitrage</td>
+        <td>3,300,000</td>
+        <td>82,500,000</td>
+      </tr>
+      <tr>
+        <td>Grid Services</td>
+        <td>1,000,000</td>
+        <td>25,000,000</td>
+      </tr>
+      <tr>
+        <td><strong>Total BESS Revenue</strong></td>
+        <td><strong>6,800,000</strong></td>
+        <td><strong>170,000,000</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SLIDE 12: FINANCIAL -->
+  <div class="slide" id="financial">
+    <div class="badge">10 · Financial Model</div>
+    <h2>Financial Model — Private PPA (Model B)</h2>
+
+    <div class="grid3">
+      <div class="stat" style="background:rgba(26,122,90,.1);border-radius:12px">
+        <div class="num" style="color:#1A7A5A">21.1%</div>
+        <div class="label">IRR (20-year)</div>
+      </div>
+      <div class="stat" style="background:rgba(232,168,32,.1);border-radius:12px">
+        <div class="num">4.7</div>
+        <div class="label">Payback (years)</div>
+      </div>
+      <div class="stat" style="background:rgba(26,122,90,.1);border-radius:12px">
+        <div class="num" style="color:#1A7A5A">฿620M</div>
+        <div class="label">NPV (8% disc.)</div>
+      </div>
+    </div>
+
+    <h3>20-Year Cash Flow Summary (Model B + BESS)</h3>
+    <table>
+      <tr>
+        <th>Period</th>
+        <th>Solar Rev</th>
+        <th>BESS Rev</th>
+        <th>OpEx</th>
+        <th>Net CF</th>
+        <th>Cumulative</th>
+      </tr>
+      <tr>
+        <td>Year 1</td>
+        <td>฿54.7M</td>
+        <td>฿6.8M</td>
+        <td>-฿6.0M</td>
+        <td>฿55.5M</td>
+        <td>-฿236.5M</td>
+      </tr>
+      <tr>
+        <td>Year 3</td>
+        <td>฿56.9M</td>
+        <td>฿6.8M</td>
+        <td>-฿6.2M</td>
+        <td>฿57.5M</td>
+        <td>-฿123.3M</td>
+      </tr>
+      <tr>
+        <td><span class="accent">Year 5</span></td>
+        <td>฿59.2M</td>
+        <td>฿6.8M</td>
+        <td>-฿6.4M</td>
+        <td>฿59.6M</td>
+        <td class="accent">+฿5.6M ✅</td>
+      </tr>
+      <tr>
+        <td>Year 10</td>
+        <td>฿65.3M</td>
+        <td>฿6.8M</td>
+        <td>-฿7.0M</td>
+        <td>฿65.1M</td>
+        <td>+฿317M</td>
+      </tr>
+      <tr>
+        <td>Year 15</td>
+        <td>฿72.1M</td>
+        <td>฿3.4M*</td>
+        <td>-฿7.7M</td>
+        <td>฿67.8M</td>
+        <td>+฿649M</td>
+      </tr>
+      <tr>
+        <td>Year 20</td>
+        <td>฿79.6M</td>
+        <td>฿3.4M*</td>
+        <td>-฿8.4M</td>
+        <td>฿74.6M</td>
+        <td>+฿1.01B</td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:rgba(255,255,255,.3);">* BESS revenue halved after year 12 (degradation). Solar
+      degradation 0.4%/yr. OpEx escalation 2%/yr. PPA escalation 2%/yr.</p>
+
+    <div class="success-box">
+      <h4 style="color:#1A7A5A;">💰 Bottom Line</h4>
+      <p style="font-size:14px;">฿292M investment → ฿1.01B net return over 20 years. <strong>3.5x return on
+          investment.</strong> Payback in under 5 years. Monthly cash flow from month 1.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: RISKS -->
+  <div class="slide" id="risks">
+    <div class="badge">11 · Risks</div>
+    <h2>Risks & Mitigation</h2>
+
+    <table>
+      <tr>
+        <th>Risk</th>
+        <th>Severity</th>
+        <th>Mitigation</th>
+      </tr>
+      <tr>
+        <td>PEA rejects grid connection</td>
+        <td><span class="red">High</span></td>
+        <td>Include BESS for grid stability. Engage PEA early. Start with 5 MW, scale to 9.</td>
+      </tr>
+      <tr>
+        <td>Land title issues</td>
+        <td><span class="accent">Medium</span></td>
+        <td>Only pursue Chanote title. Due diligence with lawyer. Title insurance.</td>
+      </tr>
+      <tr>
+        <td>Community opposition</td>
+        <td><span class="accent">Medium</span></td>
+        <td>Agrivoltaic design (farming under panels). Community benefit sharing. Jobs.</td>
+      </tr>
+      <tr>
+        <td>Typhoon/storm damage</td>
+        <td><span class="accent">Medium</span></td>
+        <td>Engineering for 150 km/h winds. Insurance. Concrete foundations if needed.</td>
+      </tr>
+      <tr>
+        <td>Customer credit risk (PPA)</td>
+        <td><span class="accent">Medium</span></td>
+        <td>Target hotels/resorts with stable revenue. Bank guarantee. Multiple offtakers.</td>
+      </tr>
+      <tr>
+        <td>Foreign ownership restriction</td>
+        <td><span class="accent">Medium</span></td>
+        <td>TM Developers partnership. Proper legal structure. Registered lease backup.</td>
+      </tr>
+      <tr>
+        <td>Submarine cable upgrade (2028)</td>
+        <td><span class="green">Low</span></td>
+        <td>More capacity = more potential customers. Our storage becomes less critical but solar remains valuable.</td>
+      </tr>
+      <tr>
+        <td>Regulatory change</td>
+        <td><span class="green">Low</span></td>
+        <td>Thailand consistently expanding solar targets. Lock in PPA early.</td>
+      </tr>
+      <tr>
+        <td>Equipment supply chain</td>
+        <td><span class="green">Low</span></td>
+        <td>LONGi + Huawei = global supply. Thailand has local PV manufacturing (10 GW/yr).</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SLIDE 14: TIMELINE -->
+  <div class="slide" id="timeline">
+    <div class="badge">12 · Timeline</div>
+    <h2>Project Timeline — 18 Months to COD</h2>
+
+    <table>
+      <tr>
+        <th>Month</th>
+        <th>Phase</th>
+        <th>Key Activities</th>
+      </tr>
+      <tr>
+        <td>1-2</td>
+        <td class="accent">Due Diligence</td>
+        <td>Land shortlisting, title verification, PEA pre-consultation, legal structure setup</td>
+      </tr>
+      <tr>
+        <td>3-4</td>
+        <td class="accent">Land & Community</td>
+        <td>Land acquisition/lease, LAO consent application, community engagement</td>
+      </tr>
+      <tr>
+        <td>3-5</td>
+        <td>Environmental</td>
+        <td>IEE preparation, environmental review, drainage design</td>
+      </tr>
+      <tr>
+        <td>4-6</td>
+        <td>Licensing</td>
+        <td>ERC VSPP application, PEA grid connection application</td>
+      </tr>
+      <tr>
+        <td>5-7</td>
+        <td>Engineering</td>
+        <td>Detailed design, structural engineering, electrical design, BESS sizing</td>
+      </tr>
+      <tr>
+        <td>6-8</td>
+        <td>Procurement</td>
+        <td>RFQ to suppliers, panel/inverter/BESS orders, EPC contractor selection</td>
+      </tr>
+      <tr>
+        <td>7-8</td>
+        <td class="accent">PPA Signing</td>
+        <td>Execute PPA with PEA/customers, secure financing</td>
+      </tr>
+      <tr>
+        <td>8-9</td>
+        <td>Site Prep</td>
+        <td>Clearing, grading, access road, fencing, foundation piles</td>
+      </tr>
+      <tr>
+        <td>9-13</td>
+        <td>Construction</td>
+        <td>Mounting, panels, inverters, BESS, transformer, grid interconnect</td>
+      </tr>
+      <tr>
+        <td>14-15</td>
+        <td>Testing</td>
+        <td>String testing, inverter commissioning, BESS testing, grid sync test</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td>PEA Inspection</td>
+        <td>Final inspection, metering verification, safety certification</td>
+      </tr>
+      <tr>
+        <td>17-18</td>
+        <td class="green">COD ✅</td>
+        <td>Commercial Operation Date, revenue starts flowing</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SLIDE 15: NEXT STEPS -->
+  <div class="slide" id="nextsteps">
+    <div class="badge">13 · Next Steps</div>
+    <h2>Immediate Action Items</h2>
+
+    <div class="timeline">
+      <div class="step">
+        <h4>1. PEA Pre-Consultation (This Month)</h4>
+        <p>Visit PEA Koh Phangan office (077-377072). Ask: available grid capacity at 33kV, process for 9 MW VSPP, BESS
+          requirements, estimated timeline.</p>
+      </div>
+      <div class="step">
+        <h4>2. Land Shortlist & Site Visits (2 weeks)</h4>
+        <p>Contact: Islanders Properties, KPN Properties, Conrad Properties. Visit top 3 candidate sites. Verify Chanote
+          titles. Get price quotes for 50-80 rai.</p>
+      </div>
+      <div class="step">
+        <h4>3. Legal Structure with TM Developers (2 weeks)</h4>
+        <p>Define partnership terms. Set up Thai entity (if needed). Clarify land ownership structure. Engage Surat
+          Thani lawyer for due diligence.</p>
+      </div>
+      <div class="step">
+        <h4>4. LAO Introduction (1 month)</h4>
+        <p>Meet local อบต./เทศบาล. Present project benefits: jobs, community power, tax revenue. Begin consent process.
+        </p>
+      </div>
+      <div class="step">
+        <h4>5. Supplier RFQs for 9 MW (Parallel)</h4>
+        <p>Send RFQs to: Solaris Green Energy, BayWa r.e., VST ECS, High Solar, Solar-Thailand. Request: 9 MW
+          ground-mount + 4.5 MWh BESS pricing.</p>
+      </div>
+    </div>
+
+    <div class="success-box">
+      <h4 style="color:#1A7A5A;">Key Contacts</h4>
+      <p style="font-size:13px;">
+        <strong>PEA Koh Phangan:</strong> 077-377072, 077-377073<br>
+        <strong>TM Developers:</strong> 062 348 0119 (partner)<br>
+        <strong>Islanders Properties:</strong> islanders-properties.com<br>
+        <strong>KPN Properties:</strong> kpnproperties.com<br>
+        <strong>ERC:</strong> erc.or.th<br>
+        <strong>TM Energy (us):</strong> k@kanielt.com
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>TM Energy · Koh Phangan Solar Farm Development Guide · March 2026 · Confidential</p>
+    <p>Data sources: NEPC, ERC, PEA, OpenStreetMap, Thai property listings, IRENA, industry reports</p>
+    <p style="margin-top:8px;">Interactive Scout Tool: kaniel149.github.io/copenhagen-solar/solar-farm-scout.html</p>
+  </div>
+
+</body>
+
+</html>

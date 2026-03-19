@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Inter',sans-serif;position:relative;background:url("bg24.png") center/cover no-repeat;}
+.overlay-bg{position:absolute;inset:0;background:rgba(13,33,55,.85);}
+.bg-pattern{position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(232,168,32,.08),transparent 60%),radial-gradient(circle at 20% 80%,rgba(26,122,90,.08),transparent 60%);}
+.logo{position:absolute;top:40px;left:40px;display:flex;align-items:center;gap:12px;z-index:2;}
+.logo-circle{width:44px;height:44px;border-radius:50%;background:#1A1A1A;border:2px solid #E8A820;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#E8A820;}
+.logo-text{font-weight:700;font-size:16px;color:#E8A820;letter-spacing:2px;}
+.quote-mark{position:absolute;top:130px;left:50px;font-family:'Playfair Display',serif;font-size:200px;color:rgba(232,168,32,.12);line-height:.8;}
+.testimonial{position:absolute;top:200px;left:80px;right:80px;z-index:2;}
+.quote{font-family:'Playfair Display',serif;font-size:44px;font-weight:700;font-style:italic;line-height:1.35;color:#fff;}
+.quote span{color:#E8A820;}
+.author{margin-top:40px;display:flex;align-items:center;gap:20px;}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#E8A820,#D4922A);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#0D2137;}
+.author-info{}.author-name{font-size:20px;font-weight:700;color:#fff;}.author-role{font-size:15px;color:rgba(255,255,255,.5);margin-top:2px;}
+.stars{position:absolute;top:140px;right:60px;font-size:28px;letter-spacing:4px;z-index:2;}
+.result-bar{position:absolute;bottom:180px;left:60px;right:60px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 36px;display:flex;justify-content:space-around;z-index:2;}
+.result-item{text-align:center;}
+.result-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#E8A820;}
+.result-label{font-size:12px;color:rgba(255,255,255,.4);margin-top:4px;text-transform:uppercase;letter-spacing:1px;}
+.cta{position:absolute;bottom:60px;left:60px;right:60px;display:flex;align-items:center;justify-content:space-between;z-index:2;}
+.cta-btn{background:#E8A820;color:#0D2137;font-weight:800;font-size:18px;padding:16px 36px;border-radius:12px;}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.4);}
+</style></head>
+<body>
+<div class="overlay-bg"></div>
+<div class="bg-pattern"></div>
+<div class="logo"><div class="logo-circle">TM</div><div class="logo-text">TM ENERGY</div></div>
+<div class="stars">⭐⭐⭐⭐⭐</div>
+<div class="quote-mark">"</div>
+<div class="testimonial">
+<div class="quote">"Best investment we made. <span>Saving ฿40,000 per month</span> and our guests love that we're eco-friendly."</div>
+<div class="author">
+<div class="avatar">M</div>
+<div class="author-info"><div class="author-name">Resort Owner</div><div class="author-role">Haad Yao Beach · 45kWp System</div></div>
+</div>
+</div>
+<div class="result-bar">
+<div class="result-item"><div class="result-num">45kWp</div><div class="result-label">System Size</div></div>
+<div class="result-item"><div class="result-num">฿480K</div><div class="result-label">Annual Savings</div></div>
+<div class="result-item"><div class="result-num">3.1yr</div><div class="result-label">Payback</div></div>
+<div class="result-item"><div class="result-num">36t</div><div class="result-label">CO₂ Saved/yr</div></div>
+</div>
+<div class="cta">
+<div class="cta-btn">SEE YOUR SAVINGS →</div>
+<div class="cta-sub">Join 50+ businesses on Koh Phangan going solar</div>
+</div>
+</body></html>

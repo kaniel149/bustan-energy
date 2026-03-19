@@ -1,0 +1,153 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-03-13T03:44:28Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 2398516811,
+  "lat": 9.6943013,
+  "lon": 100.0758419,
+  "tags": {
+    "generator:output:electricity": "yes",
+    "generator:source": "diesel",
+    "generator:type": "reciprocating_engine",
+    "power": "generator"
+  }
+},
+{
+  "type": "node",
+  "id": 2398516816,
+  "lat": 9.6942576,
+  "lon": 100.0757869,
+  "tags": {
+    "generator:method": "photovoltaic",
+    "generator:output:electricity": "yes",
+    "generator:source": "solar",
+    "generator:type": "solar_photovoltaic_panel",
+    "power": "generator"
+  }
+},
+{
+  "type": "node",
+  "id": 4757176340,
+  "lat": 9.7068204,
+  "lon": 99.9947128,
+  "tags": {
+    "power": "portal"
+  }
+},
+{
+  "type": "node",
+  "id": 4757176341,
+  "lat": 9.7064741,
+  "lon": 99.9947557,
+  "tags": {
+    "power": "portal"
+  }
+},
+{
+  "type": "way",
+  "id": 546094911,
+  "bounds": {
+    "minlat": 9.7062097,
+    "minlon": 99.9946189,
+    "maxlat": 9.7069711,
+    "maxlon": 99.9950775
+  },
+  "nodes": [
+    5277488246,
+    5277488245,
+    5277488244,
+    5277488243,
+    5277488246
+  ],
+  "geometry": [
+    { "lat": 9.7069711, "lon": 99.9950480 },
+    { "lat": 9.7062361, "lon": 99.9950775 },
+    { "lat": 9.7062097, "lon": 99.9946189 },
+    { "lat": 9.7069050, "lon": 99.9946430 },
+    { "lat": 9.7069711, "lon": 99.9950480 }
+  ],
+  "tags": {
+    "power": "substation",
+    "voltage": "115000"
+  }
+},
+{
+  "type": "way",
+  "id": 1028295027,
+  "bounds": {
+    "minlat": 9.7263358,
+    "minlon": 99.9911062,
+    "maxlat": 9.7273668,
+    "maxlon": 99.9918680
+  },
+  "nodes": [
+    9480399415,
+    9480399416,
+    9480426017,
+    9480426018,
+    9480399415
+  ],
+  "geometry": [
+    { "lat": 9.7273060, "lon": 99.9917982 },
+    { "lat": 9.7263358, "lon": 99.9918680 },
+    { "lat": 9.7263622, "lon": 99.9911277 },
+    { "lat": 9.7273668, "lon": 99.9911062 },
+    { "lat": 9.7273060, "lon": 99.9917982 }
+  ],
+  "tags": {
+    "landuse": "industrial",
+    "name": "Trash Burning Factory",
+    "plant:method": "combustion",
+    "plant:output:electricity": "no",
+    "plant:source": "waste",
+    "power": "plant"
+  }
+},
+{
+  "type": "way",
+  "id": 1362369501,
+  "bounds": {
+    "minlat": 9.5672669,
+    "minlon": 99.9947288,
+    "maxlat": 9.7064741,
+    "maxlon": 100.0035566
+  },
+  "nodes": [
+    12613449767,
+    12613449768,
+    12613449769,
+    12613449770,
+    12613449771,
+    12613449772,
+    12613449773,
+    4757176341
+  ],
+  "geometry": [
+    { "lat": 9.5672669, "lon": 100.0032039 },
+    { "lat": 9.5691125, "lon": 100.0034376 },
+    { "lat": 9.5733183, "lon": 100.0034569 },
+    { "lat": 9.5885082, "lon": 100.0035566 },
+    { "lat": 9.7055602, "lon": 99.9948770 },
+    { "lat": 9.7063099, "lon": 99.9948196 },
+    { "lat": 9.7064041, "lon": 99.9947288 },
+    { "lat": 9.7064741, "lon": 99.9947557 }
+  ],
+  "tags": {
+    "layer": "-1",
+    "location": "underground",
+    "name": "Koh Samui Export",
+    "operator": "PEA",
+    "power": "cable",
+    "voltage": "115000"
+  }
+}
+
+  ]
+}

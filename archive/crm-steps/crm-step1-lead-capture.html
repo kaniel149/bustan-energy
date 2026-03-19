@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TM Energy — Step 1: Lead Capture & Pipeline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --sun: #E8A820; --ocean-deep: #062A40; --green: #43A047; --blue: #1E88E5; --red: #E53935; --purple: #7B1FA2; }
+        * { margin:0;padding:0;box-sizing:border-box; }
+        body { font-family:'Heebo','DM Sans',sans-serif; background:#0A0A0A; color:#fff; overflow-x:hidden; }
+        body[data-lang="en"],body[data-lang="th"] { direction:ltr; }
+        .slide { min-height:100vh; padding:4rem 3rem; display:flex; flex-direction:column; justify-content:center; position:relative; border-bottom:1px solid rgba(255,255,255,.05); }
+        .slide-num { position:absolute; top:2rem; left:2rem; font-size:.75rem; color:rgba(255,255,255,.3); letter-spacing:.15em; }
+        .container { max-width:1100px; margin:0 auto; width:100%; }
+        h1 { font-family:'Instrument Serif',serif; font-size:clamp(2.5rem,6vw,4.5rem); line-height:1.1; }
+        h2 { font-family:'Instrument Serif',serif; font-size:clamp(1.8rem,4vw,3rem); line-height:1.2; margin-bottom:2rem; }
+        h3 { font-size:1.3rem; font-weight:700; margin-bottom:.8rem; }
+        .accent { color:var(--sun); }
+        .subtitle { font-size:1.15rem; color:rgba(255,255,255,.6); line-height:1.6; max-width:700px; margin-top:1.5rem; }
+        .cover { background:linear-gradient(160deg,var(--ocean-deep),#0A0A0A 60%); }
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; }
+        .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+        .card { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:2rem; transition:all .3s; }
+        .card:hover { background:rgba(255,255,255,.07); transform:translateY(-4px); }
+        .card-icon { font-size:2.5rem; margin-bottom:1rem; }
+        .card p { color:rgba(255,255,255,.6); line-height:1.6; font-size:.95rem; }
+        .stat-big { font-family:'Instrument Serif',serif; font-size:3rem; color:var(--sun); line-height:1; }
+        .stat-label { font-size:.85rem; color:rgba(255,255,255,.5); margin-top:.3rem; }
+        .badge { display:inline-block; padding:.3rem .8rem; border-radius:100px; font-size:.75rem; font-weight:600; }
+        .badge-green { background:rgba(67,160,71,.15); color:var(--green); }
+        .badge-gold { background:rgba(232,168,32,.15); color:var(--sun); }
+        .badge-blue { background:rgba(30,136,229,.15); color:var(--blue); }
+
+        .step-block { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:2rem; margin-bottom:1.5rem; }
+        .step-num { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:var(--sun); color:#0A0A0A; font-weight:900; font-size:1rem; margin-left:1rem; flex-shrink:0; }
+        .step-header { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+        .step-title { font-size:1.1rem; font-weight:700; }
+        .step-body { font-size:.95rem; color:rgba(255,255,255,.65); line-height:1.7; padding-right:3rem; }
+
+        .feat-list { list-style:none; padding:0; }
+        .feat-list li { padding:.6rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.95rem; color:rgba(255,255,255,.75); display:flex; align-items:flex-start; gap:.6rem; }
+        .feat-list li::before { content:'✓'; color:var(--sun); font-weight:700; flex-shrink:0; }
+
+        .mockup { background:#111827; border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden; }
+        .mockup-bar { background:rgba(255,255,255,.05); padding:.5rem 1rem; display:flex; align-items:center; gap:.4rem; }
+        .mockup-dot { width:8px; height:8px; border-radius:50%; }
+        .mockup-dot.r { background:#EF4444; } .mockup-dot.y { background:#F59E0B; } .mockup-dot.g { background:#10B981; }
+        .mockup-body { padding:1.5rem; }
+
+        .kanban { display:flex; gap:.8rem; overflow-x:auto; padding:.5rem 0; }
+        .kanban-col { min-width:110px; flex:1; }
+        .kanban-header { font-size:.7rem; font-weight:700; color:rgba(255,255,255,.5); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.5rem; padding-bottom:.3rem; border-bottom:2px solid rgba(255,255,255,.1); display:flex; justify-content:space-between; }
+        .kanban-card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:8px; padding:.5rem; margin-bottom:.4rem; font-size:.65rem; }
+        .kanban-card .name { font-weight:600; }
+        .kanban-card .meta { color:rgba(255,255,255,.4); margin-top:.2rem; }
+
+        .source-card { background:rgba(232,168,32,.05); border:1px solid rgba(232,168,32,.15); border-radius:12px; padding:1.5rem; }
+        .source-icon { font-size:2rem; margin-bottom:.5rem; }
+
+        .tm-logo-header { position:fixed; top:1.2rem; right:1.2rem; z-index:200; display:flex; align-items:center; gap:.5rem; }
+        .tm-logo-header img { height:36px; border-radius:50%; }
+        .tm-logo-header span { font-weight:700; font-size:.85rem; color:var(--sun); }
+
+        .lang-bar { position:fixed; top:1.2rem; left:50%; transform:translateX(-50%); z-index:200; display:flex; gap:.3rem; background:rgba(0,0,0,.6); backdrop-filter:blur(8px); padding:.3rem; border-radius:8px; border:1px solid rgba(255,255,255,.1); }
+        .lang-btn { padding:.3rem .8rem; border:none; border-radius:6px; font-size:.75rem; font-weight:600; cursor:pointer; background:transparent; color:rgba(255,255,255,.5); transition:all .2s; }
+        .lang-btn.active { background:var(--sun); color:#0A0A0A; }
+        .tri-text .lang-he,.tri-text .lang-en,.tri-text .lang-th { display:none; }
+        body[data-lang="he"] .tri-text .lang-he { display:inline; }
+        body[data-lang="en"] .tri-text .lang-en { display:inline; }
+        body[data-lang="th"] .tri-text .lang-th { display:inline; }
+
+        .nav-bottom { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); z-index:200; display:flex; gap:.5rem; }
+        .nav-btn { padding:.5rem 1rem; border:none; border-radius:8px; font-size:.8rem; font-weight:600; cursor:pointer; background:rgba(255,255,255,.1); color:rgba(255,255,255,.6); transition:all .2s; text-decoration:none; }
+        .nav-btn:hover { background:var(--sun); color:#0A0A0A; }
+
+        @media(max-width:768px) { .slide{padding:3rem 1.5rem;} .grid-2,.grid-3{grid-template-columns:1fr;} .kanban{flex-wrap:wrap;} .step-body{padding-right:0;} }
+    </style>
+</head>
+<body data-lang="he">
+
+<div class="tm-logo-header"><img src="visuals/tm-energy-logo-v2.png" alt="TM Energy"><span>TM Energy</span></div>
+<div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('he')">עברית</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+    <button class="lang-btn" onclick="setLang('th')">ไทย</button>
+</div>
+
+<!-- SLIDE 1: COVER -->
+<section class="slide cover">
+    <span class="slide-num">STEP 1 / 12</span>
+    <div class="container">
+        <div class="badge badge-blue" style="margin-bottom:1rem;">Value Chain — Step 1</div>
+        <h1 class="tri-text">
+            <span class="lang-he">לכידת לידים<br><span class="accent">& Pipeline</span></span>
+            <span class="lang-en">Lead Capture<br><span class="accent">& Pipeline</span></span>
+            <span class="lang-th">จับลูกค้าเป้าหมาย<br><span class="accent">& ไปป์ไลน์</span></span>
+        </h1>
+        <p class="subtitle tri-text">
+            <span class="lang-he">איך מגיעים לידים, איך מנהלים אותם ב-CRM, ואיך מזיזים אותם קדימה בשרשרת הערך</span>
+            <span class="lang-en">How leads arrive, how to manage them in the CRM, and how to move them forward in the value chain</span>
+            <span class="lang-th">ลูกค้าเป้าหมายมาจากไหน จัดการอย่างไรใน CRM และเลื่อนต่อในห่วงโซ่คุณค่าอย่างไร</span>
+        </p>
+    </div>
+</section>
+
+<!-- SLIDE 2: LEAD SOURCES -->
+<section class="slide">
+    <span class="slide-num">01</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">7 מקורות</span> לידים</span>
+            <span class="lang-en"><span class="accent">7 Lead</span> Sources</span>
+            <span class="lang-th"><span class="accent">7 แหล่ง</span>ลูกค้าเป้าหมาย</span>
+        </h2>
+        <div class="grid-3" style="margin-bottom:2rem;">
+            <div class="source-card">
+                <div class="source-icon">🌐</div>
+                <h3 class="tri-text"><span class="lang-he">אתר + Landing Page</span><span class="lang-en">Website + Landing Page</span><span class="lang-th">เว็บไซต์ + Landing Page</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">tmenergy.asia — טופס יצירת קשר, מחשבון ROI, הזמנת סקר חינם</span>
+                    <span class="lang-en">tmenergy.asia — contact form, ROI calculator, free survey booking</span>
+                    <span class="lang-th">tmenergy.asia — แบบฟอร์มติดต่อ เครื่องคำนวณ ROI จองสำรวจฟรี</span>
+                </p>
+            </div>
+            <div class="source-card">
+                <div class="source-icon">📱</div>
+                <h3 class="tri-text"><span class="lang-he">Facebook / Instagram Ads</span><span class="lang-en">Facebook / Instagram Ads</span><span class="lang-th">Facebook / Instagram Ads</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">מודעות ממוקדות — בעלי עסקים בקופנגן, expats, resort owners</span>
+                    <span class="lang-en">Targeted ads — business owners in Koh Phangan, expats, resort owners</span>
+                    <span class="lang-th">โฆษณาเฉพาะกลุ่ม — เจ้าของธุรกิจเกาะพะงัน ชาวต่างชาติ เจ้าของรีสอร์ท</span>
+                </p>
+            </div>
+            <div class="source-card">
+                <div class="source-icon">🤝</div>
+                <h3 class="tri-text"><span class="lang-he">TM Developers — הפניות</span><span class="lang-en">TM Developers — Referrals</span><span class="lang-th">TM Developers — การแนะนำ</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">לקוחות בנייה קיימים שרוצים סולאר על הבניין החדש</span>
+                    <span class="lang-en">Existing construction clients wanting solar on their new building</span>
+                    <span class="lang-th">ลูกค้าก่อสร้างที่ต้องการโซลาร์บนอาคารใหม่</span>
+                </p>
+            </div>
+            <div class="source-card">
+                <div class="source-icon">🗺️</div>
+                <h3 class="tri-text"><span class="lang-he">Roof Scanner Pro</span><span class="lang-en">Roof Scanner Pro</span><span class="lang-th">Roof Scanner Pro</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">2,467 גגות ממופים, 1,576 עסקים עם שמות, 130 טלפונים</span>
+                    <span class="lang-en">2,467 roofs mapped, 1,576 named businesses, 130 phone numbers</span>
+                    <span class="lang-th">หลังคา 2,467 แห่ง ธุรกิจ 1,576 แห่ง โทรศัพท์ 130 เบอร์</span>
+                </p>
+            </div>
+            <div class="source-card">
+                <div class="source-icon">🚶</div>
+                <h3 class="tri-text"><span class="lang-he">Cold Outreach</span><span class="lang-en">Cold Outreach</span><span class="lang-th">Cold Outreach</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">WhatsApp ישיר לרשימת 165 עסקים שנחקרו — resorts, מסעדות, דייב שופס</span>
+                    <span class="lang-en">Direct WhatsApp to 165 researched businesses — resorts, restaurants, dive shops</span>
+                    <span class="lang-th">WhatsApp ตรงถึง 165 ธุรกิจ — รีสอร์ท ร้านอาหาร ร้านดำน้ำ</span>
+                </p>
+            </div>
+            <div class="source-card">
+                <div class="source-icon">👥</div>
+                <h3 class="tri-text"><span class="lang-he">Word of Mouth</span><span class="lang-en">Word of Mouth</span><span class="lang-th">บอกต่อปากต่อปาก</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">לקוחות מרוצים → הפניות. אי קטן = כולם מכירים את כולם</span>
+                    <span class="lang-en">Happy clients → referrals. Small island = everyone knows everyone</span>
+                    <span class="lang-th">ลูกค้าพอใจ → แนะนำต่อ เกาะเล็ก = ทุกคนรู้จักกัน</span>
+                </p>
+            </div>
+        </div>
+        <div class="card" style="text-align:center;border-color:rgba(232,168,32,.3);">
+            <div class="tri-text" style="font-size:1rem;">
+                <span class="lang-he">🎯 <b>יעד:</b> 20 לידים חדשים בחודש → 4-5 חוזים סגורים</span>
+                <span class="lang-en">🎯 <b>Target:</b> 20 new leads/month → 4-5 closed contracts</span>
+                <span class="lang-th">🎯 <b>เป้าหมาย:</b> 20 ลีดใหม่/เดือน → 4-5 สัญญาที่ปิดได้</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 3: HOW-TO — ADDING A LEAD -->
+<section class="slide">
+    <span class="slide-num">02</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">איך מוסיפים ליד</span> ל-CRM</span>
+            <span class="lang-en"><span class="accent">How to Add a Lead</span> to the CRM</span>
+            <span class="lang-th"><span class="accent">วิธีเพิ่มลีด</span>ใน CRM</span>
+        </h2>
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">1</div><div class="step-title tri-text"><span class="lang-he">נכנסים ל-CRM ולוחצים "New Project"</span><span class="lang-en">Open CRM and click "New Project"</span><span class="lang-th">เปิด CRM แล้วกด "New Project"</span></div></div>
+            <div class="step-body tri-text">
+                <span class="lang-he">כפתור כתום בראש ה-sidebar. נפתח טופס ליד חדש.</span>
+                <span class="lang-en">Orange button at the top of the sidebar. A new lead form opens.</span>
+                <span class="lang-th">ปุ่มสีส้มด้านบน sidebar แบบฟอร์มลีดใหม่จะเปิดขึ้น</span>
+            </div>
+        </div>
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">2</div><div class="step-title tri-text"><span class="lang-he">ממלאים פרטי ליד</span><span class="lang-en">Fill in lead details</span><span class="lang-th">กรอกรายละเอียดลีด</span></div></div>
+            <div class="step-body tri-text">
+                <span class="lang-he"><b>שם עסק</b> — Santhiya Resort<br><b>סוג עסק</b> — Resort / Restaurant / Villa / Dive Shop...<br><b>טלפון</b> — +66 77 428 999<br><b>אימייל</b> — info@santhiya.com<br><b>מקור</b> — Facebook Ad / Referral / Cold Outreach / Walk-in<br><b>הערות</b> — "בילדינג גדול, עניין ב-PPA"</span>
+                <span class="lang-en"><b>Business name</b> — Santhiya Resort<br><b>Business type</b> — Resort / Restaurant / Villa / Dive Shop...<br><b>Phone</b> — +66 77 428 999<br><b>Email</b> — info@santhiya.com<br><b>Source</b> — Facebook Ad / Referral / Cold Outreach / Walk-in<br><b>Notes</b> — "Large building, interested in PPA"</span>
+                <span class="lang-th"><b>ชื่อธุรกิจ</b> — Santhiya Resort<br><b>ประเภท</b> — รีสอร์ท / ร้านอาหาร / วิลล่า / ร้านดำน้ำ...<br><b>โทรศัพท์</b> — +66 77 428 999<br><b>อีเมล</b> — info@santhiya.com<br><b>แหล่งที่มา</b> — Facebook Ad / แนะนำ / Cold Outreach / Walk-in<br><b>หมายเหตุ</b> — "อาคารใหญ่ สนใจ PPA"</span>
+            </div>
+        </div>
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">3</div><div class="step-title tri-text"><span class="lang-he">הליד נכנס ל-Pipeline בעמודה "Lead"</span><span class="lang-en">Lead enters Pipeline in "Lead" column</span><span class="lang-th">ลีดเข้าไปป์ไลน์ในคอลัมน์ "Lead"</span></div></div>
+            <div class="step-body tri-text">
+                <span class="lang-he">כל ליד חדש מתחיל בעמודת Lead. משם נזיז אותו קדימה לפי התקדמות.</span>
+                <span class="lang-en">Every new lead starts in the Lead column. From there we move it forward based on progress.</span>
+                <span class="lang-th">ลีดใหม่ทุกรายเริ่มที่คอลัมน์ Lead จากนั้นเลื่อนต่อตามความคืบหน้า</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 4: PIPELINE KANBAN -->
+<section class="slide">
+    <span class="slide-num">03</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">Pipeline</span> — 7 עמודות</span>
+            <span class="lang-en"><span class="accent">Pipeline</span> — 7 Columns</span>
+            <span class="lang-th"><span class="accent">ไปป์ไลน์</span> — 7 คอลัมน์</span>
+        </h2>
+        <div class="mockup">
+            <div class="mockup-bar"><div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+                <span style="margin-right:auto;font-size:.7rem;color:rgba(255,255,255,.4);">kophangan-solar-crm.vercel.app/pipeline</span>
+            </div>
+            <div class="mockup-body">
+                <div class="kanban">
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--blue);">Lead <span style="color:var(--blue);">57</span></div>
+                        <div class="kanban-card"><div class="name">Anantara Rasananda</div><div class="meta">🏨 Resort · ฿3.2M</div></div>
+                        <div class="kanban-card"><div class="name">Santhiya Resort</div><div class="meta">🏨 Resort · ฿4.5M</div></div>
+                        <div class="kanban-card"><div class="name">Baan Thai Yoga</div><div class="meta">🧘 Wellness · ฿850K</div></div>
+                        <div class="kanban-card" style="opacity:.5"><div class="name">+54 more...</div></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:#F59E0B;">Survey <span style="color:#F59E0B;">0</span></div>
+                        <div style="font-size:.6rem;color:rgba(255,255,255,.3);text-align:center;padding:1rem;border:1px dashed rgba(255,255,255,.1);border-radius:6px;margin-top:.3rem;">
+                            <span class="tri-text"><span class="lang-he">גורר ליד לכאן<br>אחרי שיחה ראשונה</span><span class="lang-en">Drag lead here<br>after first call</span><span class="lang-th">ลากลีดมาที่นี่<br>หลังโทรครั้งแรก</span></span>
+                        </div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--purple);">Design <span style="color:var(--purple);">0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--sun);">Proposal <span style="color:var(--sun);">0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:#EC4899;">Contract <span style="color:#EC4899;">0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:#8B5CF6;">Install <span style="color:#8B5CF6;">0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--green);">Live <span style="color:var(--green);">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-2" style="margin-top:2rem;">
+            <div>
+                <h3 class="tri-text"><span class="lang-he">📊 מה רואים בכל כרטיס</span><span class="lang-en">📊 What each card shows</span><span class="lang-th">📊 แต่ละการ์ดแสดงอะไร</span></h3>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">שם העסק</span><span class="lang-en">Business name</span><span class="lang-th">ชื่อธุรกิจ</span></li>
+                    <li class="tri-text"><span class="lang-he">סוג עסק (אייקון)</span><span class="lang-en">Business type (icon)</span><span class="lang-th">ประเภทธุรกิจ (ไอคอน)</span></li>
+                    <li class="tri-text"><span class="lang-he">טלפון — לחיצה להתקשר</span><span class="lang-en">Phone — click to call</span><span class="lang-th">โทรศัพท์ — กดเพื่อโทร</span></li>
+                    <li class="tri-text"><span class="lang-he">שווי עסקה משוער</span><span class="lang-en">Estimated deal value</span><span class="lang-th">มูลค่าดีลโดยประมาณ</span></li>
+                    <li class="tri-text"><span class="lang-he">תאריך יצירה</span><span class="lang-en">Creation date</span><span class="lang-th">วันที่สร้าง</span></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="tri-text"><span class="lang-he">🔄 איך מזיזים ליד</span><span class="lang-en">🔄 How to move a lead</span><span class="lang-th">🔄 วิธีเลื่อนลีด</span></h3>
+                <div class="step-block" style="margin-bottom:.5rem;">
+                    <div class="step-body tri-text">
+                        <span class="lang-he">1. נכנסים לפרטי הליד<br>2. משנים סטטוס: "new" → "contacted" → "qualified"<br>3. הכרטיס זז אוטומטית לעמודה הנכונה<br><br><b>הזמנה לסקר = סטטוס "qualified"</b><br>הליד עובר לעמודת Survey</span>
+                        <span class="lang-en">1. Open lead details<br>2. Change status: "new" → "contacted" → "qualified"<br>3. Card moves automatically to correct column<br><br><b>Survey scheduled = status "qualified"</b><br>Lead moves to Survey column</span>
+                        <span class="lang-th">1. เปิดรายละเอียดลีด<br>2. เปลี่ยนสถานะ: "new" → "contacted" → "qualified"<br>3. การ์ดเลื่อนไปคอลัมน์ที่ถูกต้องอัตโนมัติ<br><br><b>นัดสำรวจ = สถานะ "qualified"</b><br>ลีดเลื่อนไปคอลัมน์ Survey</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 5: LEAD SCORING -->
+<section class="slide">
+    <span class="slide-num">04</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">דירוג לידים</span> — איפה להתמקד</span>
+            <span class="lang-en"><span class="accent">Lead Scoring</span> — Where to Focus</span>
+            <span class="lang-th"><span class="accent">จัดลำดับลีด</span> — โฟกัสที่ไหน</span>
+        </h2>
+        <div class="grid-3">
+            <div class="card" style="border-top:3px solid var(--green);">
+                <div style="font-size:.7rem;color:var(--green);font-weight:700;margin-bottom:.5rem;">🔥 HOT — TIER 1</div>
+                <h3 class="tri-text"><span class="lang-he">PPA — אפס מקדמה</span><span class="lang-en">PPA — Zero Upfront</span><span class="lang-th">PPA — ไม่ต้องจ่ายล่วงหน้า</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he"><b>Resorts</b> (Anantara, Santhiya, Panviman)<br><b>Wellness centers</b><br><b>Coworking spaces</b><br><br>צריכה גבוהה, גגות גדולים, תקציב → PPA מושלם<br><br><b>Deal size:</b> ฿2-5M<br><b>Conversion:</b> 30%</span>
+                    <span class="lang-en"><b>Resorts</b> (Anantara, Santhiya, Panviman)<br><b>Wellness centers</b><br><b>Coworking spaces</b><br><br>High consumption, large roofs, budget → perfect PPA<br><br><b>Deal size:</b> ฿2-5M<br><b>Conversion:</b> 30%</span>
+                    <span class="lang-th"><b>รีสอร์ท</b> (Anantara, Santhiya, Panviman)<br><b>ศูนย์สุขภาพ</b><br><b>Co-working</b><br><br>ใช้ไฟมาก หลังคาใหญ่ มีงบ → PPA เหมาะมาก<br><br><b>ขนาดดีล:</b> ฿2-5M<br><b>Conversion:</b> 30%</span>
+                </p>
+            </div>
+            <div class="card" style="border-top:3px solid var(--sun);">
+                <div style="font-size:.7rem;color:var(--sun);font-weight:700;margin-bottom:.5rem;">⚡ WARM — TIER 2</div>
+                <h3 class="tri-text"><span class="lang-he">EPC — מכירה ישירה</span><span class="lang-en">EPC — Direct Sale</span><span class="lang-th">EPC — ขายตรง</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he"><b>Expat villas</b><br><b>Restaurants</b><br><b>Developers</b><br><br>בעלים שרוצים בעלות → EPC<br><br><b>Deal size:</b> ฿500K-2M<br><b>Conversion:</b> 20%</span>
+                    <span class="lang-en"><b>Expat villas</b><br><b>Restaurants</b><br><b>Developers</b><br><br>Owners who want ownership → EPC<br><br><b>Deal size:</b> ฿500K-2M<br><b>Conversion:</b> 20%</span>
+                    <span class="lang-th"><b>วิลล่าชาวต่างชาติ</b><br><b>ร้านอาหาร</b><br><b>ผู้พัฒนา</b><br><br>เจ้าของที่ต้องการเป็นเจ้าของ → EPC<br><br><b>ขนาดดีล:</b> ฿500K-2M<br><b>Conversion:</b> 20%</span>
+                </p>
+            </div>
+            <div class="card" style="border-top:3px solid rgba(255,255,255,.3);">
+                <div style="font-size:.7rem;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:.5rem;">💤 COLD — TIER 3</div>
+                <h3 class="tri-text"><span class="lang-he">אולי מאוחר יותר</span><span class="lang-en">Maybe Later</span><span class="lang-th">อาจจะทีหลัง</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he"><b>בתים קטנים</b><br><b>עסקים עם שוכרים</b><br><b>"אני צריך לחשוב"</b><br><br>לשמור ב-CRM, follow-up כל 3 חודשים<br><br><b>Deal size:</b> ฿200-500K<br><b>Conversion:</b> 5%</span>
+                    <span class="lang-en"><b>Small houses</b><br><b>Businesses with tenants</b><br><b>"I need to think about it"</b><br><br>Keep in CRM, follow up every 3 months<br><br><b>Deal size:</b> ฿200-500K<br><b>Conversion:</b> 5%</span>
+                    <span class="lang-th"><b>บ้านขนาดเล็ก</b><br><b>ธุรกิจที่เช่า</b><br><b>"ขอคิดก่อน"</b><br><br>เก็บใน CRM ติดตามทุก 3 เดือน<br><br><b>ขนาดดีล:</b> ฿200-500K<br><b>Conversion:</b> 5%</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 6: CURRENT DATA -->
+<section class="slide">
+    <span class="slide-num">05</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">מצב נוכחי</span> — מה כבר יש ב-CRM</span>
+            <span class="lang-en"><span class="accent">Current State</span> — What's Already in the CRM</span>
+            <span class="lang-th"><span class="accent">สถานะปัจจุบัน</span> — มีอะไรอยู่ใน CRM แล้ว</span>
+        </h2>
+        <div class="grid-3" style="margin-bottom:2rem;">
+            <div class="card" style="text-align:center;">
+                <div class="stat-big">57</div>
+                <div class="stat-label tri-text"><span class="lang-he">לידים מיובאים</span><span class="lang-en">imported leads</span><span class="lang-th">ลีดที่นำเข้า</span></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="stat-big">2,467</div>
+                <div class="stat-label tri-text"><span class="lang-he">גגות ממופים (Roof Scanner)</span><span class="lang-en">mapped roofs (Roof Scanner)</span><span class="lang-th">หลังคาที่แมป (Roof Scanner)</span></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="stat-big">165</div>
+                <div class="stat-label tri-text"><span class="lang-he">עסקים נחקרו</span><span class="lang-en">businesses researched</span><span class="lang-th">ธุรกิจที่วิจัย</span></div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <h3 class="tri-text"><span class="lang-he">📋 סוגי עסקים ב-Pipeline</span><span class="lang-en">📋 Business Types in Pipeline</span><span class="lang-th">📋 ประเภทธุรกิจในไปป์ไลน์</span></h3>
+                <ul class="feat-list">
+                    <li>🏨 Resorts & Hotels — 15</li>
+                    <li>🍽️ Restaurants & Bars — 12</li>
+                    <li>🧘 Yoga & Wellness — 8</li>
+                    <li>🏊 Dive Shops — 6</li>
+                    <li>🏥 Hospital & Clinics — 3</li>
+                    <li>🏪 Retail & Supermarkets — 5</li>
+                    <li>🏠 Villas & Residential — 8</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="tri-text"><span class="lang-he">💰 פוטנציאל מכירות</span><span class="lang-en">💰 Sales Potential</span><span class="lang-th">💰 ศักยภาพการขาย</span></h3>
+                <div class="card" style="text-align:center;border-color:rgba(232,168,32,.3);">
+                    <div class="stat-big">฿1.96B</div>
+                    <div class="stat-label tri-text"><span class="lang-he">שווי EPC כולל (Roof Scanner)</span><span class="lang-en">Total EPC value (Roof Scanner)</span><span class="lang-th">มูลค่า EPC รวม (Roof Scanner)</span></div>
+                </div>
+                <div class="card" style="text-align:center;margin-top:1rem;">
+                    <div class="stat-big" style="color:var(--green);">฿445M</div>
+                    <div class="stat-label tri-text"><span class="lang-he">הכנסת PPA שנתית פוטנציאלית</span><span class="lang-en">Potential annual PPA revenue</span><span class="lang-th">รายได้ PPA ปีต่อปี</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 7: NEXT STEP -->
+<section class="slide" style="background:linear-gradient(160deg,var(--ocean-deep),#0A0A0A 60%);">
+    <span class="slide-num">06</span>
+    <div class="container" style="text-align:center;">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">השלב הבא</span> → סקר אתר</span>
+            <span class="lang-en"><span class="accent">Next Step</span> → Site Survey</span>
+            <span class="lang-th"><span class="accent">ขั้นตอนถัดไป</span> → สำรวจไซต์</span>
+        </h2>
+        <p class="subtitle tri-text" style="margin:0 auto 2rem;">
+            <span class="lang-he">אחרי שיחה ראשונה עם הליד ואישור עניין — קובעים סקר אתר. הליד עובר לעמודת "Survey" ב-Pipeline.</span>
+            <span class="lang-en">After the first call with the lead and confirmed interest — schedule a site survey. The lead moves to the "Survey" column in the Pipeline.</span>
+            <span class="lang-th">หลังโทรครั้งแรกกับลีดและยืนยันความสนใจ — นัดสำรวจไซต์ ลีดเลื่อนไปคอลัมน์ "Survey" ในไปป์ไลน์</span>
+        </p>
+        <div class="nav-bottom" style="position:static;transform:none;">
+            <a href="crm-value-chain.html" class="nav-btn">← Overview</a>
+            <a href="crm-step2-site-survey.html" class="nav-btn" style="background:var(--sun);color:#0A0A0A;">Step 2: Site Survey →</a>
+        </div>
+    </div>
+</section>
+
+<script>
+function setLang(lang) {
+    document.body.setAttribute('data-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    localStorage.setItem('tm-lang', lang);
+}
+const saved = localStorage.getItem('tm-lang');
+if (saved) {
+    document.body.setAttribute('data-lang', saved);
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.includes(saved === 'he' ? 'עברית' : saved === 'en' ? 'English' : 'ไทย'));
+    });
+}
+</script>
+</body>
+</html>

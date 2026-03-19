@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Ko Phangan Solar — תוכנית עסקית שנה 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root { --ocean:#0A3D5C; --gold:#E8A820; --reef:#1A7A5A; --coral:#E85D3A; --night:#0D2137; --white:#FFF; --navy:#0D2137; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--navy);color:var(--white);overflow:hidden;height:100vh}
+.slide-container{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:40px 60px;opacity:0;transform:translateX(100px);transition:all .6s cubic-bezier(.23,1,.32,1);pointer-events:none;overflow-y:auto;padding-bottom:90px}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-100px)}
+.slide-cover{background:linear-gradient(135deg,var(--ocean),var(--navy));justify-content:center;align-items:center;text-align:center}
+.slide-dark{background:var(--navy)}.slide-ocean{background:linear-gradient(180deg,var(--ocean),var(--navy))}
+.slide-reef{background:linear-gradient(135deg,#0D3B2E,var(--navy))}.slide-gold{background:linear-gradient(135deg,#3D2E0A,var(--navy))}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px 30px;background:rgba(13,33,55,.97);backdrop-filter:blur(12px);border-top:1px solid rgba(232,168,32,.25);z-index:100}
+.nav-btn{background:none;border:2px solid var(--gold);color:var(--gold);padding:8px 24px;border-radius:8px;cursor:pointer;font-family:'Heebo';font-size:14px;font-weight:500;transition:all .3s ease}
+.nav-btn:hover{background:var(--gold);color:var(--navy);box-shadow:0 0 24px rgba(232,168,32,.35);transform:translateY(-1px)}.nav-btn:disabled{opacity:.3;cursor:default}.nav-btn:disabled:hover{background:none;color:var(--gold);box-shadow:none;transform:none}
+.slide-counter{font-family:'Space Grotesk';color:rgba(255,255,255,.5);font-size:14px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),#F0C040);transition:width .4s ease;z-index:101;box-shadow:0 0 8px rgba(232,168,32,.4)}
+.toc-btn{position:fixed;top:20px;left:20px;background:rgba(232,168,32,.12);border:1px solid rgba(232,168,32,.3);color:var(--gold);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:102;transition:all .3s ease}
+.toc-btn:hover{background:var(--gold);color:var(--navy);box-shadow:0 0 16px rgba(232,168,32,.3);transform:scale(1.05)}
+.toc-panel{position:fixed;top:0;left:-350px;width:350px;height:100vh;background:rgba(13,33,55,.98);backdrop-filter:blur(20px);border-right:1px solid rgba(232,168,32,.25);z-index:103;transition:left .4s cubic-bezier(.23,1,.32,1);padding:60px 30px 30px;overflow-y:auto;box-shadow:4px 0 24px rgba(0,0,0,.3)}
+.toc-panel.open{left:0}
+.toc-item{padding:10px 16px;margin:4px 0;border-radius:8px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.7);transition:all .25s ease;display:flex;align-items:center;gap:10px}
+.toc-item:hover{background:rgba(232,168,32,.12);color:var(--white);transform:translateX(-4px)}.toc-item.active{background:rgba(232,168,32,.2);color:var(--gold);border-right:2px solid var(--gold)}
+.toc-num{font-family:'Space Grotesk';font-weight:700;font-size:12px;color:var(--gold);min-width:24px}
+h1{font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.1;margin-bottom:16px}
+h2{font-size:clamp(24px,3.5vw,40px);font-weight:700;line-height:1.2;margin-bottom:12px}
+h3{font-size:clamp(16px,2vw,22px);font-weight:700;margin-bottom:8px}
+.subtitle{font-size:clamp(16px,2vw,22px);font-weight:300;opacity:.8;margin-bottom:24px}
+.gold{color:var(--gold)}.reef-text{color:#2ED89A}.coral-text{color:var(--coral)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;transition:all .3s ease}
+.card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,168,32,.15)}
+.card-icon{font-size:28px;margin-bottom:10px}.card h3{font-size:16px;margin-bottom:6px}.card p{font-size:13px;opacity:.7;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:12px;border:1px solid rgba(255,255,255,.1);-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:rgba(232,168,32,.15);padding:10px 14px;text-align:right;font-weight:600;white-space:nowrap;color:var(--gold)}
+td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
+tr:hover td{background:rgba(255,255,255,.04)}
+.alert{padding:16px 20px;border-radius:10px;margin:12px 0;font-size:14px;line-height:1.6;transition:all .25s ease}
+.alert:hover{transform:translateX(2px)}
+.alert-warn{background:rgba(232,93,58,.12);border-right:3px solid var(--coral)}
+.alert-info{background:rgba(232,168,32,.08);border-right:3px solid var(--gold)}
+.alert-success{background:rgba(26,122,90,.12);border-right:3px solid var(--reef)}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.tag-ppa{background:rgba(26,122,90,.25);color:#2ED89A}.tag-epc{background:rgba(100,150,255,.2);color:#6496FF}.tag-both{background:rgba(232,168,32,.2);color:var(--gold)}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}.slide{padding:20px 16px;padding-bottom:100px}.vs-box{grid-template-columns:1fr;gap:12px}.vs-divider{padding:8px 0;flex-direction:row;justify-content:center}.month-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}.section-num{font-size:36px;top:8px;left:16px}.nav-bar{padding:10px 14px}.big-num{font-size:clamp(24px,6vw,48px)}.card-grid{grid-template-columns:1fr}.nav-btn{padding:6px 16px;font-size:13px}.toc-panel{width:280px}.tm-logo-header{top:10px;right:12px}.tm-logo-header img{height:28px}.tm-logo-header .brand-text{font-size:10px}.alert{padding:12px 16px;font-size:13px}h1{font-size:clamp(26px,6vw,48px)}h2{font-size:clamp(20px,4.5vw,36px)}.img-float{float:none;width:100%}.img-row{flex-direction:column}.img-row img{max-height:180px}}
+@media(max-width:480px){.slide{padding:16px 12px;padding-bottom:100px}.stat-grid{grid-template-columns:1fr 1fr;gap:12px}.month-grid{grid-template-columns:repeat(2,1fr)}.table-wrap{font-size:12px}th,td{padding:8px 10px}.toc-panel{width:260px}}
+@media print{body{overflow:visible!important;height:auto!important;background:#fff!important;color:#000!important}.slide-container{height:auto!important;overflow:visible!important}.slide{position:relative!important;opacity:1!important;transform:none!important;pointer-events:all!important;page-break-after:always;padding:20px!important;padding-bottom:20px!important;background:#fff!important;color:#000!important;display:flex!important;min-height:auto!important}.slide.active,.slide:not(.active){opacity:1!important;transform:none!important;display:flex!important}.nav-bar,.toc-btn,.toc-panel,.progress-bar,.tm-logo-header{display:none!important}.card{border:1px solid #ddd;background:#f9f9f9}.table-wrap{border:1px solid #ccc}th{background:#f0e6c8;color:#0D2137}td{border-top:1px solid #ddd}.alert{border:1px solid #ccc;background:#f5f5f5}.alert-warn{border-right:3px solid var(--coral)}.alert-info{border-right:3px solid #E8A820}.alert-success{border-right:3px solid #1A7A5A}.gold,.reef-text,.coral-text{-webkit-print-color-adjust:exact;print-color-adjust:exact}.big-num{color:#0D2137!important}.section-num{color:#E8A820!important;opacity:.3!important}a{color:#0D2137;text-decoration:underline}.slide-cover,.slide-dark,.slide-ocean,.slide-reef,.slide-gold{background:#fff!important}}
+.slide::-webkit-scrollbar{width:5px}.slide::-webkit-scrollbar-track{background:rgba(255,255,255,.02)}.slide::-webkit-scrollbar-thumb{background:rgba(232,168,32,.35);border-radius:3px}.slide::-webkit-scrollbar-thumb:hover{background:rgba(232,168,32,.55)}
+.section-num{font-family:'Space Grotesk';font-size:64px;font-weight:700;color:var(--gold);opacity:.15;position:absolute;top:20px;left:40px}
+.big-num{font-family:'Space Grotesk';font-size:clamp(36px,6vw,72px);font-weight:700;color:var(--gold)}
+.stat-label{font-size:14px;opacity:.6;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;margin:20px 0;text-align:center}
+.stat-grid>div{padding:16px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);transition:all .3s ease}
+.stat-grid>div:hover{border-color:rgba(232,168,32,.2);transform:translateY(-2px)}
+.bar-chart{margin:16px 0}
+.bar-row{display:flex;align-items:center;gap:12px;margin:6px 0}
+.bar-label{font-size:13px;min-width:80px;text-align:left}
+.bar-wrap{flex:1;height:28px;background:rgba(255,255,255,.05);border-radius:14px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:14px;display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;font-family:'Space Grotesk';transition:width 1s ease}
+.bar-val{font-family:'Space Grotesk';font-size:13px;min-width:70px;text-align:left;font-weight:600}
+.vs-box{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;margin:16px 0}
+.vs-divider{display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:30px;color:var(--gold);font-weight:700;font-size:18px}
+.model-card{background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.1);border-radius:16px;padding:24px;transition:all .35s ease}
+.model-card:hover{border-color:var(--gold);box-shadow:0 8px 32px rgba(232,168,32,.12)}
+.model-card.ppa{border-color:rgba(26,122,90,.4)}.model-card.epc{border-color:rgba(100,150,255,.3)}
+.month-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.month-cell{background:rgba(255,255,255,.03);border-radius:8px;padding:10px;text-align:center;font-size:12px;border:1px solid rgba(255,255,255,.06);transition:all .25s ease}
+.month-cell:hover{border-color:rgba(232,168,32,.25);transform:translateY(-1px)}
+.month-cell .m-num{font-family:'Space Grotesk';font-weight:700;font-size:10px;color:var(--gold);opacity:.6}
+.month-cell .m-val{font-family:'Space Grotesk';font-weight:700;font-size:16px;margin-top:2px}
+.month-cell .m-label{font-size:10px;opacity:.5}
+.highlight{background:rgba(232,168,32,.1);border-color:var(--gold)!important}
+
+.slide-img{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:12px 0;border:1px solid rgba(232,168,32,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.slide-img-sm{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;border:1px solid rgba(255,255,255,.1)}
+.img-float{float:left;width:45%;max-height:240px;object-fit:cover;border-radius:12px;margin:0 20px 12px 0;border:1px solid rgba(232,168,32,.15)}
+.img-row{display:flex;gap:12px;margin:12px 0}.img-row img{flex:1;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+<div class="progress-bar" id="progress"></div>
+<button class="toc-btn" onclick="toggleTOC()">☰</button>
+<div class="toc-panel" id="tocPanel"><h3 style="color:var(--gold);margin-bottom:20px;">תוכן עניינים</h3><div id="tocList"></div></div>
+
+<div class="slide-container" id="slides">
+
+<!-- SLIDE 0: Cover -->
+<div class="slide slide-cover active" data-title="שער" style="background:linear-gradient(rgba(13,33,55,.5),rgba(10,61,92,.6)),url(visuals/bizplan-01-cover.png) center/cover">
+  <div style="margin-bottom:30px">
+    <div style="font-size:56px;margin-bottom:16px">☀️💰</div>
+    <h1>תוכנית עסקית<br><span class="gold">Ko Phangan Solar</span></h1>
+    <p class="subtitle">שנה ראשונה — שני מודלים עסקיים</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
+      <span class="tag tag-epc">EPC — מכירה ישירה</span>
+      <span class="tag tag-ppa">PPA/ESCO — הכנסה חוזרת</span>
+      <span class="tag tag-both">Hybrid — הכי חזק</span>
+    </div>
+  </div>
+  <p style="opacity:.4;font-size:13px">TM Energy — מרץ 2026</p>
+</div>
+
+<!-- SLIDE 1: Market Opportunity -->
+<div class="slide slide-ocean" data-title="הזדמנות שוק">
+  <h2>🎯 ההזדמנות — Koh Phangan</h2>
+  <p class="subtitle">שוק בתול עם ביקוש מוכח</p>
+
+  <div class="stat-grid">
+    <div><div class="big-num">฿5-7</div><div class="stat-label">kWh תעריף ממוצע<br>עסקי: עד ฿5+</div></div>
+    <div><div class="big-num">4.5</div><div class="stat-label">שעות שיא שמש/יום<br>כל השנה</div></div>
+    <div><div class="big-num">0</div><div class="stat-label">מתחרים רציניים<br>באי</div></div>
+    <div><div class="big-num">165+</div><div class="stat-label">לידים מזוהים<br>כבר במערכת</div></div>
+  </div>
+
+  <div class="two-col" style="margin-top:16px">
+    <div>
+      <h3>למה עכשיו?</h3>
+      <div class="card" style="margin:8px 0"><h3>רגולציה פושטה דרמטית</h3><p>אין היתר בנייה (11/2025), אין רישיון מפעל (12/2024). רק תיאום PEA.</p></div>
+      <div class="card" style="margin:8px 0"><h3>הפסקות חשמל תכופות</h3><p>האי סובל מהפסקות. סולאר + סוללות = pitch שמוכר את עצמו.</p></div>
+      <div class="card" style="margin:8px 0"><h3>מגמת eco-luxury</h3><p>רזורטים ווילות יוקרה רוצים "green". סולאר = שיווק + חיסכון.</p></div>
+    </div>
+    <div>
+      <h3>לקוחות מטרה (לפי עדיפות)</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>סגמנט</th><th>כמות באי</th><th>גודל מערכת</th><th>חשבון חשמל/חודש</th></tr>
+          <tr><td><strong>רזורטים גדולים</strong></td><td>10</td><td>50-120 kWp</td><td>฿600K-1.5M</td></tr>
+          <tr><td><strong>רזורטים בינוניים</strong></td><td>15</td><td>25-50 kWp</td><td>฿250K-600K</td></tr>
+          <tr><td><strong>בתי חולים + סופרים</strong></td><td>5</td><td>80-100 kWp</td><td>฿500K+</td></tr>
+          <tr><td><strong>וילות (ניהול)</strong></td><td>20+</td><td>5-15 kWp</td><td>฿30K-150K</td></tr>
+          <tr><td><strong>Wellness + Yoga</strong></td><td>10</td><td>20-40 kWp</td><td>฿100K-400K</td></tr>
+          <tr><td><strong>בנייה חדשה</strong></td><td>5-10/שנה</td><td>10-30 kWp</td><td>—</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Two Models -->
+<div class="slide slide-dark" data-title="שני מודלים">
+  <h2>🔄 שני מודלים עסקיים</h2>
+  <p class="subtitle">EPC (מכירה) vs PPA/ESCO (הכנסה חוזרת)</p>
+
+  <div class="vs-box">
+    <div class="model-card epc">
+      <h3 style="color:#6496FF;font-size:20px">⚡ EPC — מכירה ישירה</h3>
+      <p style="font-size:14px;opacity:.8;margin:8px 0">הלקוח קונה את המערכת. תשלום חד-פעמי.</p>
+      <div class="table-wrap" style="margin:12px 0">
+        <table>
+          <tr><td>הכנסה</td><td><strong>חד-פעמית</strong></td></tr>
+          <tr><td>מחיר ללקוח</td><td>฿30K/kWp (ללא סוללות)</td></tr>
+          <tr><td>מרווח גולמי</td><td>60%</td></tr>
+          <tr><td>רווח נקי/פרויקט</td><td>~฿800K (50kWp)</td></tr>
+          <tr><td>Cash flow</td><td>מיידי 💚</td></tr>
+          <tr><td>סיכון</td><td>נמוך</td></tr>
+          <tr><td>מכירה</td><td>ROI 3-5 שנים</td></tr>
+        </table>
+      </div>
+      <div class="alert alert-info" style="padding:10px 14px;font-size:12px">
+        <strong>הפיץ':</strong> "השקעה שמחזירה את עצמה ב-3-5 שנים ואז חשמל חינם 20+ שנה"
+      </div>
+    </div>
+
+    <div class="vs-divider">VS</div>
+
+    <div class="model-card ppa">
+      <h3 style="color:#2ED89A;font-size:20px">🔄 PPA/ESCO — הכנסה חוזרת</h3>
+      <p style="font-size:14px;opacity:.8;margin:8px 0">אתה בעל המערכת. הלקוח משלם על חשמל.</p>
+      <div class="table-wrap" style="margin:12px 0">
+        <table>
+          <tr><td>הכנסה</td><td><strong>חודשית, 15 שנים</strong></td></tr>
+          <tr><td>מחיר ללקוח</td><td>฿0 מראש!</td></tr>
+          <tr><td>תעריף PPA</td><td>฿4.50/kWh (הצמדה CPI/PEA ~3%/שנה)</td></tr>
+          <tr><td>רווח נקי/מערכת/חודש</td><td>~฿24,100</td></tr>
+          <tr><td>Cash flow</td><td>שלילי 12-18 חודשים ❌</td></tr>
+          <tr><td>סיכון</td><td>בינוני (הלוואה)</td></tr>
+          <tr><td>מכירה</td><td>"אפס השקעה, חיסכון מיום 1"</td></tr>
+        </table>
+      </div>
+      <div class="alert alert-success" style="padding:10px 14px;font-size:12px">
+        <strong>הפיץ':</strong> "תשלם פחות על חשמל — בלי לשלם שקל מראש"
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:12px">
+    <strong>ההמלצה: Hybrid!</strong> EPC לcash flow מיידי + PPA לבניית הכנסה חוזרת. התחל עם EPC, הוסף PPA כשיש מזומן.
+  </div>
+</div>
+
+<!-- SLIDE 3: EPC Financial Model -->
+<div class="slide slide-ocean" data-title="מודל EPC — מספרים">
+  <span class="section-num">EPC</span>
+  <h2>⚡ מודל EPC — המספרים</h2>
+  <p class="subtitle">מכירת מערכות סולאריות — שנה 1</p>
+
+  <div class="two-col">
+    <div>
+      <h3>פרויקט ממוצע</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פרמטר</th><th>ערך</th></tr>
+          <tr><td>גודל מערכת</td><td>50 kWp</td></tr>
+          <tr><td>מחיר ללקוח</td><td>฿1,500,000 (฿30K/kWp)</td></tr>
+          <tr><td>עלות ציוד (฿9,500/kWp)</td><td>฿475,000</td></tr>
+          <tr><td>עלות עבודה (฿2,500/kWp)</td><td>฿125,000</td></tr>
+          <tr><td><strong>עלות כוללת</strong></td><td><strong>฿600,000 (฿12K/kWp)</strong></td></tr>
+          <tr><td><strong>רווח גולמי</strong></td><td><strong class="reef-text">฿900,000 (60%)</strong></td></tr>
+          <tr><td>הוצאות קבועות/פרויקט</td><td>฿100,000</td></tr>
+          <tr><td><strong>רווח נקי/פרויקט</strong></td><td><strong class="reef-text">฿800,000</strong></td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:16px">מה הלקוח מקבל</h3>
+      <div class="alert alert-success" style="font-size:13px">
+        • מערכת 50 kWp = ~225 kWh/יום<br>
+        • חיסכון: ~฿28K/חודש בחשמל<br>
+        • ROI: 4.5 שנים<br>
+        • חשמל "חינם" 20+ שנה<br>
+        • ניכוי מס 50% (עסקי)<br>
+        • ערך נכס עולה 5-10%
+      </div>
+    </div>
+
+    <div>
+      <h3>תוכנית שנה 1 — EPC בלבד</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>רבעון</th><th>פרויקטים</th><th>הכנסה</th><th>רווח נקי</th></tr>
+          <tr><td>Q1 (הקמה)</td><td>0</td><td>฿0</td><td style="color:var(--coral)">-฿250K</td></tr>
+          <tr><td>Q2</td><td>2</td><td>฿3.0M</td><td class="reef-text">฿1.0M</td></tr>
+          <tr><td>Q3</td><td>3</td><td>฿4.5M</td><td class="reef-text">฿1.8M</td></tr>
+          <tr><td>Q4</td><td>4</td><td>฿6.0M</td><td class="reef-text">฿2.6M</td></tr>
+          <tr style="font-weight:700"><td><strong>שנה 1</strong></td><td><strong>9</strong></td><td><strong>฿13.5M</strong></td><td class="reef-text"><strong>฿5.15M</strong></td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:16px">הוצאות קבועות חודשיות</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><td>שכר (5 עובדים)</td><td>฿120,000</td></tr>
+          <tr><td>משרד + רכב</td><td>฿25,000</td></tr>
+          <tr><td>ביטוח</td><td>฿10,000</td></tr>
+          <tr><td>שיווק</td><td>฿30,000</td></tr>
+          <tr><td>רו"ח + משפטי</td><td>฿15,000</td></tr>
+          <tr><td><strong>סה"כ/חודש</strong></td><td><strong>฿200,000</strong></td></tr>
+          <tr><td><strong>סה"כ/שנה</strong></td><td><strong>฿2,400,000</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: PPA Financial Model -->
+<div class="slide slide-reef" data-title="מודל PPA — מספרים">
+  <span class="section-num">PPA</span>
+  <h2>🔄 מודל PPA/ESCO — המספרים</h2>
+  <p class="subtitle">בעלות על מערכות + מכירת חשמל</p>
+
+  <div class="two-col">
+    <div>
+      <h3>פרויקט PPA ממוצע</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פרמטר</th><th>ערך</th></tr>
+          <tr><td>גודל מערכת</td><td>50 kWp</td></tr>
+          <tr><td>עלות התקנה (שלך)</td><td>฿600,000 (฿12K/kWp)</td></tr>
+          <tr><td>מימון (70% הלוואה)</td><td>฿420,000</td></tr>
+          <tr><td>הון עצמי (30%)</td><td>฿180,000</td></tr>
+          <tr><td>ריבית הלוואה</td><td>5% (7 שנים)</td></tr>
+          <tr><td>החזר חודשי</td><td>฿5,288</td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:12px">הכנסה חודשית / מערכת</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><td>תפוקה</td><td>6,840 kWh/חודש</td></tr>
+          <tr><td>תעריף PPA</td><td>฿4.50/kWh (הצמדה CPI/PEA ~3%/שנה)</td></tr>
+          <tr><td><strong>הכנסה</strong></td><td><strong>฿30,780</strong></td></tr>
+          <tr><td>החזר הלוואה</td><td style="color:var(--coral)">-฿5,288</td></tr>
+          <tr><td>O&M</td><td style="color:var(--coral)">-฿875</td></tr>
+          <tr><td>ביטוח</td><td style="color:var(--coral)">-฿500</td></tr>
+          <tr><td><strong>רווח נקי/חודש</strong></td><td><strong class="reef-text">฿24,117</strong></td></tr>
+          <tr><td><strong>רווח נקי/שנה</strong></td><td><strong class="reef-text">฿289,404</strong></td></tr>
+        </table>
+      </div>
+
+      <div class="alert alert-info" style="font-size:12px;margin-top:8px">
+        <strong>אחרי פירעון:</strong> הכנסה ฿29,405/חודש/מערכת! חוזה 15 שנים עם הצמדה.
+      </div>
+    </div>
+
+    <div>
+      <h3>תוכנית שנה 1 — PPA</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>חודש</th><th>מערכות חדשות</th><th>סה"כ פעילות</th><th>הכנסה חודשית</th></tr>
+          <tr><td>1-3</td><td>0</td><td>0</td><td>฿0</td></tr>
+          <tr><td>4</td><td>1</td><td>1</td><td>฿25,992</td></tr>
+          <tr><td>5</td><td>1</td><td>2</td><td>฿51,984</td></tr>
+          <tr><td>6</td><td>0</td><td>2</td><td>฿51,984</td></tr>
+          <tr><td>7</td><td>1</td><td>3</td><td>฿77,976</td></tr>
+          <tr><td>8</td><td>1</td><td>4</td><td>฿103,968</td></tr>
+          <tr><td>9-10</td><td>1</td><td>5</td><td>฿129,960</td></tr>
+          <tr><td>11-12</td><td>1</td><td>6</td><td>฿155,952</td></tr>
+          <tr style="font-weight:700"><td colspan="2"><strong>סוף שנה 1</strong></td><td><strong>6 מערכות</strong></td><td><strong class="reef-text">฿155,952/חודש</strong></td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:12px">סה"כ PPA שנה 1</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><td>הכנסה מצטברת</td><td>฿753,000</td></tr>
+          <tr><td>החזרי הלוואות</td><td style="color:var(--coral)">-฿213,756</td></tr>
+          <tr><td>O&M + ביטוח</td><td style="color:var(--coral)">-฿61,425</td></tr>
+          <tr><td><strong>רווח נקי שנה 1</strong></td><td><strong class="reef-text">฿477,819</strong></td></tr>
+          <tr><td>השקעה עצמית (6×180K)</td><td>฿1,080,000</td></tr>
+          <tr><td><strong>MRR סוף שנה</strong></td><td><strong class="gold">฿155,952</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Hybrid Model -->
+<div class="slide slide-gold" data-title="Hybrid — המודל המנצח">
+  <span class="section-num">฿฿</span>
+  <h2>💎 Hybrid Model — הכי חזק</h2>
+  <p class="subtitle">EPC ל-cash flow + PPA להכנסה חוזרת</p>
+
+  <div class="two-col">
+    <div>
+      <h3>תוכנית Hybrid שנה 1</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th></th><th>EPC</th><th>PPA</th><th>סה"כ</th></tr>
+          <tr><td>פרויקטים</td><td>9</td><td>6</td><td><strong>15</strong></td></tr>
+          <tr><td>הכנסה חד-פעמית</td><td>฿13.5M</td><td>—</td><td>฿13.5M</td></tr>
+          <tr><td>הכנסה חוזרת/חודש</td><td>—</td><td>฿156K</td><td>฿156K</td></tr>
+          <tr><td>MRR סוף שנה</td><td>—</td><td>฿156K</td><td><strong class="gold">฿156K</strong></td></tr>
+          <tr><td>עלויות (כולל הקמה)</td><td>฿8.35M</td><td>฿1.36M</td><td>฿9.71M</td></tr>
+          <tr style="font-weight:700;font-size:15px"><td><strong>רווח נקי שנה 1</strong></td><td>฿5.15M</td><td>฿478K</td><td class="reef-text"><strong>฿5.63M</strong></td></tr>
+        </table>
+      </div>
+
+      <div class="alert alert-success" style="margin-top:12px">
+        <strong>שנה 2 ואילך:</strong><br>
+        • EPC: 15 פרויקטים × ฿1.5M → ฿22.5M הכנסה<br>
+        • PPA: 12 מערכות פעילות → ฿312K MRR<br>
+        • שנה 3: 20 PPA → ฿520K MRR = <strong>฿6.24M/שנה recurring</strong>
+      </div>
+    </div>
+
+    <div>
+      <h3>ציר זמן — חודש אחר חודש</h3>
+      <div class="month-grid">
+        <div class="month-cell"><div class="m-num">חודש 1-2</div><div class="m-val" style="color:var(--coral)">-฿250K</div><div class="m-label">הקמה</div></div>
+        <div class="month-cell"><div class="m-num">חודש 3</div><div class="m-val" style="color:var(--coral)">-฿50K</div><div class="m-label">מכירות</div></div>
+        <div class="month-cell"><div class="m-num">חודש 4</div><div class="m-val" style="color:#2ED89A">+฿800K</div><div class="m-label">EPC #1</div></div>
+        <div class="month-cell"><div class="m-num">חודש 5</div><div class="m-val" style="color:#2ED89A">+฿826K</div><div class="m-label">EPC #2 + PPA</div></div>
+        <div class="month-cell"><div class="m-num">חודש 6</div><div class="m-val" style="color:#2ED89A">+฿852K</div><div class="m-label">EPC #3</div></div>
+        <div class="month-cell"><div class="m-num">חודש 7</div><div class="m-val" style="color:#2ED89A">+฿878K</div><div class="m-label">EPC + PPA</div></div>
+        <div class="month-cell"><div class="m-num">חודש 8</div><div class="m-val" style="color:#2ED89A">+฿904K</div><div class="m-label">EPC #5</div></div>
+        <div class="month-cell"><div class="m-num">חודש 9</div><div class="m-val" style="color:#2ED89A">+฿930K</div><div class="m-label">EPC + PPA</div></div>
+        <div class="month-cell"><div class="m-num">חודש 10</div><div class="m-val" style="color:#2ED89A">+฿956K</div><div class="m-label">EPC #7</div></div>
+        <div class="month-cell"><div class="m-num">חודש 11</div><div class="m-val" style="color:#2ED89A">+฿982K</div><div class="m-label">EPC #8</div></div>
+        <div class="month-cell highlight"><div class="m-num">חודש 12</div><div class="m-val" style="color:var(--gold)">+฿1.0M</div><div class="m-label">EPC #9 + 6 PPA</div></div>
+        <div class="month-cell highlight"><div class="m-num">MRR</div><div class="m-val" style="color:var(--gold)">฿156K</div><div class="m-label">recurring!</div></div>
+      </div>
+
+      <h3 style="margin-top:12px">Break-even</h3>
+      <div class="alert alert-info">
+        <strong>חודש 4</strong> — כבר ברווח מצטבר (EPC #1 מכסה את עלויות ההקמה).<br>
+        <strong>חודש 12</strong> — ฿5.63M רווח נקי מצטבר + ฿156K MRR.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Financing -->
+<div class="slide slide-dark" data-title="אפשרויות מימון">
+  <span class="section-num">฿</span>
+  <h2>💰 אפשרויות מימון</h2>
+  <p class="subtitle">ללקוחות + לחברה</p>
+
+  <div class="two-col">
+    <div>
+      <h3>מימון ללקוחות (מכירת EPC)</h3>
+      <div class="card" style="margin:8px 0;border-color:#2ED89A">
+        <h3>Krungsri Solar Loan <span class="tag tag-ppa">הכי טוב</span></h3>
+        <p><strong>3.5% קבוע</strong> | מימון 100% | 3 מוצרי סולאר ייעודיים<br>Tel: 02-626-2626</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Bangkok Bank — Bualuang Green Solar</h3>
+        <p>ריבית תחרותית | יש סניף בקופנגן | green desk<br>Tel: 1333</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>SME D Bank — Green Productivity</h3>
+        <p><strong>3% קבוע 3 שנים</strong> (ממשלתי) | עד ฿30M | עד 12/2026<br>Tel: 1357</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>SCB — Solar Loan</h3>
+        <p>Tel: 077-489-841 (Koh Phangan branch)</p>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:12px;font-size:13px">
+        <strong>טקטיקה:</strong> בנה שותפות עם Krungsri. הגיע עם pre-approved financing ללקוח = מכירה קלה יותר. "אנחנו מטפלים בהכל — כולל המימון."
+      </div>
+    </div>
+
+    <div>
+      <h3>מימון לחברה (PPA)</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>SME D Bank — הכי טוב לPPA</h3>
+        <p>3% ל-3 שנים! מימון עד ฿30M. אידיאלי למימון מערכות PPA.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>EXIM Bank — ייבוא ציוד</h3>
+        <p>0.5% הנחה ירוקה. לייבוא ישיר של פאנלים ואינוורטרים.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>ENCON Fund (DEDE)</h3>
+        <p>קרן ממשלתית לאנרגיה חלופית. הלוואות בריבית נמוכה ל-ESCO.</p>
+      </div>
+
+      <h3 style="margin-top:16px">הטבות מס</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>הטבה</th><th>שווי</th></tr>
+          <tr><td>ניכוי 50% ללקוח (עסקי)</td><td>pitch מכירה!</td></tr>
+          <tr><td>ניכוי ฿200K ללקוח (מגורים)</td><td>pitch מכירה!</td></tr>
+          <tr><td>הטבות מס ממשלתיות (אם זמין)</td><td>฿7.78M+</td></tr>
+          <tr><td>0% מכס על פאנלים (ASEAN)</td><td>חיסכון 5-10%</td></tr>
+          <tr><td>VAT זיכוי תשומות</td><td>7% על כל ציוד</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Pricing -->
+<div class="slide slide-ocean" data-title="תמחור">
+  <h2>💲 אסטרטגיית תמחור</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>תמחור EPC</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>גודל מערכת</th><th>מחיר כולל</th><th>฿/kWp</th><th>רווח גולמי</th></tr>
+          <tr><td>5 kWp (וילה קטנה)</td><td>฿180,000</td><td>36,000</td><td>66%</td></tr>
+          <tr><td>10 kWp (וילה)</td><td>฿330,000</td><td>33,000</td><td>63%</td></tr>
+          <tr><td>30 kWp (עסק בינוני)</td><td>฿900,000</td><td>30,000</td><td>60%</td></tr>
+          <tr><td><strong>50 kWp (רזורט) ★</strong></td><td><strong>฿1,500,000</strong></td><td><strong>30,000</strong></td><td><strong>60%</strong></td></tr>
+          <tr><td>100 kWp (רזורט גדול)</td><td>฿2,900,000</td><td>29,000</td><td>59%</td></tr>
+        </table>
+      </div>
+      <p style="font-size:12px;opacity:.5;margin-top:6px">מחיר סטנדרטי: ฿30K/kWp (ללא סוללות). עלות: ฿12K/kWp (ציוד ฿9.5K + עבודה ฿2.5K). מרווח 60%.</p>
+
+      <h3 style="margin-top:16px">מה נכלל במחיר</h3>
+      <ul style="font-size:13px;line-height:2;opacity:.8;padding-right:20px">
+        <li>סקר אתר + תכנון מערכת</li>
+        <li>ציוד Tier-1 (Longi + Huawei)</li>
+        <li>חומרי הרכבה marine-grade</li>
+        <li>התקנה מלאה + חיבור PEA</li>
+        <li>ניטור אונליין 24/7</li>
+        <li>אחריות 10 שנים (פאנלים 25)</li>
+        <li>Single-line diagram + תיעוד</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>תמחור PPA</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>תעריף PEA</th><th>תעריף PPA שלנו</th><th>חיסכון ללקוח</th></tr>
+          <tr><td>฿6-8/kWh (ממוצע)</td><td>฿4.50/kWh</td><td><strong class="reef-text">25-35%</strong></td></tr>
+          <tr><td>฿5.00/kWh (עסקי נמוך)</td><td>฿4.50/kWh</td><td><strong class="reef-text">10%</strong></td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:16px">חבילות O&M (הכנסה נוספת)</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>חבילה</th><th>מחיר/חודש</th><th>כולל</th></tr>
+          <tr><td>Basic</td><td>฿1,500</td><td>ניטור + ביקור שנתי</td></tr>
+          <tr><td>Standard</td><td>฿3,000</td><td>+ ניקוי רבעוני + תיקונים</td></tr>
+          <tr><td>Premium</td><td>฿5,000</td><td>+ SLA 24h + חלקי חילוף</td></tr>
+        </table>
+      </div>
+      <p style="font-size:12px;opacity:.5;margin-top:6px">9 לקוחות EPC × Standard = ฿27K MRR נוסף!</p>
+
+      <h3 style="margin-top:16px">הוסף: סוללות</h3>
+      <div class="alert alert-info" style="font-size:13px">
+        <strong>Upsell:</strong> סוללות Huawei LUNA — ฿150-300K לכל מערכת. מרווח 50%. האי סובל מהפסקות = ביקוש אמיתי. O&M recurring נוסף.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Marketing & Sales -->
+<div class="slide slide-dark" data-title="שיווק + מכירות">
+  <h2>📣 שיווק + מכירות — שנה 1</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>אסטרטגיה: Direct + Partners</h3>
+      <div class="card" style="margin:8px 0">
+        <h3>שלב 1: Lighthouse (חודשים 1-3)</h3>
+        <p>3-5 פרויקטים ראוותניים: Anantara, Santhiya, First Western Hospital. מחיר עלות = case study + reference.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>שלב 2: Referral Machine (חודשים 3-6)</h3>
+        <p>שותפויות עם חברות נדל"ן + property managers. עמלה 5-10% על כל הפנייה.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>שלב 3: Scale (חודשים 6-12)</h3>
+        <p>FB/IG ads, Google SEO, WhatsApp campaigns. תקציב: ฿30K/חודש.</p>
+      </div>
+
+      <h3 style="margin-top:16px">ערוצי מכירה</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>ערוץ</th><th>עלות/ליד</th><th>conversion</th></tr>
+          <tr><td>שותפויות נדל"ן</td><td>฿0 (עמלה)</td><td>30%+</td></tr>
+          <tr><td>הפניות לקוחות</td><td>฿0</td><td>40%+</td></tr>
+          <tr><td>פגישות ישירות</td><td>฿500</td><td>20%</td></tr>
+          <tr><td>Facebook/IG Ads</td><td>฿800</td><td>5%</td></tr>
+          <tr><td>Google Ads</td><td>฿1,200</td><td>8%</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <h3>Hook #1: הפסקות חשמל</h3>
+      <div class="alert alert-warn">
+        <strong>"כמה הפסדת בהפסקת חשמל האחרונה?"</strong><br>
+        רזורטים: מאות אלפי בהט בביטולי הזמנות + מזון שנזרק. סולאר + סוללות = ביטוח + חיסכון.
+      </div>
+
+      <h3 style="margin-top:16px">Hook #2: ROI</h3>
+      <div class="alert alert-success">
+        <strong>"ההשקעה מחזירה את עצמה ב-3-5 שנים. אחרי זה — חשמל חינם 20 שנה."</strong><br>
+        עם ניכוי מס 50%: ROI ב-2.5-4 שנים!
+      </div>
+
+      <h3 style="margin-top:16px">Hook #3: אפס השקעה (PPA)</h3>
+      <div class="alert alert-info">
+        <strong>"תשלם פחות על חשמל. אפס השקעה מראש. אנחנו מטפלים בהכל."</strong><br>
+        Perfect לרזורטים שלא רוצים CAPEX.
+      </div>
+
+      <h3 style="margin-top:16px">תקציב שיווק שנה 1</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><td>Q1: Branding + אתר</td><td>฿50K</td></tr>
+          <tr><td>Q2-Q4: Ads + Events</td><td>฿270K</td></tr>
+          <tr><td>שותפויות (עמלות)</td><td>฿50K</td></tr>
+          <tr><td><strong>סה"כ</strong></td><td><strong>฿370K</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Risk & Mitigation -->
+<div class="slide slide-ocean" data-title="סיכונים + הקטנה">
+  <h2>⚠️ סיכונים + הקטנה</h2>
+
+  <div class="table-wrap" style="margin-top:20px">
+    <table style="font-size:14px">
+      <tr><th>סיכון</th><th>חומרה</th><th>הסתברות</th><th>הקטנה</th></tr>
+      <tr><td><strong>מכירות איטיות</strong></td><td style="color:var(--coral)">גבוה</td><td>בינונית</td><td>התחל עם lighthouse projects. PPA מוריד חסם. שותפויות נדל"ן.</td></tr>
+      <tr><td><strong>לוגיסטיקה לאי</strong></td><td style="color:var(--gold)">בינוני</td><td>גבוהה</td><td>מחסן בסוראט + הזמנות מראש. ביטוח מטען. ספק backup.</td></tr>
+      <tr><td><strong>תחרות חדשה</strong></td><td style="color:var(--gold)">בינוני</td><td>נמוכה</td><td>בנה brand + base מהר. חוזי O&M ארוכי טווח. ESCO lock-in.</td></tr>
+      <tr><td><strong>שינוי רגולציה</strong></td><td style="color:#2ED89A">נמוך</td><td>נמוכה</td><td>המגמה חיובית (פישוט). חוזי PPA 15 שנים + הצמדה מגנים.</td></tr>
+      <tr><td><strong>קורוזיה/מזג אוויר</strong></td><td style="color:var(--gold)">בינוני</td><td>גבוהה</td><td>חומרי marine-grade בלבד. ביטוח CAR. O&M תכוף.</td></tr>
+      <tr><td><strong>כוח אדם</strong></td><td style="color:var(--gold)">בינוני</td><td>בינונית</td><td>גייס מסוראט. הכשר מקומיים. team lead מנוסה.</td></tr>
+      <tr><td><strong>PEA דחייה/עיכוב</strong></td><td style="color:#2ED89A">נמוך</td><td>נמוכה</td><td>בנה קשר אישי. תיעוד מושלם. סבלנות + follow up.</td></tr>
+    </table>
+  </div>
+
+  <div class="alert alert-success" style="margin-top:20px">
+    <strong>Moat (חפיר):</strong><br>
+    • <strong>First mover</strong> — אין מתחרה רציני באי<br>
+    • <strong>Logistics</strong> — פרי + island ops = חסם כניסה למתחרים מהיבשה<br>
+    • <strong>PPA lock-in</strong> — חוזים 15 שנים = recurring revenue שלא ניתן לגניבה<br>
+    • <strong>O&M relationships</strong> — אחרי ההתקנה, אתה ה"רופא" של המערכת<br>
+    • <strong>Local reputation</strong> — אי קטן = word of mouth הכי חזק
+  </div>
+</div>
+
+<!-- SLIDE 10: Year 1 Summary -->
+<div class="slide slide-gold" data-title="סיכום שנה 1">
+  <h2>🏆 סיכום שנה 1 — Hybrid Model</h2>
+
+  <div class="stat-grid" style="margin:24px 0">
+    <div><div class="big-num">15</div><div class="stat-label">פרויקטים<br>(9 EPC + 6 PPA)</div></div>
+    <div><div class="big-num">฿14.25M</div><div class="stat-label">הכנסה כוללת<br>~$407K USD</div></div>
+    <div><div class="big-num">฿5.63M</div><div class="stat-label">רווח נקי<br>~$161K USD</div></div>
+    <div><div class="big-num">฿156K</div><div class="stat-label">MRR סוף שנה<br>~$4.5K USD/month</div></div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>השקעה נדרשת</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><td>הון רשום (נשאר בחברה)</td><td>฿2,000,000</td></tr>
+          <tr><td>הקמה + ציוד (CapEx)</td><td>฿942,000</td></tr>
+          <tr><td>הון חוזר 3 חודשים</td><td>฿600,000</td></tr>
+          <tr><td>הון עצמי ל-6 PPA (30%)</td><td>฿1,080,000</td></tr>
+          <tr style="font-weight:700"><td><strong>סה"כ נדרש</strong></td><td><strong>฿4,622,000</strong></td></tr>
+          <tr><td></td><td style="opacity:.5">~$132K USD</td></tr>
+        </table>
+      </div>
+
+      <h3 style="margin-top:16px">ROI על ההשקעה</h3>
+      <div class="alert alert-success">
+        <strong>רווח שנה 1:</strong> ฿5.63M<br>
+        <strong>ROI:</strong> 122% (על ฿4.62M)<br>
+        <strong>Break-even:</strong> חודש 4<br>
+        <strong>+ Asset:</strong> 6 מערכות PPA בשווי ฿6.3M
+      </div>
+    </div>
+
+    <div>
+      <h3>תחזית 3 שנים</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th></th><th>שנה 1</th><th>שנה 2</th><th>שנה 3</th></tr>
+          <tr><td>EPC פרויקטים</td><td>9</td><td>15</td><td>20</td></tr>
+          <tr><td>PPA מערכות (מצטבר)</td><td>6</td><td>12</td><td>20</td></tr>
+          <tr><td>הכנסה EPC</td><td>฿13.5M</td><td>฿22.5M</td><td>฿30M</td></tr>
+          <tr><td>MRR</td><td>฿156K</td><td>฿312K</td><td>฿520K</td></tr>
+          <tr><td>ARR (recurring)</td><td>฿1.87M</td><td>฿3.74M</td><td>฿6.24M</td></tr>
+          <tr style="font-weight:700;font-size:14px"><td><strong>רווח נקי</strong></td><td class="reef-text">฿5.63M</td><td class="reef-text">฿10.5M</td><td class="reef-text">฿17M</td></tr>
+          <tr><td>MRR (USD)</td><td>$4.5K</td><td>$8.9K</td><td><strong class="gold">$14.9K</strong></td></tr>
+        </table>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:12px">
+        <strong>שנה 3 = $14.9K MRR מ-PPA בלבד</strong><br>
+        + הכנסות EPC ฿30M + O&M ฿27K/חודש<br>
+        = <strong>בסיס להכנסה חוזרת משמעותית</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Next Steps -->
+<div class="slide slide-dark" data-title="צעדים הבאים">
+  <h2>🚀 צעדים הבאים</h2>
+
+  <div class="three-col">
+    <div>
+      <h3 style="color:#2ED89A">שבוע 1-2</h3>
+      <div class="card" style="margin:8px 0"><h3>עו"ד + רו"ח</h3><p>התקשרות עם Belaws/Konrad Legal. רישום חברה.</p></div>
+      <div class="card" style="margin:8px 0"><h3>ייעוץ הטבות מס</h3><p>בדיקת זכאות להטבות מס ממשלתיות.</p></div>
+      <div class="card" style="margin:8px 0"><h3>PEA פגישת היכרות</h3><p>077-377-084. בנה קשר אישי. שאל על קיבולת רשת.</p></div>
+    </div>
+    <div>
+      <h3 style="color:var(--gold)">חודש 1-2</h3>
+      <div class="card" style="margin:8px 0"><h3>רישום חברה</h3><p>DBD + בנק + מס + ביטוח לאומי.</p></div>
+      <div class="card" style="margin:8px 0"><h3>Lighthouse outreach</h3><p>Anantara, Santhiya, First Western Hospital. הצעות מחיר.</p></div>
+      <div class="card" style="margin:8px 0"><h3>ספק ציוד</h3><p>הסכם עם BayWa או ספק מקומי. הזמנה ראשונה.</p></div>
+    </div>
+    <div>
+      <h3 style="color:#6496FF">חודש 2-3</h3>
+      <div class="card" style="margin:8px 0"><h3>שותפות נדל"ן</h3><p>פגישות עם Azura, Alma Terra, KP Real Estate.</p></div>
+      <div class="card" style="margin:8px 0"><h3>Krungsri שותפות</h3><p>הסכם referral עם הבנק. Pre-approved financing.</p></div>
+      <div class="card" style="margin:8px 0"><h3>פרויקט ראשון!</h3><p>סגירה + הזמנת ציוד + התקנה.</p></div>
+    </div>
+  </div>
+
+  <div class="alert alert-success" style="margin-top:24px;text-align:center;font-size:16px">
+    <strong>המטרה:</strong> ฿5.63M רווח נקי + ฿156K MRR בסוף שנה 1<br>
+    <strong>השקעה:</strong> ฿4.62M (~$132K)<br>
+    <strong>ROI:</strong> 122% שנה 1 | 227% שנה 2 | 368% שנה 3
+  </div>
+</div>
+
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">→ הקודם</button>
+  <span class="slide-counter" id="counter">1 / 12</span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">הבא ←</button>
+</div>
+
+<script>
+let current=0;const slides=document.querySelectorAll('.slide'),total=slides.length;
+function navigate(d){const p=current;current=Math.max(0,Math.min(total-1,current+d));if(p===current)return;slides[p].classList.remove('active');slides[p].classList.add('exit');setTimeout(()=>slides[p].classList.remove('exit'),600);slides[current].classList.add('active');updateUI()}
+function goTo(i){slides[current].classList.remove('active');current=i;slides[current].classList.add('active');updateUI();toggleTOC()}
+function updateUI(){document.getElementById('counter').textContent=`${current+1} / ${total}`;document.getElementById('prevBtn').disabled=current===0;document.getElementById('nextBtn').disabled=current===total-1;document.getElementById('progress').style.width=`${((current+1)/total)*100}%`;document.querySelectorAll('.toc-item').forEach((e,i)=>e.classList.toggle('active',i===current))}
+function toggleTOC(){document.getElementById('tocPanel').classList.toggle('open')}
+function toggleCheck(e){const li=e.target.closest('li');if(li)li.classList.toggle('done')}
+const tocList=document.getElementById('tocList');
+slides.forEach((s,i)=>{const t=s.dataset.title||`Slide ${i+1}`;const d=document.createElement('div');d.className='toc-item'+(i===0?' active':'');d.innerHTML=`<span class="toc-num">${i+1}</span>${t}`;d.onclick=()=>goTo(i);tocList.appendChild(d)});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight')navigate(e.key==='ArrowLeft'?1:-1);if(e.key==='Escape')document.getElementById('tocPanel').classList.remove('open')});
+let ts=0;document.addEventListener('touchstart',e=>ts=e.touches[0].clientX);document.addEventListener('touchend',e=>{const d=ts-e.changedTouches[0].clientX;if(Math.abs(d)>60)navigate(d>0?1:-1)});
+updateUI();
+</script>
+
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "תוכן עניינים": {en: "Table of Contents", th: "สารบัญ"},
+  "תוכנית עסקית": {en: "Business Plan", th: "แผนธุรกิจ"},
+  "שנה ראשונה — שני מודלים עסקיים": {en: "Year One — Two Business Models", th: "ปีแรก — สองรูปแบบธุรกิจ"},
+  "EPC — מכירה ישירה": {en: "EPC — Direct Sale", th: "EPC — ขายตรง"},
+  "PPA/ESCO — הכנסה חוזרת": {en: "PPA/ESCO — Recurring Revenue", th: "PPA/ESCO — รายได้ประจำ"},
+  "Hybrid — הכי חזק": {en: "Hybrid — The Strongest", th: "Hybrid — แข็งแกร่งที่สุด"},
+  "TM Energy — מרץ 2026": {en: "TM Energy — March 2026", th: "TM Energy — มีนาคม 2026"},
+  "ההזדמנות — Koh Phangan": {en: "The Opportunity — Koh Phangan", th: "โอกาสทางธุรกิจ — เกาะพะงัน"},
+  "שוק בתול עם ביקוש מוכח": {en: "Virgin market with proven demand", th: "ตลาดที่ยังไม่มีใครบุก พร้อมความต้องการที่พิสูจน์แล้ว"},
+  "kWh תעריף ממוצע": {en: "average kWh rate", th: "อัตราค่าไฟเฉลี่ย/หน่วย"},
+  "עסקי: עד ฿5+": {en: "Commercial: up to ฿5+", th: "เชิงพาณิชย์: สูงถึง ฿5+"},
+  "שעות שיא שמש/יום": {en: "peak sun hours/day", th: "ชั่วโมงแสงแดดจัด/วัน"},
+  "כל השנה": {en: "year-round", th: "ตลอดทั้งปี"},
+  "מתחרים רציניים": {en: "serious competitors", th: "คู่แข่งที่จริงจัง"},
+  "באי": {en: "on the island", th: "บนเกาะ"},
+  "לידים מזוהים": {en: "identified leads", th: "ลูกค้าเป้าหมายที่ระบุแล้ว"},
+  "כבר במערכת": {en: "already in the system", th: "อยู่ในระบบแล้ว"},
+  "למה עכשיו?": {en: "Why Now?", th: "ทำไมต้องตอนนี้?"},
+  "רגולציה פושטה דרמטית": {en: "Regulation Dramatically Simplified", th: "กฎระเบียบถูกปรับให้ง่ายขึ้นอย่างมาก"},
+  "אין היתר בנייה (11/2025), אין רישיון מפעל (12/2024). רק תיאום PEA.": {en: "No building permit (11/2025), no factory license (12/2024). Only PEA coordination required.", th: "ไม่ต้องขออนุญาตก่อสร้าง (11/2025) ไม่ต้องมีใบอนุญาตโรงงาน (12/2024) ต้องการเพียงการประสานงานกับ PEA"},
+  "הפסקות חשמל תכופות": {en: "Frequent Power Outages", th: "ไฟฟ้าดับบ่อยครั้ง"},
+  "האי סובל מהפסקות. סולאר + סוללות = pitch שמוכר את עצמו.": {en: "The island suffers from outages. Solar + batteries = a pitch that sells itself.", th: "เกาะนี้ประสบปัญหาไฟดับบ่อย โซลาร์ + แบตเตอรี่ = สินค้าที่ขายตัวเอง"},
+  "מגמת eco-luxury": {en: "Eco-Luxury Trend", th: "แนวโน้ม eco-luxury"},
+  "רזורטים ווילות יוקרה רוצים \"green\". סולאר = שיווק + חיסכון.": {en: "Resorts and luxury villas want to be \"green\". Solar = marketing + savings.", th: "รีสอร์ตและวิลล่าหรูต้องการความเป็น \"green\" โซลาร์ = การตลาด + การประหยัด"},
+  "לקוחות מטרה (לפי עדיפות)": {en: "Target Clients (by priority)", th: "ลูกค้าเป้าหมาย (ตามลำดับความสำคัญ)"},
+  "סגמנט": {en: "Segment", th: "กลุ่มลูกค้า"},
+  "כמות באי": {en: "Count on Island", th: "จำนวนบนเกาะ"},
+  "גודל מערכת": {en: "System Size", th: "ขนาดระบบ"},
+  "חשבון חשמל/חודש": {en: "Electricity Bill/Month", th: "ค่าไฟ/เดือน"},
+  "רזורטים גדולים": {en: "Large Resorts", th: "รีสอร์ตขนาดใหญ่"},
+  "רזורטים בינוניים": {en: "Medium Resorts", th: "รีสอร์ตขนาดกลาง"},
+  "בתי חולים + סופרים": {en: "Hospitals + Supermarkets", th: "โรงพยาบาล + ซูเปอร์มาร์เก็ต"},
+  "וילות (ניהול)": {en: "Villas (managed)", th: "วิลล่า (บริหารจัดการ)"},
+  "בנייה חדשה": {en: "New Construction", th: "การก่อสร้างใหม่"},
+  "שני מודלים עסקיים": {en: "Two Business Models", th: "สองรูปแบบธุรกิจ"},
+  "EPC (מכירה) vs PPA/ESCO (הכנסה חוזרת)": {en: "EPC (Sale) vs PPA/ESCO (Recurring Revenue)", th: "EPC (ขาย) เทียบกับ PPA/ESCO (รายได้ประจำ)"},
+  "EPC — מכירה ישירה": {en: "EPC — Direct Sale", th: "EPC — ขายตรง"},
+  "הלקוח קונה את המערכת. תשלום חד-פעמי.": {en: "The client buys the system. One-time payment.", th: "ลูกค้าซื้อระบบ ชำระครั้งเดียว"},
+  "הכנסה": {en: "Revenue", th: "รายได้"},
+  "חד-פעמית": {en: "One-time", th: "ครั้งเดียว"},
+  "מחיר ללקוח": {en: "Client Price", th: "ราคาสำหรับลูกค้า"},
+  "מרווח גולמי": {en: "Gross Margin", th: "อัตรากำไรขั้นต้น"},
+  "רווח נקי/פרויקט": {en: "Net Profit/Project", th: "กำไรสุทธิ/โครงการ"},
+  "סיכון": {en: "Risk", th: "ความเสี่ยง"},
+  "נמוך": {en: "Low", th: "ต่ำ"},
+  "מכירה": {en: "Sales Pitch", th: "จุดขาย"},
+  "הפיץ':": {en: "The Pitch:", th: "สคริปต์ขาย:"},
+  "\"השקעה שמחזירה את עצמה ב-3-5 שנים ואז חשמל חינם 20+ שנה\"": {en: "\"An investment that pays for itself in 3-5 years, then free electricity for 20+ years\"", th: "\"การลงทุนที่คืนทุนใน 3-5 ปี จากนั้นได้ไฟฟ้าฟรีอีกกว่า 20 ปี\""},
+  "PPA/ESCO — הכנסה חוזרת": {en: "PPA/ESCO — Recurring Revenue", th: "PPA/ESCO — รายได้ประจำ"},
+  "אתה בעל המערכת. הלקוח משלם על חשמל.": {en: "You own the system. The client pays for electricity.", th: "คุณเป็นเจ้าของระบบ ลูกค้าจ่ายค่าไฟฟ้า"},
+  "חודשית, 15 שנים": {en: "Monthly, 15 years", th: "รายเดือน 15 ปี"},
+  "฿0 מראש!": {en: "฿0 upfront!", th: "฿0 ล่วงหน้า!"},
+  "תעריף PPA": {en: "PPA Rate", th: "อัตรา PPA"},
+  "הצמדה CPI/PEA ~3%/שנה": {en: "CPI/PEA indexed ~3%/year", th: "ปรับตาม CPI/PEA ~3%/ปี"},
+  "רווח נקי/מערכת/חודש": {en: "Net Profit/System/Month", th: "กำไรสุทธิ/ระบบ/เดือน"},
+  "שלילי 12-18 חודשים ❌": {en: "Negative 12-18 months ❌", th: "ติดลบ 12-18 เดือน ❌"},
+  "בינוני (הלוואה)": {en: "Medium (loan)", th: "ปานกลาง (สินเชื่อ)"},
+  "\"אפס השקעה, חיסכון מיום 1\"": {en: "\"Zero investment, savings from day 1\"", th: "\"ไม่มีการลงทุน ประหยัดตั้งแต่วันแรก\""},
+  "\"תשלם פחות על חשמל — בלי לשלם שקל מראש\"": {en: "\"Pay less for electricity — without paying anything upfront\"", th: "\"จ่ายค่าไฟน้อยลง — โดยไม่ต้องจ่ายล่วงหน้าเลย\""},
+  "ההמלצה: Hybrid!": {en: "The Recommendation: Hybrid!", th: "คำแนะนำ: Hybrid!"},
+  "EPC לcash flow מיידי + PPA לבניית הכנסה חוזרת. התחל עם EPC, הוסף PPA כשיש מזומן.": {en: "EPC for immediate cash flow + PPA to build recurring revenue. Start with EPC, add PPA when you have cash.", th: "EPC เพื่อกระแสเงินสดทันที + PPA เพื่อสร้างรายได้ประจำ เริ่มด้วย EPC เพิ่ม PPA เมื่อมีเงินสด"},
+  "מודל EPC — המספרים": {en: "EPC Model — The Numbers", th: "โมเดล EPC — ตัวเลข"},
+  "מכירת מערכות סולאריות — שנה 1": {en: "Solar System Sales — Year 1", th: "การขายระบบโซลาร์ — ปีที่ 1"},
+  "פרויקט ממוצע": {en: "Average Project", th: "โครงการเฉลี่ย"},
+  "פרמטר": {en: "Parameter", th: "พารามิเตอร์"},
+  "ערך": {en: "Value", th: "มูลค่า"},
+  "גודל מערכת": {en: "System Size", th: "ขนาดระบบ"},
+  "עלות ציוד (฿9,500/kWp)": {en: "Equipment Cost (฿9,500/kWp)", th: "ต้นทุนอุปกรณ์ (฿9,500/kWp)"},
+  "עלות עבודה (฿2,500/kWp)": {en: "Labour Cost (฿2,500/kWp)", th: "ต้นทุนแรงงาน (฿2,500/kWp)"},
+  "עלות כוללת": {en: "Total Cost", th: "ต้นทุนรวม"},
+  "רווח גולמי": {en: "Gross Profit", th: "กำไรขั้นต้น"},
+  "הוצאות קבועות/פרויקט": {en: "Fixed Expenses/Project", th: "ค่าใช้จ่ายคงที่/โครงการ"},
+  "רווח נקי/פרויקט": {en: "Net Profit/Project", th: "กำไรสุทธิ/โครงการ"},
+  "מה הלקוח מקבל": {en: "What the Client Gets", th: "สิ่งที่ลูกค้าได้รับ"},
+  "מערכת 50 kWp = ~225 kWh/יום": {en: "50 kWp system = ~225 kWh/day", th: "ระบบ 50 kWp = ~225 kWh/วัน"},
+  "חיסכון: ~฿28K/חודש בחשמל": {en: "Savings: ~฿28K/month on electricity", th: "ประหยัด: ~฿28K/เดือนในค่าไฟ"},
+  "ROI: 4.5 שנים": {en: "ROI: 4.5 years", th: "ROI: 4.5 ปี"},
+  "חשמל \"חינם\" 20+ שנה": {en: "\"Free\" electricity for 20+ years", th: "ไฟฟ้า \"ฟรี\" นานกว่า 20 ปี"},
+  "ניכוי מס 50% (עסקי)": {en: "50% tax deduction (business)", th: "หักลดหย่อนภาษี 50% (ธุรกิจ)"},
+  "ערך נכס עולה 5-10%": {en: "Property value increases 5-10%", th: "มูลค่าทรัพย์สินเพิ่มขึ้น 5-10%"},
+  "תוכנית שנה 1 — EPC בלבד": {en: "Year 1 Plan — EPC Only", th: "แผนปีที่ 1 — EPC เท่านั้น"},
+  "רבעון": {en: "Quarter", th: "ไตรมาส"},
+  "פרויקטים": {en: "Projects", th: "โครงการ"},
+  "הכנסה": {en: "Revenue", th: "รายได้"},
+  "רווח נקי": {en: "Net Profit", th: "กำไรสุทธิ"},
+  "Q1 (הקמה)": {en: "Q1 (Setup)", th: "Q1 (ตั้งตัว)"},
+  "שנה 1": {en: "Year 1", th: "ปีที่ 1"},
+  "שנה 2": {en: "Year 2", th: "ปีที่ 2"},
+  "שנה 3": {en: "Year 3", th: "ปีที่ 3"},
+  "הוצאות קבועות חודשיות": {en: "Monthly Fixed Expenses", th: "ค่าใช้จ่ายคงที่รายเดือน"},
+  "שכר (5 עובדים)": {en: "Salaries (5 employees)", th: "เงินเดือน (5 พนักงาน)"},
+  "משרד + רכב": {en: "Office + Vehicle", th: "สำนักงาน + ยานพาหนะ"},
+  "ביטוח": {en: "Insurance", th: "ประกันภัย"},
+  "שיווק": {en: "Marketing", th: "การตลาด"},
+  "רו\"ח + משפטי": {en: "Accountant + Legal", th: "บัญชี + กฎหมาย"},
+  "סה\"כ/חודש": {en: "Total/Month", th: "รวม/เดือน"},
+  "סה\"כ/שנה": {en: "Total/Year", th: "รวม/ปี"},
+  "מודל PPA/ESCO — המספרים": {en: "PPA/ESCO Model — The Numbers", th: "โมเดล PPA/ESCO — ตัวเลข"},
+  "בעלות על מערכות + מכירת חשמל": {en: "System Ownership + Electricity Sales", th: "เป็นเจ้าของระบบ + ขายไฟฟ้า"},
+  "פרויקט PPA ממוצע": {en: "Average PPA Project", th: "โครงการ PPA เฉลี่ย"},
+  "עלות התקנה (שלך)": {en: "Installation Cost (yours)", th: "ต้นทุนการติดตั้ง (ของคุณ)"},
+  "מימון (70% הלוואה)": {en: "Financing (70% loan)", th: "การจัดหาเงินทุน (กู้ 70%)"},
+  "הון עצמי (30%)": {en: "Own Capital (30%)", th: "ทุนของตัวเอง (30%)"},
+  "ריבית הלוואה": {en: "Loan Interest", th: "ดอกเบี้ยสินเชื่อ"},
+  "החזר חודשי": {en: "Monthly Repayment", th: "การผ่อนชำระรายเดือน"},
+  "הכנסה חודשית / מערכת": {en: "Monthly Revenue / System", th: "รายได้รายเดือน / ระบบ"},
+  "תפוקה": {en: "Output", th: "ผลผลิต"},
+  "החזר הלוואה": {en: "Loan Repayment", th: "ชำระคืนสินเชื่อ"},
+  "רווח נקי/חודש": {en: "Net Profit/Month", th: "กำไรสุทธิ/เดือน"},
+  "רווח נקי/שנה": {en: "Net Profit/Year", th: "กำไรสุทธิ/ปี"},
+  "אחרי פירעון:": {en: "After full repayment:", th: "หลังชำระหมด:"},
+  "הכנסה ฿29,405/חודש/מערכת! חוזה 15 שנים עם הצמדה.": {en: "Revenue ฿29,405/month/system! 15-year contract with indexation.", th: "รายได้ ฿29,405/เดือน/ระบบ! สัญญา 15 ปีพร้อมการปรับอัตรา"},
+  "תוכנית שנה 1 — PPA": {en: "Year 1 Plan — PPA", th: "แผนปีที่ 1 — PPA"},
+  "חודש": {en: "Month", th: "เดือน"},
+  "מערכות חדשות": {en: "New Systems", th: "ระบบใหม่"},
+  "סה\"כ פעילות": {en: "Total Active", th: "ใช้งานรวม"},
+  "הכנסה חודשית": {en: "Monthly Revenue", th: "รายได้รายเดือน"},
+  "סוף שנה 1": {en: "End of Year 1", th: "สิ้นปีที่ 1"},
+  "6 מערכות": {en: "6 systems", th: "6 ระบบ"},
+  "סה\"כ PPA שנה 1": {en: "Total PPA Year 1", th: "รวม PPA ปีที่ 1"},
+  "הכנסה מצטברת": {en: "Cumulative Revenue", th: "รายได้สะสม"},
+  "החזרי הלוואות": {en: "Loan Repayments", th: "การชำระคืนสินเชื่อ"},
+  "O&M + ביטוח": {en: "O&M + Insurance", th: "O&M + ประกันภัย"},
+  "רווח נקי שנה 1": {en: "Net Profit Year 1", th: "กำไรสุทธิปีที่ 1"},
+  "השקעה עצמית (6×180K)": {en: "Own Investment (6×180K)", th: "การลงทุนของตัวเอง (6×180K)"},
+  "MRR סוף שנה": {en: "MRR End of Year", th: "MRR สิ้นปี"},
+  "Hybrid Model — הכי חזק": {en: "Hybrid Model — The Strongest", th: "Hybrid Model — แข็งแกร่งที่สุด"},
+  "EPC ל-cash flow + PPA להכנסה חוזרת": {en: "EPC for cash flow + PPA for recurring revenue", th: "EPC เพื่อกระแสเงินสด + PPA เพื่อรายได้ประจำ"},
+  "תוכנית Hybrid שנה 1": {en: "Hybrid Plan Year 1", th: "แผน Hybrid ปีที่ 1"},
+  "סה\"כ": {en: "Total", th: "รวม"},
+  "הכנסה חד-פעמית": {en: "One-time Revenue", th: "รายได้ครั้งเดียว"},
+  "הכנסה חוזרת/חודש": {en: "Recurring Revenue/Month", th: "รายได้ประจำ/เดือน"},
+  "MRR סוף שנה": {en: "MRR End of Year", th: "MRR สิ้นปี"},
+  "עלויות (כולל הקמה)": {en: "Costs (incl. setup)", th: "ต้นทุน (รวมการตั้งตัว)"},
+  "שנה 2 ואילך:": {en: "Year 2 and beyond:", th: "ปีที่ 2 เป็นต้นไป:"},
+  "EPC: 15 פרויקטים × ฿1.5M → ฿22.5M הכנסה": {en: "EPC: 15 projects × ฿1.5M → ฿22.5M revenue", th: "EPC: 15 โครงการ × ฿1.5M → ฿22.5M รายได้"},
+  "PPA: 12 מערכות פעילות → ฿312K MRR": {en: "PPA: 12 active systems → ฿312K MRR", th: "PPA: 12 ระบบที่ใช้งาน → ฿312K MRR"},
+  "שנה 3: 20 PPA → ฿520K MRR =": {en: "Year 3: 20 PPA → ฿520K MRR =", th: "ปีที่ 3: 20 PPA → ฿520K MRR ="},
+  "฿6.24M/שנה recurring": {en: "฿6.24M/year recurring", th: "฿6.24M/ปีรายได้ประจำ"},
+  "ציר זמן — חודש אחר חודש": {en: "Timeline — Month by Month", th: "ไทม์ไลน์ — ทีละเดือน"},
+  "הקמה": {en: "Setup", th: "ตั้งตัว"},
+  "מכירות": {en: "Sales", th: "การขาย"},
+  "חודש 4": {en: "Month 4", th: "เดือน 4"},
+  "חודש 5": {en: "Month 5", th: "เดือน 5"},
+  "חודש 6": {en: "Month 6", th: "เดือน 6"},
+  "חודש 7": {en: "Month 7", th: "เดือน 7"},
+  "חודש 8": {en: "Month 8", th: "เดือน 8"},
+  "חודש 9": {en: "Month 9", th: "เดือน 9"},
+  "חודש 10": {en: "Month 10", th: "เดือน 10"},
+  "חודש 11": {en: "Month 11", th: "เดือน 11"},
+  "חודש 12": {en: "Month 12", th: "เดือน 12"},
+  "חודש 1-2": {en: "Month 1-2", th: "เดือน 1-2"},
+  "חודש 3": {en: "Month 3", th: "เดือน 3"},
+  "כבר ברווח מצטבר (EPC #1 מכסה את עלויות ההקמה).": {en: "Already in cumulative profit (EPC #1 covers setup costs).", th: "อยู่ในกำไรสะสมแล้ว (EPC #1 ครอบคลุมต้นทุนการตั้งตัว)"},
+  "฿5.63M רווח נקי מצטבר + ฿156K MRR.": {en: "฿5.63M cumulative net profit + ฿156K MRR.", th: "฿5.63M กำไรสุทธิสะสม + ฿156K MRR"},
+  "אפשרויות מימון": {en: "Financing Options", th: "ตัวเลือกการจัดหาเงินทุน"},
+  "ללקוחות + לחברה": {en: "For Clients + For the Company", th: "สำหรับลูกค้า + สำหรับบริษัท"},
+  "מימון ללקוחות (מכירת EPC)": {en: "Client Financing (EPC Sales)", th: "การจัดหาเงินทุนสำหรับลูกค้า (EPC)"},
+  "הכי טוב": {en: "Best", th: "ดีที่สุด"},
+  "3.5% קבוע": {en: "Fixed 3.5%", th: "คงที่ 3.5%"},
+  "מימון 100%": {en: "100% financing", th: "จัดหาเงินทุน 100%"},
+  "3 מוצרי סולאר ייעודיים": {en: "3 dedicated solar products", th: "ผลิตภัณฑ์โซลาร์เฉพาะ 3 รายการ"},
+  "ריבית תחרותית": {en: "Competitive interest rate", th: "อัตราดอกเบี้ยที่แข่งขันได้"},
+  "יש סניף בקופנגן": {en: "Has a branch in Koh Phangan", th: "มีสาขาในเกาะพะงัน"},
+  "3% קבוע 3 שנים": {en: "Fixed 3% for 3 years", th: "คงที่ 3% เป็นเวลา 3 ปี"},
+  "ממשלתי": {en: "government", th: "ภาครัฐ"},
+  "עד 12/2026": {en: "until 12/2026", th: "ถึง 12/2026"},
+  "טקטיקה:": {en: "Tactic:", th: "กลยุทธ์:"},
+  "בנה שותפות עם Krungsri. הגיע עם pre-approved financing ללקוח = מכירה קלה יותר. \"אנחנו מטפלים בהכל — כולל המימון.\"": {en: "Build a partnership with Krungsri. Come with pre-approved financing for the client = easier sale. \"We handle everything — including financing.\"", th: "สร้างความร่วมมือกับ Krungsri นำเสนอสินเชื่อที่อนุมัติล่วงหน้าให้ลูกค้า = ขายได้ง่ายขึ้น \"เราดูแลทุกอย่าง — รวมถึงการจัดหาเงินทุน\""},
+  "מימון לחברה (PPA)": {en: "Company Financing (PPA)", th: "การจัดหาเงินทุนสำหรับบริษัท (PPA)"},
+  "SME D Bank — הכי טוב לPPA": {en: "SME D Bank — Best for PPA", th: "SME D Bank — ดีที่สุดสำหรับ PPA"},
+  "3% ל-3 שנים! מימון עד ฿30M. אידיאלי למימון מערכות PPA.": {en: "3% for 3 years! Financing up to ฿30M. Ideal for financing PPA systems.", th: "3% เป็นเวลา 3 ปี! วงเงินถึง ฿30M เหมาะสำหรับจัดหาเงินทุนระบบ PPA"},
+  "EXIM Bank — ייבוא ציוד": {en: "EXIM Bank — Equipment Import", th: "EXIM Bank — นำเข้าอุปกรณ์"},
+  "0.5% הנחה ירוקה. לייבוא ישיר של פאנלים ואינוורטרים.": {en: "0.5% green discount. For direct import of panels and inverters.", th: "ส่วนลด green 0.5% สำหรับนำเข้าแผงโซลาร์และอินเวอร์เตอร์โดยตรง"},
+  "ENCON Fund (DEDE)": {en: "ENCON Fund (DEDE)", th: "กองทุน ENCON (DEDE)"},
+  "קרן ממשלתית לאנרגיה חלופית. הלוואות בריבית נמוכה ל-ESCO.": {en: "Government fund for alternative energy. Low-interest loans for ESCO.", th: "กองทุนภาครัฐสำหรับพลังงานทดแทน สินเชื่อดอกเบี้ยต่ำสำหรับ ESCO"},
+  "הטבות מס": {en: "Tax Incentives", th: "สิทธิประโยชน์ทางภาษี"},
+  "הטבה": {en: "Incentive", th: "สิทธิประโยชน์"},
+  "שווי": {en: "Value", th: "มูลค่า"},
+  "ניכוי 50% ללקוח (עסקי)": {en: "50% deduction for client (business)", th: "หักลดหย่อน 50% สำหรับลูกค้า (ธุรกิจ)"},
+  "pitch מכירה!": {en: "sales pitch!", th: "จุดขาย!"},
+  "ניכוי ฿200K ללקוח (מגורים)": {en: "฿200K deduction for client (residential)", th: "หักลดหย่อน ฿200K สำหรับลูกค้า (ที่อยู่อาศัย)"},
+  "הטבות מס ממשלתיות (אם זמין)": {en: "Government tax incentives (if available)", th: "สิทธิประโยชน์ทางภาษีภาครัฐ (ถ้ามี)"},
+  "0% מכס על פאנלים (ASEAN)": {en: "0% customs on panels (ASEAN)", th: "ภาษีนำเข้าแผงโซลาร์ 0% (ASEAN)"},
+  "חיסכון 5-10%": {en: "5-10% savings", th: "ประหยัด 5-10%"},
+  "VAT זיכוי תשומות": {en: "VAT input credit", th: "เครดิต VAT ปัจจัยการผลิต"},
+  "7% על כל ציוד": {en: "7% on all equipment", th: "7% บนอุปกรณ์ทั้งหมด"},
+  "אסטרטגיית תמחור": {en: "Pricing Strategy", th: "กลยุทธ์การกำหนดราคา"},
+  "תמחור EPC": {en: "EPC Pricing", th: "ราคา EPC"},
+  "גודל מערכת": {en: "System Size", th: "ขนาดระบบ"},
+  "מחיר כולל": {en: "Total Price", th: "ราคารวม"},
+  "רווח גולמי": {en: "Gross Margin", th: "อัตรากำไรขั้นต้น"},
+  "5 kWp (וילה קטנה)": {en: "5 kWp (small villa)", th: "5 kWp (วิลล่าเล็ก)"},
+  "10 kWp (וילה)": {en: "10 kWp (villa)", th: "10 kWp (วิลล่า)"},
+  "30 kWp (עסק בינוני)": {en: "30 kWp (medium business)", th: "30 kWp (ธุรกิจขนาดกลาง)"},
+  "50 kWp (רזורט) ★": {en: "50 kWp (resort) ★", th: "50 kWp (รีสอร์ต) ★"},
+  "100 kWp (רזורט גדול)": {en: "100 kWp (large resort)", th: "100 kWp (รีสอร์ตขนาดใหญ่)"},
+  "מחיר סטנדרטי: ฿30K/kWp (ללא סוללות). עלות: ฿12K/kWp (ציוד ฿9.5K + עבודה ฿2.5K). מרווח 60%.": {en: "Standard price: ฿30K/kWp (without batteries). Cost: ฿12K/kWp (equipment ฿9.5K + labour ฿2.5K). Margin 60%.", th: "ราคามาตรฐาน: ฿30K/kWp (ไม่รวมแบตเตอรี่) ต้นทุน: ฿12K/kWp (อุปกรณ์ ฿9.5K + แรงงาน ฿2.5K) อัตรากำไร 60%"},
+  "מה נכלל במחיר": {en: "What's Included in the Price", th: "สิ่งที่รวมอยู่ในราคา"},
+  "סקר אתר + תכנון מערכת": {en: "Site survey + system design", th: "สำรวจพื้นที่ + ออกแบบระบบ"},
+  "ציוד Tier-1 (Longi + Huawei)": {en: "Tier-1 equipment (Longi + Huawei)", th: "อุปกรณ์ Tier-1 (Longi + Huawei)"},
+  "חומרי הרכבה marine-grade": {en: "Marine-grade mounting materials", th: "วัสดุยึดระดับ marine-grade"},
+  "התקנה מלאה + חיבור PEA": {en: "Full installation + PEA connection", th: "การติดตั้งครบชุด + การเชื่อมต่อ PEA"},
+  "ניטור אונליין 24/7": {en: "24/7 online monitoring", th: "ติดตามออนไลน์ 24/7"},
+  "אחריות 10 שנים (פאנלים 25)": {en: "10-year warranty (panels 25)", th: "รับประกัน 10 ปี (แผงโซลาร์ 25 ปี)"},
+  "Single-line diagram + תיעוד": {en: "Single-line diagram + documentation", th: "แผนผังวงจรเดี่ยว + เอกสาร"},
+  "תמחור PPA": {en: "PPA Pricing", th: "ราคา PPA"},
+  "תעריף PEA": {en: "PEA Rate", th: "อัตรา PEA"},
+  "תעריף PPA שלנו": {en: "Our PPA Rate", th: "อัตรา PPA ของเรา"},
+  "חיסכון ללקוח": {en: "Client Savings", th: "การประหยัดสำหรับลูกค้า"},
+  "חבילות O&M (הכנסה נוספת)": {en: "O&M Packages (Additional Revenue)", th: "แพ็กเกจ O&M (รายได้เพิ่มเติม)"},
+  "חבילה": {en: "Package", th: "แพ็กเกจ"},
+  "מחיר/חודש": {en: "Price/Month", th: "ราคา/เดือน"},
+  "כולל": {en: "Includes", th: "รวมถึง"},
+  "ניטור + ביקור שנתי": {en: "Monitoring + Annual Visit", th: "ติดตาม + เยี่ยมชมประจำปี"},
+  "+ ניקוי רבעוני + תיקונים": {en: "+ Quarterly Cleaning + Repairs", th: "+ ทำความสะอาดรายไตรมาส + ซ่อมแซม"},
+  "+ SLA 24h + חלקי חילוף": {en: "+ 24h SLA + Spare Parts", th: "+ SLA 24 ชั่วโมง + อะไหล่"},
+  "9 לקוחות EPC × Standard = ฿27K MRR נוסף!": {en: "9 EPC clients × Standard = additional ฿27K MRR!", th: "ลูกค้า EPC 9 ราย × Standard = ฿27K MRR เพิ่มเติม!"},
+  "הוסף: סוללות": {en: "Add: Batteries", th: "เพิ่มเติม: แบตเตอรี่"},
+  "Upsell:": {en: "Upsell:", th: "ขายเพิ่มเติม:"},
+  "סוללות Huawei LUNA — ฿150-300K לכל מערכת. מרווח 50%. האי סובל מהפסקות = ביקוש אמיתי. O&M recurring נוסף.": {en: "Huawei LUNA batteries — ฿150-300K per system. 50% margin. The island suffers from outages = real demand. Additional recurring O&M.", th: "แบตเตอรี่ Huawei LUNA — ฿150-300K ต่อระบบ อัตรากำไร 50% เกาะประสบปัญหาไฟดับ = ความต้องการจริง O&M ประจำเพิ่มเติม"},
+  "שיווק + מכירות — שנה 1": {en: "Marketing + Sales — Year 1", th: "การตลาด + การขาย — ปีที่ 1"},
+  "אסטרטגיה: Direct + Partners": {en: "Strategy: Direct + Partners", th: "กลยุทธ์: ตรง + พันธมิตร"},
+  "שלב 1: Lighthouse (חודשים 1-3)": {en: "Phase 1: Lighthouse (Months 1-3)", th: "ระยะที่ 1: Lighthouse (เดือน 1-3)"},
+  "3-5 פרויקטים ראוותניים: Anantara, Santhiya, First Western Hospital. מחיר עלות = case study + reference.": {en: "3-5 showcase projects: Anantara, Santhiya, First Western Hospital. Cost price = case study + reference.", th: "โครงการโชว์ 3-5 แห่ง: Anantara, Santhiya, First Western Hospital ราคาต้นทุน = case study + อ้างอิง"},
+  "שלב 2: Referral Machine (חודשים 3-6)": {en: "Phase 2: Referral Machine (Months 3-6)", th: "ระยะที่ 2: Referral Machine (เดือน 3-6)"},
+  "שותפויות עם חברות נדל\"ן + property managers. עמלה 5-10% על כל הפנייה.": {en: "Partnerships with real estate companies + property managers. 5-10% commission per referral.", th: "ความร่วมมือกับบริษัทอสังหาริมทรัพย์ + ผู้จัดการทรัพย์สิน ค่าคอมมิชชั่น 5-10% ต่อการแนะนำ"},
+  "שלב 3: Scale (חודשים 6-12)": {en: "Phase 3: Scale (Months 6-12)", th: "ระยะที่ 3: ขยาย (เดือน 6-12)"},
+  "FB/IG ads, Google SEO, WhatsApp campaigns. תקציב: ฿30K/חודש.": {en: "FB/IG ads, Google SEO, WhatsApp campaigns. Budget: ฿30K/month.", th: "โฆษณา FB/IG, Google SEO, แคมเปญ WhatsApp งบประมาณ: ฿30K/เดือน"},
+  "ערוצי מכירה": {en: "Sales Channels", th: "ช่องทางการขาย"},
+  "ערוץ": {en: "Channel", th: "ช่องทาง"},
+  "עלות/ליד": {en: "Cost/Lead", th: "ต้นทุน/ลูกค้าเป้าหมาย"},
+  "שותפויות נדל\"ן": {en: "Real Estate Partnerships", th: "ความร่วมมืออสังหาริมทรัพย์"},
+  "הפניות לקוחות": {en: "Customer Referrals", th: "การแนะนำจากลูกค้า"},
+  "פגישות ישירות": {en: "Direct Meetings", th: "การพบปะโดยตรง"},
+  "Hook #1: הפסקות חשמל": {en: "Hook #1: Power Outages", th: "Hook #1: ไฟฟ้าดับ"},
+  "\"כמה הפסדת בהפסקת חשמל האחרונה?\"": {en: "\"How much did you lose in the last power outage?\"", th: "\"คุณเสียเงินเท่าไหร่จากไฟดับครั้งล่าสุด?\""},
+  "רזורטים: מאות אלפי בהט בביטולי הזמנות + מזון שנזרק. סולאר + סוללות = ביטוח + חיסכון.": {en: "Resorts: hundreds of thousands of baht in cancellations + thrown-out food. Solar + batteries = insurance + savings.", th: "รีสอร์ต: หลายแสนบาทจากการยกเลิกการจอง + อาหารที่ต้องทิ้ง โซลาร์ + แบตเตอรี่ = ประกัน + การประหยัด"},
+  "Hook #2: ROI": {en: "Hook #2: ROI", th: "Hook #2: ROI"},
+  "\"ההשקעה מחזירה את עצמה ב-3-5 שנים. אחרי זה — חשמל חינם 20 שנה.\"": {en: "\"The investment pays for itself in 3-5 years. After that — free electricity for 20 years.\"", th: "\"การลงทุนคืนทุนใน 3-5 ปี หลังจากนั้น — ไฟฟ้าฟรี 20 ปี\""},
+  "עם ניכוי מס 50%: ROI ב-2.5-4 שנים!": {en: "With 50% tax deduction: ROI in 2.5-4 years!", th: "พร้อมหักลดหย่อนภาษี 50%: คืนทุนใน 2.5-4 ปี!"},
+  "Hook #3: אפס השקעה (PPA)": {en: "Hook #3: Zero Investment (PPA)", th: "Hook #3: ไม่มีการลงทุน (PPA)"},
+  "\"תשלם פחות על חשמל. אפס השקעה מראש. אנחנו מטפלים בהכל.\"": {en: "\"Pay less for electricity. Zero upfront investment. We handle everything.\"", th: "\"จ่ายค่าไฟน้อยลง ไม่มีการลงทุนล่วงหน้า เราดูแลทุกอย่าง\""},
+  "Perfect לרזורטים שלא רוצים CAPEX.": {en: "Perfect for resorts that don't want CAPEX.", th: "เหมาะสำหรับรีสอร์ตที่ไม่ต้องการ CAPEX"},
+  "תקציב שיווק שנה 1": {en: "Year 1 Marketing Budget", th: "งบประมาณการตลาดปีที่ 1"},
+  "Q1: Branding + אתר": {en: "Q1: Branding + Website", th: "Q1: Branding + เว็บไซต์"},
+  "Q2-Q4: Ads + Events": {en: "Q2-Q4: Ads + Events", th: "Q2-Q4: โฆษณา + กิจกรรม"},
+  "שותפויות (עמלות)": {en: "Partnerships (commissions)", th: "ความร่วมมือ (ค่าคอมมิชชั่น)"},
+  "סה\"כ": {en: "Total", th: "รวม"},
+  "סיכונים + הקטנה": {en: "Risks + Mitigation", th: "ความเสี่ยง + การลดความเสี่ยง"},
+  "סיכון": {en: "Risk", th: "ความเสี่ยง"},
+  "חומרה": {en: "Severity", th: "ความรุนแรง"},
+  "הסתברות": {en: "Probability", th: "ความน่าจะเป็น"},
+  "הקטנה": {en: "Mitigation", th: "การลดความเสี่ยง"},
+  "מכירות איטיות": {en: "Slow Sales", th: "ยอดขายช้า"},
+  "גבוה": {en: "High", th: "สูง"},
+  "בינונית": {en: "Medium", th: "ปานกลาง"},
+  "התחל עם lighthouse projects. PPA מוריד חסם. שותפויות נדל\"ן.": {en: "Start with lighthouse projects. PPA lowers the barrier. Real estate partnerships.", th: "เริ่มด้วย lighthouse projects PPA ลดอุปสรรค ความร่วมมืออสังหาริมทรัพย์"},
+  "לוגיסטיקה לאי": {en: "Island Logistics", th: "โลจิสติกส์เกาะ"},
+  "בינוני": {en: "Medium", th: "ปานกลาง"},
+  "גבוהה": {en: "High", th: "สูง"},
+  "מחסן בסוראט + הזמנות מראש. ביטוח מטען. ספק backup.": {en: "Warehouse in Surat + advance orders. Cargo insurance. Backup supplier.", th: "คลังสินค้าในสุราษฎร์ + สั่งล่วงหน้า ประกันสินค้า ซัพพลายเออร์สำรอง"},
+  "תחרות חדשה": {en: "New Competition", th: "การแข่งขันใหม่"},
+  "נמוכה": {en: "Low", th: "ต่ำ"},
+  "בנה brand + base מהר. חוזי O&M ארוכי טווח. ESCO lock-in.": {en: "Build brand + base fast. Long-term O&M contracts. ESCO lock-in.", th: "สร้าง brand + ฐานลูกค้าอย่างรวดเร็ว สัญญา O&M ระยะยาว ESCO lock-in"},
+  "שינוי רגולציה": {en: "Regulatory Change", th: "การเปลี่ยนแปลงกฎระเบียบ"},
+  "נמוך": {en: "Low", th: "ต่ำ"},
+  "המגמה חיובית (פישוט). חוזי PPA 15 שנים + הצמדה מגנים.": {en: "The trend is positive (simplification). 15-year PPA contracts + indexation protect.", th: "แนวโน้มเป็นบวก (ลดความซับซ้อน) สัญญา PPA 15 ปี + การปรับอัตราคุ้มครอง"},
+  "קורוזיה/מזג אוויר": {en: "Corrosion/Weather", th: "การกัดกร่อน/สภาพอากาศ"},
+  "חומרי marine-grade בלבד. ביטוח CAR. O&M תכוף.": {en: "Marine-grade materials only. CAR insurance. Frequent O&M.", th: "วัสดุระดับ marine-grade เท่านั้น ประกัน CAR O&M บ่อยครั้ง"},
+  "כוח אדם": {en: "Manpower", th: "กำลังคน"},
+  "גייס מסוראט. הכשר מקומיים. team lead מנוסה.": {en: "Recruit from Surat. Train locals. Experienced team lead.", th: "สรรหาจากสุราษฎร์ ฝึกคนในพื้นที่ หัวหน้าทีมที่มีประสบการณ์"},
+  "PEA דחייה/עיכוב": {en: "PEA Rejection/Delay", th: "การปฏิเสธ/ล่าช้าจาก PEA"},
+  "בנה קשר אישי. תיעוד מושלם. סבלנות + follow up.": {en: "Build personal relationship. Perfect documentation. Patience + follow up.", th: "สร้างความสัมพันธ์ส่วนตัว เอกสารครบถ้วนสมบูรณ์ ความอดทน + ติดตาม"},
+  "Moat (חפיר):": {en: "Moat:", th: "ข้อได้เปรียบที่ยั่งยืน:"},
+  "First mover": {en: "First mover", th: "ผู้บุกเบิกรายแรก"},
+  "אין מתחרה רציני באי": {en: "No serious competitor on the island", th: "ไม่มีคู่แข่งที่จริงจังบนเกาะ"},
+  "Logistics": {en: "Logistics", th: "โลจิสติกส์"},
+  "פרי + island ops = חסם כניסה למתחרים מהיבשה": {en: "Ferry + island ops = entry barrier for mainland competitors", th: "เรือเฟอร์รี่ + การดำเนินงานบนเกาะ = อุปสรรคสำหรับคู่แข่งจากแผ่นดินใหญ่"},
+  "PPA lock-in": {en: "PPA lock-in", th: "PPA lock-in"},
+  "חוזים 15 שנים = recurring revenue שלא ניתן לגניבה": {en: "15-year contracts = recurring revenue that can't be stolen", th: "สัญญา 15 ปี = รายได้ประจำที่ไม่สามารถถูกแย่งได้"},
+  "O&M relationships": {en: "O&M relationships", th: "ความสัมพันธ์ O&M"},
+  "אחרי ההתקנה, אתה ה\"רופא\" של המערכת": {en: "After installation, you are the system's \"doctor\"", th: "หลังการติดตั้ง คุณคือ \"หมอ\" ของระบบ"},
+  "Local reputation": {en: "Local reputation", th: "ชื่อเสียงในท้องถิ่น"},
+  "אי קטן = word of mouth הכי חזק": {en: "Small island = the strongest word of mouth", th: "เกาะเล็ก = การบอกปากต่อปากที่แข็งแกร่งที่สุด"},
+  "סיכום שנה 1 — Hybrid Model": {en: "Year 1 Summary — Hybrid Model", th: "สรุปปีที่ 1 — Hybrid Model"},
+  "פרויקטים": {en: "Projects", th: "โครงการ"},
+  "(9 EPC + 6 PPA)": {en: "(9 EPC + 6 PPA)", th: "(9 EPC + 6 PPA)"},
+  "הכנסה כוללת": {en: "Total Revenue", th: "รายได้รวม"},
+  "~$407K USD": {en: "~$407K USD", th: "~$407K USD"},
+  "רווח נקי": {en: "Net Profit", th: "กำไรสุทธิ"},
+  "~$161K USD": {en: "~$161K USD", th: "~$161K USD"},
+  "MRR סוף שנה": {en: "MRR End of Year", th: "MRR สิ้นปี"},
+  "~$4.5K USD/month": {en: "~$4.5K USD/month", th: "~$4.5K USD/เดือน"},
+  "השקעה נדרשת": {en: "Required Investment", th: "การลงทุนที่ต้องการ"},
+  "הון רשום (נשאר בחברה)": {en: "Registered capital (stays in company)", th: "ทุนจดทะเบียน (อยู่ในบริษัท)"},
+  "הקמה + ציוד (CapEx)": {en: "Setup + Equipment (CapEx)", th: "การตั้งตัว + อุปกรณ์ (CapEx)"},
+  "הון חוזר 3 חודשים": {en: "3-month working capital", th: "เงินทุนหมุนเวียน 3 เดือน"},
+  "הון עצמי ל-6 PPA (30%)": {en: "Own capital for 6 PPA (30%)", th: "ทุนของตัวเองสำหรับ 6 PPA (30%)"},
+  "סה\"כ נדרש": {en: "Total Required", th: "รวมที่ต้องการ"},
+  "ROI על ההשקעה": {en: "ROI on Investment", th: "ROI บนการลงทุน"},
+  "רווח שנה 1:": {en: "Year 1 Profit:", th: "กำไรปีที่ 1:"},
+  "ROI:": {en: "ROI:", th: "ROI:"},
+  "122% (על ฿4.62M)": {en: "122% (on ฿4.62M)", th: "122% (บน ฿4.62M)"},
+  "Break-even:": {en: "Break-even:", th: "จุดคุ้มทุน:"},
+  "+ Asset:": {en: "+ Asset:", th: "+ ทรัพย์สิน:"},
+  "6 מערכות PPA בשווי ฿6.3M": {en: "6 PPA systems worth ฿6.3M", th: "ระบบ PPA 6 ระบบ มูลค่า ฿6.3M"},
+  "תחזית 3 שנים": {en: "3-Year Forecast", th: "การคาดการณ์ 3 ปี"},
+  "EPC פרויקטים": {en: "EPC Projects", th: "โครงการ EPC"},
+  "PPA מערכות (מצטבר)": {en: "PPA Systems (cumulative)", th: "ระบบ PPA (สะสม)"},
+  "הכנסה EPC": {en: "EPC Revenue", th: "รายได้ EPC"},
+  "ARR (recurring)": {en: "ARR (recurring)", th: "ARR (ประจำ)"},
+  "שנה 3 = $14.9K MRR מ-PPA בלבד": {en: "Year 3 = $14.9K MRR from PPA alone", th: "ปีที่ 3 = $14.9K MRR จาก PPA เพียงอย่างเดียว"},
+  "+ הכנסות EPC ฿30M + O&M ฿27K/חודש": {en: "+ EPC revenue ฿30M + O&M ฿27K/month", th: "+ รายได้ EPC ฿30M + O&M ฿27K/เดือน"},
+  "בסיס להכנסה חוזרת משמעותית": {en: "foundation for significant recurring revenue", th: "ฐานรายได้ประจำที่มีนัยสำคัญ"},
+  "צעדים הבאים": {en: "Next Steps", th: "ขั้นตอนถัดไป"},
+  "שבוע 1-2": {en: "Week 1-2", th: "สัปดาห์ 1-2"},
+  "עו\"ד + רו\"ח": {en: "Lawyer + Accountant", th: "ทนาย + นักบัญชี"},
+  "התקשרות עם Belaws/Konrad Legal. רישום חברה.": {en: "Engage Belaws/Konrad Legal. Company registration.", th: "ติดต่อ Belaws/Konrad Legal จดทะเบียนบริษัท"},
+  "ייעוץ הטבות מס": {en: "Tax Incentives Consultation", th: "การปรึกษาสิทธิประโยชน์ทางภาษี"},
+  "בדיקת זכאות להטבות מס ממשלתיות.": {en: "Check eligibility for government tax incentives.", th: "ตรวจสอบสิทธิ์สำหรับสิทธิประโยชน์ทางภาษีภาครัฐ"},
+  "PEA פגישת היכרות": {en: "PEA Introduction Meeting", th: "การประชุมแนะนำตัวกับ PEA"},
+  "077-377-084. בנה קשר אישי. שאל על קיבולת רשת.": {en: "077-377-084. Build personal relationship. Ask about grid capacity.", th: "077-377-084 สร้างความสัมพันธ์ส่วนตัว สอบถามเรื่องความจุกริด"},
+  "חודש 1-2": {en: "Month 1-2", th: "เดือน 1-2"},
+  "רישום חברה": {en: "Company Registration", th: "การจดทะเบียนบริษัท"},
+  "DBD + בנק + מס + ביטוח לאומי.": {en: "DBD + Bank + Tax + Social Security.", th: "DBD + ธนาคาร + ภาษี + ประกันสังคม"},
+  "Lighthouse outreach": {en: "Lighthouse outreach", th: "Lighthouse outreach"},
+  "Anantara, Santhiya, First Western Hospital. הצעות מחיר.": {en: "Anantara, Santhiya, First Western Hospital. Price proposals.", th: "Anantara, Santhiya, First Western Hospital ใบเสนอราคา"},
+  "ספק ציוד": {en: "Equipment Supplier", th: "ซัพพลายเออร์อุปกรณ์"},
+  "הסכם עם BayWa או ספק מקומי. הזמנה ראשונה.": {en: "Agreement with BayWa or local supplier. First order.", th: "ข้อตกลงกับ BayWa หรือซัพพลายเออร์ท้องถิ่น คำสั่งซื้อแรก"},
+  "חודש 2-3": {en: "Month 2-3", th: "เดือน 2-3"},
+  "שותפות נדל\"ן": {en: "Real Estate Partnership", th: "ความร่วมมืออสังหาริมทรัพย์"},
+  "פגישות עם Azura, Alma Terra, KP Real Estate.": {en: "Meetings with Azura, Alma Terra, KP Real Estate.", th: "การประชุมกับ Azura, Alma Terra, KP Real Estate"},
+  "Krungsri שותפות": {en: "Krungsri Partnership", th: "ความร่วมมือ Krungsri"},
+  "הסכם referral עם הבנק. Pre-approved financing.": {en: "Referral agreement with the bank. Pre-approved financing.", th: "ข้อตกลงการแนะนำกับธนาคาร การจัดหาเงินทุนที่อนุมัติล่วงหน้า"},
+  "פרויקט ראשון!": {en: "First Project!", th: "โครงการแรก!"},
+  "סגירה + הזמנת ציוד + התקנה.": {en: "Close + Order equipment + Installation.", th: "ปิดการขาย + สั่งอุปกรณ์ + ติดตั้ง"},
+  "המטרה:": {en: "The Goal:", th: "เป้าหมาย:"},
+  "฿5.63M רווח נקי + ฿156K MRR בסוף שנה 1": {en: "฿5.63M net profit + ฿156K MRR at end of Year 1", th: "฿5.63M กำไรสุทธิ + ฿156K MRR ณ สิ้นปีที่ 1"},
+  "השקעה:": {en: "Investment:", th: "การลงทุน:"},
+  "฿4.62M (~$132K)": {en: "฿4.62M (~$132K)", th: "฿4.62M (~$132K)"},
+  "122% שנה 1 | 227% שנה 2 | 368% שנה 3": {en: "122% Year 1 | 227% Year 2 | 368% Year 3", th: "122% ปีที่ 1 | 227% ปีที่ 2 | 368% ปีที่ 3"},
+  "שנה": {en: "year", th: "ปี"},
+  "ללא סוללות": {en: "without batteries", th: "ไม่รวมแบตเตอรี่"},
+  "מיידי": {en: "immediate", th: "ทันที"},
+  "ROI 3-5 שנים": {en: "ROI 3-5 years", th: "คืนทุน 3-5 ปี"},
+  "→ הקודם": {en: "→ Prev", th: "→ ก่อนหน้า"},
+  "הבא ←": {en: "Next ←", th: "ถัดไป ←"},
+  "שער": {en: "Cover", th: "ปก"},
+  "הזדמנות שוק": {en: "Market Opportunity", th: "โอกาสตลาด"},
+  "שני מודלים": {en: "Two Models", th: "สองโมเดล"},
+  "מודל EPC — מספרים": {en: "EPC Model — Numbers", th: "โมเดล EPC — ตัวเลข"},
+  "מודל PPA — מספרים": {en: "PPA Model — Numbers", th: "โมเดล PPA — ตัวเลข"},
+  "Hybrid — המודל המנצח": {en: "Hybrid — The Winning Model", th: "Hybrid — โมเดลที่ชนะ"},
+  "אפשרויות מימון": {en: "Financing Options", th: "ตัวเลือกการจัดหาเงินทุน"},
+  "תמחור": {en: "Pricing", th: "การกำหนดราคา"},
+  "שיווק + מכירות": {en: "Marketing + Sales", th: "การตลาด + การขาย"},
+  "סיכונים + הקטנה": {en: "Risks + Mitigation", th: "ความเสี่ยง + การลด"},
+  "סיכום שנה 1": {en: "Year 1 Summary", th: "สรุปปีที่ 1"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

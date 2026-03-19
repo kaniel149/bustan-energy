@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — KP Solar Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.1.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.1.1/dist/maplibre-gl.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0D2137;--navy2:#1a3a5c;--gold:#E8A820;--green:#1A7A5A;--coral:#E85D3A;--bg:#0A1929;--card:#132d47;--border:rgba(255,255,255,0.1)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#fff;overflow:hidden;height:100vh}
+
+/* Header */
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--gold);z-index:1000;position:relative}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--navy)}
+.logo-text{font-size:16px;font-weight:700}.logo-text span{color:var(--gold)}
+.header-stats{display:flex;gap:20px}
+.hstat{text-align:center}
+.hstat-val{font-size:18px;font-weight:800;color:var(--gold)}
+.hstat-label{font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:1px}
+
+/* Main layout */
+.main{display:flex;height:calc(100vh - 52px)}
+
+/* Sidebar */
+.sidebar{width:380px;min-width:380px;background:var(--navy);display:flex;flex-direction:column;border-right:1px solid var(--border);z-index:500}
+.sidebar-tabs{display:flex;border-bottom:1px solid var(--border)}
+.sidebar-tabs button{flex:1;padding:10px 8px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;transition:all .2s}
+.sidebar-tabs button.active{color:var(--gold);border-bottom-color:var(--gold)}
+.sidebar-tabs button:hover{color:#fff}
+
+/* Filters */
+.filters-bar{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.fbtn{background:var(--navy2);border:1px solid var(--border);color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:14px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+.fbtn:hover{border-color:var(--gold);color:#fff}
+.fbtn.on{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600}
+.search-row{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px}
+.search-row input{flex:1;background:var(--navy2);border:1px solid var(--border);color:#fff;padding:6px 10px;border-radius:6px;font-size:12px;font-family:inherit;outline:none}
+.search-row input:focus{border-color:var(--gold)}
+.search-row select{background:var(--navy2);border:1px solid var(--border);color:#fff;padding:6px;border-radius:6px;font-size:11px;font-family:inherit;outline:none}
+
+/* Building list */
+.panel-content{flex:1;overflow-y:auto;padding:0}
+.bldg-card{padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.bldg-card:hover{background:rgba(232,168,32,0.08)}
+.bldg-card.selected{background:rgba(232,168,32,0.15);border-left:3px solid var(--gold)}
+.bldg-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.bldg-name{font-size:13px;font-weight:600;flex:1;margin-right:8px}
+.bldg-badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;flex-shrink:0}
+.badge-A{background:rgba(232,168,32,0.2);color:var(--gold)}
+.badge-B{background:rgba(46,216,154,0.2);color:#2ED89A}
+.badge-C{background:rgba(100,150,255,0.2);color:#6496FF}
+.badge-D{background:rgba(102,102,102,0.2);color:#888}
+.bldg-meta{font-size:11px;opacity:0.5;margin-bottom:4px}
+.bldg-stats{display:flex;gap:12px;font-size:11px}
+.bldg-stats span{color:var(--gold);font-weight:600}
+.bldg-actions{display:flex;gap:4px;margin-top:6px}
+.bldg-actions button{background:var(--navy2);border:1px solid var(--border);color:#fff;padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit}
+.bldg-actions button:hover{border-color:var(--gold);color:var(--gold)}
+.bldg-actions button.pip-on{background:var(--green);border-color:var(--green)}
+
+/* Compare bar */
+.compare-bar{padding:8px 12px;background:var(--navy2);border-top:1px solid var(--gold);display:none;align-items:center;justify-content:space-between;font-size:12px}
+.compare-bar.show{display:flex}
+.compare-bar button{background:var(--gold);color:var(--navy);border:none;padding:4px 12px;border-radius:4px;font-weight:600;cursor:pointer;font-family:inherit;font-size:11px}
+.compare-bar .clear-btn{background:var(--coral)}
+
+/* Drone zones panel */
+.zone-card{padding:12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.zone-card:hover{background:rgba(232,168,32,0.08)}
+.zone-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.zone-id{font-weight:700;color:var(--gold);font-size:14px}
+.zone-status{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.status-planned{background:rgba(232,168,32,0.2);color:var(--gold)}
+.status-scanning{background:rgba(26,122,90,0.3);color:#2ED89A}
+.status-complete{background:rgba(26,122,90,0.5);color:#2ED89A}
+.zone-name{font-size:13px;margin-bottom:4px}
+.zone-meta{font-size:11px;opacity:0.5}
+.zone-stats{display:flex;gap:12px;font-size:11px;margin-top:6px}
+.zone-stats span{color:var(--gold);font-weight:600}
+.zone-progress{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:6px;overflow:hidden}
+.zone-progress-fill{height:100%;border-radius:2px;transition:width .5s}
+
+/* Analytics panel */
+.analytics-panel{padding:16px}
+.analytics-panel h3{color:var(--gold);font-size:14px;margin-bottom:12px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.stat-card{background:var(--navy2);border-radius:8px;padding:12px;text-align:center}
+.stat-card .sv{font-size:20px;font-weight:800;color:var(--gold)}
+.stat-card .sl{font-size:10px;opacity:0.5;text-transform:uppercase;margin-top:2px}
+.chart-section{margin-bottom:16px}
+.chart-section h4{font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px}
+.bar-label{width:70px;text-align:right;opacity:0.6;flex-shrink:0}
+.bar-track{flex:1;height:16px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:9px;font-weight:600;transition:width .5s}
+.bar-count{width:35px;font-size:11px;opacity:0.6}
+.top-list{list-style:none;margin-top:8px}
+.top-list li{display:flex;justify-content:space-between;padding:4px 0;font-size:11px;border-bottom:1px solid var(--border)}
+.top-list .tl-rank{color:var(--gold);font-weight:700;width:20px}
+.top-list .tl-name{flex:1;margin:0 8px}
+.top-list .tl-val{font-weight:600;color:var(--green)}
+
+/* Map area */
+.map-wrap{flex:1;position:relative}
+#map{width:100%;height:100%}
+
+/* Map controls */
+.map-ctrls{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:6px;z-index:10}
+.map-ctrls button{background:rgba(13,33,55,0.9);border:1px solid var(--border);color:#fff;width:34px;height:34px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.map-ctrls button:hover{border-color:var(--gold);color:var(--gold)}
+.map-ctrls button.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+
+/* Style toggle */
+.style-toggle{position:absolute;top:12px;left:12px;display:flex;gap:2px;z-index:10;background:rgba(13,33,55,0.9);border-radius:6px;padding:2px;border:1px solid var(--border)}
+.style-toggle button{background:none;border:none;color:rgba(255,255,255,0.6);padding:6px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;font-family:inherit;transition:all .15s}
+.style-toggle button.active{background:var(--gold);color:var(--navy)}
+
+/* Legend */
+.map-legend{position:absolute;bottom:12px;left:12px;background:rgba(13,33,55,0.92);border:1px solid var(--border);border-radius:8px;padding:10px 14px;z-index:10;font-size:11px}
+.map-legend h5{color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.lg-i{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.lg-d{width:10px;height:10px;border-radius:50%}
+
+/* Popup */
+.maplibregl-popup-content{background:var(--navy)!important;color:#fff!important;border:1px solid var(--gold)!important;border-radius:10px!important;padding:16px!important;min-width:300px;max-width:360px;box-shadow:0 8px 30px rgba(0,0,0,0.5)!important}
+.maplibregl-popup-tip{border-top-color:var(--gold)!important}
+.maplibregl-popup-close-button{color:#fff!important;font-size:18px!important;right:8px!important;top:4px!important}
+.popup-title{font-size:15px;font-weight:700;margin-bottom:4px;padding-right:20px}
+.popup-sub{font-size:11px;opacity:0.5;margin-bottom:10px}
+.popup-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-bottom:10px}
+.popup-grid .pg-label{font-size:10px;opacity:0.5;text-transform:uppercase}
+.popup-grid .pg-val{font-size:13px;font-weight:600}
+.popup-options{margin-bottom:10px}
+.popup-opt{background:var(--navy2);padding:8px 10px;border-radius:6px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.popup-opt-name{font-size:12px;font-weight:600}
+.popup-opt-detail{font-size:10px;opacity:0.5}
+.popup-opt-price{font-size:12px;font-weight:700;color:var(--green)}
+.popup-btns{display:flex;gap:6px}
+.popup-btns a,.popup-btns button{flex:1;text-align:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;font-family:inherit;border:none}
+.wa-btn{background:var(--green);color:#fff}
+.wa-btn:hover{background:#15634a}
+.proposal-btn{background:var(--gold);color:var(--navy)}
+.proposal-btn:hover{background:#d4981c}
+.pip-toggle-btn{background:var(--navy2);color:#fff;border:1px solid var(--border)!important}
+.pip-toggle-btn.active{background:var(--green);border-color:var(--green)!important}
+
+/* Compare overlay */
+.compare-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:2000;display:none;align-items:center;justify-content:center}
+.compare-overlay.show{display:flex}
+.compare-box{background:var(--navy);border:2px solid var(--gold);border-radius:12px;padding:24px;max-width:900px;width:90%;max-height:80vh;overflow-y:auto}
+.compare-box h3{color:var(--gold);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.compare-box .close-cmp{background:none;border:none;color:#fff;font-size:20px;cursor:pointer}
+.compare-grid{display:grid;gap:16px}
+.compare-col{background:var(--navy2);border-radius:8px;padding:14px}
+.compare-col h4{color:var(--gold);font-size:13px;margin-bottom:10px}
+.cmp-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)}
+.cmp-label{opacity:0.5}
+.cmp-val{font-weight:600}
+
+/* Notes textarea */
+.note-area{width:100%;background:var(--navy2);border:1px solid var(--border);color:#fff;padding:6px 8px;border-radius:4px;font-size:11px;font-family:inherit;resize:vertical;min-height:40px;margin-top:6px}
+.note-area:focus{border-color:var(--gold);outline:none}
+
+/* Loading */
+.loading{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+.loading.done{opacity:0;pointer-events:none}
+.spinner{width:40px;height:40px;border:3px solid var(--navy2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{margin-top:12px;font-size:13px;opacity:0.6}
+
+/* Mobile */
+@media(max-width:768px){
+  .sidebar{width:100%;min-width:unset;position:fixed;bottom:0;left:0;right:0;height:50vh;z-index:500;border-right:none;border-top:2px solid var(--gold)}
+  .main{flex-direction:column}
+  .map-wrap{height:50vh}
+  .header-stats{display:none}
+}
+
+/* Scrollbar */
+.panel-content::-webkit-scrollbar{width:6px}
+.panel-content::-webkit-scrollbar-track{background:var(--navy)}
+.panel-content::-webkit-scrollbar-thumb{background:var(--navy2);border-radius:3px}
+.panel-content::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <p>Loading 2,467 buildings...</p>
+</div>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">TM</div>
+    <div class="logo-text"><span>KP Solar</span> Pro</div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><div class="hstat-val" id="h-buildings">0</div><div class="hstat-label">Buildings</div></div>
+    <div class="hstat"><div class="hstat-val" id="h-mwp">0</div><div class="hstat-label">MWp</div></div>
+    <div class="hstat"><div class="hstat-val" id="h-value">0</div><div class="hstat-label">฿M Value</div></div>
+    <div class="hstat"><div class="hstat-val" id="h-pipeline">0</div><div class="hstat-label">Pipeline</div></div>
+    <div class="hstat"><div class="hstat-val" id="h-scanned">0/8</div><div class="hstat-label">Zones</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-tabs">
+      <button class="active" onclick="switchTab('buildings',this)">🏢 Buildings</button>
+      <button onclick="switchTab('zones',this)">🛸 Drone Zones</button>
+      <button onclick="switchTab('analytics',this)">📊 Analytics</button>
+    </div>
+
+    <!-- Buildings panel -->
+    <div id="tab-buildings">
+      <div class="filters-bar">
+        <button class="fbtn on" data-pr="all" onclick="filterPriority('all',this)">All</button>
+        <button class="fbtn" data-pr="A" onclick="filterPriority('A',this)">🥇 A</button>
+        <button class="fbtn" data-pr="B" onclick="filterPriority('B',this)">🥈 B</button>
+        <button class="fbtn" data-pr="C" onclick="filterPriority('C',this)">🥉 C</button>
+        <button class="fbtn" data-pr="D" onclick="filterPriority('D',this)">D</button>
+        <span style="margin-left:8px;opacity:0.3">|</span>
+        <button class="fbtn" data-cat="hospitality" onclick="filterCat('hospitality',this)">🏨</button>
+        <button class="fbtn" data-cat="food_beverage" onclick="filterCat('food_beverage',this)">🍽️</button>
+        <button class="fbtn" data-cat="retail" onclick="filterCat('retail',this)">🛒</button>
+        <button class="fbtn" data-cat="residential" onclick="filterCat('residential',this)">🏠</button>
+        <button class="fbtn" data-cat="bungalow" onclick="filterCat('bungalow',this)">🛖</button>
+        <button class="fbtn" data-cat="healthcare" onclick="filterCat('healthcare',this)">🏥</button>
+        <span style="margin-left:4px;opacity:0.3">|</span>
+        <button class="fbtn" data-sz="100" onclick="filterSize(100,this)">100m²+</button>
+        <button class="fbtn" data-sz="500" onclick="filterSize(500,this)">500m²+</button>
+        <button class="fbtn" data-pip="1" onclick="filterPipeline(this)">🟢 Pipeline</button>
+      </div>
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="🔍 Search name, category...">
+        <select id="sortSelect" onchange="sortAndRender()">
+          <option value="score">Score ↓</option>
+          <option value="kwp">kWp ↓</option>
+          <option value="area">Area ↓</option>
+          <option value="savings">Savings ↓</option>
+          <option value="name">Name A-Z</option>
+        </select>
+      </div>
+      <div class="panel-content" id="buildingList"></div>
+      <div class="compare-bar" id="compareBar">
+        <span>Compare: <span id="cmpCount">0</span>/3</span>
+        <div style="display:flex;gap:4px">
+          <button onclick="showCompare()">Compare</button>
+          <button class="clear-btn" onclick="clearCompare()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drone Zones panel -->
+    <div id="tab-zones" style="display:none">
+      <div class="panel-content" id="zoneList"></div>
+    </div>
+
+    <!-- Analytics panel -->
+    <div id="tab-analytics" style="display:none">
+      <div class="panel-content">
+        <div class="analytics-panel" id="analyticsContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="style-toggle">
+      <button class="active" id="btn-sat" onclick="setMapStyle('satellite')">🛰️ Satellite</button>
+      <button id="btn-map" onclick="setMapStyle('streets')">🗺️ Map</button>
+    </div>
+    <div class="map-ctrls">
+      <button onclick="map.zoomIn()" title="Zoom in">+</button>
+      <button onclick="map.zoomOut()" title="Zoom out">−</button>
+      <button onclick="resetView()" title="Reset view">⌂</button>
+      <button id="btn-zones-toggle" onclick="toggleZonesLayer()" title="Toggle drone zones">🛸</button>
+      <button id="btn-park-toggle" onclick="toggleParkLayer()" title="Toggle national park">🌳</button>
+    </div>
+    <div class="map-legend">
+      <h5>Priority</h5>
+      <div class="lg-i"><div class="lg-d" style="background:#E8A820"></div> A — High</div>
+      <div class="lg-i"><div class="lg-d" style="background:#2ED89A"></div> B — Medium</div>
+      <div class="lg-i"><div class="lg-d" style="background:#6496FF"></div> C — Low</div>
+      <div class="lg-i"><div class="lg-d" style="background:#666"></div> D — Small</div>
+      <div class="lg-i"><div class="lg-d" style="background:var(--green);border:2px solid #2ED89A"></div> Pipeline</div>
+    </div>
+  </div>
+</div>
+
+<!-- Compare overlay -->
+<div class="compare-overlay" id="compareOverlay">
+  <div class="compare-box">
+    <h3><span>⚖️ Building Comparison</span><button class="close-cmp" onclick="closeCompare()">✕</button></h3>
+    <div class="compare-grid" id="compareGrid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))"></div>
+  </div>
+</div>
+
+<script src="roof-scanner/buildings_data.js"></script>
+<script>
+// ── Data Processing ──
+const ZONES = [
+  {id:'Z1',name:'Thong Sala',color:'#E8A820',center:[9.7205,99.9784],coords:[[99.968,9.712],[99.988,9.712],[99.988,9.728],[99.968,9.728]],roofs:800,priority:'high',status:'planned',progress:0,flights:0},
+  {id:'Z2',name:'Ban Tai',color:'#E8A820',center:[9.7120,100.010],coords:[[99.995,9.704],[100.030,9.704],[100.030,9.720],[99.995,9.720]],roofs:500,priority:'high',status:'planned',progress:0,flights:0},
+  {id:'Z3',name:'Haad Rin',color:'#E8A820',center:[9.6785,100.065],coords:[[100.055,9.672],[100.078,9.672],[100.078,9.688],[100.055,9.688]],roofs:300,priority:'medium',status:'planned',progress:0,flights:0},
+  {id:'Z4',name:'Sri Thanu',color:'#1A7A5A',center:[9.7450,99.960],coords:[[99.948,9.735],[99.970,9.735],[99.970,9.755],[99.948,9.755]],roofs:200,priority:'medium',status:'planned',progress:0,flights:0},
+  {id:'Z5',name:'Chaloklum',color:'#1A7A5A',center:[9.7920,100.025],coords:[[100.012,9.783],[100.040,9.783],[100.040,9.800],[100.012,9.800]],roofs:250,priority:'medium',status:'planned',progress:0,flights:0},
+  {id:'Z6',name:'Wok Tum / Hin Kong',color:'#1A7A5A',center:[9.7350,99.985],coords:[[99.975,9.726],[99.995,9.726],[99.995,9.744],[99.975,9.744]],roofs:150,priority:'medium',status:'planned',progress:0,flights:0},
+  {id:'Z7',name:'Ban Khai',color:'#E85D3A',center:[9.7500,100.075],coords:[[100.060,9.740],[100.088,9.740],[100.088,9.760],[100.060,9.760]],roofs:200,priority:'low',status:'planned',progress:0,flights:0},
+  {id:'Z8',name:'Mae Haad / Koh Ma',color:'#E85D3A',center:[9.7850,99.970],coords:[[99.960,9.778],[99.982,9.778],[99.982,9.792],[99.960,9.792]],roofs:100,priority:'low',status:'planned',progress:0,flights:0}
+];
+
+const NATIONAL_PARK = [[99.990,9.730],[100.010,9.740],[100.030,9.755],[100.045,9.770],[100.040,9.785],[100.020,9.790],[100.000,9.785],[99.985,9.775],[99.975,9.760],[99.978,9.745]];
+
+const PRIORITY_COLORS = {A:'#E8A820',B:'#2ED89A',C:'#6496FF',D:'#666666'};
+const CAT_ICONS = {hospitality:'🏨',food_beverage:'🍽️',retail:'🛒',residential:'🏠',bungalow:'🛖',healthcare:'🏥',commercial:'🏢',government:'🏛️'};
+
+// Enrich building data
+let buildings = (typeof B !== 'undefined' ? B : []).map(b => {
+  const annual_kwh = b.kw * 1350;
+  const annual_savings = annual_kwh * 5.5;
+  const ppa_savings = annual_kwh * (5.5 - 4.5);
+  const payback = b.epc > 0 ? (b.epc / annual_savings) : 99;
+  const co2 = annual_kwh * 0.5;
+  const storage_cost = b.epc * 1.4;
+  return {...b, annual_kwh, annual_savings, ppa_savings, payback: Math.round(payback*10)/10, co2: Math.round(co2), storage_cost: Math.round(storage_cost)};
+});
+
+// State
+let currentFilter = {priority:'all', category:null, minSize:0, pipeline:false, search:''};
+let compareSet = new Set();
+let notes = {};
+let pipelineState = {};
+let showZonesOnMap = true;
+let showParkOnMap = true;
+
+// Load localStorage
+try {
+  notes = JSON.parse(localStorage.getItem('kpsp_notes') || '{}');
+  pipelineState = JSON.parse(localStorage.getItem('kpsp_pipeline') || '{}');
+  // Apply pipeline state from localStorage
+  buildings.forEach(b => { if (pipelineState[b.i] !== undefined) b.pip = pipelineState[b.i]; });
+} catch(e){}
+
+// ── Map ──
+const map = new maplibregl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+    sources: {
+      'satellite': {
+        type: 'raster',
+        tiles: ['https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}'],
+        tileSize: 256, maxzoom: 22
+      }
+    },
+    layers: [{id:'satellite-layer',type:'raster',source:'satellite'}]
+  },
+  center: [100.0291, 9.7578],
+  zoom: 12.5,
+  maxZoom: 22,
+  minZoom: 10
+});
+
+let currentStyle = 'satellite';
+
+function setMapStyle(style) {
+  currentStyle = style;
+  document.getElementById('btn-sat').classList.toggle('active', style === 'satellite');
+  document.getElementById('btn-map').classList.toggle('active', style === 'streets');
+  const lyrs = style === 'satellite' ? 's' : 'm';
+  map.getSource('satellite').tiles = [`https://mt0.google.com/vt/lyrs=${lyrs}&hl=en&x={x}&y={y}&z={z}`];
+  map.style.sourceCaches['satellite'].clearTiles();
+  map.style.sourceCaches['satellite'].update(map.transform);
+  map.triggerRepaint();
+}
+
+function resetView() { map.flyTo({center:[100.0291,9.7578],zoom:12.5}); }
+
+map.on('load', () => {
+  initMapLayers();
+  renderBuildings();
+  renderZones();
+  renderAnalytics();
+  updateHeaderStats();
+  document.getElementById('loading').classList.add('done');
+});
+
+function initMapLayers() {
+  // Building points GeoJSON
+  const features = buildings.map(b => ({
+    type: 'Feature',
+    geometry: {type:'Point',coordinates:[b.lo,b.la]},
+    properties: {id:b.i, pr:b.pr, kw:b.kw, pip:b.pip, a:b.a, n:b.n, c:b.c, s:b.s}
+  }));
+  
+  map.addSource('buildings', {type:'geojson', data:{type:'FeatureCollection',features}});
+  
+  // Circle layer — non-pipeline
+  map.addLayer({
+    id: 'buildings-circles',
+    type: 'circle',
+    source: 'buildings',
+    filter: ['==', ['get','pip'], 0],
+    paint: {
+      'circle-radius': ['interpolate',['linear'],['zoom'],10,2,14,5,18,10],
+      'circle-color': ['match',['get','pr'],'A','#E8A820','B','#2ED89A','C','#6496FF','#666666'],
+      'circle-opacity': 0.85,
+      'circle-stroke-width': 1,
+      'circle-stroke-color': 'rgba(255,255,255,0.4)'
+    }
+  });
+  
+  // Pipeline circles
+  map.addLayer({
+    id: 'buildings-pipeline',
+    type: 'circle',
+    source: 'buildings',
+    filter: ['==', ['get','pip'], 1],
+    paint: {
+      'circle-radius': ['interpolate',['linear'],['zoom'],10,3,14,7,18,12],
+      'circle-color': '#1A7A5A',
+      'circle-opacity': 0.9,
+      'circle-stroke-width': 2,
+      'circle-stroke-color': '#2ED89A'
+    }
+  });
+  
+  // Drone zone boundaries
+  const zoneFeatures = ZONES.map(z => ({
+    type:'Feature',
+    geometry:{type:'Polygon',coordinates:[[
+      [z.coords[0][0],z.coords[0][1]],
+      [z.coords[1][0],z.coords[1][1]],
+      [z.coords[2][0],z.coords[2][1]],
+      [z.coords[3][0],z.coords[3][1]],
+      [z.coords[0][0],z.coords[0][1]]
+    ]]},
+    properties:{id:z.id,name:z.name,color:z.color}
+  }));
+  
+  map.addSource('zones',{type:'geojson',data:{type:'FeatureCollection',features:zoneFeatures}});
+  map.addLayer({
+    id:'zones-fill',type:'fill',source:'zones',
+    paint:{'fill-color':['get','color'],'fill-opacity':0.06}
+  });
+  map.addLayer({
+    id:'zones-border',type:'line',source:'zones',
+    paint:{'line-color':['get','color'],'line-width':2,'line-dasharray':[6,4]}
+  });
+  
+  // Zone labels
+  map.addSource('zone-labels',{type:'geojson',data:{type:'FeatureCollection',features:ZONES.map(z=>({
+    type:'Feature',geometry:{type:'Point',coordinates:[z.center[1],z.center[0]]},
+    properties:{label:z.id+' — '+z.name}
+  }))}});
+  try { map.addLayer({
+    id:'zone-labels-layer',type:'symbol',source:'zone-labels',
+    layout:{'text-field':['get','label'],'text-size':12,'text-font':['Noto Sans Regular']},
+    paint:{'text-color':'#E8A820','text-halo-color':'rgba(13,33,55,0.9)','text-halo-width':2}
+  }); } catch(e) { console.warn('Zone labels skipped:', e.message); }
+  
+  // National Park
+  map.addSource('park',{type:'geojson',data:{type:'FeatureCollection',features:[{
+    type:'Feature',
+    geometry:{type:'Polygon',coordinates:[NATIONAL_PARK.map(c=>[c[0],c[1]]).concat([NATIONAL_PARK[0]])]},
+    properties:{}
+  }]}});
+  map.addLayer({id:'park-fill',type:'fill',source:'park',paint:{'fill-color':'#ff6b6b','fill-opacity':0.04}});
+  map.addLayer({id:'park-border',type:'line',source:'park',paint:{'line-color':'#ff6b6b','line-width':1.5,'line-dasharray':[4,4]}});
+  
+  // Click handler
+  map.on('click','buildings-circles', e => showPopup(e));
+  map.on('click','buildings-pipeline', e => showPopup(e));
+  map.on('mouseenter','buildings-circles',()=>{map.getCanvas().style.cursor='pointer'});
+  map.on('mouseleave','buildings-circles',()=>{map.getCanvas().style.cursor=''});
+  map.on('mouseenter','buildings-pipeline',()=>{map.getCanvas().style.cursor='pointer'});
+  map.on('mouseleave','buildings-pipeline',()=>{map.getCanvas().style.cursor=''});
+}
+
+function showPopup(e) {
+  const f = e.features[0];
+  const bid = f.properties.id;
+  const b = buildings.find(x=>x.i===bid);
+  if (!b) return;
+  
+  const waLink = `https://wa.me/66623480119?text=${encodeURIComponent(`Hi TM Energy, I saw "${b.n||'Building #'+b.i}" on KP Solar Pro. I'd like a free solar proposal.`)}`;
+  const noteVal = notes[b.i] || '';
+  const isPip = b.pip ? 'active' : '';
+  
+  const html = `
+    <div class="popup-title">${b.n || 'Building #'+b.i}</div>
+    <div class="popup-sub">${CAT_ICONS[b.c]||'📍'} ${b.c} · ${b.a} m² · Grade ${b.pr} · Score ${b.s}</div>
+    <div class="popup-grid">
+      <div><div class="pg-label">System</div><div class="pg-val">${b.kw} kWp</div></div>
+      <div><div class="pg-label">Panels</div><div class="pg-val">${b.p}</div></div>
+      <div><div class="pg-label">Annual kWh</div><div class="pg-val">${Math.round(b.annual_kwh).toLocaleString()}</div></div>
+      <div><div class="pg-label">Annual Savings</div><div class="pg-val">฿${Math.round(b.annual_savings).toLocaleString()}</div></div>
+      <div><div class="pg-label">CO₂ Offset</div><div class="pg-val">${(b.co2/1000).toFixed(1)} tons</div></div>
+      <div><div class="pg-label">Payback</div><div class="pg-val">${b.payback} yrs</div></div>
+    </div>
+    <div class="popup-options">
+      <div class="popup-opt">
+        <div><div class="popup-opt-name">EPC (Buy)</div><div class="popup-opt-detail">Payback ${b.payback} years</div></div>
+        <div class="popup-opt-price">฿${b.epc.toLocaleString()}</div>
+      </div>
+      <div class="popup-opt">
+        <div><div class="popup-opt-name">PPA (฿0 Upfront)</div><div class="popup-opt-detail">Save ฿${Math.round(b.ppa_savings).toLocaleString()}/yr</div></div>
+        <div class="popup-opt-price">฿4.50/kWh</div>
+      </div>
+      <div class="popup-opt">
+        <div><div class="popup-opt-name">EPC + Storage</div><div class="popup-opt-detail">Battery backup included</div></div>
+        <div class="popup-opt-price">฿${b.storage_cost.toLocaleString()}</div>
+      </div>
+    </div>
+    <div class="popup-btns">
+      <a class="wa-btn" href="${waLink}" target="_blank">📱 WhatsApp</a>
+      <button class="proposal-btn" onclick="generateProposal(${b.i})">📄 Proposal</button>
+    </div>
+    <div class="popup-btns" style="margin-top:6px">
+      <button class="pip-toggle-btn ${isPip}" onclick="togglePipeline(${b.i},this)">🟢 ${b.pip?'In Pipeline':'Add to Pipeline'}</button>
+    </div>
+    <textarea class="note-area" placeholder="Add notes..." onchange="saveNote(${b.i},this.value)">${noteVal}</textarea>
+  `;
+  
+  new maplibregl.Popup({maxWidth:'360px'}).setLngLat(e.lngLat).setHTML(html).addTo(map);
+}
+
+// ── Sidebar: Buildings ──
+function getFilteredBuildings() {
+  return buildings.filter(b => {
+    if (currentFilter.priority !== 'all' && b.pr !== currentFilter.priority) return false;
+    if (currentFilter.category && b.c !== currentFilter.category) return false;
+    if (b.a < currentFilter.minSize) return false;
+    if (currentFilter.pipeline && !b.pip) return false;
+    if (currentFilter.search) {
+      const q = currentFilter.search.toLowerCase();
+      if (!(b.n||'').toLowerCase().includes(q) && !(b.c||'').toLowerCase().includes(q) && !(b.ph||'').includes(q))
+        return false;
+    }
+    return true;
+  });
+}
+
+function sortBuildings(list) {
+  const s = document.getElementById('sortSelect').value;
+  return [...list].sort((a,b) => {
+    if (s==='score') return b.s - a.s;
+    if (s==='kwp') return b.kw - a.kw;
+    if (s==='area') return b.a - a.a;
+    if (s==='savings') return b.annual_savings - a.annual_savings;
+    if (s==='name') return (a.n||'').localeCompare(b.n||'');
+    return 0;
+  });
+}
+
+function renderBuildings() {
+  const filtered = sortBuildings(getFilteredBuildings());
+  const container = document.getElementById('buildingList');
+  
+  // Update map filter
+  updateMapFilter(filtered);
+  
+  // Limit render for performance
+  const show = filtered.slice(0, 200);
+  
+  container.innerHTML = `<div style="padding:8px 12px;font-size:11px;opacity:0.5">${filtered.length} buildings${filtered.length>200?' (showing first 200)':''}</div>` +
+    show.map(b => {
+      const isCompare = compareSet.has(b.i);
+      return `<div class="bldg-card ${isCompare?'selected':''}" onclick="flyTo(${b.lo},${b.la},${b.i})" data-id="${b.i}">
+        <div class="bldg-top">
+          <div class="bldg-name">${b.n || 'Building #'+b.i}</div>
+          <div class="bldg-badge badge-${b.pr}">${b.pr}</div>
+        </div>
+        <div class="bldg-meta">${CAT_ICONS[b.c]||'📍'} ${b.c} · ${b.a} m²</div>
+        <div class="bldg-stats">
+          <span>${b.kw} kWp</span> · 
+          <span>฿${Math.round(b.annual_savings).toLocaleString()}/yr</span> · 
+          Score <span>${b.s}</span>
+          ${b.pip?'<span style="color:var(--green)"> · 🟢</span>':''}
+        </div>
+        <div class="bldg-actions">
+          <button onclick="event.stopPropagation();toggleCompare(${b.i})" ${isCompare?'style="border-color:var(--gold);color:var(--gold)"':''}>⚖️</button>
+          <button class="${b.pip?'pip-on':''}" onclick="event.stopPropagation();togglePipelineFromList(${b.i})">🟢</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function updateMapFilter(filtered) {
+  if (!map.getLayer('buildings-circles')) return;
+  const ids = new Set(filtered.map(b=>b.i));
+  // We'll use a filter approach — show all matching IDs
+  if (currentFilter.priority === 'all' && !currentFilter.category && currentFilter.minSize === 0 && !currentFilter.pipeline && !currentFilter.search) {
+    map.setFilter('buildings-circles', ['==',['get','pip'],0]);
+    map.setFilter('buildings-pipeline', ['==',['get','pip'],1]);
+  } else {
+    const idList = [...ids];
+    map.setFilter('buildings-circles', ['all',['==',['get','pip'],0],['in',['get','id'],['literal',idList]]]);
+    map.setFilter('buildings-pipeline', ['all',['==',['get','pip'],1],['in',['get','id'],['literal',idList]]]);
+  }
+}
+
+function sortAndRender() { renderBuildings(); }
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentFilter.search = e.target.value;
+  renderBuildings();
+});
+
+function filterPriority(pr, btn) {
+  currentFilter.priority = pr;
+  document.querySelectorAll('.filters-bar [data-pr]').forEach(b => b.classList.toggle('on', b.dataset.pr === pr));
+  renderBuildings();
+}
+
+function filterCat(cat, btn) {
+  if (currentFilter.category === cat) {
+    currentFilter.category = null;
+    btn.classList.remove('on');
+  } else {
+    document.querySelectorAll('.filters-bar [data-cat]').forEach(b => b.classList.remove('on'));
+    currentFilter.category = cat;
+    btn.classList.add('on');
+  }
+  renderBuildings();
+}
+
+function filterSize(sz, btn) {
+  if (currentFilter.minSize === sz) {
+    currentFilter.minSize = 0;
+    btn.classList.remove('on');
+  } else {
+    document.querySelectorAll('.filters-bar [data-sz]').forEach(b => b.classList.remove('on'));
+    currentFilter.minSize = sz;
+    btn.classList.add('on');
+  }
+  renderBuildings();
+}
+
+function filterPipeline(btn) {
+  currentFilter.pipeline = !currentFilter.pipeline;
+  btn.classList.toggle('on', currentFilter.pipeline);
+  renderBuildings();
+}
+
+function flyTo(lng, lat, id) {
+  map.flyTo({center:[lng,lat],zoom:17});
+  // Simulate click
+  setTimeout(() => {
+    const b = buildings.find(x=>x.i===id);
+    if (b) {
+      const e = {features:[{properties:{id:b.i}}], lngLat:{lng:b.lo,lat:b.la}};
+      showPopup(e);
+    }
+  }, 500);
+}
+
+// ── Pipeline ──
+function togglePipeline(id, btn) {
+  const b = buildings.find(x=>x.i===id);
+  if (!b) return;
+  b.pip = b.pip ? 0 : 1;
+  pipelineState[id] = b.pip;
+  localStorage.setItem('kpsp_pipeline', JSON.stringify(pipelineState));
+  if (btn) {
+    btn.classList.toggle('active', b.pip);
+    btn.textContent = b.pip ? '🟢 In Pipeline' : '🟢 Add to Pipeline';
+  }
+  refreshMapData();
+  updateHeaderStats();
+}
+
+function togglePipelineFromList(id) {
+  const b = buildings.find(x=>x.i===id);
+  if (!b) return;
+  b.pip = b.pip ? 0 : 1;
+  pipelineState[id] = b.pip;
+  localStorage.setItem('kpsp_pipeline', JSON.stringify(pipelineState));
+  refreshMapData();
+  updateHeaderStats();
+  renderBuildings();
+}
+
+function refreshMapData() {
+  const src = map.getSource('buildings');
+  if (!src) return;
+  src.setData({
+    type:'FeatureCollection',
+    features: buildings.map(b => ({
+      type:'Feature',
+      geometry:{type:'Point',coordinates:[b.lo,b.la]},
+      properties:{id:b.i,pr:b.pr,kw:b.kw,pip:b.pip,a:b.a,n:b.n,c:b.c,s:b.s}
+    }))
+  });
+}
+
+// ── Notes ──
+function saveNote(id, val) {
+  notes[id] = val;
+  localStorage.setItem('kpsp_notes', JSON.stringify(notes));
+}
+
+// ── Compare ──
+function toggleCompare(id) {
+  if (compareSet.has(id)) compareSet.delete(id);
+  else if (compareSet.size < 3) compareSet.add(id);
+  document.getElementById('compareBar').classList.toggle('show', compareSet.size > 0);
+  document.getElementById('cmpCount').textContent = compareSet.size;
+  renderBuildings();
+}
+
+function clearCompare() {
+  compareSet.clear();
+  document.getElementById('compareBar').classList.remove('show');
+  renderBuildings();
+}
+
+function showCompare() {
+  if (compareSet.size < 2) return;
+  const items = [...compareSet].map(id => buildings.find(b=>b.i===id)).filter(Boolean);
+  document.getElementById('compareGrid').innerHTML = items.map(b => `
+    <div class="compare-col">
+      <h4>${b.n || 'Building #'+b.i}</h4>
+      <div class="cmp-row"><span class="cmp-label">Priority</span><span class="cmp-val">${b.pr}</span></div>
+      <div class="cmp-row"><span class="cmp-label">Category</span><span class="cmp-val">${b.c}</span></div>
+      <div class="cmp-row"><span class="cmp-label">Area</span><span class="cmp-val">${b.a} m²</span></div>
+      <div class="cmp-row"><span class="cmp-label">System</span><span class="cmp-val">${b.kw} kWp</span></div>
+      <div class="cmp-row"><span class="cmp-label">Panels</span><span class="cmp-val">${b.p}</span></div>
+      <div class="cmp-row"><span class="cmp-label">Annual kWh</span><span class="cmp-val">${Math.round(b.annual_kwh).toLocaleString()}</span></div>
+      <div class="cmp-row"><span class="cmp-label">Annual Savings</span><span class="cmp-val">฿${Math.round(b.annual_savings).toLocaleString()}</span></div>
+      <div class="cmp-row"><span class="cmp-label">EPC Cost</span><span class="cmp-val">฿${b.epc.toLocaleString()}</span></div>
+      <div class="cmp-row"><span class="cmp-label">Payback</span><span class="cmp-val">${b.payback} yrs</span></div>
+      <div class="cmp-row"><span class="cmp-label">PPA Savings</span><span class="cmp-val">฿${Math.round(b.ppa_savings).toLocaleString()}/yr</span></div>
+      <div class="cmp-row"><span class="cmp-label">CO₂ Offset</span><span class="cmp-val">${(b.co2/1000).toFixed(1)} tons</span></div>
+      <div class="cmp-row"><span class="cmp-label">Score</span><span class="cmp-val">${b.s}</span></div>
+    </div>
+  `).join('');
+  document.getElementById('compareOverlay').classList.add('show');
+}
+
+function closeCompare() { document.getElementById('compareOverlay').classList.remove('show'); }
+
+// ── Proposal ──
+function generateProposal(id) {
+  const b = buildings.find(x=>x.i===id);
+  if (!b) return;
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>Solar Proposal — ${b.n||'Building #'+b.i}</title>
+    <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:40px;max-width:800px;margin:0 auto;color:#333}
+    .header{text-align:center;margin-bottom:30px;border-bottom:3px solid #E8A820;padding-bottom:20px}
+    .logo-t{display:inline-block;width:40px;height:40px;background:#E8A820;border-radius:50%;text-align:center;line-height:40px;font-weight:800;font-size:16px;color:#0D2137;margin-bottom:8px}
+    h1{font-size:22px;color:#0D2137}h2{font-size:16px;color:#0D2137;margin:20px 0 10px;border-bottom:1px solid #ddd;padding-bottom:6px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin:10px 0}
+    .grid .label{font-size:12px;color:#888;text-transform:uppercase}.grid .val{font-size:15px;font-weight:600}
+    table{width:100%;border-collapse:collapse;margin:10px 0}th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #eee}
+    th{background:#f5f5f5;font-size:12px;text-transform:uppercase;color:#888}
+    .cta{display:block;text-align:center;background:#1A7A5A;color:#fff;padding:14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;margin:30px 0}
+    .footer{text-align:center;font-size:11px;color:#888;margin-top:30px;border-top:1px solid #ddd;padding-top:15px}
+    @media print{.cta{display:none}}</style></head><body>
+    <div class="header"><div class="logo-t">TM</div><h1>TM Energy — Solar Proposal</h1><p style="color:#888;margin-top:4px">${new Date().toLocaleDateString()}</p></div>
+    <h2>Property Details</h2>
+    <div class="grid">
+      <div><div class="label">Property</div><div class="val">${b.n||'Building #'+b.i}</div></div>
+      <div><div class="label">Category</div><div class="val">${b.c}</div></div>
+      <div><div class="label">Roof Area</div><div class="val">${b.a} m²</div></div>
+      <div><div class="label">Usable Area</div><div class="val">${b.u} m²</div></div>
+      <div><div class="label">Priority Grade</div><div class="val">${b.pr}</div></div>
+      <div><div class="label">Score</div><div class="val">${b.s}/100</div></div>
+    </div>
+    <h2>Solar System</h2>
+    <div class="grid">
+      <div><div class="label">System Size</div><div class="val">${b.kw} kWp</div></div>
+      <div><div class="label">Solar Panels</div><div class="val">${b.p} panels</div></div>
+      <div><div class="label">Annual Output</div><div class="val">${Math.round(b.annual_kwh).toLocaleString()} kWh</div></div>
+      <div><div class="label">Monthly Savings</div><div class="val">฿${Math.round(b.annual_savings/12).toLocaleString()}</div></div>
+      <div><div class="label">Annual Savings</div><div class="val">฿${Math.round(b.annual_savings).toLocaleString()}</div></div>
+      <div><div class="label">CO₂ Offset</div><div class="val">${(b.co2/1000).toFixed(1)} tons/year</div></div>
+    </div>
+    <h2>Investment Options</h2>
+    <table><thead><tr><th>Option</th><th>Cost</th><th>Savings</th><th>Payback</th></tr></thead><tbody>
+      <tr><td><strong>Option A: EPC (Purchase)</strong></td><td>฿${b.epc.toLocaleString()}</td><td>฿${Math.round(b.annual_savings).toLocaleString()}/yr</td><td>${b.payback} years</td></tr>
+      <tr><td><strong>Option B: PPA (฿0 Upfront)</strong></td><td>฿0</td><td>฿${Math.round(b.ppa_savings).toLocaleString()}/yr</td><td>Immediate</td></tr>
+      <tr><td><strong>Option C: EPC + Battery Storage</strong></td><td>฿${b.storage_cost.toLocaleString()}</td><td>฿${Math.round(b.annual_savings*1.15).toLocaleString()}/yr</td><td>${Math.round(b.storage_cost/(b.annual_savings*1.15)*10)/10} years</td></tr>
+    </tbody></table>
+    <a class="cta" href="https://wa.me/66623480119?text=${encodeURIComponent(`Hi TM Energy, I'd like to discuss the solar proposal for "${b.n||'Building #'+b.i}" (${b.kw} kWp).`)}" target="_blank">📱 Contact TM Energy via WhatsApp</a>
+    <div class="footer">TM Energy · Koh Phangan, Thailand · +66 62 348 0119<br>Generated by KP Solar Pro</div>
+    </body></html>`);
+}
+
+// ── Sidebar: Drone Zones ──
+function renderZones() {
+  const container = document.getElementById('zoneList');
+  container.innerHTML = ZONES.map(z => {
+    const statusClass = z.status === 'complete' ? 'status-complete' : z.status === 'scanning' ? 'status-scanning' : 'status-planned';
+    const progressColor = z.status === 'complete' ? 'var(--green)' : z.status === 'scanning' ? 'var(--gold)' : 'var(--navy2)';
+    const buildingsInZone = buildings.filter(b => {
+      return b.la >= z.coords[0][1] && b.la <= z.coords[2][1] && b.lo >= z.coords[0][0] && b.lo <= z.coords[2][0];
+    });
+    const zoneKwp = buildingsInZone.reduce((s,b)=>s+b.kw,0);
+    return `<div class="zone-card" onclick="flyToZone('${z.id}')">
+      <div class="zone-header">
+        <div class="zone-id">${z.id}</div>
+        <div class="zone-status ${statusClass}">${z.status.charAt(0).toUpperCase()+z.status.slice(1)}</div>
+      </div>
+      <div class="zone-name">${z.name}</div>
+      <div class="zone-meta">${z.priority} priority · Est. ${z.roofs} roofs · ${z.flights} flights</div>
+      <div class="zone-stats">
+        <span>${buildingsInZone.length}</span> mapped · 
+        <span>${(zoneKwp/1000).toFixed(1)} MWp</span> potential
+      </div>
+      <div class="zone-progress"><div class="zone-progress-fill" style="width:${z.progress}%;background:${progressColor}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function flyToZone(zid) {
+  const z = ZONES.find(x=>x.id===zid);
+  if (z) map.flyTo({center:[z.center[1],z.center[0]],zoom:14});
+}
+
+// ── Sidebar: Analytics ──
+function renderAnalytics() {
+  const totalKwp = buildings.reduce((s,b)=>s+b.kw,0);
+  const totalSavings = buildings.reduce((s,b)=>s+b.annual_savings,0);
+  const totalEpc = buildings.reduce((s,b)=>s+b.epc,0);
+  const totalCo2 = buildings.reduce((s,b)=>s+b.co2,0);
+  const pipCount = buildings.filter(b=>b.pip).length;
+  
+  // Priority distribution
+  const prCounts = {A:0,B:0,C:0,D:0};
+  buildings.forEach(b => prCounts[b.pr]=(prCounts[b.pr]||0)+1);
+  const maxPr = Math.max(...Object.values(prCounts));
+  
+  // Category distribution
+  const catCounts = {};
+  buildings.forEach(b => catCounts[b.c]=(catCounts[b.c]||0)+1);
+  const catSorted = Object.entries(catCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxCat = catSorted.length ? catSorted[0][1] : 1;
+  
+  // Top 10
+  const top10 = [...buildings].sort((a,b)=>b.kw-a.kw).slice(0,10);
+  
+  document.getElementById('analyticsContent').innerHTML = `
+    <h3>📊 Portfolio Analytics</h3>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="sv">${buildings.length.toLocaleString()}</div><div class="sl">Total Buildings</div></div>
+      <div class="stat-card"><div class="sv">${(totalKwp/1000).toFixed(1)}</div><div class="sl">MWp Potential</div></div>
+      <div class="stat-card"><div class="sv">฿${(totalEpc/1000000).toFixed(0)}M</div><div class="sl">EPC Value</div></div>
+      <div class="stat-card"><div class="sv">฿${(totalSavings/1000000).toFixed(1)}M</div><div class="sl">Annual Savings</div></div>
+      <div class="stat-card"><div class="sv">${(totalCo2/1000000).toFixed(1)}K</div><div class="sl">Tons CO₂/yr</div></div>
+      <div class="stat-card"><div class="sv">${pipCount}</div><div class="sl">Pipeline</div></div>
+    </div>
+    
+    <div class="chart-section">
+      <h4>Priority Distribution</h4>
+      ${['A','B','C','D'].map(pr => `<div class="bar-row">
+        <div class="bar-label">Grade ${pr}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(prCounts[pr]/maxPr*100)}%;background:${PRIORITY_COLORS[pr]}">${prCounts[pr]}</div></div>
+        <div class="bar-count">${prCounts[pr]}</div>
+      </div>`).join('')}
+    </div>
+    
+    <div class="chart-section">
+      <h4>By Category</h4>
+      ${catSorted.map(([cat,cnt]) => `<div class="bar-row">
+        <div class="bar-label">${CAT_ICONS[cat]||'📍'} ${cat.replace('_',' ')}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(cnt/maxCat*100)}%;background:var(--gold)">${cnt}</div></div>
+        <div class="bar-count">${cnt}</div>
+      </div>`).join('')}
+    </div>
+    
+    <div class="chart-section">
+      <h4>Top 10 by kWp</h4>
+      <ol class="top-list">${top10.map((b,i) => `<li>
+        <span class="tl-rank">${i+1}</span>
+        <span class="tl-name">${b.n||'#'+b.i}</span>
+        <span class="tl-val">${b.kw} kWp</span>
+      </li>`).join('')}</ol>
+    </div>
+  `;
+}
+
+// ── Tabs ──
+function switchTab(tab, btn) {
+  document.querySelectorAll('.sidebar-tabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-buildings').style.display = tab === 'buildings' ? '' : 'none';
+  document.getElementById('tab-zones').style.display = tab === 'zones' ? '' : 'none';
+  document.getElementById('tab-analytics').style.display = tab === 'analytics' ? '' : 'none';
+}
+
+// ── Map toggles ──
+function toggleZonesLayer() {
+  showZonesOnMap = !showZonesOnMap;
+  document.getElementById('btn-zones-toggle').classList.toggle('active', showZonesOnMap);
+  ['zones-fill','zones-border','zone-labels-layer'].forEach(l => {
+    if (map.getLayer(l)) map.setLayoutProperty(l,'visibility', showZonesOnMap ? 'visible' : 'none');
+  });
+}
+
+function toggleParkLayer() {
+  showParkOnMap = !showParkOnMap;
+  document.getElementById('btn-park-toggle').classList.toggle('active', showParkOnMap);
+  ['park-fill','park-border'].forEach(l => {
+    if (map.getLayer(l)) map.setLayoutProperty(l,'visibility', showParkOnMap ? 'visible' : 'none');
+  });
+}
+
+// ── Header Stats ──
+function updateHeaderStats() {
+  const totalKwp = buildings.reduce((s,b)=>s+b.kw,0);
+  const totalEpc = buildings.reduce((s,b)=>s+b.epc,0);
+  const pipCount = buildings.filter(b=>b.pip).length;
+  const scanned = ZONES.filter(z=>z.status==='complete').length;
+  
+  document.getElementById('h-buildings').textContent = buildings.length.toLocaleString();
+  document.getElementById('h-mwp').textContent = (totalKwp/1000).toFixed(1);
+  document.getElementById('h-value').textContent = Math.round(totalEpc/1000000);
+  document.getElementById('h-pipeline').textContent = pipCount;
+  document.getElementById('h-scanned').textContent = `${scanned}/8`;
+}
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && !e.ctrlKey) { e.preventDefault(); document.getElementById('searchInput').focus(); }
+  if (e.key === 'Escape') { closeCompare(); }
+});
+
+// Initial active states for map toggles
+document.getElementById('btn-zones-toggle').classList.add('active');
+document.getElementById('btn-park-toggle').classList.add('active');
+</script>
+</body>
+</html>

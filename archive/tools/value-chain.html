@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שרשרת הערך — TM Energy CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#0A1929;color:#E8E8E8;line-height:1.6}
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+.lang-bar{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:200;display:flex;gap:4px;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);border-radius:20px;padding:3px}
+.lang-btn{padding:4px 12px;border-radius:16px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:rgba(255,255,255,.5);transition:all .2s}
+.lang-btn.active{background:rgba(232,168,32,.2);color:#E8A820}
+.container{max-width:1200px;margin:0 auto;padding:80px 24px 60px}
+h1{font-size:2.2rem;text-align:center;margin-bottom:8px}
+.subtitle{text-align:center;color:rgba(255,255,255,.4);margin-bottom:48px;font-size:1rem}
+.gold{color:#E8A820}
+
+/* Chain visualization */
+.chain{display:flex;flex-wrap:wrap;gap:0;justify-content:center;margin-bottom:48px}
+.chain-step{position:relative;width:calc(25% - 2px);min-width:250px;padding:24px 20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .3s}
+.chain-step:hover{background:rgba(232,168,32,.05);border-color:rgba(232,168,32,.3)}
+.chain-step.active{background:rgba(232,168,32,.08);border-color:#E8A820}
+.chain-num{position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:50%;background:rgba(232,168,32,.15);color:#E8A820;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.chain-icon{font-size:2rem;margin-bottom:8px}
+.chain-title{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:4px}
+.chain-desc{font-size:.75rem;color:rgba(255,255,255,.4)}
+.chain-model{margin-top:8px}
+.chain-model span{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:600}
+.m-crm{background:rgba(59,130,246,.15);color:#3B82F6}
+.m-new{background:rgba(22,163,74,.15);color:#22C55E}
+.m-exists{background:rgba(168,85,247,.15);color:#A855F7}
+
+/* Detail panel */
+.detail{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px;margin-top:24px;display:none}
+.detail.show{display:block}
+.detail h2{font-size:1.5rem;color:#fff;margin-bottom:4px}
+.detail .detail-sub{color:#E8A820;font-size:.9rem;margin-bottom:20px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:768px){.detail-grid{grid-template-columns:1fr}}
+.detail-col h3{font-size:.85rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.checklist{list-style:none;padding:0}
+.checklist li{padding:6px 0;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:flex-start;gap:8px}
+.checklist li::before{content:'☐';color:#E8A820;flex-shrink:0}
+.db-fields{background:rgba(0,0,0,.3);border-radius:8px;padding:12px;font-family:monospace;font-size:.75rem;color:rgba(255,255,255,.5);white-space:pre-wrap;max-height:200px;overflow-y:auto}
+.screens{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.screen-tag{padding:6px 12px;border-radius:8px;background:rgba(232,168,32,.1);border:1px solid rgba(232,168,32,.2);font-size:.8rem;color:#E8A820}
+
+/* Pipeline */
+.pipeline{display:flex;gap:2px;margin:32px 0;overflow-x:auto}
+.pipe-stage{flex:1;min-width:100px;text-align:center;padding:12px 8px;position:relative}
+.pipe-stage::after{content:'→';position:absolute;left:-8px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.2);font-size:1.2rem}
+.pipe-stage:last-child::after{display:none}
+.pipe-num{font-size:1.5rem;font-weight:700;color:#E8A820}
+.pipe-label{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:2px}
+.pipe-bar{height:4px;border-radius:2px;margin-top:8px}
+.p1{background:linear-gradient(90deg,#3B82F6,#60A5FA)}
+.p2{background:linear-gradient(90deg,#8B5CF6,#A78BFA)}
+.p3{background:linear-gradient(90deg,#E8A820,#F59E0B)}
+.p4{background:linear-gradient(90deg,#22C55E,#4ADE80)}
+
+/* Summary */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+.summary-card{text-align:center;padding:20px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(255,255,255,.06)}
+.summary-num{font-size:2rem;font-weight:700;color:#E8A820}
+.summary-label{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:4px}
+@media(max-width:600px){.chain-step{width:calc(50% - 1px);min-width:140px}.summary{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="tm-logo-header"><span class="brand-text">TM ENERGY</span></div>
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('he')" data-l="he">עב</button>
+  <button class="lang-btn" onclick="setLang('en')" data-l="en">EN</button>
+  <button class="lang-btn" onclick="setLang('th')" data-l="th">ไทย</button>
+</div>
+
+<div class="container">
+
+<h1>🔗 שרשרת הערך — <span class="gold">TM Energy CRM</span></h1>
+<p class="subtitle">12 שלבים מליד ועד O&M — הכל בתוך הפלטפורמה</p>
+
+<!-- Pipeline summary -->
+<div class="pipeline">
+  <div class="pipe-stage"><div class="pipe-num">57</div><div class="pipe-label">לידים</div><div class="pipe-bar p1"></div></div>
+  <div class="pipe-stage"><div class="pipe-num">0</div><div class="pipe-label">סקר</div><div class="pipe-bar p1"></div></div>
+  <div class="pipe-stage"><div class="pipe-num">0</div><div class="pipe-label">עיצוב</div><div class="pipe-bar p2"></div></div>
+  <div class="pipe-stage"><div class="pipe-num">0</div><div class="pipe-label">הצעה</div><div class="pipe-bar p2"></div></div>
+  <div class="pipe-stage"><div class="pipe-num">0</div><div class="pipe-label">חוזה</div><div class="pipe-bar p3"></div></div>
+  <div class="pipe-stage"><div class="pipe-num">0</div><div class="pipe-label">התקנה</div><div class="pipe-bar p3"></div></div>
+  <div class="pipe-stage"><div class="pipe-num">0</div><div class="pipe-label">חיבור</div><div class="pipe-bar p4"></div></div>
+  <div class="pipe-stage"><div class="pipe-num">0</div><div class="pipe-label">LIVE</div><div class="pipe-bar p4"></div></div>
+</div>
+
+<!-- 12 Steps Chain -->
+<div class="chain" id="chain">
+
+<div class="chain-step" onclick="showDetail(0)">
+  <div class="chain-num">1</div>
+  <div class="chain-icon">📥</div>
+  <div class="chain-title">Lead Capture</div>
+  <div class="chain-desc">לכידת ליד — WhatsApp, LINE, אתר, הפניה</div>
+  <div class="chain-model"><span class="m-exists">קיים ב-CRM</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(1)">
+  <div class="chain-num">2</div>
+  <div class="chain-icon">📸</div>
+  <div class="chain-title">Site Survey</div>
+  <div class="chain-desc">סקר אתר — צילום, מדידות, ארון חשמל, מונה</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(2)">
+  <div class="chain-num">3</div>
+  <div class="chain-icon">⚡</div>
+  <div class="chain-title">Electricity Analysis</div>
+  <div class="chain-desc">ניתוח חשמל — חשבונות PEA, צריכה, עונתיות</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(3)">
+  <div class="chain-num">4</div>
+  <div class="chain-icon">🎨</div>
+  <div class="chain-title">System Design</div>
+  <div class="chain-desc">עיצוב מערכת — פריסת פאנלים, ציוד, ביצועים</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(4)">
+  <div class="chain-num">5</div>
+  <div class="chain-icon">📐</div>
+  <div class="chain-title">SLD — PEA</div>
+  <div class="chain-desc">תוכנית חד-קווית — generator + שליחה ל-PEA</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(5)">
+  <div class="chain-num">6</div>
+  <div class="chain-icon">💰</div>
+  <div class="chain-title">Proposal</div>
+  <div class="chain-desc">הצעת מחיר — EPC/PPA, מודלים כלכליים, חתימה</div>
+  <div class="chain-model"><span class="m-exists">קיים (להרחיב)</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(6)">
+  <div class="chain-num">7</div>
+  <div class="chain-icon">📝</div>
+  <div class="chain-title">Contract</div>
+  <div class="chain-desc">חוזה — EPC/PPA/O&M, milestones, תשלומים</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(7)">
+  <div class="chain-num">8</div>
+  <div class="chain-icon">📦</div>
+  <div class="chain-title">Procurement</div>
+  <div class="chain-desc">רכש ומלאי — הזמנות, מחסן, שיוך לפרויקט</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(8)">
+  <div class="chain-num">9</div>
+  <div class="chain-icon">🔨</div>
+  <div class="chain-title">Installation</div>
+  <div class="chain-desc">התקנה — צוות, צ'קליסט, תמונות, timeline</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(9)">
+  <div class="chain-num">10</div>
+  <div class="chain-icon">🔌</div>
+  <div class="chain-title">PEA Connection</div>
+  <div class="chain-desc">חיבור לרשת — בקשה, בדיקה, מונה דו-כיווני</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(10)">
+  <div class="chain-num">11</div>
+  <div class="chain-icon">✅</div>
+  <div class="chain-title">Commissioning</div>
+  <div class="chain-desc">הפעלה ומסירה — בדיקות, הדרכה, חתימה</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+<div class="chain-step" onclick="showDetail(11)">
+  <div class="chain-num">12</div>
+  <div class="chain-icon">🔧</div>
+  <div class="chain-title">O&M</div>
+  <div class="chain-desc">ניטור + תחזוקה — monitoring, tickets, דוחות</div>
+  <div class="chain-model"><span class="m-new">לבנות</span></div>
+</div>
+
+</div><!-- end chain -->
+
+<!-- Detail panels (one per step) -->
+<div class="detail" id="d0">
+  <h2>📥 שלב 1: Lead Capture — לכידת ליד</h2>
+  <div class="detail-sub">סטטוס: קיים ב-CRM | צריך: webhooks + auto-assign</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>מה קורה</h3>
+      <ul class="checklist">
+        <li>ליד נכנס מ-WhatsApp / LINE / Facebook / אתר / Roof Scanner</li>
+        <li>נרשם אוטומטית עם מקור + תאריך</li>
+        <li>שיוך אוטומטי לאיש מכירות</li>
+        <li>התראה תוך 2 שעות אם לא נענה</li>
+      </ul>
+      <h3 style="margin-top:16px">סטטוסים</h3>
+      <div class="screens">
+        <span class="screen-tag">New</span>
+        <span class="screen-tag">Contacted</span>
+        <span class="screen-tag">Survey Scheduled</span>
+        <span class="screen-tag">Qualified</span>
+        <span class="screen-tag">Lost</span>
+      </div>
+    </div>
+    <div class="detail-col">
+      <h3>מה לבנות</h3>
+      <ul class="checklist">
+        <li>WhatsApp Business webhook → auto-create lead</li>
+        <li>LINE Official webhook → auto-create lead</li>
+        <li>Landing page form → API → lead</li>
+        <li>Roof Scanner → "Request Quote" → lead</li>
+        <li>Auto-assign round-robin</li>
+        <li>SLA timer: 2h response alert</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d1">
+  <h2>📸 שלב 2: Site Survey — סקר אתר</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 1</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>צ'קליסט סקר</h3>
+      <ul class="checklist">
+        <li>צילום גג מלמעלה (דרון)</li>
+        <li>צילום גג מקרוב (סוג חומר)</li>
+        <li>צילום ארון חשמל — פנים + חוץ</li>
+        <li>צילום מונה PEA — מספר + קריאה</li>
+        <li>צילום סביבה — הצללות, עצים</li>
+        <li>מדידות: אורך × רוחב × זווית גג</li>
+        <li>כיוון גג (compass)</li>
+        <li>מרחק: גג → ארון → מונה</li>
+        <li>סוג גג: בטון / פח / רעפים / עץ</li>
+        <li>מצב גג: טוב / בינוני / דורש תיקון</li>
+        <li>גישה: סולם / מדרגות / מנוף</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>מסכי CRM</h3>
+      <ul class="checklist">
+        <li>טופס סקר מובנה (mobile-friendly)</li>
+        <li>Upload תמונות עם סיווג אוטומטי</li>
+        <li>מפה עם GPS pin</li>
+        <li>גלריית תמונות per lead</li>
+        <li>צ'קליסט — חייב 100% לפני שלב הבא</li>
+      </ul>
+      <h3 style="margin-top:16px">שדות מפתח</h3>
+      <div class="db-fields">roof_type, roof_area_m2, roof_angle
+panel_distance_m, meter_number
+shading_hours, roof_condition
+lat, lng, photos[]</div>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d2">
+  <h2>⚡ שלב 3: Electricity Analysis — ניתוח חשמל</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 1</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>מה אוספים</h3>
+      <ul class="checklist">
+        <li>3-12 חשבונות PEA (חודש, kWh, THB)</li>
+        <li>תמונת חשבון (OCR עתידי)</li>
+        <li>סוג תעריף: residential / commercial / TOU</li>
+        <li>Demand charge + FT surcharge</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>מה מחשבים (אוטומטי)</h3>
+      <ul class="checklist">
+        <li>צריכה ממוצעת חודשית (kWh)</li>
+        <li>עלות ממוצעת per kWh</li>
+        <li>גרף צריכה חודשי + מגמות</li>
+        <li>גודל מערכת מומלץ (kWp)</li>
+        <li>חיסכון שנתי צפוי (THB)</li>
+        <li>CO₂ reduction</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d3">
+  <h2>🎨 שלב 4: System Design — עיצוב מערכת</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 2</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>Panel Layout Designer</h3>
+      <ul class="checklist">
+        <li>פריסת פאנלים על תמונת גג / מפה</li>
+        <li>Drag & drop פאנלים</li>
+        <li>חישוב אוטומטי: כמות + הספק</li>
+        <li>אזורי הצללה מסומנים</li>
+        <li>מרחק שורות (row spacing)</li>
+        <li>תמונת layout לשליחה ללקוח</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>בחירת ציוד</h3>
+      <ul class="checklist">
+        <li>Panel: LONGi 580W / 550W / 400W</li>
+        <li>Inverter: Huawei 5-20KTL</li>
+        <li>Battery: LUNA2000 5-15 kWh</li>
+        <li>Mounting: roof / ground / ballast</li>
+      </ul>
+      <h3 style="margin-top:16px">חישובי ביצועים</h3>
+      <ul class="checklist">
+        <li>Total kWp, annual kWh</li>
+        <li>Self-consumption ratio</li>
+        <li>Grid export ratio</li>
+        <li>Performance ratio</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d4">
+  <h2>📐 שלב 5: SLD — תוכנית חד-קווית</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 2</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>SLD Generator</h3>
+      <ul class="checklist">
+        <li>אוטומטי מעיצוב המערכת</li>
+        <li>תבנית: residential / commercial / hybrid</li>
+        <li>DC cable sizing</li>
+        <li>AC cable sizing</li>
+        <li>Breaker ratings</li>
+        <li>SPD + Grounding</li>
+        <li>Export: SVG + PDF</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>מעקב PEA</h3>
+      <ul class="checklist">
+        <li>תאריך שליחה</li>
+        <li>מספר בקשה</li>
+        <li>מועד בדיקה</li>
+        <li>סטטוס: Preparing → Submitted → Approved</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d5">
+  <h2>💰 שלב 6: Proposal — הצעת מחיר</h2>
+  <div class="detail-sub">סטטוס: קיים (proposal.html) — להרחיב ולשלב ב-CRM</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>Proposal Builder</h3>
+      <ul class="checklist">
+        <li>Auto-fill מעיצוב + ניתוח חשמל</li>
+        <li>מודל EPC: מחיר, תשלומים, payback</li>
+        <li>מודל PPA: הנחה, חיסכון, חוזה</li>
+        <li>השוואה EPC vs PPA side-by-side</li>
+        <li>תמונת layout על הגג</li>
+        <li>Branding: TM Energy</li>
+        <li>שליחה ב-WhatsApp / Email</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>מודלים כלכליים</h3>
+      <ul class="checklist">
+        <li>EPC: NPV, IRR, payback years</li>
+        <li>PPA: monthly rate, escalation, IRR</li>
+        <li>Sensitivity: best / base / worst</li>
+        <li>חתימה דיגיטלית</li>
+      </ul>
+      <div class="screens" style="margin-top:12px">
+        <span class="screen-tag">Draft</span>
+        <span class="screen-tag">Sent</span>
+        <span class="screen-tag">Viewed</span>
+        <span class="screen-tag">Accepted</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d6">
+  <h2>📝 שלב 7: Contract — חוזה</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 3</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>ניהול חוזים</h3>
+      <ul class="checklist">
+        <li>Template auto-fill מ-proposal</li>
+        <li>EPC: 30/40/30 milestones</li>
+        <li>PPA: תנאים, שנים, escalation</li>
+        <li>O&M: חבילה, מחיר, SLA</li>
+        <li>חתימה דיגיטלית</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>מעקב תשלומים</h3>
+      <ul class="checklist">
+        <li>Milestone tracker</li>
+        <li>Invoice generation</li>
+        <li>Payment status: pending / paid</li>
+        <li>מעקב אחריות: start / end</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d7">
+  <h2>📦 שלב 8: Procurement — רכש ומלאי</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 3</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>ניהול מלאי</h3>
+      <ul class="checklist">
+        <li>פאנלים, ממירים, סוללות, מרכבים, כבלים</li>
+        <li>במחסן / בדרך / משויך / זמין</li>
+        <li>התראת מלאי מינימלי</li>
+        <li>שיוך ציוד לפרויקט (pull from stock)</li>
+        <li>Serial number tracking</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>הזמנות רכש (PO)</h3>
+      <ul class="checklist">
+        <li>ספק, פריטים, מחיר, delivery date</li>
+        <li>סטטוס: Draft → Sent → Shipped → Received</li>
+        <li>מעקב משלוח (מעבורת לאי)</li>
+        <li>היסטוריית מחירים per item</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d8">
+  <h2>🔨 שלב 9: Installation — התקנה</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 3</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>צ'קליסט התקנה</h3>
+      <ul class="checklist">
+        <li>הכנת גג (ניקוי, חיזוק)</li>
+        <li>התקנת מרכבים</li>
+        <li>הנחת פאנלים</li>
+        <li>חיווט DC (strings)</li>
+        <li>התקנת ממיר</li>
+        <li>חיווט AC</li>
+        <li>סוללה (אם יש)</li>
+        <li>Grounding + SPD</li>
+        <li>בדיקות DC: Voc, Isc</li>
+        <li>בדיקות AC: voltage, frequency</li>
+        <li>בדיקת בידוד</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>ניהול צוות</h3>
+      <ul class="checklist">
+        <li>Team lead + crew assignment</li>
+        <li>Gantt פשוט — שלבי התקנה</li>
+        <li>תמונות per שלב</li>
+        <li>דיווח בעיות + פתרון</li>
+        <li>שעות עבודה + הוצאות</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d9">
+  <h2>🔌 שלב 10: PEA Connection — חיבור לרשת</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 4</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>מעקב PEA</h3>
+      <ul class="checklist">
+        <li>הגשת בקשה (30 יום הודעה)</li>
+        <li>מעקב מספר בקשה</li>
+        <li>תיאום בדיקה</li>
+        <li>תוצאת בדיקה: pass / fail / conditional</li>
+        <li>התקנת מונה דו-כיווני</li>
+        <li>אישור net metering</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>מסמכים נדרשים</h3>
+      <ul class="checklist">
+        <li>SLD (מהשלב 5)</li>
+        <li>צילום תעודת זהות</li>
+        <li>ספר בית (house book)</li>
+        <li>טופס PEA</li>
+        <li>תמונות המערכת המותקנת</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d10">
+  <h2>✅ שלב 11: Commissioning — הפעלה ומסירה</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 4</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>צ'קליסט הפעלה</h3>
+      <ul class="checklist">
+        <li>בדיקת ייצור (kW actual vs expected)</li>
+        <li>הגדרת monitoring (FusionSolar / iSolarCloud)</li>
+        <li>הדרכת לקוח — app, מה לעשות בהפסקה</li>
+        <li>מסירת מסמכים: אחריות, SLD, manual</li>
+        <li>חתימת פרוטוקול מסירה (דיגיטלי)</li>
+        <li>תיעוד תמונות סופי</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>ביצועים יום 1</h3>
+      <ul class="checklist">
+        <li>kWh produced</li>
+        <li>Peak kW</li>
+        <li>Performance ratio %</li>
+        <li>Monitoring configured</li>
+        <li>Customer trained</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail" id="d11">
+  <h2>🔧 שלב 12: O&M — ניטור ותחזוקה</h2>
+  <div class="detail-sub">סטטוס: לבנות | עדיפות: Phase 4</div>
+  <div class="detail-grid">
+    <div class="detail-col">
+      <h3>Dashboard ניטור</h3>
+      <ul class="checklist">
+        <li>ייצור real-time per site</li>
+        <li>התראות: inverter fault, low production</li>
+        <li>ביצועים vs expected</li>
+        <li>תחזוקה מתוזמנת (ניקוי כל 3-6 חודשים)</li>
+        <li>בדיקה שנתית</li>
+      </ul>
+    </div>
+    <div class="detail-col">
+      <h3>Tickets + דוחות</h3>
+      <ul class="checklist">
+        <li>פתיחת ticket → שיוך לטכנאי</li>
+        <li>SLA: 4h response (premium) / 24h (basic)</li>
+        <li>דוח חודשי אוטומטי ללקוח</li>
+        <li>kWh, חיסכון, CO₂, ביצועים</li>
+        <li>שליחה ב-WhatsApp / Email</li>
+        <li>חיוב O&M חודשי (invoice)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Summary -->
+<div class="summary">
+  <div class="summary-card">
+    <div class="summary-num">23</div>
+    <div class="summary-label">טבלאות DB חדשות</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-num">12</div>
+    <div class="summary-label">מסכי CRM חדשים</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-num">4</div>
+    <div class="summary-label">שלבי בנייה (Phases)</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-num">~5</div>
+    <div class="summary-label">שבועות לבנייה מלאה</div>
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+function showDetail(i) {
+  document.querySelectorAll('.detail').forEach(d => d.classList.remove('show'));
+  document.querySelectorAll('.chain-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('d'+i).classList.add('show');
+  document.querySelectorAll('.chain-step')[i].classList.add('active');
+  document.getElementById('d'+i).scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

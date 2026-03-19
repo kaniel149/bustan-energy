@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ko Phangan Solar — הסכם רכישת חשמל (PPA)</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);line-height:1.8;padding:0}
+
+.contract{max-width:900px;margin:0 auto;padding:60px 60px 100px;background:var(--night)}
+
+@media print{
+  body{background:#fff;color:#111}
+  .contract{padding:40px;max-width:100%}
+  h1,h2,h3{color:#0A3D5C !important}
+  .header-bar,.gold,.section-title{color:#0A3D5C !important}
+  .clause{border-color:#ddd !important}
+  .signature-box{border-color:#333 !important;background:#f9f9f9 !important}
+  .no-print{display:none}
+  .contract-badge{border-color:#0A3D5C !important;color:#0A3D5C !important}
+  .highlight-box{background:#f0f7ee !important;border-color:#2ED89A !important;color:#111 !important}
+}
+
+.header-bar{text-align:center;border-bottom:3px solid var(--gold);padding-bottom:30px;margin-bottom:40px}
+.header-bar h1{font-size:28px;font-weight:900;color:var(--gold);margin-bottom:8px}
+.header-bar .contract-type{font-size:18px;font-weight:300;opacity:.8;margin-bottom:16px}
+.contract-badge{display:inline-block;border:2px solid var(--gold);color:var(--gold);padding:6px 20px;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:1px}
+
+.section-title{font-size:20px;font-weight:700;color:var(--gold);margin:36px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(232,168,32,.3)}
+.section-title span{font-family:'Space Grotesk';font-weight:400;font-size:14px;opacity:.6;margin-right:8px}
+
+.clause{padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:15px}
+.clause-num{font-family:'Space Grotesk';font-weight:700;color:var(--gold);margin-left:8px}
+.clause strong{font-weight:600}
+.sub-clause{padding:4px 24px;font-size:14px;opacity:.85;line-height:1.7}
+
+.fill-field{border-bottom:2px dotted var(--gold);padding:0 8px;min-width:120px;display:inline-block;color:var(--gold);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+th{background:rgba(232,168,32,.12);padding:10px 14px;text-align:right;font-weight:600;border:1px solid rgba(255,255,255,.1)}
+td{padding:10px 14px;border:1px solid rgba(255,255,255,.06)}
+
+.highlight-box{background:rgba(46,216,154,.08);border:1px solid rgba(46,216,154,.3);border-radius:10px;padding:16px 20px;margin:16px 0;font-size:14px;line-height:1.7}
+.highlight-box strong{color:#2ED89A}
+
+.escalation-table td:nth-child(2){color:var(--gold);font-weight:600}
+
+.signature-box{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:50px;padding-top:30px;border-top:2px solid rgba(232,168,32,.3)}
+.sig-party{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:24px;text-align:center}
+.sig-party h3{font-size:16px;margin-bottom:20px;color:var(--gold)}
+.sig-line{border-bottom:1px solid rgba(255,255,255,.3);height:60px;margin:12px 0}
+.sig-label{font-size:12px;opacity:.5;margin-top:4px}
+
+.appendix{margin-top:40px;padding:20px;background:rgba(232,168,32,.05);border:1px solid rgba(232,168,32,.2);border-radius:12px}
+.appendix h3{color:var(--gold);margin-bottom:12px}
+
+.print-btn{position:fixed;bottom:20px;left:20px;background:var(--gold);color:var(--night);border:none;padding:12px 28px;border-radius:8px;font-family:'Heebo';font-size:15px;font-weight:600;cursor:pointer;z-index:100;box-shadow:0 4px 20px rgba(232,168,32,.3)}
+.print-btn:hover{transform:scale(1.05)}
+
+.back-btn{position:fixed;bottom:20px;right:20px;background:rgba(255,255,255,.1);color:var(--white);border:1px solid rgba(255,255,255,.2);padding:10px 24px;border-radius:8px;font-family:'Heebo';font-size:14px;cursor:pointer;z-index:100;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,.15)}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+
+<a href="assets.html" class="back-btn no-print">חזרה לנכסים</a>
+<button class="print-btn no-print" onclick="window.print()">הדפס / PDF</button>
+
+<div class="contract">
+
+<div class="header-bar">
+  <h1>Ko Phangan Solar Co., Ltd.</h1>
+  <div class="contract-type">הסכם רכישת חשמל (PPA)</div>
+  <div class="contract-badge">POWER PURCHASE AGREEMENT</div>
+</div>
+
+<!-- ===== PREAMBLE ===== -->
+<div class="section-title"><span>A</span>הגדרות וצדדים</div>
+
+<div class="clause">
+  <span class="clause-num">1.</span>
+  <strong>חוזה זה</strong> ("ההסכם") נחתם ביום <span class="fill-field">___/___/______</span> בין:
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.1</span>
+  <strong>"ספק החשמל"</strong> (Owner) — Ko Phangan Solar Co., Ltd. (חברת PPA),
+  רישום מספר <span class="fill-field">_____________</span>,
+  כתובת: <span class="fill-field">_________________________________</span>, Ko Phangan, Surat Thani, Thailand.
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.2</span>
+  <strong>"הצרכן"</strong> (Off-Taker) — <span class="fill-field">____________________________</span>,
+  ת.ז./רישום חברה מספר <span class="fill-field">_____________</span>,
+  כתובת הנכס: <span class="fill-field">_________________________________</span>.
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.3</span>
+  <strong>"המערכת"</strong> — מערכת סולארית פוטו-וולטאית בהספק <span class="fill-field">_____</span> kWp,
+  המותקנת בנכס הצרכן בכתובת שצוינה לעיל.
+</div>
+
+<div class="clause">
+  <span class="clause-num">1.4</span>
+  <strong>הגדרות נוספות:</strong>
+  <div class="sub-clause">"PEA" — Provincial Electricity Authority (רשות החשמל התאילנדית)</div>
+  <div class="sub-clause">"CPI" — Consumer Price Index — מדד המחירים לצרכן בתאילנד (Bank of Thailand)</div>
+  <div class="sub-clause">"PEA Tariff Increase" — שיעור העלייה השנתי בתעריפי PEA (ממוצע Ft charge)</div>
+  <div class="sub-clause">"kWh" — קילוואט-שעה (יחידת חשמל)</div>
+  <div class="sub-clause">"COD" — Commercial Operation Date — תאריך ההפעלה המסחרית</div>
+  <div class="sub-clause">"O&M" — Operation & Maintenance — תפעול ותחזוקה</div>
+</div>
+
+<!-- ===== KEY TERMS ===== -->
+<div class="section-title"><span>B</span>תנאים מסחריים עיקריים</div>
+
+<div class="clause">
+  <span class="clause-num">2.</span>
+  <strong>תקופת ההסכם:</strong>
+  <div class="sub-clause">2.1 תקופת ההסכם: <strong>15 (חמש-עשרה) שנים</strong> מתאריך ה-COD.</div>
+  <div class="sub-clause">2.2 אופציה להארכה: הצדדים רשאים להאריך את ההסכם לתקופות נוספות של 5 שנים, בהסכמה הדדית בכתב, לפחות 6 חודשים לפני תום התקופה.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">3.</span>
+  <strong>תעריף חשמל:</strong>
+
+  <div class="highlight-box">
+    <strong>תעריף התחלתי: ฿4.50/kWh</strong> (ארבע באט וחמישים סאתאנג לקילוואט-שעה)<br>
+    <strong>חיסכון ללקוח: ~25-35%</strong> מתעריף PEA (฿6-8/kWh)
+  </div>
+
+  <div class="sub-clause">3.1 התעריף ההתחלתי נקבע ליום ה-COD ויעודכן אחת לשנה בהתאם למנגנון ההצמדה (סעיף 4).</div>
+  <div class="sub-clause">3.2 הצרכן משלם אך ורק על חשמל שנצרך בפועל מהמערכת הסולארית, בהתאם לקריאת מונה.</div>
+  <div class="sub-clause">3.3 חשמל מ-PEA: הצרכן ימשיך לשלם ל-PEA עבור צריכה שמעבר לייצור הסולארי (שעות ערב, ימים מעוננים).</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">4.</span>
+  <strong>מנגנון הצמדה (Escalation):</strong>
+
+  <div class="highlight-box">
+    <strong>עדכון שנתי:</strong> התעריף יעודכן ב-1 בינואר של כל שנה, לפי הגבוה מבין:<br>
+    (א) שיעור עליית מדד המחירים לצרכן (CPI) של תאילנד בשנה הקודמת<br>
+    (ב) שיעור עליית תעריפי PEA (כולל Ft surcharge) בשנה הקודמת<br><br>
+    <strong>רצפה:</strong> מינימום 0% (התעריף לא יירד לעולם)<br>
+    <strong>תקרה:</strong> מקסימום 5% לשנה
+  </div>
+
+  <div class="sub-clause">4.1 מקור נתוני CPI: Bank of Thailand — פרסום רשמי.</div>
+  <div class="sub-clause">4.2 מקור נתוני PEA: תעריף Ft charge כפי שפורסם ע"י ERC (Energy Regulatory Commission).</div>
+  <div class="sub-clause">4.3 ספק החשמל ישלח הודעת עדכון תעריף לצרכן עד 15 בדצמבר, עם הפניה למקורות הנתונים.</div>
+  <div class="sub-clause">4.4 <strong>דוגמה:</strong></div>
+
+  <table class="escalation-table">
+    <tr><th>שנה</th><th>תעריף PPA</th><th>תעריף PEA (משוער)</th><th>חיסכון</th></tr>
+    <tr><td>1</td><td>฿4.50</td><td>฿6.50</td><td>31%</td></tr>
+    <tr><td>3</td><td>~฿4.78</td><td>~฿7.10</td><td>33%</td></tr>
+    <tr><td>5</td><td>~฿5.07</td><td>~฿7.54</td><td>33%</td></tr>
+    <tr><td>10</td><td>~฿5.87</td><td>~฿8.74</td><td>33%</td></tr>
+    <tr><td>15</td><td>~฿6.81</td><td>~฿10.13</td><td>33%</td></tr>
+  </table>
+  <div class="sub-clause" style="opacity:.6;font-size:12px">* בהנחת הצמדה ממוצעת 3%/שנה. ערכים בפועל ייקבעו לפי מנגנון סעיף 4.</div>
+</div>
+
+<!-- ===== OWNERSHIP ===== -->
+<div class="section-title"><span>C</span>בעלות על המערכת</div>
+
+<div class="clause">
+  <span class="clause-num">5.</span>
+  <strong>בעלות:</strong>
+  <div class="sub-clause">5.1 המערכת הסולארית על כל רכיביה (פאנלים, אינוורטר, קונסטרוקציה, כבלים, מונה) הינה ותישאר <strong>רכוש בלעדי של ספק החשמל</strong> לכל אורך תקופת ההסכם.</div>
+  <div class="sub-clause">5.2 הצרכן לא ירכוש, ישעבד, ימכור, או יעביר כל זכות במערכת.</div>
+  <div class="sub-clause">5.3 ספק החשמל רשאי לרשום הערת אזהרה על הנכס בגין המערכת (אם נדרש).</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">6.</span>
+  <strong>העברת בעלות בתום התקופה:</strong>
+
+  <div class="highlight-box">
+    <strong>בתום 15 שנים — המערכת עוברת לבעלות הצרכן בתמורה סמלית של ฿1 (באט אחד).</strong>
+  </div>
+
+  <div class="sub-clause">6.1 ההעברה מותנית בכך שהצרכן עמד בכל התחייבויותיו לפי הסכם זה.</div>
+  <div class="sub-clause">6.2 ספק החשמל ימסור לצרכן את כל התיעוד, אחריות יצרנים (ככל שעדיין בתוקף), וגישה למערכת הניטור.</div>
+  <div class="sub-clause">6.3 אם הצרכן אינו מעוניין לקבל את המערכת — ספק החשמל יפרק ויסיר על חשבונו תוך 60 יום.</div>
+</div>
+
+<!-- ===== O&M ===== -->
+<div class="section-title"><span>D</span>תפעול ותחזוקה (O&M)</div>
+
+<div class="clause">
+  <span class="clause-num">7.</span>
+  <strong>אחריות ספק החשמל:</strong>
+  <div class="sub-clause">7.1 ספק החשמל אחראי באופן בלעדי לתחזוקת המערכת לכל אורך התקופה.</div>
+  <div class="sub-clause">7.2 O&M כלול בתעריף — הצרכן אינו משלם עבור תחזוקה.</div>
+  <div class="sub-clause">7.3 היקף O&M:
+    <div class="sub-clause">א. ניטור מרחוק 24/7 באמצעות מערכת monitoring</div>
+    <div class="sub-clause">ב. בדיקה תקופתית רבעונית (visual + electrical)</div>
+    <div class="sub-clause">ג. ניקוי פאנלים (לפחות 2 פעמים בשנה)</div>
+    <div class="sub-clause">ד. תיקון או החלפת רכיבים פגומים</div>
+    <div class="sub-clause">ה. עדכון firmware אינוורטר</div>
+  </div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">8.</span>
+  <strong>זמני תגובה:</strong>
+  <table>
+    <tr><th>חומרת תקלה</th><th>זמן תגובה</th><th>זמן תיקון</th></tr>
+    <tr><td>קריטית (מערכת כבויה לחלוטין)</td><td>4 שעות</td><td>24 שעות</td></tr>
+    <tr><td>משמעותית (ירידת ביצועים &gt;20%)</td><td>24 שעות</td><td>72 שעות</td></tr>
+    <tr><td>קלה (אזהרה, אסתטי)</td><td>72 שעות</td><td>7 ימים</td></tr>
+  </table>
+</div>
+
+<!-- ===== PERFORMANCE ===== -->
+<div class="section-title"><span>E</span>ביצועים מובטחים</div>
+
+<div class="clause">
+  <span class="clause-num">9.</span>
+  <strong>Availability (זמינות):</strong>
+  <div class="sub-clause">9.1 ספק החשמל מתחייב לזמינות מערכת של <strong>לפחות 95%</strong> בכל שנה קלנדרית (מחושב לפי שעות אור שמש).</div>
+  <div class="sub-clause">9.2 "זמינות" = שעות שהמערכת פעילה ומייצרת / סה"כ שעות אור שמש.</div>
+  <div class="sub-clause">9.3 לא נכלל בחישוב: כוח עליון, תחזוקה מתוכננת (עד 24 שעות/רבעון), הפסקות PEA.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">10.</span>
+  <strong>פיצוי על אי-עמידה:</strong>
+  <div class="sub-clause">10.1 אם הזמינות השנתית נמוכה מ-95% — ספק החשמל יפצה את הצרכן בגובה ההכנסה האבודה (kWh אבודים × תעריף PPA).</div>
+  <div class="sub-clause">10.2 אם הזמינות נמוכה מ-80% בשנתיים רצופות — הצרכן רשאי לבטל את ההסכם (סעיף 16).</div>
+</div>
+
+<!-- ===== METERING ===== -->
+<div class="section-title"><span>F</span>מדידה וחיוב</div>
+
+<div class="clause">
+  <span class="clause-num">11.</span>
+  <strong>מונה:</strong>
+  <div class="sub-clause">11.1 ספק החשמל יתקין מונה ייעודי (revenue-grade, Class 0.5S) למדידת החשמל הנצרך מהמערכת.</div>
+  <div class="sub-clause">11.2 המונה הינו רכוש ספק החשמל ויכויל אחת לשנתיים ע"י מעבדה מוסמכת.</div>
+  <div class="sub-clause">11.3 בנוסף — מערכת monitoring דיגיטלית עם גישה לצרכן (app/web).</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">12.</span>
+  <strong>חשבונית וגבייה:</strong>
+  <div class="sub-clause">12.1 ספק החשמל יוציא חשבונית חודשית עד ה-5 בחודש העוקב, על בסיס קריאת מונה.</div>
+  <div class="sub-clause">12.2 תשלום: תוך 15 ימים מתאריך החשבונית, בהעברה בנקאית.</div>
+  <div class="sub-clause">12.3 איחור בתשלום מעל 30 יום — ריבית של 1.5% לחודש על הסכום שבפיגור.</div>
+  <div class="sub-clause">12.4 איחור מעל 60 יום — ספק החשמל רשאי לנתק את המערכת מרשת הצרכן (עם הודעה של 7 ימים).</div>
+</div>
+
+<!-- ===== SITE ACCESS ===== -->
+<div class="section-title"><span>G</span>גישה לאתר</div>
+
+<div class="clause">
+  <span class="clause-num">13.</span>
+  <strong>זכות גישה:</strong>
+  <div class="sub-clause">13.1 הצרכן מעניק לספק החשמל זכות גישה <strong>לגג ולמרחב המערכת 24/7</strong> לצורכי תחזוקה, תיקון, והחלפת רכיבים.</div>
+  <div class="sub-clause">13.2 לתחזוקה שוטפת — הודעה מראש של 24 שעות.</div>
+  <div class="sub-clause">13.3 לתקלה קריטית — גישה מיידית ללא הודעה מראש.</div>
+  <div class="sub-clause">13.4 הצרכן לא יחסום גישה, לא יצור הצללה חדשה (עצים, מבנים), ולא ישנה את מבנה הגג ללא תיאום.</div>
+</div>
+
+<!-- ===== INSURANCE ===== -->
+<div class="section-title"><span>H</span>ביטוח</div>
+
+<div class="clause">
+  <span class="clause-num">14.</span>
+  <strong>ביטוח — אחריות ספק החשמל:</strong>
+  <div class="sub-clause">14.1 <strong>ביטוח ציוד:</strong> All Risk — מכסה נזק, גניבה, אסונות טבע למערכת הסולארית.</div>
+  <div class="sub-clause">14.2 <strong>אחריות צד ג':</strong> כיסוי של לפחות ฿2,000,000 לאירוע — נזק לנכס הצרכן עקב המערכת.</div>
+  <div class="sub-clause">14.3 ספק החשמל ימציא אישורי ביטוח תקפים לצרכן על-פי דרישה.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">15.</span>
+  <strong>ביטוח — אחריות הצרכן:</strong>
+  <div class="sub-clause">15.1 ביטוח מבנה (גג/שטח) — הצרכן אחראי לבטח את המבנה עליו מותקנת המערכת.</div>
+  <div class="sub-clause">15.2 הצרכן ידווח מיד על כל אירוע ביטוחי שעלול להשפיע על המערכת.</div>
+</div>
+
+<!-- ===== TERMINATION ===== -->
+<div class="section-title"><span>I</span>סיום מוקדם</div>
+
+<div class="clause">
+  <span class="clause-num">16.</span>
+  <strong>סיום מצד הצרכן:</strong>
+  <div class="sub-clause">16.1 הצרכן רשאי לסיים את ההסכם בכל עת, בכפוף לתשלום <strong>קנס סיום מוקדם:</strong></div>
+
+  <div class="highlight-box">
+    <strong>קנס סיום מוקדם = 70% × (תעריף נוכחי × ייצור שנתי ממוצע × שנים שנותרו)</strong><br><br>
+    דוגמה: סיום בשנה 5 למערכת 50kWp:<br>
+    70% × (฿5.07 × 82,000 × 10 שנים) = 70% × ฿4,157,400 = <strong>฿2,910,180</strong>
+  </div>
+
+  <div class="sub-clause">16.2 לחלופין — הצרכן רשאי <strong>לרכוש את המערכת</strong> בערך השוק ההוגן (Fair Market Value) כפי שייקבע ע"י שמאי מוסכם, ובכך ההסכם מסתיים ללא קנס.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">17.</span>
+  <strong>סיום מצד ספק החשמל:</strong>
+  <div class="sub-clause">17.1 אי-תשלום מעבר ל-90 יום — ספק החשמל רשאי לסיים את ההסכם בהודעה של 30 יום.</div>
+  <div class="sub-clause">17.2 הפרה מהותית שלא תוקנה תוך 30 יום מהודעה בכתב.</div>
+  <div class="sub-clause">17.3 בסיום — ספק החשמל יפרק ויסיר את המערכת תוך 60 יום, על חשבונו, ויתקן כל נזק לגג.</div>
+</div>
+
+<div class="clause">
+  <span class="clause-num">18.</span>
+  <strong>מכירת הנכס:</strong>
+  <div class="sub-clause">18.1 הצרכן רשאי למכור את הנכס בכפוף ל-<strong>העברת ההסכם לרוכש החדש</strong> (assignment).</div>
+  <div class="sub-clause">18.2 ספק החשמל יאשר העברה בתנאי שהרוכש מקבל על עצמו את כל ההתחייבויות.</div>
+  <div class="sub-clause">18.3 אם הרוכש מסרב — חלים תנאי סיום מוקדם (סעיף 16).</div>
+</div>
+
+<!-- ===== FORCE MAJEURE ===== -->
+<div class="section-title"><span>J</span>כוח עליון</div>
+
+<div class="clause">
+  <span class="clause-num">19.</span>
+  <strong>כוח עליון:</strong>
+  <div class="sub-clause">19.1 אף צד לא יישא באחריות לאי-ביצוע עקב אירועים שאינם בשליטתו (אסונות טבע, מגפות, מלחמות, הפסקות PEA ממושכות).</div>
+  <div class="sub-clause">19.2 הצד המושפע יודיע תוך 7 ימים ויפעל למזער השפעה.</div>
+  <div class="sub-clause">19.3 כוח עליון מעבר ל-180 יום — כל צד רשאי לסיים בהודעה של 30 יום, ללא קנס.</div>
+</div>
+
+<!-- ===== CONFIDENTIALITY ===== -->
+<div class="section-title"><span>K</span>סודיות</div>
+
+<div class="clause">
+  <span class="clause-num">20.</span>
+  <strong>סודיות:</strong>
+  <div class="sub-clause">20.1 תנאי ההסכם, התעריף, וכל מידע מסחרי הם חסויים.</div>
+  <div class="sub-clause">20.2 שני הצדדים מתחייבים שלא לחשוף מידע חסוי לצד שלישי ללא הסכמה בכתב, למעט: יועצים משפטיים, רואי חשבון, ובנקים מממנים.</div>
+  <div class="sub-clause">20.3 התחייבות הסודיות ממשיכה 3 שנים לאחר סיום ההסכם.</div>
+</div>
+
+<!-- ===== DISPUTE ===== -->
+<div class="section-title"><span>L</span>יישוב סכסוכים</div>
+
+<div class="clause">
+  <span class="clause-num">21.</span>
+  <strong>יישוב סכסוכים:</strong>
+  <div class="sub-clause">21.1 <strong>שלב 1 — משא ומתן:</strong> תוך 14 יום.</div>
+  <div class="sub-clause">21.2 <strong>שלב 2 — גישור:</strong> מגשר מוסכם, תוך 30 יום.</div>
+  <div class="sub-clause">21.3 <strong>שלב 3 — בוררות:</strong> בהתאם לחוק הבוררות התאילנדי. מקום: Surat Thani. שפה: אנגלית.</div>
+</div>
+
+<!-- ===== GENERAL ===== -->
+<div class="section-title"><span>M</span>הוראות כלליות</div>
+
+<div class="clause">
+  <span class="clause-num">22.</span>
+  <strong>דין חל:</strong> חוזה זה כפוף לחוקי ממלכת תאילנד.
+</div>
+
+<div class="clause">
+  <span class="clause-num">23.</span>
+  <strong>שפה:</strong> חוזה זה ייחתם בגרסה <strong>דו-לשונית (אנגלית + תאילנדית)</strong>. במקרה של סתירה — הגרסה התאילנדית גוברת.
+</div>
+
+<div class="clause">
+  <span class="clause-num">24.</span>
+  <strong>שלמות ההסכם:</strong> חוזה זה מהווה את ההסכם המלא בין הצדדים. כל שינוי ייעשה בנספח חתום.
+</div>
+
+<div class="clause">
+  <span class="clause-num">25.</span>
+  <strong>העברת זכויות ספק החשמל:</strong> ספק החשמל רשאי להעביר את זכויותיו (כולל שעבוד ההכנסות לטובת בנק מממן) בהודעה לצרכן. הצרכן אינו רשאי להתנגד להעברה כאמור, כל עוד זה אינו משנה את תנאי ההסכם.
+</div>
+
+<div class="clause">
+  <span class="clause-num">26.</span>
+  <strong>הודעות:</strong> כל הודעה תישלח בכתב לכתובות שצוינו, או בדוא"ל מאושר ע"י שני הצדדים.
+</div>
+
+<!-- ===== SIGNATURES ===== -->
+<div class="signature-box">
+  <div class="sig-party">
+    <h3>ספק החשמל — Ko Phangan Solar Co., Ltd.</h3>
+    <div class="sig-line"></div>
+    <div class="sig-label">שם מורשה חתימה</div>
+    <div class="sig-line"></div>
+    <div class="sig-label">חתימה</div>
+    <div class="sig-line" style="height:30px"></div>
+    <div class="sig-label">תאריך</div>
+  </div>
+  <div class="sig-party">
+    <h3>הצרכן</h3>
+    <div class="sig-line"></div>
+    <div class="sig-label">שם מורשה חתימה</div>
+    <div class="sig-line"></div>
+    <div class="sig-label">חתימה</div>
+    <div class="sig-line" style="height:30px"></div>
+    <div class="sig-label">תאריך</div>
+  </div>
+</div>
+
+<!-- ===== APPENDICES ===== -->
+<div class="appendix">
+  <h3>נספחים</h3>
+  <table>
+    <tr><th>נספח</th><th>תוכן</th></tr>
+    <tr><td>A</td><td>מפרט טכני של המערכת — פאנלים, אינוורטר, מונה, monitoring</td></tr>
+    <tr><td>B</td><td>תוכנית הצבה (Layout) — מיקום המערכת על הנכס</td></tr>
+    <tr><td>C</td><td>ייצור שנתי צפוי (kWh) — סימולציה + הנחות</td></tr>
+    <tr><td>D</td><td>טבלת הצמדה — תעריפים צפויים ל-15 שנה</td></tr>
+    <tr><td>E</td><td>חשבונית לדוגמה — פורמט חיוב חודשי</td></tr>
+    <tr><td>F</td><td>אישורי ביטוח — ציוד + צד ג'</td></tr>
+    <tr><td>G</td><td>פרוטוקול O&M — לוח תחזוקה שנתי</td></tr>
+  </table>
+</div>
+
+</div>
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "חזרה לנכסים": {en: "Back to Assets", th: "กลับไปยังสินทรัพย์"},
+  "הדפס / PDF": {en: "Print / PDF", th: "พิมพ์ / PDF"},
+  "הסכם רכישת חשמל (PPA)": {en: "Power Purchase Agreement (PPA)", th: "สัญญาซื้อขายไฟฟ้า (PPA)"},
+  "הגדרות וצדדים": {en: "Definitions and Parties", th: "คำนิยามและคู่สัญญา"},
+  "חוזה זה": {en: "This Agreement", th: "สัญญานี้"},
+  "ההסכם": {en: "the Agreement", th: "ข้อตกลง"},
+  "נחתם ביום": {en: "entered into on", th: "ทำขึ้นเมื่อวันที่"},
+  "בין": {en: "between", th: "ระหว่าง"},
+  '"ספק החשמל"': {en: '"The Power Supplier"', th: '"ผู้จำหน่ายไฟฟ้า"'},
+  "חברת PPA": {en: "PPA Company", th: "บริษัท PPA"},
+  "רישום מספר": {en: "Registration No.", th: "เลขทะเบียน"},
+  "כתובת": {en: "Address", th: "ที่อยู่"},
+  '"הצרכן"': {en: '"The Consumer"', th: '"ผู้ใช้ไฟฟ้า"'},
+  "ת.ז./רישום חברה מספר": {en: "ID / Company Registration No.", th: "เลขบัตรประชาชน / เลขทะเบียนบริษัท"},
+  "כתובת הנכס:": {en: "Property Address:", th: "ที่อยู่อสังหาริมทรัพย์:"},
+  '"המערכת"': {en: '"The System"', th: '"ระบบ"'},
+  "מערכת סולארית פוטו-וולטאית בהספק": {en: "A photovoltaic solar system with output of", th: "ระบบโซลาร์เซลล์พลังงานแสงอาทิตย์ที่มีกำลังผลิต"},
+  "המותקנת בנכס הצרכן בכתובת שצוינה לעיל.": {en: "installed at the Consumer's property at the address stated above.", th: "ติดตั้ง ณ อสังหาริมทรัพย์ของผู้ใช้ไฟฟ้าตามที่อยู่ที่ระบุข้างต้น"},
+  "הגדרות נוספות:": {en: "Additional Definitions:", th: "คำนิยามเพิ่มเติม:"},
+  "רשות החשמל התאילנדית": {en: "Thai Provincial Electricity Authority", th: "การไฟฟ้าส่วนภูมิภาค"},
+  "מדד המחירים לצרכן בתאילנד (Bank of Thailand)": {en: "Consumer Price Index in Thailand (Bank of Thailand)", th: "ดัชนีราคาผู้บริโภคในประเทศไทย (ธนาคารแห่งประเทศไทย)"},
+  "שיעור העלייה השנתי בתעריפי PEA (ממוצע Ft charge)": {en: "Annual rate of increase in PEA tariffs (average Ft charge)", th: "อัตราการเพิ่มขึ้นรายปีของค่าไฟฟ้า PEA (ค่าเฉลี่ย Ft charge)"},
+  "קילוואט-שעה (יחידת חשמל)": {en: "Kilowatt-hour (unit of electricity)", th: "กิโลวัตต์-ชั่วโมง (หน่วยไฟฟ้า)"},
+  "תאריך ההפעלה המסחרית": {en: "Commercial Operation Date", th: "วันที่เริ่มดำเนินการเชิงพาณิชย์"},
+  "תפעול ותחזוקה": {en: "Operation and Maintenance", th: "การดำเนินงานและการบำรุงรักษา"},
+  "תנאים מסחריים עיקריים": {en: "Key Commercial Terms", th: "เงื่อนไขเชิงพาณิชย์หลัก"},
+  "תקופת ההסכם:": {en: "Agreement Term:", th: "ระยะเวลาของสัญญา:"},
+  "15 (חמש-עשרה) שנים": {en: "15 (fifteen) years", th: "15 (สิบห้า) ปี"},
+  "מתאריך ה-COD.": {en: "from the COD date.", th: "นับจากวันที่ COD"},
+  "אופציה להארכה: הצדדים רשאים להאריך את ההסכם לתקופות נוספות של 5 שנים, בהסכמה הדדית בכתב, לפחות 6 חודשים לפני תום התקופה.": {en: "Extension option: The parties may extend the agreement for additional periods of 5 years, by mutual written consent, at least 6 months before the end of the term.", th: "ตัวเลือกการต่ออายุ: คู่สัญญาอาจต่ออายุข้อตกลงเป็นระยะเวลาเพิ่มเติม 5 ปี โดยความยินยอมเป็นลายลักษณ์อักษรร่วมกัน อย่างน้อย 6 เดือนก่อนสิ้นสุดระยะเวลา"},
+  "תעריף חשמל:": {en: "Electricity Tariff:", th: "อัตราค่าไฟฟ้า:"},
+  "תעריף התחלתי: ฿4.50/kWh": {en: "Initial Tariff: ฿4.50/kWh", th: "อัตราเริ่มต้น: ฿4.50/kWh"},
+  "ארבע באט וחמישים סאתאנג לקילוואט-שעה": {en: "Four Baht and fifty satang per kilowatt-hour", th: "สี่บาทห้าสิบสตางค์ต่อกิโลวัตต์-ชั่วโมง"},
+  "חיסכון ללקוח: ~25-35%": {en: "Customer savings: ~25-35%", th: "การประหยัดของลูกค้า: ~25-35%"},
+  "מתעריף PEA": {en: "off the PEA tariff", th: "จากอัตราค่าไฟฟ้า PEA"},
+  "התעריף ההתחלתי נקבע ליום ה-COD ויעודכן אחת לשנה בהתאם למנגנון ההצמדה (סעיף 4).": {en: "The initial tariff is set as of the COD date and shall be updated annually according to the escalation mechanism (Clause 4).", th: "อัตราเริ่มต้นกำหนด ณ วันที่ COD และจะปรับปรุงทุกปีตามกลไกการปรับอัตรา (ข้อ 4)"},
+  "הצרכן משלם אך ורק על חשמל שנצרך בפועל מהמערכת הסולארית, בהתאם לקריאת מונה.": {en: "The Consumer pays only for electricity actually consumed from the solar system, based on meter readings.", th: "ผู้ใช้ไฟฟ้าจ่ายเฉพาะไฟฟ้าที่บริโภคจริงจากระบบโซลาร์ตามการอ่านมิเตอร์"},
+  "חשמל מ-PEA: הצרכן ימשיך לשלם ל-PEA עבור צריכה שמעבר לייצור הסולארי (שעות ערב, ימים מעוננים).": {en: "Electricity from PEA: The Consumer will continue to pay PEA for consumption beyond the solar output (evening hours, cloudy days).", th: "ไฟฟ้าจาก PEA: ผู้ใช้ไฟฟ้าจะยังคงจ่ายค่าไฟให้ PEA สำหรับการใช้ไฟฟ้าที่เกินกว่ากำลังผลิตของโซลาร์ (ช่วงเย็น วันที่มีเมฆ)"},
+  "מנגנון הצמדה (Escalation):": {en: "Escalation Mechanism:", th: "กลไกการปรับอัตรา (Escalation):"},
+  "עדכון שנתי:": {en: "Annual Update:", th: "การปรับปรุงรายปี:"},
+  "התעריף יעודכן ב-1 בינואר של כל שנה, לפי הגבוה מבין:": {en: "The tariff shall be updated on January 1 of each year, according to the higher of:", th: "อัตราจะปรับปรุงในวันที่ 1 มกราคมของทุกปี ตามค่าที่สูงกว่าระหว่าง:"},
+  "(א) שיעור עליית מדד המחירים לצרכן (CPI) של תאילנד בשנה הקודמת": {en: "(a) The rate of increase in Thailand's CPI in the previous year", th: "(ก) อัตราการเพิ่มขึ้นของ CPI ของประเทศไทยในปีก่อนหน้า"},
+  "(ב) שיעור עליית תעריפי PEA (כולל Ft surcharge) בשנה הקודמת": {en: "(b) The rate of increase in PEA tariffs (including Ft surcharge) in the previous year", th: "(ข) อัตราการเพิ่มขึ้นของค่าไฟฟ้า PEA (รวม Ft surcharge) ในปีก่อนหน้า"},
+  "רצפה:": {en: "Floor:", th: "อัตราขั้นต่ำ:"},
+  "מינימום 0% (התעריף לא יירד לעולם)": {en: "Minimum 0% (the tariff will never decrease)", th: "ขั้นต่ำ 0% (อัตราจะไม่ลดลงเด็ดขาด)"},
+  "תקרה:": {en: "Ceiling:", th: "อัตราสูงสุด:"},
+  "מקסימום 5% לשנה": {en: "Maximum 5% per year", th: "สูงสุด 5% ต่อปี"},
+  "מקור נתוני CPI: Bank of Thailand — פרסום רשמי.": {en: "CPI data source: Bank of Thailand — official publication.", th: "แหล่งข้อมูล CPI: ธนาคารแห่งประเทศไทย — การเผยแพร่อย่างเป็นทางการ"},
+  "מקור נתוני PEA: תעריף Ft charge כפי שפורסם ע\"י ERC (Energy Regulatory Commission).": {en: "PEA data source: Ft charge tariff as published by ERC (Energy Regulatory Commission).", th: "แหล่งข้อมูล PEA: อัตรา Ft charge ตามที่ประกาศโดย ERC (คณะกรรมการกำกับกิจการพลังงาน)"},
+  "ספק החשמל ישלח הודעת עדכון תעריף לצרכן עד 15 בדצמבר, עם הפניה למקורות הנתונים.": {en: "The Power Supplier shall send a tariff update notice to the Consumer by December 15, with reference to data sources.", th: "ผู้จำหน่ายไฟฟ้าจะส่งประกาศปรับอัตราไปยังผู้ใช้ไฟฟ้าภายในวันที่ 15 ธันวาคม พร้อมอ้างอิงแหล่งข้อมูล"},
+  "דוגמה:": {en: "Example:", th: "ตัวอย่าง:"},
+  "שנה": {en: "Year", th: "ปี"},
+  "תעריף PPA": {en: "PPA Tariff", th: "อัตรา PPA"},
+  "תעריף PEA (משוער)": {en: "PEA Tariff (estimated)", th: "อัตรา PEA (ประมาณการ)"},
+  "חיסכון": {en: "Savings", th: "การประหยัด"},
+  "* בהנחת הצמדה ממוצעת 3%/שנה. ערכים בפועל ייקבעו לפי מנגנון סעיף 4.": {en: "* Assuming average escalation of 3%/year. Actual values to be determined per the mechanism in Clause 4.", th: "* สมมติว่าการปรับอัตราเฉลี่ย 3%/ปี ค่าจริงจะกำหนดตามกลไกในข้อ 4"},
+  "בעלות על המערכת": {en: "System Ownership", th: "ความเป็นเจ้าของระบบ"},
+  "בעלות:": {en: "Ownership:", th: "ความเป็นเจ้าของ:"},
+  "המערכת הסולארית על כל רכיביה (פאנלים, אינוורטר, קונסטרוקציה, כבלים, מונה) הינה ותישאר": {en: "The solar system and all its components (panels, inverter, mounting, cables, meter) is and shall remain", th: "ระบบโซลาร์และส่วนประกอบทั้งหมด (แผงโซลาร์ อินเวอร์เตอร์ โครงสร้าง สายไฟ มิเตอร์) เป็นและจะยังคงเป็น"},
+  "רכוש בלעדי של ספק החשמל": {en: "the exclusive property of the Power Supplier", th: "ทรัพย์สินแต่เพียงผู้เดียวของผู้จำหน่ายไฟฟ้า"},
+  "לכל אורך תקופת ההסכם.": {en: "throughout the entire term of the agreement.", th: "ตลอดระยะเวลาของสัญญา"},
+  "הצרכן לא ירכוש, ישעבד, ימכור, או יעביר כל זכות במערכת.": {en: "The Consumer shall not purchase, pledge, sell, or transfer any right in the system.", th: "ผู้ใช้ไฟฟ้าจะไม่ซื้อ จำนอง ขาย หรือโอนสิทธิ์ใดๆ ในระบบ"},
+  "ספק החשמל רשאי לרשום הערת אזהרה על הנכס בגין המערכת (אם נדרש).": {en: "The Power Supplier may register a cautionary note on the property regarding the system (if required).", th: "ผู้จำหน่ายไฟฟ้าอาจจดทะเบียนบันทึกเตือนบนอสังหาริมทรัพย์เกี่ยวกับระบบ (หากจำเป็น)"},
+  "העברת בעלות בתום התקופה:": {en: "Transfer of Ownership at End of Term:", th: "การโอนกรรมสิทธิ์เมื่อสิ้นสุดระยะเวลา:"},
+  "בתום 15 שנים — המערכת עוברת לבעלות הצרכן בתמורה סמלית של ฿1 (באט אחד).": {en: "At the end of 15 years — the system transfers to the Consumer's ownership for a nominal consideration of ฿1 (one Baht).", th: "เมื่อครบ 15 ปี — ระบบจะโอนเป็นกรรมสิทธิ์ของผู้ใช้ไฟฟ้าด้วยค่าตอบแทนเชิงสัญลักษณ์ ฿1 (หนึ่งบาท)"},
+  "ההעברה מותנית בכך שהצרכן עמד בכל התחייבויותיו לפי הסכם זה.": {en: "The transfer is conditional upon the Consumer having fulfilled all its obligations under this agreement.", th: "การโอนขึ้นอยู่กับเงื่อนไขที่ผู้ใช้ไฟฟ้าปฏิบัติตามภาระผูกพันทั้งหมดตามสัญญานี้"},
+  "ספק החשמל ימסור לצרכן את כל התיעוד, אחריות יצרנים (ככל שעדיין בתוקף), וגישה למערכת הניטור.": {en: "The Power Supplier shall deliver all documentation, manufacturer warranties (to the extent still valid), and access to the monitoring system to the Consumer.", th: "ผู้จำหน่ายไฟฟ้าจะส่งมอบเอกสารทั้งหมด การรับประกันจากผู้ผลิต (เท่าที่ยังมีผลบังคับใช้) และการเข้าถึงระบบตรวจสอบแก่ผู้ใช้ไฟฟ้า"},
+  "אם הצרכן אינו מעוניין לקבל את המערכת — ספק החשמל יפרק ויסיר על חשבונו תוך 60 יום.": {en: "If the Consumer does not wish to receive the system — the Power Supplier shall dismantle and remove it at its own expense within 60 days.", th: "หากผู้ใช้ไฟฟ้าไม่ต้องการรับระบบ — ผู้จำหน่ายไฟฟ้าจะรื้อถอนและนำออกโดยค่าใช้จ่ายตัวเองภายใน 60 วัน"},
+  "תפעול ותחזוקה (O&M)": {en: "Operation and Maintenance (O&M)", th: "การดำเนินงานและการบำรุงรักษา (O&M)"},
+  "אחריות ספק החשמל:": {en: "Power Supplier's Responsibility:", th: "ความรับผิดชอบของผู้จำหน่ายไฟฟ้า:"},
+  "ספק החשמל אחראי באופן בלעדי לתחזוקת המערכת לכל אורך התקופה.": {en: "The Power Supplier is solely responsible for system maintenance throughout the entire term.", th: "ผู้จำหน่ายไฟฟ้ารับผิดชอบแต่เพียงผู้เดียวในการบำรุงรักษาระบบตลอดระยะเวลา"},
+  "O&M כלול בתעריף — הצרכן אינו משלם עבור תחזוקה.": {en: "O&M is included in the tariff — the Consumer does not pay separately for maintenance.", th: "O&M รวมอยู่ในอัตราค่าไฟ — ผู้ใช้ไฟฟ้าไม่ต้องจ่ายค่าบำรุงรักษาแยกต่างหาก"},
+  "היקף O&M:": {en: "O&M Scope:", th: "ขอบเขต O&M:"},
+  "א. ניטור מרחוק 24/7 באמצעות מערכת monitoring": {en: "a. Remote monitoring 24/7 via monitoring system", th: "ก. การตรวจสอบระยะไกล 24/7 ผ่านระบบ monitoring"},
+  "ב. בדיקה תקופתית רבעונית (visual + electrical)": {en: "b. Quarterly periodic inspection (visual + electrical)", th: "ข. การตรวจสอบรายไตรมาส (visual + electrical)"},
+  "ג. ניקוי פאנלים (לפחות 2 פעמים בשנה)": {en: "c. Panel cleaning (at least 2 times per year)", th: "ค. ทำความสะอาดแผงโซลาร์ (อย่างน้อย 2 ครั้งต่อปี)"},
+  "ד. תיקון או החלפת רכיבים פגומים": {en: "d. Repair or replacement of defective components", th: "ง. ซ่อมแซมหรือเปลี่ยนส่วนประกอบที่ชำรุด"},
+  "ה. עדכון firmware אינוורטר": {en: "e. Inverter firmware update", th: "จ. อัปเดต firmware อินเวอร์เตอร์"},
+  "זמני תגובה:": {en: "Response Times:", th: "เวลาตอบสนอง:"},
+  "חומרת תקלה": {en: "Fault Severity", th: "ระดับความรุนแรงของข้อบกพร่อง"},
+  "זמן תגובה": {en: "Response Time", th: "เวลาตอบสนอง"},
+  "זמן תיקון": {en: "Repair Time", th: "เวลาซ่อมแซม"},
+  "קריטית (מערכת כבויה לחלוטין)": {en: "Critical (system completely down)", th: "วิกฤต (ระบบดับสนิท)"},
+  "4 שעות": {en: "4 hours", th: "4 ชั่วโมง"},
+  "24 שעות": {en: "24 hours", th: "24 ชั่วโมง"},
+  "משמעותית (ירידת ביצועים >20%)": {en: "Significant (performance drop >20%)", th: "มีนัยสำคัญ (ประสิทธิภาพลดลง >20%)"},
+  "72 שעות": {en: "72 hours", th: "72 ชั่วโมง"},
+  "קלה (אזהרה, אסתטי)": {en: "Minor (warning, cosmetic)", th: "เล็กน้อย (คำเตือน ด้านความสวยงาม)"},
+  "7 ימים": {en: "7 days", th: "7 วัน"},
+  "ביצועים מובטחים": {en: "Guaranteed Performance", th: "ประสิทธิภาพที่รับประกัน"},
+  "Availability (זמינות):": {en: "Availability:", th: "ความพร้อมใช้งาน:"},
+  "ספק החשמל מתחייב לזמינות מערכת של": {en: "The Power Supplier guarantees system availability of", th: "ผู้จำหน่ายไฟฟ้ารับประกันความพร้อมใช้งานของระบบ"},
+  "לפחות 95%": {en: "at least 95%", th: "อย่างน้อย 95%"},
+  "בכל שנה קלנדרית (מחושב לפי שעות אור שמש).": {en: "in each calendar year (calculated by sunlight hours).", th: "ในแต่ละปีปฏิทิน (คำนวณตามชั่วโมงแสงแดด)"},
+  '"זמינות" = שעות שהמערכת פעילה ומייצרת / סה"כ שעות אור שמש.': {en: '"Availability" = hours the system is active and producing / total sunlight hours.', th: '"ความพร้อมใช้งาน" = ชั่วโมงที่ระบบทำงานและผลิตไฟ / ชั่วโมงแสงแดดทั้งหมด'},
+  "לא נכלל בחישוב: כוח עליון, תחזוקה מתוכננת (עד 24 שעות/רבעון), הפסקות PEA.": {en: "Excluded from calculation: force majeure, planned maintenance (up to 24 hours/quarter), PEA outages.", th: "ไม่รวมในการคำนวณ: เหตุสุดวิสัย การบำรุงรักษาตามกำหนด (สูงสุด 24 ชั่วโมง/ไตรมาส) ไฟดับ PEA"},
+  "פיצוי על אי-עמידה:": {en: "Compensation for Non-Compliance:", th: "ค่าชดเชยสำหรับการไม่ปฏิบัติตาม:"},
+  "אם הזמינות השנתית נמוכה מ-95% — ספק החשמל יפצה את הצרכן בגובה ההכנסה האבודה (kWh אבודים × תעריף PPA).": {en: "If annual availability is below 95% — the Power Supplier shall compensate the Consumer for lost revenue (lost kWh × PPA tariff).", th: "หากความพร้อมใช้งานรายปีต่ำกว่า 95% — ผู้จำหน่ายไฟฟ้าจะชดเชยผู้ใช้ไฟฟ้าสำหรับรายได้ที่สูญเสีย (kWh ที่สูญเสีย × อัตรา PPA)"},
+  "אם הזמינות נמוכה מ-80% בשנתיים רצופות — הצרכן רשאי לבטל את ההסכם (סעיף 16).": {en: "If availability falls below 80% for two consecutive years — the Consumer may cancel the agreement (Clause 16).", th: "หากความพร้อมใช้งานต่ำกว่า 80% เป็นเวลาสองปีติดต่อกัน — ผู้ใช้ไฟฟ้าอาจยกเลิกข้อตกลง (ข้อ 16)"},
+  "מדידה וחיוב": {en: "Metering and Billing", th: "การวัดและการเรียกเก็บเงิน"},
+  "מונה:": {en: "Meter:", th: "มิเตอร์:"},
+  "ספק החשמל יתקין מונה ייעודי (revenue-grade, Class 0.5S) למדידת החשמל הנצרך מהמערכת.": {en: "The Power Supplier shall install a dedicated meter (revenue-grade, Class 0.5S) to measure electricity consumed from the system.", th: "ผู้จำหน่ายไฟฟ้าจะติดตั้งมิเตอร์เฉพาะ (revenue-grade, Class 0.5S) เพื่อวัดไฟฟ้าที่ใช้จากระบบ"},
+  "המונה הינו רכוש ספק החשמל ויכויל אחת לשנתיים ע\"י מעבדה מוסמכת.": {en: "The meter is the property of the Power Supplier and shall be calibrated every two years by an accredited laboratory.", th: "มิเตอร์เป็นทรัพย์สินของผู้จำหน่ายไฟฟ้าและจะได้รับการสอบเทียบทุกสองปีโดยห้องปฏิบัติการที่ได้รับการรับรอง"},
+  "בנוסף — מערכת monitoring דיגיטלית עם גישה לצרכן (app/web).": {en: "Additionally — a digital monitoring system with Consumer access (app/web).", th: "นอกจากนี้ — ระบบ monitoring ดิจิทัลพร้อมการเข้าถึงของผู้ใช้ไฟฟ้า (app/web)"},
+  "חשבונית וגבייה:": {en: "Invoice and Collection:", th: "ใบแจ้งหนี้และการเรียกเก็บเงิน:"},
+  "ספק החשמל יוציא חשבונית חודשית עד ה-5 בחודש העוקב, על בסיס קריאת מונה.": {en: "The Power Supplier shall issue a monthly invoice by the 5th of the following month, based on meter readings.", th: "ผู้จำหน่ายไฟฟ้าจะออกใบแจ้งหนี้รายเดือนภายในวันที่ 5 ของเดือนถัดไป โดยอิงจากการอ่านมิเตอร์"},
+  "תשלום: תוך 15 ימים מתאריך החשבונית, בהעברה בנקאית.": {en: "Payment: within 15 days of invoice date, by bank transfer.", th: "การชำระเงิน: ภายใน 15 วันนับจากวันที่ออกใบแจ้งหนี้ โดยการโอนเงินผ่านธนาคาร"},
+  "איחור בתשלום מעל 30 יום — ריבית של 1.5% לחודש על הסכום שבפיגור.": {en: "Payment delay of more than 30 days — interest of 1.5% per month on the overdue amount.", th: "การชำระเงินล่าช้าเกิน 30 วัน — ดอกเบี้ย 1.5% ต่อเดือนบนยอดค้างชำระ"},
+  "איחור מעל 60 יום — ספק החשמל רשאי לנתק את המערכת מרשת הצרכן (עם הודעה של 7 ימים).": {en: "Delay of more than 60 days — the Power Supplier may disconnect the system from the Consumer's grid (with 7 days' notice).", th: "ล่าช้าเกิน 60 วัน — ผู้จำหน่ายไฟฟ้าอาจตัดการเชื่อมต่อระบบออกจากสายไฟของผู้ใช้ไฟฟ้า (พร้อมแจ้ง 7 วัน)"},
+  "גישה לאתר": {en: "Site Access", th: "การเข้าถึงสถานที่"},
+  "זכות גישה:": {en: "Access Right:", th: "สิทธิ์การเข้าถึง:"},
+  "הצרכן מעניק לספק החשמל זכות גישה": {en: "The Consumer grants the Power Supplier access rights", th: "ผู้ใช้ไฟฟ้าให้สิทธิ์การเข้าถึงแก่ผู้จำหน่ายไฟฟ้า"},
+  "לגג ולמרחב המערכת 24/7": {en: "to the roof and system area 24/7", th: "ไปยังหลังคาและพื้นที่ระบบ 24/7"},
+  "לצורכי תחזוקה, תיקון, והחלפת רכיבים.": {en: "for maintenance, repair, and component replacement.", th: "เพื่อการบำรุงรักษา ซ่อมแซม และเปลี่ยนส่วนประกอบ"},
+  "לתחזוקה שוטפת — הודעה מראש של 24 שעות.": {en: "For routine maintenance — 24 hours' advance notice.", th: "สำหรับการบำรุงรักษาประจำ — แจ้งล่วงหน้า 24 ชั่วโมง"},
+  "לתקלה קריטית — גישה מיידית ללא הודעה מראש.": {en: "For critical fault — immediate access without advance notice.", th: "สำหรับข้อบกพร่องวิกฤต — เข้าถึงได้ทันทีโดยไม่ต้องแจ้งล่วงหน้า"},
+  "הצרכן לא יחסום גישה, לא יצור הצללה חדשה (עצים, מבנים), ולא ישנה את מבנה הגג ללא תיאום.": {en: "The Consumer shall not block access, create new shading (trees, structures), or alter the roof structure without coordination.", th: "ผู้ใช้ไฟฟ้าจะไม่ปิดกั้นการเข้าถึง ไม่สร้างร่มเงาใหม่ (ต้นไม้ สิ่งก่อสร้าง) และไม่แก้ไขโครงสร้างหลังคาโดยไม่ประสานงาน"},
+  "ביטוח — אחריות ספק החשמל:": {en: "Insurance — Power Supplier's Responsibility:", th: "ประกันภัย — ความรับผิดชอบของผู้จำหน่ายไฟฟ้า:"},
+  "ביטוח ציוד:": {en: "Equipment Insurance:", th: "ประกันอุปกรณ์:"},
+  "All Risk — מכסה נזק, גניבה, אסונות טבע למערכת הסולארית.": {en: "All Risk — covers damage, theft, natural disasters to the solar system.", th: "All Risk — ครอบคลุมความเสียหาย การโจรกรรม ภัยธรรมชาติต่อระบบโซลาร์"},
+  "אחריות צד ג':": {en: "Third-Party Liability:", th: "ความรับผิดต่อบุคคลที่สาม:"},
+  "כיסוי של לפחות ฿2,000,000 לאירוע — נזק לנכס הצרכן עקב המערכת.": {en: "Coverage of at least ฿2,000,000 per incident — damage to Consumer's property due to the system.", th: "ความคุ้มครองอย่างน้อย ฿2,000,000 ต่อเหตุการณ์ — ความเสียหายต่ออสังหาริมทรัพย์ของผู้ใช้ไฟฟ้า"},
+  "ספק החשמל ימציא אישורי ביטוח תקפים לצרכן על-פי דרישה.": {en: "The Power Supplier shall provide valid insurance certificates to the Consumer upon request.", th: "ผู้จำหน่ายไฟฟ้าจะจัดส่งใบรับรองประกันภัยที่ยังมีผลบังคับใช้แก่ผู้ใช้ไฟฟ้าตามคำร้องขอ"},
+  "ביטוח — אחריות הצרכן:": {en: "Insurance — Consumer's Responsibility:", th: "ประกันภัย — ความรับผิดชอบของผู้ใช้ไฟฟ้า:"},
+  "ביטוח מבנה (גג/שטח) — הצרכן אחראי לבטח את המבנה עליו מותקנת המערכת.": {en: "Building insurance (roof/area) — the Consumer is responsible for insuring the structure on which the system is installed.", th: "ประกันอาคาร (หลังคา/พื้นที่) — ผู้ใช้ไฟฟ้ารับผิดชอบในการประกันโครงสร้างที่ติดตั้งระบบ"},
+  "הצרכן ידווח מיד על כל אירוע ביטוחי שעלול להשפיע על המערכת.": {en: "The Consumer shall immediately report any insurable event that may affect the system.", th: "ผู้ใช้ไฟฟ้าจะรายงานทันทีต่อเหตุการณ์ที่อาจส่งผลต่อระบบ"},
+  "סיום מוקדם": {en: "Early Termination", th: "การสิ้นสุดสัญญาก่อนกำหนด"},
+  "סיום מצד הצרכן:": {en: "Termination by the Consumer:", th: "การสิ้นสุดสัญญาโดยผู้ใช้ไฟฟ้า:"},
+  "הצרכן רשאי לסיים את ההסכם בכל עת, בכפוף לתשלום": {en: "The Consumer may terminate the agreement at any time, subject to payment of", th: "ผู้ใช้ไฟฟ้าอาจสิ้นสุดข้อตกลงได้ทุกเมื่อ โดยขึ้นอยู่กับการชำระ"},
+  "קנס סיום מוקדם:": {en: "Early Termination Penalty:", th: "ค่าปรับการสิ้นสุดสัญญาก่อนกำหนด:"},
+  "קנס סיום מוקדם = 70% × (תעריף נוכחי × ייצור שנתי ממוצע × שנים שנותרו)": {en: "Early Termination Penalty = 70% × (current tariff × average annual output × remaining years)", th: "ค่าปรับการสิ้นสุดสัญญาก่อนกำหนด = 70% × (อัตราปัจจุบัน × กำลังผลิตรายปีเฉลี่ย × ปีที่เหลือ)"},
+  "דוגמה: סיום בשנה 5 למערכת 50kWp:": {en: "Example: Termination in year 5 for a 50kWp system:", th: "ตัวอย่าง: การสิ้นสุดในปีที่ 5 สำหรับระบบ 50kWp:"},
+  "לחלופין — הצרכן רשאי": {en: "Alternatively — the Consumer may", th: "อีกทางเลือกหนึ่ง — ผู้ใช้ไฟฟ้าอาจ"},
+  "לרכוש את המערכת": {en: "purchase the system", th: "ซื้อระบบ"},
+  "בערך השוק ההוגן (Fair Market Value) כפי שייקבע ע\"י שמאי מוסכם, ובכך ההסכם מסתיים ללא קנס.": {en: "at Fair Market Value as determined by an agreed appraiser, and the agreement terminates without penalty.", th: "ในราคาตลาดยุติธรรม (Fair Market Value) ตามที่กำหนดโดยผู้ประเมินที่ตกลงกัน และข้อตกลงสิ้นสุดโดยไม่มีค่าปรับ"},
+  "סיום מצד ספק החשמל:": {en: "Termination by the Power Supplier:", th: "การสิ้นสุดสัญญาโดยผู้จำหน่ายไฟฟ้า:"},
+  "אי-תשלום מעבר ל-90 יום — ספק החשמל רשאי לסיים את ההסכם בהודעה של 30 יום.": {en: "Non-payment beyond 90 days — the Power Supplier may terminate the agreement with 30 days' notice.", th: "ไม่ชำระเงินเกิน 90 วัน — ผู้จำหน่ายไฟฟ้าอาจสิ้นสุดข้อตกลงโดยแจ้ง 30 วัน"},
+  "הפרה מהותית שלא תוקנה תוך 30 יום מהודעה בכתב.": {en: "Material breach not remedied within 30 days of written notice.", th: "การผิดสัญญาอย่างร้ายแรงที่ไม่ได้รับการแก้ไขภายใน 30 วันนับจากการแจ้งเป็นลายลักษณ์อักษร"},
+  "בסיום — ספק החשמל יפרק ויסיר את המערכת תוך 60 יום, על חשבונו, ויתקן כל נזק לגג.": {en: "Upon termination — the Power Supplier shall dismantle and remove the system within 60 days, at its own expense, and repair any roof damage.", th: "เมื่อสิ้นสุด — ผู้จำหน่ายไฟฟ้าจะรื้อถอนและนำระบบออกภายใน 60 วัน โดยค่าใช้จ่ายตัวเอง และซ่อมแซมความเสียหายบนหลังคา"},
+  "מכירת הנכס:": {en: "Sale of Property:", th: "การขายอสังหาริมทรัพย์:"},
+  "הצרכן רשאי למכור את הנכס בכפוף ל-": {en: "The Consumer may sell the property subject to", th: "ผู้ใช้ไฟฟ้าอาจขายอสังหาริมทรัพย์โดยขึ้นอยู่กับ"},
+  "העברת ההסכם לרוכש החדש": {en: "transfer of the agreement to the new buyer", th: "การโอนข้อตกลงไปยังผู้ซื้อรายใหม่"},
+  "ספק החשמל יאשר העברה בתנאי שהרוכש מקבל על עצמו את כל ההתחייבויות.": {en: "The Power Supplier shall approve transfer provided the buyer accepts all obligations.", th: "ผู้จำหน่ายไฟฟ้าจะอนุมัติการโอนโดยมีเงื่อนไขว่าผู้ซื้อยอมรับภาระผูกพันทั้งหมด"},
+  "אם הרוכש מסרב — חלים תנאי סיום מוקדם (סעיף 16).": {en: "If the buyer refuses — early termination terms apply (Clause 16).", th: "หากผู้ซื้อปฏิเสธ — เงื่อนไขการสิ้นสุดก่อนกำหนดจะมีผลบังคับใช้ (ข้อ 16)"},
+  "כוח עליון": {en: "Force Majeure", th: "เหตุสุดวิสัย"},
+  "כוח עליון:": {en: "Force Majeure:", th: "เหตุสุดวิสัย:"},
+  "אף צד לא יישא באחריות לאי-ביצוע עקב אירועים שאינם בשליטתו (אסונות טבע, מגפות, מלחמות, הפסקות PEA ממושכות).": {en: "Neither party shall bear liability for non-performance due to events beyond its control (natural disasters, pandemics, wars, prolonged PEA outages).", th: "ไม่มีฝ่ายใดรับผิดชอบต่อการไม่ปฏิบัติงานอันเนื่องมาจากเหตุการณ์นอกเหนือการควบคุม (ภัยธรรมชาติ โรคระบาด สงคราม ไฟดับ PEA เป็นเวลานาน)"},
+  "הצד המושפע יודיע תוך 7 ימים ויפעל למזער השפעה.": {en: "The affected party shall notify within 7 days and act to minimize the impact.", th: "ฝ่ายที่ได้รับผลกระทบต้องแจ้งภายใน 7 วันและดำเนินการเพื่อลดผลกระทบ"},
+  "כוח עליון מעבר ל-180 יום — כל צד רשאי לסיים בהודעה של 30 יום, ללא קנס.": {en: "Force majeure beyond 180 days — either party may terminate with 30 days' notice, without penalty.", th: "เหตุสุดวิสัยเกิน 180 วัน — ฝ่ายใดฝ่ายหนึ่งอาจสิ้นสุดสัญญาโดยแจ้ง 30 วัน โดยไม่มีค่าปรับ"},
+  "סודיות": {en: "Confidentiality", th: "การรักษาความลับ"},
+  "סודיות:": {en: "Confidentiality:", th: "การรักษาความลับ:"},
+  "תנאי ההסכם, התעריף, וכל מידע מסחרי הם חסויים.": {en: "The terms of the agreement, the tariff, and all commercial information are confidential.", th: "เงื่อนไขของข้อตกลง อัตราค่าไฟ และข้อมูลเชิงพาณิชย์ทั้งหมดเป็นความลับ"},
+  "שני הצדדים מתחייבים שלא לחשוף מידע חסוי לצד שלישי ללא הסכמה בכתב, למעט: יועצים משפטיים, רואי חשבון, ובנקים מממנים.": {en: "Both parties undertake not to disclose confidential information to third parties without written consent, except: legal advisors, accountants, and financing banks.", th: "ทั้งสองฝ่ายตกลงที่จะไม่เปิดเผยข้อมูลที่เป็นความลับแก่บุคคลที่สามโดยไม่ได้รับความยินยอมเป็นลายลักษณ์อักษร ยกเว้น: ที่ปรึกษากฎหมาย นักบัญชี และธนาคารที่ให้การเงิน"},
+  "התחייבות הסודיות ממשיכה 3 שנים לאחר סיום ההסכם.": {en: "The confidentiality obligation continues for 3 years after termination of the agreement.", th: "ภาระผูกพันการรักษาความลับยังคงมีผลต่อเนื่อง 3 ปีหลังจากสิ้นสุดข้อตกลง"},
+  "יישוב סכסוכים": {en: "Dispute Resolution", th: "การระงับข้อพิพาท"},
+  "יישוב סכסוכים:": {en: "Dispute Resolution:", th: "การระงับข้อพิพาท:"},
+  "שלב 1 — משא ומתן:": {en: "Stage 1 — Negotiation:", th: "ขั้นที่ 1 — การเจรจา:"},
+  "תוך 14 יום.": {en: "Within 14 days.", th: "ภายใน 14 วัน"},
+  "שלב 2 — גישור:": {en: "Stage 2 — Mediation:", th: "ขั้นที่ 2 — การไกล่เกลี่ย:"},
+  "מגשר מוסכם, תוך 30 יום.": {en: "Agreed mediator, within 30 days.", th: "ผู้ไกล่เกลี่ยที่ตกลงกัน ภายใน 30 วัน"},
+  "שלב 3 — בוררות:": {en: "Stage 3 — Arbitration:", th: "ขั้นที่ 3 — อนุญาโตตุลาการ:"},
+  "בהתאם לחוק הבוררות התאילנדי. מקום: Surat Thani. שפה: אנגלית.": {en: "In accordance with Thai Arbitration Law. Place: Surat Thani. Language: English.", th: "ตามกฎหมายอนุญาโตตุลาการไทย สถานที่: สุราษฎร์ธานี ภาษา: อังกฤษ"},
+  "הוראות כלליות": {en: "General Provisions", th: "บทบัญญัติทั่วไป"},
+  "דין חל:": {en: "Governing Law:", th: "กฎหมายที่ใช้บังคับ:"},
+  "חוזה זה כפוף לחוקי ממלכת תאילנד.": {en: "This agreement is subject to the laws of the Kingdom of Thailand.", th: "สัญญานี้อยู่ภายใต้กฎหมายของราชอาณาจักรไทย"},
+  "שפה:": {en: "Language:", th: "ภาษา:"},
+  "חוזה זה ייחתם בגרסה": {en: "This agreement shall be signed in a", th: "สัญญานี้จะลงนามในฉบับ"},
+  "דו-לשונית (אנגלית + תאילנדית)": {en: "bilingual version (English + Thai)", th: "สองภาษา (อังกฤษ + ไทย)"},
+  "במקרה של סתירה — הגרסה התאילנדית גוברת.": {en: "In case of conflict — the Thai version prevails.", th: "ในกรณีที่ขัดแย้งกัน — ฉบับภาษาไทยจะมีผลบังคับใช้"},
+  "שלמות ההסכם:": {en: "Entire Agreement:", th: "ข้อตกลงฉบับสมบูรณ์:"},
+  "חוזה זה מהווה את ההסכם המלא בין הצדדים. כל שינוי ייעשה בנספח חתום.": {en: "This agreement constitutes the entire agreement between the parties. Any amendment shall be made in a signed annex.", th: "สัญญานี้ถือเป็นข้อตกลงฉบับสมบูรณ์ระหว่างคู่สัญญา การแก้ไขใดๆ จะกระทำในภาคผนวกที่ลงนาม"},
+  "העברת זכויות ספק החשמל:": {en: "Assignment of Power Supplier's Rights:", th: "การโอนสิทธิ์ของผู้จำหน่ายไฟฟ้า:"},
+  "ספק החשמל רשאי להעביר את זכויותיו (כולל שעבוד ההכנסות לטובת בנק מממן) בהודעה לצרכן. הצרכן אינו רשאי להתנגד להעברה כאמור, כל עוד זה אינו משנה את תנאי ההסכם.": {en: "The Power Supplier may assign its rights (including pledging revenues in favor of a financing bank) by notice to the Consumer. The Consumer may not object to such assignment, as long as it does not change the terms of the agreement.", th: "ผู้จำหน่ายไฟฟ้าอาจโอนสิทธิ์ของตน (รวมถึงการจำนำรายได้เพื่อประโยชน์ของธนาคารที่ให้การเงิน) โดยแจ้งแก่ผู้ใช้ไฟฟ้า ผู้ใช้ไฟฟ้าไม่อาจคัดค้านการโอนดังกล่าว ตราบเท่าที่ไม่เปลี่ยนแปลงเงื่อนไขของข้อตกลง"},
+  "הודעות:": {en: "Notices:", th: "การแจ้งเตือน:"},
+  "כל הודעה תישלח בכתב לכתובות שצוינו, או בדוא\"ל מאושר ע\"י שני הצדדים.": {en: "All notices shall be sent in writing to the addresses stated, or by email approved by both parties.", th: "การแจ้งเตือนทั้งหมดต้องส่งเป็นลายลักษณ์อักษรไปยังที่อยู่ที่ระบุ หรือทางอีเมลที่ได้รับอนุมัติจากทั้งสองฝ่าย"},
+  "ספק החשמל — Ko Phangan Solar Co., Ltd.": {en: "The Power Supplier — Ko Phangan Solar Co., Ltd.", th: "ผู้จำหน่ายไฟฟ้า — Ko Phangan Solar Co., Ltd."},
+  "שם מורשה חתימה": {en: "Authorized Signatory Name", th: "ชื่อผู้มีอำนาจลงนาม"},
+  "חתימה": {en: "Signature", th: "ลายเซ็น"},
+  "תאריך": {en: "Date", th: "วันที่"},
+  "הצרכן": {en: "The Consumer", th: "ผู้ใช้ไฟฟ้า"},
+  "נספחים": {en: "Appendices", th: "ภาคผนวก"},
+  "נספח": {en: "Appendix", th: "ภาคผนวก"},
+  "תוכן": {en: "Content", th: "เนื้อหา"},
+  "מפרט טכני של המערכת — פאנלים, אינוורטר, מונה, monitoring": {en: "Technical specifications of the system — panels, inverter, meter, monitoring", th: "ข้อมูลจำเพาะทางเทคนิคของระบบ — แผงโซลาร์ อินเวอร์เตอร์ มิเตอร์ monitoring"},
+  "תוכנית הצבה (Layout) — מיקום המערכת על הנכס": {en: "Layout Plan — system placement on the property", th: "แผนผังการจัดวาง — ตำแหน่งระบบบนอสังหาริมทรัพย์"},
+  "ייצור שנתי צפוי (kWh) — סימולציה + הנחות": {en: "Expected Annual Output (kWh) — simulation + assumptions", th: "กำลังผลิตรายปีที่คาดไว้ (kWh) — การจำลอง + สมมติฐาน"},
+  "טבלת הצמדה — תעריפים צפויים ל-15 שנה": {en: "Escalation Table — projected tariffs for 15 years", th: "ตารางการปรับอัตรา — อัตราที่คาดการณ์สำหรับ 15 ปี"},
+  "חשבונית לדוגמה — פורמט חיוב חודשי": {en: "Sample Invoice — monthly billing format", th: "ตัวอย่างใบแจ้งหนี้ — รูปแบบการเรียกเก็บเงินรายเดือน"},
+  "אישורי ביטוח — ציוד + צד ג'": {en: "Insurance Certificates — equipment + third party", th: "ใบรับรองประกันภัย — อุปกรณ์ + บุคคลที่สาม"},
+  "פרוטוקול O&M — לוח תחזוקה שנתי": {en: "O&M Protocol — annual maintenance schedule", th: "โปรโตคอล O&M — ตารางการบำรุงรักษารายปี"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

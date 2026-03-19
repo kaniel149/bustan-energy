@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Project Planning vs Execution Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D2137;--gold:#E8A820;--green:#1A7A5A;--red:#E85D3A;--gray:#8899AA;--light:#F0F4F8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--navy);padding:24px;}
+h1{font-size:28px;font-weight:800;margin-bottom:4px;}
+.subtitle{color:var(--gray);font-size:14px;margin-bottom:24px;}
+.project-bar{background:var(--navy);color:#fff;border-radius:12px;padding:20px 28px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.project-bar .name{font-size:18px;font-weight:700;}
+.project-bar .meta{display:flex;gap:24px;font-size:13px;color:rgba(255,255,255,.6);}
+.project-bar .meta b{color:#fff;}
+.progress-bar{height:8px;background:rgba(255,255,255,.1);border-radius:4px;flex:0 0 200px;}
+.progress-fill{height:100%;border-radius:4px;background:var(--gold);transition:width .5s;}
+.tabs{display:flex;gap:4px;margin-bottom:20px;}
+.tab{padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.06);}
+.tab.active{background:var(--navy);color:#fff;}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04);}
+th{background:var(--navy);color:#fff;padding:12px 16px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}
+td{padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.04);font-size:13px;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+.status{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;}
+.status.planned{background:rgba(136,153,170,.1);color:var(--gray);}
+.status.in-progress{background:rgba(232,168,32,.1);color:var(--gold);}
+.status.done{background:rgba(26,122,90,.1);color:var(--green);}
+.status.delayed{background:rgba(232,93,58,.1);color:var(--red);}
+.status.blocked{background:rgba(232,93,58,.2);color:var(--red);font-weight:800;}
+.plan-col{color:var(--gray);}
+.actual-col{font-weight:600;}
+.delta{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;}
+.delta.on-track{background:rgba(26,122,90,.1);color:var(--green);}
+.delta.behind{background:rgba(232,93,58,.1);color:var(--red);}
+.delta.ahead{background:rgba(26,122,90,.1);color:var(--green);}
+.cost-col{text-align:right;font-family:'Inter',monospace;}
+.cost-plan{color:var(--gray);}
+.cost-actual{font-weight:700;}
+.cost-delta.over{color:var(--red);}
+.cost-delta.under{color:var(--green);}
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin:24px 0;}
+.summary-card{background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.summary-card .num{font-size:28px;font-weight:800;color:var(--navy);}
+.summary-card .label{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.summary-card.gold .num{color:var(--gold);}
+.summary-card.green .num{color:var(--green);}
+.summary-card.red .num{color:var(--red);}
+.footer-note{font-size:11px;color:var(--gray);margin-top:16px;text-align:center;}
+@media(max-width:768px){.summary{grid-template-columns:1fr 1fr;} table{font-size:12px;} td,th{padding:8px;}}
+</style>
+</head>
+<body>
+
+<h1>📊 TM Energy — Planning vs Execution</h1>
+<p class="subtitle">Project tracker for Beamtech Residences · TM-2026-001</p>
+
+<div class="project-bar">
+<div>
+<div class="name">Beamtech Block & Beam — 32.5 kWp</div>
+<div class="meta">
+<span>Ref: <b>TM-2026-001</b></span>
+<span>Start: <b>TBD</b></span>
+<span>Target: <b>8 weeks</b></span>
+<span>Status: <b>Pre-sales</b></span>
+</div>
+</div>
+<div>
+<div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px;">Overall Progress</div>
+<div class="progress-bar"><div class="progress-fill" style="width:5%;"></div></div>
+</div>
+</div>
+
+<div class="summary">
+<div class="summary-card"><div class="num">32.5</div><div class="label">kWp System</div></div>
+<div class="summary-card gold"><div class="num">฿1,056,250</div><div class="label">EPC Budget</div></div>
+<div class="summary-card"><div class="num">56</div><div class="label">Panels</div></div>
+<div class="summary-card green"><div class="num">0 / 8</div><div class="label">Weeks Done</div></div>
+<div class="summary-card"><div class="num">฿0</div><div class="label">Spent So Far</div></div>
+</div>
+
+<!-- TIMELINE TABLE -->
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Task</th>
+<th>Planned Start</th>
+<th>Planned End</th>
+<th>Actual Start</th>
+<th>Actual End</th>
+<th>Delta</th>
+<th>Status</th>
+<th>Owner</th>
+</tr>
+</thead>
+<tbody>
+<!-- PHASE 1: PRE-SALES -->
+<tr style="background:rgba(232,168,32,.04);">
+<td rowspan="5"><b>1. Pre-Sales</b></td>
+<td>Receive construction plans</td>
+<td class="plan-col">9 Mar</td>
+<td class="plan-col">9 Mar</td>
+<td class="actual-col">9 Mar</td>
+<td class="actual-col">9 Mar</td>
+<td><span class="delta on-track">✓</span></td>
+<td><span class="status done">Done</span></td>
+<td>Kaniel</td>
+</tr>
+<tr style="background:rgba(232,168,32,.04);">
+<td>System design & sizing (32.5 kWp)</td>
+<td class="plan-col">9 Mar</td>
+<td class="plan-col">9 Mar</td>
+<td class="actual-col">9 Mar</td>
+<td class="actual-col">9 Mar</td>
+<td><span class="delta on-track">✓</span></td>
+<td><span class="status done">Done</span></td>
+<td>G (AI)</td>
+</tr>
+<tr style="background:rgba(232,168,32,.04);">
+<td>Proposal created (EN/HE/TH)</td>
+<td class="plan-col">9 Mar</td>
+<td class="plan-col">9 Mar</td>
+<td class="actual-col">9 Mar</td>
+<td class="actual-col">9 Mar</td>
+<td><span class="delta on-track">✓</span></td>
+<td><span class="status done">Done</span></td>
+<td>Noa (AI)</td>
+</tr>
+<tr style="background:rgba(232,168,32,.04);">
+<td>Send RFQ to 5 suppliers</td>
+<td class="plan-col">10 Mar</td>
+<td class="plan-col">10 Mar</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Kaniel</td>
+</tr>
+<tr style="background:rgba(232,168,32,.04);">
+<td>Receive supplier quotes</td>
+<td class="plan-col">10 Mar</td>
+<td class="plan-col">17 Mar</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Kaniel</td>
+</tr>
+
+<!-- PHASE 2: SALES -->
+<tr>
+<td rowspan="3"><b>2. Sales</b></td>
+<td>Present proposal to Beamtech</td>
+<td class="plan-col">Week 1</td>
+<td class="plan-col">Week 1</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Kaniel</td>
+</tr>
+<tr>
+<td>Client selects option (A/B/C)</td>
+<td class="plan-col">Week 1-2</td>
+<td class="plan-col">Week 2</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Client</td>
+</tr>
+<tr>
+<td>Contract signed + deposit received</td>
+<td class="plan-col">Week 2</td>
+<td class="plan-col">Week 2</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Kaniel</td>
+</tr>
+
+<!-- PHASE 3: ENGINEERING -->
+<tr style="background:rgba(26,122,90,.04);">
+<td rowspan="3"><b>3. Engineering</b></td>
+<td>Site survey + roof measurement</td>
+<td class="plan-col">Week 2</td>
+<td class="plan-col">Week 2</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Engineer</td>
+</tr>
+<tr style="background:rgba(26,122,90,.04);">
+<td>Structural approval (Rock Engineering)</td>
+<td class="plan-col">Week 2</td>
+<td class="plan-col">Week 3</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Rock Eng.</td>
+</tr>
+<tr style="background:rgba(26,122,90,.04);">
+<td>PEA license application</td>
+<td class="plan-col">Week 3</td>
+<td class="plan-col">Week 5</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Kaniel</td>
+</tr>
+
+<!-- PHASE 4: PROCUREMENT -->
+<tr>
+<td rowspan="3"><b>4. Procurement</b></td>
+<td>Place equipment order</td>
+<td class="plan-col">Week 2</td>
+<td class="plan-col">Week 2</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Kaniel</td>
+</tr>
+<tr>
+<td>Delivery to Surat Thani</td>
+<td class="plan-col">Week 3</td>
+<td class="plan-col">Week 4</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Supplier</td>
+</tr>
+<tr>
+<td>Ferry to Koh Phangan + site delivery</td>
+<td class="plan-col">Week 4</td>
+<td class="plan-col">Week 4</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>TM Dev</td>
+</tr>
+
+<!-- PHASE 5: INSTALLATION -->
+<tr style="background:rgba(232,168,32,.04);">
+<td rowspan="4"><b>5. Installation</b></td>
+<td>Building 1 — mounting + panels</td>
+<td class="plan-col">Week 5</td>
+<td class="plan-col">Week 5</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>TM Dev</td>
+</tr>
+<tr style="background:rgba(232,168,32,.04);">
+<td>Building 1 — inverter + wiring</td>
+<td class="plan-col">Week 5</td>
+<td class="plan-col">Week 5</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Electrician</td>
+</tr>
+<tr style="background:rgba(232,168,32,.04);">
+<td>Building 2 — mounting + panels + wiring</td>
+<td class="plan-col">Week 6</td>
+<td class="plan-col">Week 6</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>TM Dev</td>
+</tr>
+<tr style="background:rgba(232,168,32,.04);">
+<td>Battery installation (if Option C)</td>
+<td class="plan-col">Week 6</td>
+<td class="plan-col">Week 6</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Electrician</td>
+</tr>
+
+<!-- PHASE 6: COMMISSIONING -->
+<tr>
+<td rowspan="3"><b>6. Commissioning</b></td>
+<td>System testing & QA</td>
+<td class="plan-col">Week 7</td>
+<td class="plan-col">Week 7</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Engineer</td>
+</tr>
+<tr>
+<td>PEA inspection + meter install</td>
+<td class="plan-col">Week 7</td>
+<td class="plan-col">Week 8</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>PEA</td>
+</tr>
+<tr>
+<td>Handover + monitoring setup</td>
+<td class="plan-col">Week 8</td>
+<td class="plan-col">Week 8</td>
+<td class="actual-col">—</td>
+<td class="actual-col">—</td>
+<td></td>
+<td><span class="status planned">Planned</span></td>
+<td>Kaniel</td>
+</tr>
+</tbody>
+</table>
+
+<!-- COST TRACKER -->
+<h2 style="margin-top:40px;font-size:22px;font-weight:800;">💰 Cost Tracker — Plan vs Actual</h2>
+<p class="subtitle">Budget breakdown with real costs as they come in</p>
+
+<table style="margin-top:16px;">
+<thead>
+<tr>
+<th>Category</th>
+<th>Item</th>
+<th>Qty</th>
+<th style="text-align:right;">Plan (฿)</th>
+<th style="text-align:right;">Actual (฿)</th>
+<th style="text-align:right;">Delta</th>
+<th>Supplier</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="2"><b>Panels</b></td>
+<td>LONGi Hi-MO X6 580W</td>
+<td>56</td>
+<td class="cost-col cost-plan">280,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>RFQ sent</td>
+<td><span class="status planned">Awaiting</span></td>
+</tr>
+<tr>
+<td><i>Unit price estimate: ฿5,000/panel</i></td>
+<td></td>
+<td class="cost-col cost-plan"></td>
+<td class="cost-col"></td>
+<td class="cost-col"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td rowspan="2"><b>Inverters</b></td>
+<td>Huawei SUN2000-11KTL-M5</td>
+<td>2</td>
+<td class="cost-col cost-plan">120,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>RFQ sent</td>
+<td><span class="status planned">Awaiting</span></td>
+</tr>
+<tr>
+<td><i>Unit price estimate: ฿60,000/unit</i></td>
+<td></td>
+<td class="cost-col"></td>
+<td class="cost-col"></td>
+<td class="cost-col"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><b>Battery (Option C)</b></td>
+<td>Huawei LUNA2000-15-S0</td>
+<td>2</td>
+<td class="cost-col cost-plan">550,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>RFQ sent</td>
+<td><span class="status planned">Awaiting</span></td>
+</tr>
+<tr>
+<td><b>Mounting</b></td>
+<td>No-drill clamps + rails</td>
+<td>56 sets</td>
+<td class="cost-col cost-plan">56,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>RFQ sent</td>
+<td><span class="status planned">Awaiting</span></td>
+</tr>
+<tr>
+<td><b>Cables & BOS</b></td>
+<td>DC/AC cables, SPD, RCD, MCB, earthing</td>
+<td>2 sets</td>
+<td class="cost-col cost-plan">40,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>RFQ sent</td>
+<td><span class="status planned">Awaiting</span></td>
+</tr>
+<tr>
+<td><b>Logistics</b></td>
+<td>Shipping to Surat Thani + ferry to KP</td>
+<td>1</td>
+<td class="cost-col cost-plan">25,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>TBD</td>
+<td><span class="status planned">Awaiting</span></td>
+</tr>
+<tr>
+<td><b>Labor</b></td>
+<td>Installation team (TM Developers)</td>
+<td>10 days</td>
+<td class="cost-col cost-plan">80,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>TM Dev</td>
+<td><span class="status planned">Planned</span></td>
+</tr>
+<tr>
+<td><b>Engineering</b></td>
+<td>Structural letter + PEA application</td>
+<td>1</td>
+<td class="cost-col cost-plan">15,000</td>
+<td class="cost-col cost-actual">—</td>
+<td class="cost-col">—</td>
+<td>Rock Eng.</td>
+<td><span class="status planned">Planned</span></td>
+</tr>
+<tr style="background:rgba(232,168,32,.06);font-weight:700;">
+<td colspan="3"><b>TOTAL (EPC — without battery)</b></td>
+<td class="cost-col" style="text-align:right;color:var(--gold);">616,000</td>
+<td class="cost-col" style="text-align:right;">—</td>
+<td class="cost-col">—</td>
+<td></td>
+<td></td>
+</tr>
+<tr style="background:rgba(26,122,90,.06);font-weight:700;">
+<td colspan="3"><b>SALE PRICE (EPC)</b></td>
+<td class="cost-col" style="text-align:right;color:var(--green);">1,056,250</td>
+<td class="cost-col"></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr style="background:rgba(26,122,90,.08);font-weight:700;">
+<td colspan="3"><b>GROSS MARGIN</b></td>
+<td class="cost-col" style="text-align:right;color:var(--green);">440,250 (42%)</td>
+<td class="cost-col"></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<div class="footer-note">
+Last updated: 9 March 2026 · TM Energy Internal — Do not share with client<br>
+Costs are estimates until supplier quotes received. Margin target: 40%+
+</div>
+
+</body>
+</html>

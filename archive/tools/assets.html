@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ko Phangan Solar — כל הנכסים</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);min-height:100vh;padding:40px}
+a{color:var(--gold);text-decoration:none;transition:opacity .2s}a:hover{opacity:.8;text-decoration:underline}
+h1{font-size:clamp(28px,4vw,48px);font-weight:900;margin-bottom:8px}
+h2{font-size:clamp(18px,2.5vw,28px);font-weight:700;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(232,168,32,.2)}
+.subtitle{font-size:18px;opacity:.6;margin-bottom:40px}
+.gold{color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;transition:all .3s;display:block}
+.card:hover{border-color:var(--gold);transform:translateY(-2px);text-decoration:none;background:rgba(255,255,255,.06)}
+.card-icon{font-size:28px;margin-bottom:8px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:6px;color:var(--white)}
+.card p{font-size:13px;opacity:.6;line-height:1.5}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;margin-top:8px}
+.tag-pres{background:rgba(100,150,255,.2);color:#6496FF}
+.tag-crm{background:rgba(46,216,154,.2);color:#2ED89A}
+.tag-landing{background:rgba(232,168,32,.2);color:var(--gold)}
+.tag-ads{background:rgba(232,93,58,.2);color:var(--coral)}
+.tag-doc{background:rgba(180,130,255,.2);color:#B482FF}
+.tag-finance{background:rgba(255,200,50,.2);color:#FFC832}
+.header{text-align:center;margin-bottom:48px}
+.logo{font-size:48px;margin-bottom:16px}
+.stats{display:flex;gap:32px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-num{font-family:'Space Grotesk';font-size:32px;font-weight:700;color:var(--gold)}
+.stat-label{font-size:12px;opacity:.5;margin-top:2px}
+.sub-links{margin-top:10px;font-size:12px;opacity:.7}
+.sub-links a{color:var(--gold);margin:0 4px}
+details{margin:8px 0 24px}
+details summary{cursor:pointer;color:var(--gold);font-weight:600;font-size:15px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;list-style:none;transition:border-color .2s}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:'▸ '}
+details[open] summary::before{content:'▾ '}
+details[open] summary{border-color:rgba(232,168,32,.3)}
+@media(max-width:600px){body{padding:20px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="header">
+  <div class="logo">☀️</div>
+  <h1>Ko Phangan Solar — <span class="gold">כל הנכסים</span></h1>
+  <p class="subtitle">מצגות, כלים, מסמכים וקישורים | TM Energy</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">קטגוריות</div></div>
+    <div class="stat"><div class="stat-num">57</div><div class="stat-label">לידים ב-CRM</div></div>
+    <div class="stat"><div class="stat-num">165+</div><div class="stat-label">לידים מזוהים</div></div>
+    <div class="stat"><div class="stat-num">28</div><div class="stat-label">מודעות</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 1. STRATEGY & FINANCE                       -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>📊 אסטרטגיה ופיננסים</h2>
+<div class="grid">
+  <a class="card" href="strategy.html">
+    <div class="card-icon">🎯</div>
+    <h3>אסטרטגיה עסקית</h3>
+    <p>13 שקפים — חזון, שוק, תחרות, מודל עסקי, roadmap</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="business-plan.html">
+    <div class="card-icon">💰</div>
+    <h3>תוכנית עסקית שנה 1</h3>
+    <p>EPC + PPA, תמחור, תחזיות הכנסה, תזרים מזומנים</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="pnl-plan.html" style="border:2px solid var(--gold)">
+    <div class="card-icon">📈</div>
+    <h3>פיננסים — תכנון מקיף</h3>
+    <p>18 שקפים — Dual Entity (EPC+PPA), מקורות מימון, Cash Flow חודשי, CapEx ฿942K, P&L, מחשבון אינטראקטיבי</p>
+    <div class="sub-links">
+      ראו גם: <a href="financial-dashboard.html">דשבורד פיננסי</a> · <a href="financing.html">מימון ובנקים</a>
+    </div>
+    <span class="tag tag-finance">מאוחד</span>
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 2. OPERATIONS & ENGINEERING                  -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>⚙️ תפעול והנדסה</h2>
+<div class="grid">
+  <a class="card" href="installation.html">
+    <div class="card-icon">🔧</div>
+    <h3>תהליך הקמה</h3>
+    <p>12 שקפים — סקר גג, קונסטרוקציה, DC, AC, חיבור PEA, בטיחות</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="procurement-engineering.html">
+    <div class="card-icon">📦</div>
+    <h3>רכש והנדסה</h3>
+    <p>12 שקפים — Longi, Huawei, שרשרת אספקה, מכס, עיצוב מערכת, תקנים</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="monitoring-maintenance.html">
+    <div class="card-icon">📡</div>
+    <h3>ניטור ותחזוקה</h3>
+    <p>11 שקפים — FusionSolar, התראות, חבילות O&M, חלקי חילוף, MRR</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="licensing.html">
+    <div class="card-icon">📋</div>
+    <h3>רישוי ורגולציה</h3>
+    <p>12 שקפים — תקנות 2025, PEA, תהליך התקנה, מיסוי, Koh Phangan</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="drone-guide.html">
+    <div class="card-icon">🛸</div>
+    <h3>מדריך סריקת גגות ברחפן</h3>
+    <p>הנחיות לצילום וסריקת גגות עם DJI — בטיחות, הגדרות, workflow</p>
+    <span class="tag tag-doc">מדריך</span>
+  </a>
+  <a class="card" href="equipment-list.html">
+    <div class="card-icon">🛠️</div>
+    <h3>רשימת ציוד וכלי עבודה</h3>
+    <p>Shopping list מלא — כלי עבודה, מכשירי מדידה, בטיחות, רחפנים + לינקים ל-Lazada</p>
+    <span class="tag tag-doc">מדריך</span>
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 3. SALES & CRM                              -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>📣 מכירות ו-CRM</h2>
+<div class="grid">
+  <a class="card" href="sales-marketing.html">
+    <div class="card-icon">📣</div>
+    <h3>שיווק ומכירות</h3>
+    <p>14 שקפים — ערוצים, סוכנים, FB/IG ads, Line, תקציב, KPIs</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="customer-avatars.html">
+    <div class="card-icon">👥</div>
+    <h3>אווטרי לקוחות — 6 פרסונות</h3>
+    <p>כאבים, התנגדויות + תשובות, אונבורדינג 7 שלבים, חלוקת PPA/EPC</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="crm-value-chain.html" style="border:2px solid #2ED89A">
+    <div class="card-icon">🖥️</div>
+    <h3>CRM מצגת מודולים — 15 שקופיות</h3>
+    <p>כל 9 מודולי ה-CRM: Pipeline, Survey, Electricity, Design, SLD, Contracts, Inventory, Installation, O&M</p>
+    <div class="sub-links">
+      ראו גם: <a href="value-chain.html">ארכיטקטורת Value Chain</a>
+    </div>
+    <span class="tag tag-pres">מצגת</span> <span class="tag tag-crm">CRM</span>
+  </a>
+</div>
+
+<details>
+  <summary>📖 10 שלבי Value Chain — מדריכים מפורטים</summary>
+  <div class="grid" style="margin-top:12px">
+    <a class="card" href="crm-step1-lead-capture.html">
+      <div class="card-icon">1️⃣</div>
+      <h3>Step 1 — ליד נכנס</h3>
+      <p>7 מקורות לידים, Pipeline Kanban, דירוג Tier 1-3</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step2-site-survey.html">
+      <div class="card-icon">2️⃣</div>
+      <h3>Step 2 — סקר ראשוני</h3>
+      <p>חשבון חשמל + גודל גג מעורך, ציוד סקר, תרחישים</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step3-electricity.html">
+      <div class="card-icon">3️⃣</div>
+      <h3>Step 3 — ניתוח חשמל</h3>
+      <p>12 חשבונות PEA, נוסחאות, גרף צריכה, PPA vs EPC</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step4-design.html">
+      <div class="card-icon">4️⃣</div>
+      <h3>Step 4 — עיצוב מערכת</h3>
+      <p>בחירת ציוד, DC:AC ratio, גורמי KP ספציפיים</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step5-sld.html">
+      <div class="card-icon">5️⃣</div>
+      <h3>Step 5 — הצעת מחיר</h3>
+      <p>EPC vs PPA, שליחה ב-WhatsApp, follow-up script</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step6-proposal.html">
+      <div class="card-icon">6️⃣</div>
+      <h3>Step 6 — חוזה + תשלום</h3>
+      <p>EPC 30/40/30, PPA 0/100, milestones, tracking</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step7-contract.html">
+      <div class="card-icon">7️⃣</div>
+      <h3>Step 7 — הגשה לרישיון PEA</h3>
+      <p>SLD אוטומטי, 7 שלבי PEA, ציר זמן 6 שבועות</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step8-inventory.html">
+      <div class="card-icon">8️⃣</div>
+      <h3>Step 8 — הזמנת חומר</h3>
+      <p>ניהול מלאי, הזמנות ספקים, מעקב משלוחים</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step9-installation.html">
+      <div class="card-icon">9️⃣</div>
+      <h3>Step 9 — התקנה</h3>
+      <p>צ'קליסט 12 משימות, צוות, progress bar, issues</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+    <a class="card" href="crm-step10-om.html">
+      <div class="card-icon">🔟</div>
+      <h3>Step 10 — חיבור + O&M</h3>
+      <p>MRR, KPIs, tickets, לוח זמנים תחזוקה KP</p>
+      <span class="tag tag-crm">CRM</span>
+    </a>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 4. CONTRACTS & LEGAL                         -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>⚖️ חוזים ומשפטי</h2>
+<div class="grid">
+  <a class="card" href="legal-contracts.html">
+    <div class="card-icon">⚖️</div>
+    <h3>משפטי, חוזים והסכמים — מצגת</h3>
+    <p>11 שקפים — חוזה EPC, PPA, O&M, אחריות, ביטוח, מיסוי, מודל עסקי</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="epc-contract.html" style="border:2px solid #2ED89A">
+    <div class="card-icon">📋</div>
+    <h3>חוזה EPC — הקמת מערכת</h3>
+    <p>חוזה מלא — 25 סעיפים, תנאי תשלום 30/40/30, אחריות 10 שנים, ביטוח, קבלני משנה (TM)</p>
+    <span class="tag tag-doc">חוזה</span>
+  </a>
+  <a class="card" href="ppa-contract.html" style="border:2px solid #2ED89A">
+    <div class="card-icon">📜</div>
+    <h3>הסכם PPA — רכישת חשמל</h3>
+    <p>חוזה 15 שנים — ฿4.50/kWh, הצמדה CPI/PEA, העברת בעלות ב-฿1, O&M כלול, קנס יציאה</p>
+    <span class="tag tag-doc">חוזה</span>
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 5. DIGITAL TOOLS (scanners untouched)        -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>💻 כלים דיגיטליים</h2>
+<div class="grid">
+  <a class="card" href="https://kophangan-solar-crm.vercel.app" target="_blank">
+    <div class="card-icon">💻</div>
+    <h3>CRM — Ko Phangan Solar</h3>
+    <p>ניהול לידים, פרויקטים, הצעות מחיר. 57 לידים מיובאים. Login: k@kanielt.com</p>
+    <span class="tag tag-crm">CRM</span>
+  </a>
+  <a class="card" href="roof-scanner.html" style="border:2px solid #E8A820">
+    <div class="card-icon">🛰️</div>
+    <h3>Roof Scanner</h3>
+    <p>2,467 מבנים | 60.2 MWp | מפה אינטראקטיבית עם כל גגות האי — סינון, חיפוש, EPC vs PPA, ייצוא</p>
+    <span class="tag tag-crm">כלי</span>
+  </a>
+  <a class="card" href="kp-solar-pro.html" style="border:3px solid #E8A820">
+    <div class="card-icon">⚡</div>
+    <h3>KP Solar Pro — מוצר משולב</h3>
+    <p>2,467 מבנים + 8 אזורי סריקה + הצעות מחיר + pipeline + analytics — הכלי המרכזי</p>
+    <span class="tag tag-crm">מוצר</span>
+  </a>
+  <a class="card" href="solar-atlas.html" style="border:2px solid #E85D3A">
+    <div class="card-icon">🗺️</div>
+    <h3>KP Solar Atlas — מפת גגות אינטראקטיבית</h3>
+    <p>אב-טיפוס: 18 גגות לדוגמה, חישוב סולארי אוטומטי, 3 אופציות מחיר, CTA WhatsApp, פילטרים</p>
+    <span class="tag tag-crm">כלי</span>
+  </a>
+  <a class="card" href="bill-scanner.html" style="border:2px solid #E8A820">
+    <div class="card-icon">🧾</div>
+    <h3>Bill Scanner — סורק חשבון חשמל</h3>
+    <p>הזן נתוני חשבון PEA, קבל ניתוח חיסכון + הצעת מחיר מיידית ללקוח — EPC או PPA</p>
+    <span class="tag tag-crm">כלי</span>
+  </a>
+  <a class="card" href="proposal.html">
+    <div class="card-icon">📄</div>
+    <h3>Proposal Builder — הצעת מחיר</h3>
+    <p>הצעת מחיר אינטראקטיבית ללקוח — EN/TH/HE עם מפה וחישובים</p>
+    <span class="tag tag-crm">כלי</span>
+  </a>
+  <a class="card" href="index.html">
+    <div class="card-icon">🌐</div>
+    <h3>עמוד נחיתה</h3>
+    <p>Landing page ב-EN — "Power Your Paradise with Solar"</p>
+    <span class="tag tag-landing">Landing Page</span>
+  </a>
+  <a class="card" href="https://drive.google.com/drive/folders/12hdMH7wDmO3KgEytFPCKR7FoQasSEBNg" target="_blank" style="border:2px solid #2ED89A">
+    <div class="card-icon">📁</div>
+    <h3>Drive — ניהול פרויקטים</h3>
+    <p>תיקיות לקוחות, תבניות (BOQ, הצעות, חוזים, בדיקות, אחריות), תפעול, כספים, שיווק</p>
+    <span class="tag tag-crm">כלי</span>
+  </a>
+  <a class="card" href="drone-ops.html" style="border:2px solid #E85D3A">
+    <div class="card-icon">🛸</div>
+    <h3>Drone Ops — תוכנית סריקת רחפן מלאה</h3>
+    <p>ציוד, לינקים לרכישה, תוכנות, אחסון, 8 אזורי סריקה עם מפה, טכניקת צילום, עיבוד, timeline 10 שבועות, צ'קליסט</p>
+    <span class="tag tag-crm">כלי</span>
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 6. BRANDING & ADS (merged)                   -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🎨 מיתוג ומודעות</h2>
+<div class="grid">
+  <a class="card" href="brand-kit.html" style="border:2px solid #E8A820">
+    <div class="card-icon">🎨</div>
+    <h3>Brand Kit — 18 אסטים</h3>
+    <p>לוגו, צבעים, פונטים, חולצות, רכב, קסדה, כרטיס ביקור, מדבקות, דגלים, ערכת מתנה ועוד</p>
+    <span class="tag tag-landing">מיתוג</span>
+  </a>
+  <a class="card" href="brand-kit/print-templates.html">
+    <div class="card-icon">🖨</div>
+    <h3>תבניות הדפסה</h3>
+    <p>8 תבניות מוכנות לבית דפוס — כרטיס ביקור, מגנט, חולצה, שלט, תג עובד EN+TH</p>
+    <span class="tag tag-landing">הדפסה</span>
+  </a>
+  <a class="card" href="ads-pro/index.html" style="border:2px solid #E8A820">
+    <div class="card-icon">🎯</div>
+    <h3>8 מודעות מקצועיות — HTML</h3>
+    <p>טקסט נקי, CTA ברור, לוגו TM Energy אמיתי, לא AI garbled. 1080×1080 מוכנות ל-FB/IG</p>
+    <span class="tag tag-ads">PRO</span>
+  </a>
+</div>
+
+<details>
+  <summary>📢 כל 28 המודעות — HTML מקצועיות + AI</summary>
+  <div class="grid" style="margin-top:12px">
+    <!-- HTML PRO (8) -->
+    <a class="card" href="ads-pro/ad21.html" target="_blank"><div class="card-icon">💰</div><h3>21. Zero Cost Solar — PPA</h3><p>"Zero Cost. Solar Power." — ฿0 upfront, 25% less than PEA</p><span class="tag tag-ads">PRO</span></a>
+    <a class="card" href="ads-pro/ad22.html" target="_blank"><div class="card-icon">🔌</div><h3>22. Blackout Split</h3><p>"Without Solar vs With TM Energy" — VS split design</p><span class="tag tag-ads">PRO</span></a>
+    <a class="card" href="ads-pro/ad23.html" target="_blank"><div class="card-icon">📊</div><h3>23. ROI Calculator</h3><p>฿35,000 → ฿10,500/mo. Annual savings ฿294,000</p><span class="tag tag-ads">PRO</span></a>
+    <a class="card" href="ads-pro/ad24.html" target="_blank"><div class="card-icon">⭐</div><h3>24. Resort Testimonial</h3><p>"Saving ฿40,000/month" — 5 stars, 45kWp, 3.1yr payback</p><span class="tag tag-ads">PRO</span></a>
+    <a class="card" href="ads-pro/ad25.html" target="_blank"><div class="card-icon">🔄</div><h3>25. Before/After Bills</h3><p>฿42,000 → ฿12,600/mo. Save ฿352,800/year</p><span class="tag tag-ads">PRO</span></a>
+    <a class="card" href="ads-pro/ad26.html" target="_blank"><div class="card-icon">📞</div><h3>26. Free Survey CTA</h3><p>4 steps: WhatsApp → Visit → Proposal → Save</p><span class="tag tag-ads">PRO</span></a>
+    <a class="card" href="ads-pro/ad27.html" target="_blank"><div class="card-icon">🛡️</div><h3>27. Equipment Quality</h3><p>LONGi Hi-MO X6 + Huawei SUN2000 + LUNA2000. 25yr warranty</p><span class="tag tag-ads">PRO</span></a>
+    <a class="card" href="ads-pro/ad28.html" target="_blank"><div class="card-icon">📈</div><h3>28. 10-Year Cost Comparison</h3><p>PEA ฿5M vs TM Energy ฿315K over 10 years</p><span class="tag tag-ads">PRO</span></a>
+    <!-- AI-Generated (20) -->
+    <a class="card" href="ads/01-resort-paradise.png" target="_blank"><div class="card-icon">🏨</div><h3>1. Resort Paradise</h3><p>"Power Your Paradise" — רזורט יוקרה עם סולאר</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/02-resort-blackout.png" target="_blank"><div class="card-icon">🔌</div><h3>2. Blackout Split</h3><p>"Never Lose Power Again" — לפני/אחרי הפסקת חשמל</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/03-eco-resort-aerial.png" target="_blank"><div class="card-icon">🌿</div><h3>3. Eco Resort Aerial</h3><p>"Eco-Luxury That Sells" — מבט מלמעלה</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/04-savings-dashboard.png" target="_blank"><div class="card-icon">📊</div><h3>4. Savings Dashboard</h3><p>"Save ฿500,000/Year" — מסך חיסכון</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/05-before-after-roof.png" target="_blank"><div class="card-icon">🔄</div><h3>5. Before/After Roof</h3><p>"Transform Your Roof" — לפני ואחרי</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/06-villa-owner.png" target="_blank"><div class="card-icon">🏡</div><h3>6. Villa Owner</h3><p>"Your Villa, Your Power" — Lifestyle</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/07-villa-savings-calc.png" target="_blank"><div class="card-icon">🔢</div><h3>7. Villa Savings Calc</h3><p>"Cut Your Bill by 90%" — אינפוגרפיקה</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/08-business-tax.png" target="_blank"><div class="card-icon">🏢</div><h3>8. Business Tax</h3><p>"50% Tax Deduction" — עסקים</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/09-ppa-zero-down.png" target="_blank"><div class="card-icon">💰</div><h3>9. PPA Zero Down</h3><p>"Zero Upfront Cost" — מודל ESCO</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/10-island-grid.png" target="_blank"><div class="card-icon">🏝️</div><h3>10. Island Grid</h3><p>"Island Grid Unreliable?" — עצמאות</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/11-panel-closeup.png" target="_blank"><div class="card-icon">☀️</div><h3>11. Panel Closeup</h3><p>"Tier-1 Equipment Only" — Longi+Huawei</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/12-monitoring-app.png" target="_blank"><div class="card-icon">📱</div><h3>12. Monitoring App</h3><p>"Monitor From Anywhere" — אפליקציה</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/13-testimonial-resort.png" target="_blank"><div class="card-icon">⭐</div><h3>13. Testimonial</h3><p>"Best Investment" — עדות לקוח</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/14-comparison-cost.png" target="_blank"><div class="card-icon">📉</div><h3>14. Cost Comparison</h3><p>"10 Year Cost" — חיסכון ฿3.5M</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/15-installation-team.png" target="_blank"><div class="card-icon">👷</div><h3>15. Installation Team</h3><p>"Expert Installation" — צוות בעבודה</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/16-sunset-panels.png" target="_blank"><div class="card-icon">🌅</div><h3>16. Sunset Panels</h3><p>"Harness the Sun" — שקיעה סינמטית</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/17-green-certification.png" target="_blank"><div class="card-icon">🏅</div><h3>17. Green Certification</h3><p>"Get Green Certified" — מיתוג ירוק</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/18-battery-backup.png" target="_blank"><div class="card-icon">🔋</div><h3>18. Battery Backup</h3><p>"Storm-Proof Your Power" — סוללות</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/19-roi-infographic.png" target="_blank"><div class="card-icon">📈</div><h3>19. ROI Infographic</h3><p>"Investment Timeline" — גרף ROI</p><span class="tag tag-ads">AI</span></a>
+    <a class="card" href="ads/20-free-survey-cta.png" target="_blank"><div class="card-icon">📞</div><h3>20. Free Survey CTA</h3><p>"Book Free Survey" — Direct Response</p><span class="tag tag-ads">AI</span></a>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 7. SOLAR FARMS                               -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🗺️ שדות סולאריים</h2>
+<div class="grid">
+  <a class="card" href="solar-farm-scout.html" style="border:2px solid #E8A820">
+    <div class="card-icon">🗺️</div>
+    <h3>Solar Farm Scout v4 — מפת שדות סולאריים</h3>
+    <p>7 אתרים מועמדים, ניתוח ROI/IRR/NPV, אגירה BESS, השוואה, קווי חשמל, לינקים לנדל"ן</p>
+    <span class="tag tag-crm">כלי</span>
+  </a>
+  <a class="card" href="solar-farm-guide.html" style="border:2px solid #E8A820">
+    <div class="card-icon">📋</div>
+    <h3>מדריך הקמת שדה סולארי — 13 שקפים</h3>
+    <p>רגולציה, רישוי, PEA, עלויות, BESS, מודל פיננסי, ציר זמן 18 חודשים, 9MW על קו פנגן</p>
+    <span class="tag tag-pres">מצגת</span>
+  </a>
+  <a class="card" href="thailand-solar-farm-masterclass.html" style="border:2px solid #E8A820">
+    <div class="card-icon">🎓</div>
+    <h3>מסטרקלאס שדות סולאריים — 12 סקשנים (EN/עב/TH)</h3>
+    <p>מחקר מקיף: שוק, רגולציה, On-Grid, Micro-Grid, רישוי, טכני, עלויות, BESS, פיננסי, Case Studies, שחקנים, קו פנגן</p>
+    <span class="tag tag-pres">מצגת</span> <span class="tag tag-doc">מחקר</span>
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 8. RESEARCH (merged 12 + 4 supporting)       -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>📚 מחקר (16 מסמכים)</h2>
+<div class="grid">
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">📊</div>
+    <h3>01 — סקירת שוק האנרגיה</h3>
+    <p>646 שורות — EGAT/PEA/MEA, תעריפי חשמל, תמהיל אנרגיה, יעדי net-zero</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">⚖️</div>
+    <h3>02 — רגולציית שדות סולאריים</h3>
+    <p>656 שורות — VSPP, ERC, Community Solar 1,500MW, BOI, בעלות זרה, מיסוי</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">🔌</div>
+    <h3>03 — שדות On-Grid</h3>
+    <p>939 שורות — חיבור PEA, PPA 25 שנה, FiT, net metering, תקנים</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">🏝️</div>
+    <h3>04 — Micro-Grid ואיים</h3>
+    <p>770 שורות — אתגרי איים, כבלים תת-ימיים, Koh Phaluai, Koh Tao, היברידי</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">📋</div>
+    <h3>05 — רישוי ואישורים</h3>
+    <p>970 שורות — 12 שלבי רישוי, LAO, ERC, PEA, 18-30 חודשים ל-COD</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">⚡</div>
+    <h3>06 — חיבור לרשת — טכני</h3>
+    <p>1,042 שורות — 22kV/33kV, שנאים, ממסרי הגנה, SCADA, anti-islanding</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">💰</div>
+    <h3>07 — עלויות ותמחור</h3>
+    <p>731 שורות — EPC 26-37M/MW, פאנלים 3.3-6/W, BESS $150-250/kWh, קרקע</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">🔋</div>
+    <h3>08 — אגירת אנרגיה BESS</h3>
+    <p>873 שורות — LFP vs NMC, revenue streams, פרויקטים בתאילנד, PDP 10GW</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">📈</div>
+    <h3>09 — מודלים פיננסיים</h3>
+    <p>946 שורות — FiT 8-12% IRR, PPA 14-20%, 8 מקורות מימון, LCOE</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">🏗️</div>
+    <h3>10 — מקרי בוחן אמיתיים</h3>
+    <p>490 שורות — TSE 136MW, B.Grimm, BCPG, Gunkul, SPCG, Koh Phaluai, Koh Tao</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">👥</div>
+    <h3>11 — שחקנים ואנשי קשר</h3>
+    <p>507 שורות — 9 EPC, 7 ספקים, 7 עו"ד, 7 בנקים, 7 גופים ממשלתיים</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <div class="card" style="border:2px solid #E8A820">
+    <div class="card-icon">🗺️</div>
+    <h3>12 — קו פנגן ספציפי</h3>
+    <p>670 שורות — רשת חשמל, קרקע, תיירות, פוטנציאל סולארי, TM Energy concept</p>
+    <span class="tag tag-doc">מחקר</span>
+  </div>
+  <!-- Supporting Research (merged from separate section) -->
+  <div class="card">
+    <div class="card-icon">📊</div>
+    <h3>מחקר שוק (מקורי)</h3>
+    <p>RESEARCH.md + MARKET_RESEARCH.md — תעריפי PEA, רגולציה, נדל"ן, עונתיות</p>
+    <span class="tag tag-doc">מסמך</span>
+  </div>
+  <div class="card">
+    <div class="card-icon">🏢</div>
+    <h3>ניתוח מתחרים</h3>
+    <p>COMPETITORS.md — Green Global Tech, Phangan.Solar, Canvas Solar</p>
+    <span class="tag tag-doc">מסמך</span>
+  </div>
+  <div class="card">
+    <div class="card-icon">👥</div>
+    <h3>לידים (165+)</h3>
+    <p>LEADS_ENRICHED.md + LEADS_ADDITIONAL.md + PROSPECT_MAP.md + PARTNERS_LIST.md</p>
+    <span class="tag tag-doc">מסמך</span>
+  </div>
+  <div class="card">
+    <div class="card-icon">📢</div>
+    <h3>קופי מודעות</h3>
+    <p>AD_COPY.md — 5 FB, 5 IG, 3 Google, emails, WhatsApp templates</p>
+    <span class="tag tag-doc">מסמך</span>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:48px;padding:24px;opacity:.4;font-size:13px;border-top:1px solid rgba(255,255,255,.1)">
+  Ko Phangan Solar — TM Energy — מרץ 2026<br>
+  <a href="https://github.com/kaniel149/copenhagen-solar">GitHub Repository</a>
+</div>
+<script>
+window.PAGE_TRANSLATIONS = {
+  "כל הנכסים": {en: "All Assets", th: "ทรัพย์สินทั้งหมด"},
+  "מצגות, כלים, מסמכים וקישורים | TM Energy": {en: "Presentations, tools, documents and links | TM Energy", th: "การนำเสนอ เครื่องมือ เอกสาร และลิงก์ | TM Energy"},
+  "קטגוריות": {en: "Categories", th: "หมวดหมู่"},
+  "לידים ב-CRM": {en: "Leads in CRM", th: "ลีดใน CRM"},
+  "לידים מזוהים": {en: "Identified leads", th: "ลีดที่ระบุแล้ว"},
+  "מודעות": {en: "Ads", th: "โฆษณา"},
+  "אסטרטגיה ופיננסים": {en: "Strategy & Finance", th: "กลยุทธ์และการเงิน"},
+  "תפעול והנדסה": {en: "Operations & Engineering", th: "การดำเนินงานและวิศวกรรม"},
+  "מכירות ו-CRM": {en: "Sales & CRM", th: "การขายและ CRM"},
+  "חוזים ומשפטי": {en: "Contracts & Legal", th: "สัญญาและกฎหมาย"},
+  "כלים דיגיטליים": {en: "Digital Tools", th: "เครื่องมือดิจิทัล"},
+  "מיתוג ומודעות": {en: "Branding & Ads", th: "การสร้างแบรนด์และโฆษณา"},
+  "שדות סולאריים": {en: "Solar Farms", th: "ฟาร์มพลังงานแสงอาทิตย์"},
+  "מחקר (16 מסמכים)": {en: "Research (16 documents)", th: "การวิจัย (16 เอกสาร)"},
+  "פיננסים — תכנון מקיף": {en: "Finance — Comprehensive Plan", th: "การเงิน — แผนครอบคลุม"},
+  "10 שלבי Value Chain — מדריכים מפורטים": {en: "10 Value Chain Steps — Detailed Guides", th: "10 ขั้นตอน Value Chain — คู่มือโดยละเอียด"},
+  "כל 28 המודעות — HTML מקצועיות + AI": {en: "All 28 Ads — Professional HTML + AI", th: "โฆษณาทั้ง 28 — HTML มืออาชีพ + AI"},
+  "מאוחד": {en: "Merged", th: "รวม"},
+  "אסטרטגיה עסקית": {en: "Business Strategy", th: "กลยุทธ์ทางธุรกิจ"},
+  "13 שקפים — חזון, שוק, תחרות, מודל עסקי, roadmap": {en: "13 slides — vision, market, competition, business model, roadmap", th: "13 สไลด์ — วิสัยทัศน์ ตลาด การแข่งขัน โมเดลธุรกิจ roadmap"},
+  "מצגת": {en: "Presentation", th: "การนำเสนอ"},
+  "תוכנית עסקית שנה 1": {en: "Year 1 Business Plan", th: "แผนธุรกิจปีที่ 1"},
+  "EPC + PPA, תמחור, תחזיות הכנסה, תזרים מזומנים": {en: "EPC + PPA, pricing, revenue forecasts, cash flow", th: "EPC + PPA การกำหนดราคา การคาดการณ์รายได้ กระแสเงินสด"},
+  "שיווק ומכירות": {en: "Marketing & Sales", th: "การตลาดและการขาย"},
+  "14 שקפים — ערוצים, סוכנים, FB/IG ads, Line, תקציב, KPIs": {en: "14 slides — channels, agents, FB/IG ads, Line, budget, KPIs", th: "14 สไลด์ — ช่องทาง ตัวแทน FB/IG ads Line งบประมาณ KPIs"},
+  "תהליך הקמה": {en: "Installation Process", th: "กระบวนการติดตั้ง"},
+  "12 שקפים — סקר גג, קונסטרוקציה, DC, AC, חיבור PEA, בטיחות": {en: "12 slides — roof survey, racking, DC, AC, PEA connection, safety", th: "12 สไลด์ — การสำรวจหลังคา โครงสร้าง DC AC การเชื่อมต่อ PEA ความปลอดภัย"},
+  "רכש והנדסה": {en: "Procurement & Engineering", th: "การจัดซื้อและวิศวกรรม"},
+  "12 שקפים — Longi, Huawei, שרשרת אספקה, מכס, עיצוב מערכת, תקנים": {en: "12 slides — Longi, Huawei, supply chain, customs, system design, standards", th: "12 สไลด์ — Longi Huawei ห่วงโซ่อุปทาน ศุลกากร การออกแบบระบบ มาตรฐาน"},
+  "משפטי, חוזים והסכמים — מצגת": {en: "Legal, Contracts & Agreements — Presentation", th: "กฎหมาย สัญญา และข้อตกลง — การนำเสนอ"},
+  "11 שקפים — חוזה EPC, PPA, O&M, אחריות, ביטוח, מיסוי, מודל עסקי": {en: "11 slides — EPC contract, PPA, O&M, warranty, insurance, taxation, business model", th: "11 สไลด์ — สัญญา EPC PPA O&M การรับประกัน การประกันภัย ภาษี โมเดลธุรกิจ"},
+  "ניטור ותחזוקה": {en: "Monitoring & Maintenance", th: "การตรวจสอบและการบำรุงรักษา"},
+  "11 שקפים — FusionSolar, התראות, חבילות O&M, חלקי חילוף, MRR": {en: "11 slides — FusionSolar, alerts, O&M packages, spare parts, MRR", th: "11 สไลด์ — FusionSolar การแจ้งเตือน แพ็คเกจ O&M อะไหล่ MRR"},
+  "רישוי ורגולציה": {en: "Licensing & Regulation", th: "การอนุญาตและการกำกับดูแล"},
+  "12 שקפים — תקנות 2025, PEA, תהליך התקנה, מיסוי, Koh Phangan": {en: "12 slides — 2025 regulations, PEA, installation process, taxation, Koh Phangan", th: "12 สไลด์ — ข้อบังคับ 2025 PEA กระบวนการติดตั้ง ภาษี เกาะพะงัน"},
+  "מדריך סריקת גגות ברחפן": {en: "Drone Roof Scanning Guide", th: "คู่มือการสแกนหลังคาด้วยโดรน"},
+  "הנחיות לצילום וסריקת גגות עם DJI — בטיחות, הגדרות, workflow": {en: "Instructions for photographing and scanning roofs with DJI — safety, settings, workflow", th: "คำแนะนำสำหรับการถ่ายภาพและสแกนหลังคาด้วย DJI — ความปลอดภัย การตั้งค่า workflow"},
+  "מדריך": {en: "Guide", th: "คู่มือ"},
+  "רשימת ציוד וכלי עבודה": {en: "Equipment & Tools List", th: "รายการอุปกรณ์และเครื่องมือ"},
+  "Shopping list מלא — כלי עבודה, מכשירי מדידה, בטיחות, רחפנים + לינקים ל-Lazada": {en: "Full shopping list — tools, measuring instruments, safety, drones + Lazada links", th: "รายการจัดซื้อแบบครบ — เครื่องมือ เครื่องมือวัด ความปลอดภัย โดรน + ลิงก์ Lazada"},
+  "חוזה EPC — הקמת מערכת": {en: "EPC Contract — System Installation", th: "สัญญา EPC — การติดตั้งระบบ"},
+  "חוזה מלא — 25 סעיפים, תנאי תשלום 30/40/30, אחריות 10 שנים, ביטוח, קבלני משנה (TM)": {en: "Full contract — 25 clauses, payment terms 30/40/30, 10-year warranty, insurance, subcontractors (TM)", th: "สัญญาครบถ้วน — 25 ข้อ เงื่อนไขการชำระเงิน 30/40/30 การรับประกัน 10 ปี การประกันภัย ผู้รับเหมาช่วง (TM)"},
+  "חוזה": {en: "Contract", th: "สัญญา"},
+  "הסכם PPA — רכישת חשמל": {en: "PPA Agreement — Electricity Purchase", th: "ข้อตกลง PPA — การซื้อไฟฟ้า"},
+  "חוזה 15 שנים — ฿4.50/kWh, הצמדה CPI/PEA, העברת בעלות ב-฿1, O&M כלול, קנס יציאה": {en: "15-year contract — ฿4.50/kWh, CPI/PEA indexation, ownership transfer at ฿1, O&M included, exit penalty", th: "สัญญา 15 ปี — ฿4.50/kWh การผูกพัน CPI/PEA การโอนกรรมสิทธิ์ที่ ฿1 รวม O&M ค่าปรับการออก"},
+  "Brand Kit — 18 אסטים": {en: "Brand Kit — 18 assets", th: "Brand Kit — 18 สินทรัพย์"},
+  "לוגו, צבעים, פונטים, חולצות, רכב, קסדה, כרטיס ביקור, מדבקות, דגלים, ערכת מתנה ועוד": {en: "Logo, colors, fonts, shirts, vehicle, helmet, business card, stickers, flags, gift set and more", th: "โลโก้ สี ฟอนต์ เสื้อ รถ หมวก นามบัตร สติ๊กเกอร์ ธง ชุดของขวัญ และอื่นๆ"},
+  "מיתוג": {en: "Branding", th: "การสร้างแบรนด์"},
+  "תבניות הדפסה": {en: "Print Templates", th: "แม่แบบการพิมพ์"},
+  "8 תבניות מוכנות לבית דפוס — כרטיס ביקור, מגנט, חולצה, שלט, תג עובד EN+TH": {en: "8 print-ready templates — business card, magnet, shirt, sign, employee badge EN+TH", th: "8 แม่แบบพร้อมพิมพ์ — นามบัตร แม่เหล็ก เสื้อ ป้าย บัตรพนักงาน EN+TH"},
+  "הדפסה": {en: "Print", th: "การพิมพ์"},
+  "CRM — Ko Phangan Solar": {en: "CRM — Ko Phangan Solar", th: "CRM — Ko Phangan Solar"},
+  "ניהול לידים, פרויקטים, הצעות מחיר. 57 לידים מיובאים. Login: k@kanielt.com": {en: "Lead, project, and proposal management. 57 imported leads. Login: k@kanielt.com", th: "การจัดการลีด โปรเจกต์ และใบเสนอราคา 57 ลีดที่นำเข้า Login: k@kanielt.com"},
+  "2,467 מבנים | 60.2 MWp | מפה אינטראקטיבית עם כל גגות האי — סינון, חיפוש, EPC vs PPA, ייצוא": {en: "2,467 buildings | 60.2 MWp | Interactive map with all island rooftops — filter, search, EPC vs PPA, export", th: "2,467 อาคาร | 60.2 MWp | แผนที่แบบโต้ตอบพร้อมหลังคาทั้งหมดบนเกาะ — กรอง ค้นหา EPC vs PPA ส่งออก"},
+  "כלי": {en: "Tool", th: "เครื่องมือ"},
+  "Bill Scanner — סורק חשבון חשמל": {en: "Bill Scanner — Electricity Bill Scanner", th: "Bill Scanner — เครื่องสแกนใบเสร็จค่าไฟ"},
+  "הזן נתוני חשבון PEA, קבל ניתוח חיסכון + הצעת מחיר מיידית ללקוח — EPC או PPA": {en: "Enter PEA bill data, get savings analysis + instant proposal for the client — EPC or PPA", th: "ป้อนข้อมูลใบเสร็จ PEA รับการวิเคราะห์การประหยัด + ใบเสนอราคาทันทีสำหรับลูกค้า — EPC หรือ PPA"},
+  "Proposal Builder — הצעת מחיר": {en: "Proposal Builder", th: "Proposal Builder — ใบเสนอราคา"},
+  "הצעת מחיר אינטראקטיבית ללקוח — EN/TH/HE עם מפה וחישובים": {en: "Interactive proposal for client — EN/TH/HE with map and calculations", th: "ใบเสนอราคาแบบโต้ตอบสำหรับลูกค้า — EN/TH/HE พร้อมแผนที่และการคำนวณ"},
+  "עמוד נחיתה": {en: "Landing Page", th: "หน้า Landing"},
+  "Landing page ב-EN — \"Power Your Paradise with Solar\"": {en: "Landing page in EN — \"Power Your Paradise with Solar\"", th: "Landing page เป็นภาษาอังกฤษ — \"Power Your Paradise with Solar\""},
+  "רזורט יוקרה עם סולאר": {en: "Luxury resort with solar", th: "รีสอร์ทหรูพร้อมพลังงานแสงอาทิตย์"},
+  "לפני/אחרי הפסקת חשמל": {en: "Before/after power outage", th: "ก่อน/หลังไฟดับ"},
+  "מבט מלמעלה": {en: "Aerial view", th: "มุมมองจากด้านบน"},
+  "מסך חיסכון": {en: "Savings screen", th: "หน้าจอการประหยัด"},
+  "לפני ואחרי": {en: "Before and after", th: "ก่อนและหลัง"},
+  "אינפוגרפיקה": {en: "Infographic", th: "อินโฟกราฟิก"},
+  "עסקים": {en: "Business", th: "ธุรกิจ"},
+  "מודל ESCO": {en: "ESCO model", th: "โมเดล ESCO"},
+  "עצמאות": {en: "Independence", th: "อิสรภาพ"},
+  "אפליקציה": {en: "App", th: "แอป"},
+  "עדות לקוח": {en: "Customer testimonial", th: "คำรับรองจากลูกค้า"},
+  "צוות בעבודה": {en: "Team at work", th: "ทีมกำลังทำงาน"},
+  "שקיעה סינמטית": {en: "Cinematic sunset", th: "พระอาทิตย์ตกแบบซีนีมาติก"},
+  "מיתוג ירוק": {en: "Green branding", th: "การสร้างแบรนด์สีเขียว"},
+  "סוללות": {en: "Batteries", th: "แบตเตอรี่"},
+  "גרף ROI": {en: "ROI graph", th: "กราฟ ROI"},
+  "מחקר שוק": {en: "Market Research", th: "การวิจัยตลาด"},
+  "RESEARCH.md + MARKET_RESEARCH.md — תעריפי PEA, רגולציה, נדל\"ן, עונתיות": {en: "RESEARCH.md + MARKET_RESEARCH.md — PEA rates, regulation, real estate, seasonality", th: "RESEARCH.md + MARKET_RESEARCH.md — อัตรา PEA กฎระเบียบ อสังหาริมทรัพย์ ฤดูกาล"},
+  "מסמך": {en: "Document", th: "เอกสาร"},
+  "ניתוח מתחרים": {en: "Competitor Analysis", th: "การวิเคราะห์คู่แข่ง"},
+  "לידים (165+)": {en: "Leads (165+)", th: "ลีด (165+)"},
+  "קופי מודעות": {en: "Ad Copy", th: "คำโฆษณา"},
+  "AD_COPY.md — 5 FB, 5 IG, 3 Google, emails, WhatsApp templates": {en: "AD_COPY.md — 5 FB, 5 IG, 3 Google, emails, WhatsApp templates", th: "AD_COPY.md — 5 FB, 5 IG, 3 Google อีเมล เทมเพลต WhatsApp"},
+  "מרץ 2026": {en: "March 2026", th: "มีนาคม 2026"},
+  "חיסכון ฿3.5M": {en: "฿3.5M savings", th: "ประหยัด ฿3.5M"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

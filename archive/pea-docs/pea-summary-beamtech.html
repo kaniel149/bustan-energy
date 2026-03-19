@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEA Application Summary — Beamtech 32.5 kWp Solar System</title>
+<script src="../auth.js"></script>
+<style>
+  :root {
+    --navy: #0D2137;
+    --gold: #E8A820;
+    --green: #1A7A5A;
+    --light-bg: #f8f9fa;
+    --border: #e0e0e0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f0f0;
+    color: var(--navy);
+    line-height: 1.5;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 10px auto;
+    padding: 15mm 18mm;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .header-left img { height: 55px; }
+  .header h1 { font-size: 20px; color: var(--navy); }
+  .header h2 { font-size: 12px; color: var(--green); font-weight: 500; }
+  .doc-title {
+    text-align: center;
+    margin: 0 0 20px;
+    padding: 12px;
+    background: var(--navy);
+    color: white;
+    border-radius: 4px;
+  }
+  .doc-title h2 { font-size: 18px; letter-spacing: 1px; }
+  .doc-title .thai { font-size: 14px; color: var(--gold); margin-top: 3px; }
+  .doc-title .sub { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+  section { margin-bottom: 18px; }
+  .section-title {
+    font-size: 14px;
+    color: var(--navy);
+    border-left: 4px solid var(--gold);
+    padding-left: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .section-title .thai { font-size: 11px; color: #888; font-weight: 400; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  th {
+    background: var(--navy);
+    color: white;
+    text-align: left;
+    padding: 6px 10px;
+    font-weight: 600;
+    font-size: 10px;
+  }
+  td {
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) { background: var(--light-bg); }
+  .highlight-row td { background: rgba(232,168,32,0.08); }
+  .label-cell { color: #666; width: 180px; }
+  .value-cell { font-weight: 500; }
+  .thai-cell { color: #999; font-size: 10px; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .info-card {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+  }
+  .info-card h4 {
+    font-size: 11px;
+    color: var(--green);
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+  }
+  .info-card p {
+    font-size: 10px;
+    margin: 3px 0;
+  }
+
+  .safety-list {
+    list-style: none;
+    padding: 0;
+  }
+  .safety-list li {
+    padding: 4px 0 4px 22px;
+    position: relative;
+    font-size: 11px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .safety-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 4px;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .contact-box {
+    background: var(--navy);
+    color: white;
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    font-size: 11px;
+  }
+  .contact-box h4 {
+    color: var(--gold);
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .contact-box a { color: var(--gold); text-decoration: none; }
+
+  .footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 2px solid var(--navy);
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #888;
+  }
+  .stamp {
+    border: 2px solid var(--navy);
+    padding: 8px 12px;
+    font-size: 10px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .stamp .label { font-size: 8px; color: #888; text-transform: uppercase; }
+
+  .page-break { page-break-before: always; }
+
+  @media print {
+    body { background: white; }
+    .page {
+      width: 100%;
+      min-height: auto;
+      padding: 10mm;
+      margin: 0;
+      box-shadow: none;
+    }
+    @page { size: A4 portrait; margin: 8mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <img src="../visuals/tm-energy-logo.png" alt="TM Energy" onerror="this.style.display='none'">
+      <div>
+        <h1>TM Energy</h1>
+        <h2>Solar Energy Solutions</h2>
+      </div>
+    </div>
+    <div style="text-align:right; font-size:10px;">
+      <div>Document No: <strong>TM-BT-PEA-001</strong></div>
+      <div>Revision: <strong>A</strong></div>
+      <div>Date: <strong>March 2026</strong></div>
+    </div>
+  </div>
+
+  <div class="doc-title">
+    <h2>PEA APPLICATION SUMMARY</h2>
+    <div class="thai">เอกสารสรุปการขออนุญาตเชื่อมต่อระบบไฟฟ้าพลังงานแสงอาทิตย์</div>
+    <div class="sub">Provincial Electricity Authority — Solar PV Grid Connection Application</div>
+  </div>
+
+  <!-- PROJECT OVERVIEW -->
+  <section>
+    <div class="section-title">
+      <span>1. Project Overview</span>
+      <span class="thai">ภาพรวมโครงการ</span>
+    </div>
+    <table>
+      <tr>
+        <td class="label-cell">Project Name / ชื่อโครงการ</td>
+        <td class="value-cell">Beamtech Rooftop Solar PV System</td>
+      </tr>
+      <tr>
+        <td class="label-cell">ชื่อโครงการ (ภาษาไทย)</td>
+        <td class="value-cell">ระบบผลิตไฟฟ้าพลังงานแสงอาทิตย์บนหลังคา บริษัท บีมเทค</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Client / ลูกค้า</td>
+        <td class="value-cell">Beamtech Block & Beam Floor Asia Co., Ltd.<br><span class="thai-cell">บริษัท บีมเทค บล็อค แอนด์ บีม ฟลอร์ เอเชีย จำกัด</span></td>
+      </tr>
+      <tr>
+        <td class="label-cell">Location / สถานที่</td>
+        <td class="value-cell">Koh Phangan, Surat Thani, Thailand<br><span class="thai-cell">เกาะพะงัน อำเภอเกาะพะงัน จังหวัดสุราษฎร์ธานี</span></td>
+      </tr>
+      <tr>
+        <td class="label-cell">System Type / ประเภทระบบ</td>
+        <td class="value-cell">Grid-Connected Rooftop Solar PV (On-Grid)<br><span class="thai-cell">ระบบเชื่อมต่อกับสายส่งการไฟฟ้า (ออนกริด)</span></td>
+      </tr>
+      <tr class="highlight-row">
+        <td class="label-cell">Total Capacity / กำลังการผลิต</td>
+        <td class="value-cell" style="font-size:13px; color:var(--green);">32.5 kWp (DC) / 22 kW (AC)</td>
+      </tr>
+      <tr>
+        <td class="label-cell">DC:AC Ratio</td>
+        <td class="value-cell">1.48</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Installation Type / ลักษณะการติดตั้ง</td>
+        <td class="value-cell">Rooftop — 2 buildings, gable roof, metal sheet<br><span class="thai-cell">หลังคา — 2 อาคาร หลังคาจั่ว แผ่นเหล็ก</span></td>
+      </tr>
+      <tr>
+        <td class="label-cell">EPC Contractor / ผู้รับเหมา</td>
+        <td class="value-cell">TM Energy</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- SYSTEM SPECIFICATIONS -->
+  <section>
+    <div class="section-title">
+      <span>2. System Specifications</span>
+      <span class="thai">รายละเอียดระบบ</span>
+    </div>
+    <div class="two-col">
+      <div>
+        <table>
+          <tr><th colspan="2">PV Modules / แผงโซลาร์เซลล์</th></tr>
+          <tr><td class="label-cell">Manufacturer</td><td class="value-cell">LONGi Solar</td></tr>
+          <tr><td class="label-cell">Model</td><td class="value-cell">Hi-MO X6 LR5-72HTH-580M</td></tr>
+          <tr><td class="label-cell">Rated Power</td><td class="value-cell">580 Wp</td></tr>
+          <tr><td class="label-cell">Dimensions</td><td class="value-cell">2,278 × 1,134 × 35 mm</td></tr>
+          <tr><td class="label-cell">Voc</td><td class="value-cell">47.6 V</td></tr>
+          <tr><td class="label-cell">Isc</td><td class="value-cell">18.83 A</td></tr>
+          <tr><td class="label-cell">Vmp</td><td class="value-cell">39.8 V</td></tr>
+          <tr><td class="label-cell">Imp</td><td class="value-cell">17.59 A</td></tr>
+          <tr><td class="label-cell">Quantity / จำนวน</td><td class="value-cell"><strong>56 panels</strong> (28 per building)</td></tr>
+          <tr><td class="label-cell">Total DC Power</td><td class="value-cell"><strong>32,480 Wp (32.48 kWp)</strong></td></tr>
+        </table>
+      </div>
+      <div>
+        <table>
+          <tr><th colspan="2">Inverters / อินเวอร์เตอร์</th></tr>
+          <tr><td class="label-cell">Manufacturer</td><td class="value-cell">Huawei</td></tr>
+          <tr><td class="label-cell">Model</td><td class="value-cell">SUN2000-11KTL-M5</td></tr>
+          <tr><td class="label-cell">AC Power Output</td><td class="value-cell">11 kW per unit</td></tr>
+          <tr><td class="label-cell">Max DC Input</td><td class="value-cell">16.5 kWp</td></tr>
+          <tr><td class="label-cell">MPPT Inputs</td><td class="value-cell">4 per inverter</td></tr>
+          <tr><td class="label-cell">AC Voltage</td><td class="value-cell">3-phase 400V</td></tr>
+          <tr><td class="label-cell">Efficiency</td><td class="value-cell">98.6% (max)</td></tr>
+          <tr><td class="label-cell">Quantity / จำนวน</td><td class="value-cell"><strong>2 units</strong></td></tr>
+          <tr><td class="label-cell">Total AC Power</td><td class="value-cell"><strong>22 kW</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRING CONFIGURATION -->
+  <section>
+    <div class="section-title">
+      <span>3. String Configuration</span>
+      <span class="thai">การต่อสายแผงโซลาร์</span>
+    </div>
+    <table>
+      <tr>
+        <th>Inverter</th>
+        <th>MPPT</th>
+        <th>String</th>
+        <th>Panels</th>
+        <th>Voc (string)</th>
+        <th>Isc (string)</th>
+        <th>Power</th>
+      </tr>
+      <tr><td rowspan="4">INV #1<br><span class="thai-cell">อาคาร 1</span></td><td rowspan="2">MPPT1</td><td>S1A</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+      <tr><td>S1B</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+      <tr><td rowspan="2">MPPT2</td><td>S1C</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+      <tr><td>S1D</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+      <tr><td rowspan="4">INV #2<br><span class="thai-cell">อาคาร 2</span></td><td rowspan="2">MPPT1</td><td>S2A</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+      <tr><td>S2B</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+      <tr><td rowspan="2">MPPT2</td><td>S2C</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+      <tr><td>S2D</td><td>7 × 580W</td><td>333.2 V</td><td>18.83 A</td><td>4,060 W</td></tr>
+    </table>
+    <p style="font-size:10px; color:#888; margin-top:4px;">Total: 8 strings × 7 panels = 56 panels / รวม: 8 สตริง × 7 แผง = 56 แผง</p>
+  </section>
+
+  <!-- ENERGY PRODUCTION -->
+  <section>
+    <div class="section-title">
+      <span>4. Expected Energy Production</span>
+      <span class="thai">การผลิตพลังงานที่คาดการณ์</span>
+    </div>
+    <div class="two-col">
+      <table>
+        <tr><td class="label-cell">System Capacity</td><td class="value-cell">32.5 kWp</td></tr>
+        <tr><td class="label-cell">Location PSH</td><td class="value-cell">~4.5 kWh/m²/day (Koh Phangan)</td></tr>
+        <tr><td class="label-cell">Performance Ratio</td><td class="value-cell">~82%</td></tr>
+        <tr><td class="label-cell">Effective Yield</td><td class="value-cell">~1,350 kWh/kWp/year</td></tr>
+        <tr class="highlight-row"><td class="label-cell" style="font-weight:600;">Annual Generation</td><td class="value-cell" style="font-size:14px; color:var(--green);"><strong>~47,500 kWh/year</strong></td></tr>
+        <tr><td class="label-cell">Monthly Average</td><td class="value-cell">~3,960 kWh/month</td></tr>
+        <tr><td class="label-cell">Daily Average</td><td class="value-cell">~130 kWh/day</td></tr>
+      </table>
+      <div class="info-card">
+        <h4>CO₂ Reduction / การลดก๊าซเรือนกระจก</h4>
+        <p><strong>~23.75 tons CO₂/year</strong></p>
+        <p style="color:#888;">Based on Thailand grid emission factor of 0.5 kgCO₂/kWh</p>
+        <p style="color:#888;">เทียบเท่าการปลูกต้นไม้ ~1,070 ต้น</p>
+        <h4 style="margin-top:10px;">System Lifetime / อายุการใช้งาน</h4>
+        <p>25-year panel warranty</p>
+        <p>10-year inverter warranty</p>
+        <p>Estimated lifetime production: <strong>~1,187,500 kWh</strong></p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- PAGE 2 -->
+<div class="page page-break">
+  <div class="header">
+    <div class="header-left">
+      <img src="../visuals/tm-energy-logo.png" alt="TM Energy" onerror="this.style.display='none'">
+      <div>
+        <h1>TM Energy</h1>
+        <h2>Solar Energy Solutions</h2>
+      </div>
+    </div>
+    <div style="text-align:right; font-size:10px;">
+      <div>Document: TM-BT-PEA-001 | Page 2/2</div>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT LIST -->
+  <section>
+    <div class="section-title">
+      <span>5. Equipment List</span>
+      <span class="thai">รายการอุปกรณ์</span>
+    </div>
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Item / รายการ</th>
+        <th>Model / รุ่น</th>
+        <th>Specification</th>
+        <th>Qty</th>
+      </tr>
+      <tr><td>1</td><td>PV Module / แผงโซลาร์</td><td>LONGi LR5-72HTH-580M</td><td>580W, Mono PERC, Tier 1</td><td>56</td></tr>
+      <tr><td>2</td><td>Inverter / อินเวอร์เตอร์</td><td>Huawei SUN2000-11KTL-M5</td><td>11kW, 3-phase, 4 MPPT</td><td>2</td></tr>
+      <tr><td>3</td><td>Smart Dongle</td><td>Huawei Smart Dongle-WLAN-FE / 4G</td><td>WiFi + 4G monitoring</td><td>2</td></tr>
+      <tr><td>4</td><td>Mounting System / ระบบยึด</td><td>Trapezoidal roof clamps</td><td>No-drill, ~12 kg/m²</td><td>1 set</td></tr>
+      <tr><td>5</td><td>DC Isolator / ตัวตัดตอน DC</td><td>—</td><td>1000V DC, 32A</td><td>2</td></tr>
+      <tr><td>6</td><td>AC Main Switch / สวิตช์หลัก</td><td>—</td><td>63A, 3-pole</td><td>1</td></tr>
+      <tr><td>7</td><td>MCB / เบรกเกอร์</td><td>—</td><td>40A, 3-pole, per inverter</td><td>2</td></tr>
+      <tr><td>8</td><td>RCD</td><td>—</td><td>30mA, Type A</td><td>1</td></tr>
+      <tr><td>9</td><td>AC SPD / กันฟ้าผ่า AC</td><td>—</td><td>Type 2, 3P+N</td><td>1</td></tr>
+      <tr><td>10</td><td>DC SPD / กันฟ้าผ่า DC</td><td>—</td><td>Type 2, 1000V DC</td><td>2</td></tr>
+      <tr><td>11</td><td>AC Distribution Panel / ตู้จ่ายไฟ</td><td>—</td><td>IP65 outdoor rated</td><td>1</td></tr>
+      <tr><td>12</td><td>DC Cable / สาย DC</td><td>PV1-F (H1Z2Z2-K)</td><td>6mm², UV resistant</td><td>As req.</td></tr>
+      <tr><td>13</td><td>AC Cable / สาย AC</td><td>NYY or equiv.</td><td>Per PEA standard</td><td>As req.</td></tr>
+      <tr><td>14</td><td>Grounding / สายดิน</td><td>—</td><td>Cu, per IEC/PEA std</td><td>1 set</td></tr>
+    </table>
+  </section>
+
+  <!-- GRID CONNECTION -->
+  <section>
+    <div class="section-title">
+      <span>6. Grid Connection Requirements</span>
+      <span class="thai">ข้อกำหนดการเชื่อมต่อระบบไฟฟ้า</span>
+    </div>
+    <table>
+      <tr><td class="label-cell">Grid Operator / การไฟฟ้า</td><td class="value-cell">Provincial Electricity Authority (PEA)<br><span class="thai-cell">การไฟฟ้าส่วนภูมิภาค (กฟภ.)</span></td></tr>
+      <tr><td class="label-cell">Connection Type / ประเภทการเชื่อมต่อ</td><td class="value-cell">3-Phase, 400V, 50Hz<br><span class="thai-cell">3 เฟส 400 โวลต์ 50 เฮิรตซ์</span></td></tr>
+      <tr><td class="label-cell">Metering / มิเตอร์</td><td class="value-cell">Bi-directional meter (per PEA requirement)<br><span class="thai-cell">มิเตอร์สองทิศทาง (ตามข้อกำหนด กฟภ.)</span></td></tr>
+      <tr><td class="label-cell">AC Output Power</td><td class="value-cell">22 kW (2 × 11 kW inverters)</td></tr>
+      <tr><td class="label-cell">Power Factor</td><td class="value-cell">> 0.9 (adjustable via inverter)</td></tr>
+      <tr><td class="label-cell">Application Category</td><td class="value-cell">VSPP ≤ 1 MW (Very Small Power Producer)<br><span class="thai-cell">ผู้ผลิตไฟฟ้าขนาดเล็กมาก</span></td></tr>
+      <tr><td class="label-cell">Regulation</td><td class="value-cell">PEA Interconnection Code for VSPP<br>ERC Notification on Solar Rooftop</td></tr>
+    </table>
+  </section>
+
+  <!-- SAFETY FEATURES -->
+  <section>
+    <div class="section-title">
+      <span>7. Safety & Protection Features</span>
+      <span class="thai">ระบบความปลอดภัยและการป้องกัน</span>
+    </div>
+    <div class="two-col">
+      <div>
+        <ul class="safety-list">
+          <li><strong>Anti-Islanding Protection</strong> — Built-in to Huawei inverter per IEC 62116<br><span class="thai-cell">ป้องกันการจ่ายไฟย้อนกลับเมื่อไฟดับ</span></li>
+          <li><strong>Over/Under Voltage (59/27)</strong> — Automatic disconnection at ±10% nominal<br><span class="thai-cell">ตัดวงจรอัตโนมัติเมื่อแรงดันผิดปกติ</span></li>
+          <li><strong>Over/Under Frequency (81O/U)</strong> — Trip at ±0.5 Hz from 50 Hz<br><span class="thai-cell">ตัดวงจรอัตโนมัติเมื่อความถี่ผิดปกติ</span></li>
+          <li><strong>Main Disconnect Switch</strong> — Visible, lockable, accessible to PEA<br><span class="thai-cell">สวิตช์ตัดตอนหลักที่มองเห็นได้</span></li>
+          <li><strong>DC Isolators</strong> — At each inverter input<br><span class="thai-cell">ตัวตัดตอน DC ที่อินเวอร์เตอร์แต่ละตัว</span></li>
+        </ul>
+      </div>
+      <div>
+        <ul class="safety-list">
+          <li><strong>Surge Protection (SPD)</strong> — Type 2 on both AC and DC side<br><span class="thai-cell">อุปกรณ์ป้องกันไฟกระชาก AC และ DC</span></li>
+          <li><strong>Residual Current Device (RCD)</strong> — 30mA Type A<br><span class="thai-cell">อุปกรณ์ตรวจจับกระแสรั่ว</span></li>
+          <li><strong>Earth Fault Monitoring</strong> — Continuous via inverter<br><span class="thai-cell">ตรวจสอบกระแสรั่วลงดินอย่างต่อเนื่อง</span></li>
+          <li><strong>Equipment Grounding</strong> — All frames, rails, and enclosures bonded<br><span class="thai-cell">สายดินอุปกรณ์ทั้งหมด</span></li>
+          <li><strong>Remote Monitoring</strong> — Huawei FusionSolar app (real-time)<br><span class="thai-cell">ระบบติดตามผลผลิตแบบเรียลไทม์</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLICABLE STANDARDS -->
+  <section>
+    <div class="section-title">
+      <span>8. Applicable Standards</span>
+      <span class="thai">มาตรฐานที่เกี่ยวข้อง</span>
+    </div>
+    <table>
+      <tr><td class="label-cell">IEC 61215</td><td>PV Module Design Qualification / มาตรฐานแผงโซลาร์เซลล์</td></tr>
+      <tr><td class="label-cell">IEC 61730</td><td>PV Module Safety Qualification / มาตรฐานความปลอดภัยแผง</td></tr>
+      <tr><td class="label-cell">IEC 62109</td><td>Safety of Power Converters / มาตรฐานความปลอดภัยอินเวอร์เตอร์</td></tr>
+      <tr><td class="label-cell">IEC 62116</td><td>Anti-Islanding Test Procedure / มาตรฐานป้องกันการจ่ายไฟย้อนกลับ</td></tr>
+      <tr><td class="label-cell">PEA Interconnection Code</td><td>VSPP Grid Connection Requirements / ข้อกำหนดเชื่อมต่อ กฟภ.</td></tr>
+      <tr><td class="label-cell">วสท. (EIT Standard)</td><td>Thailand Electrical Installation Standard / มาตรฐานการติดตั้งทางไฟฟ้า</td></tr>
+    </table>
+  </section>
+
+  <!-- CONTACT -->
+  <section>
+    <div class="contact-box">
+      <div>
+        <h4>EPC Contractor / ผู้รับเหมา</h4>
+        <p><strong style="font-size:14px;">TM Energy</strong></p>
+        <p>Solar Energy Solutions</p>
+        <p style="margin-top:8px;">Email: <a href="mailto:k@kanielt.com">k@kanielt.com</a></p>
+        <p>WhatsApp: <a href="https://wa.me/66623480119">+66 62 348 0119</a></p>
+      </div>
+      <div>
+        <h4>Document References / เอกสารอ้างอิง</h4>
+        <p>• TM-BT-SLD-001 — Single Line Diagram</p>
+        <p>• TM-BT-LAY-001 — Roof Layout Plan</p>
+        <p>• TM-BT-PEA-001 — This Application Summary</p>
+        <p style="margin-top:8px; color:#aaa;">All drawings prepared per PEA guidelines for VSPP solar rooftop applications.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER / SIGNATURE BLOCKS -->
+  <div class="footer">
+    <div class="stamp">
+      <div class="label">Prepared by / จัดทำโดย</div>
+      <div style="height:40px;"></div>
+      <div>TM Energy</div>
+      <div style="font-size:8px; color:#aaa;">Date: _______________</div>
+    </div>
+    <div class="stamp">
+      <div class="label">Reviewed by / ตรวจสอบโดย</div>
+      <div style="height:40px;"></div>
+      <div>Licensed Engineer</div>
+      <div style="font-size:8px; color:#aaa;">License No: _______________</div>
+    </div>
+    <div class="stamp">
+      <div class="label">Approved by / อนุมัติโดย</div>
+      <div style="height:40px;"></div>
+      <div>Client Representative</div>
+      <div style="font-size:8px; color:#aaa;">Date: _______________</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

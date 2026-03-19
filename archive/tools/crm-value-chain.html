@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TM Energy — CRM Value Chain — Lead to O&M</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sun: #E8A820;
+            --sun-light: #F5D76E;
+            --ocean: #0A3D5C;
+            --ocean-deep: #062A40;
+            --palm: #1B5E20;
+            --sand: #FFF8E7;
+            --white: #FFFFFF;
+            --text: #1A1A1A;
+            --text-light: #5A5A5A;
+            --red: #E53935;
+            --green: #43A047;
+            --blue: #1E88E5;
+            --purple: #7B1FA2;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Heebo', 'DM Sans', sans-serif; background: #0A0A0A; color: var(--white); overflow-x: hidden; }
+        body[data-lang="en"] { direction: ltr; }
+        body[data-lang="th"] { direction: ltr; }
+
+        .slide {
+            min-height: 100vh;
+            padding: 4rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .slide-num {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.15em;
+        }
+        .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+        h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2.5rem,6vw,4.5rem); line-height: 1.1; letter-spacing: -0.03em; }
+        h2 { font-family: 'Instrument Serif', serif; font-size: clamp(1.8rem,4vw,3rem); line-height: 1.2; margin-bottom: 2rem; }
+        h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.8rem; }
+        .accent { color: var(--sun); }
+        .subtitle { font-size: 1.2rem; color: rgba(255,255,255,0.6); line-height: 1.6; max-width: 700px; margin-top: 1.5rem; }
+
+        .cover { background: linear-gradient(160deg, var(--ocean-deep), #0A0A0A 60%); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+        .card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        .card:hover { background: rgba(255,255,255,0.07); transform: translateY(-4px); }
+        .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .card p { color: rgba(255,255,255,0.6); line-height: 1.6; font-size: 0.95rem; }
+
+        .stat-big { font-family: 'Instrument Serif', serif; font-size: 3rem; color: var(--sun); line-height: 1; }
+        .stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 0.3rem; }
+
+        .badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
+        .badge-green { background: rgba(67,160,71,0.15); color: var(--green); }
+        .badge-gold { background: rgba(232,168,32,0.15); color: var(--sun); }
+        .badge-blue { background: rgba(30,136,229,0.15); color: var(--blue); }
+        .badge-purple { background: rgba(123,31,162,0.15); color: var(--purple); }
+
+        /* Pipeline flow */
+        .pipeline {
+            display: flex;
+            gap: 0;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+        .pipe-step {
+            flex: 1;
+            min-width: 90px;
+            text-align: center;
+            position: relative;
+            padding: 1rem 0.5rem;
+        }
+        .pipe-circle {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: rgba(232,168,32,0.15);
+            border: 2px solid var(--sun);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-size: 1.2rem;
+        }
+        .pipe-step.active .pipe-circle { background: var(--sun); }
+        .pipe-step.active .pipe-circle span { filter: none; }
+        .pipe-label { font-size: 0.7rem; color: rgba(255,255,255,0.6); line-height: 1.3; }
+        .pipe-step::after {
+            content: '→';
+            position: absolute;
+            left: -8px;
+            top: 1.4rem;
+            color: rgba(255,255,255,0.2);
+            font-size: 1rem;
+        }
+        .pipe-step:first-child::after { display: none; }
+
+        /* Feature list */
+        .feat-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feat-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.75);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+        }
+        .feat-list li::before {
+            content: '✓';
+            color: var(--sun);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Module card */
+        .module-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .module-num {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--sun);
+            color: #0A0A0A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .module-title { font-size: 1.3rem; font-weight: 700; }
+        .module-subtitle { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+
+        /* Screenshot mockup */
+        .mockup {
+            background: #111827;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .mockup-bar {
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .mockup-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .mockup-dot.r { background: #EF4444; }
+        .mockup-dot.y { background: #F59E0B; }
+        .mockup-dot.g { background: #10B981; }
+        .mockup-body { padding: 1.5rem; }
+
+        /* Kanban mockup */
+        .kanban {
+            display: flex;
+            gap: 0.8rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+        .kanban-col {
+            min-width: 120px;
+            flex: 1;
+        }
+        .kanban-header {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        .kanban-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 0.5rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.65rem;
+        }
+        .kanban-card .name { font-weight: 600; color: var(--white); }
+        .kanban-card .meta { color: rgba(255,255,255,0.4); margin-top: 0.2rem; }
+
+        /* SLD diagram */
+        .sld-box {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+        }
+        .sld-wire {
+            text-align: center;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.7rem;
+            padding: 0.3rem 0;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--sun);
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.7);
+        }
+        .check-done { color: var(--green); }
+        .check-progress { color: var(--sun); }
+        .check-pending { color: rgba(255,255,255,0.3); }
+
+        /* TM Energy logo */
+        .tm-logo-header {
+            position: fixed;
+            top: 1.2rem;
+            right: 1.2rem;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tm-logo-header img { height: 36px; border-radius: 50%; }
+        .tm-logo-header span { font-weight: 700; font-size: 0.85rem; color: var(--sun); }
+
+        /* Language bar */
+        .lang-bar {
+            position: fixed;
+            top: 1.2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            display: flex;
+            gap: 0.3rem;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            padding: 0.3rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .lang-btn {
+            padding: 0.3rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.2s;
+        }
+        .lang-btn.active { background: var(--sun); color: #0A0A0A; }
+
+        .tri-text .lang-he, .tri-text .lang-en, .tri-text .lang-th { display: none; }
+        body[data-lang="he"] .tri-text .lang-he { display: inline; }
+        body[data-lang="en"] .tri-text .lang-en { display: inline; }
+        body[data-lang="th"] .tri-text .lang-th { display: inline; }
+
+        /* TOC */
+        .toc-panel {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            z-index: 300;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+            padding: 4rem 1.5rem 2rem;
+            overflow-y: auto;
+        }
+        .toc-panel.open { transform: translateX(0); }
+        .toc-toggle {
+            position: fixed;
+            left: 1rem;
+            bottom: 1rem;
+            z-index: 301;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--sun);
+            color: #0A0A0A;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toc-link {
+            display: block;
+            padding: 0.5rem 0;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .toc-link:hover { color: var(--sun); }
+
+        @media (max-width: 768px) {
+            .slide { padding: 3rem 1.5rem; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .pipeline { flex-wrap: wrap; }
+            .pipe-step::after { display: none; }
+        }
+    </style>
+</head>
+<body data-lang="he">
+
+<!-- Logo -->
+<div class="tm-logo-header">
+    <img src="visuals/tm-energy-logo-v2.png" alt="TM Energy">
+    <span>TM Energy</span>
+</div>
+
+<!-- Language bar -->
+<div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('he')">עברית</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+    <button class="lang-btn" onclick="setLang('th')">ไทย</button>
+</div>
+
+<!-- TOC -->
+<button class="toc-toggle" onclick="document.querySelector('.toc-panel').classList.toggle('open')">☰</button>
+<div class="toc-panel">
+    <h3 style="color:var(--sun);margin-bottom:1rem;">📑 Contents</h3>
+    <a class="toc-link" href="#cover">Overview</a>
+    <a class="toc-link" href="#pipeline">Pipeline Flow</a>
+    <a class="toc-link" href="#phase1">Phase 1 — Core</a>
+    <a class="toc-link" href="#survey">Site Survey</a>
+    <a class="toc-link" href="#electricity">Electricity Analysis</a>
+    <a class="toc-link" href="#phase2">Phase 2 — Design</a>
+    <a class="toc-link" href="#design">System Design</a>
+    <a class="toc-link" href="#sld">SLD & PEA</a>
+    <a class="toc-link" href="#phase3">Phase 3 — Operations</a>
+    <a class="toc-link" href="#contracts">Contracts</a>
+    <a class="toc-link" href="#inventory">Inventory</a>
+    <a class="toc-link" href="#installation">Installation</a>
+    <a class="toc-link" href="#phase4">Phase 4 — Post-Install</a>
+    <a class="toc-link" href="#om">O&M</a>
+    <a class="toc-link" href="#summary">Summary</a>
+</div>
+
+<!-- SLIDE 1: COVER -->
+<section class="slide cover" id="cover">
+    <span class="slide-num">01</span>
+    <div class="container">
+        <h1 class="tri-text">
+            <span class="lang-he">שרשרת הערך<br><span class="accent">Lead → O&M</span></span>
+            <span class="lang-en">Value Chain<br><span class="accent">Lead → O&M</span></span>
+            <span class="lang-th">ห่วงโซ่คุณค่า<br><span class="accent">Lead → O&M</span></span>
+        </h1>
+        <p class="subtitle tri-text">
+            <span class="lang-he">12 שלבים. 9 מודולים. מערכת CRM מלאה לניהול כל מחזור חיי ההתקנה הסולארית — מרגע הליד הראשון ועד תחזוקה שוטפת.</span>
+            <span class="lang-en">12 steps. 9 modules. A complete CRM system to manage the entire solar installation lifecycle — from first lead to ongoing maintenance.</span>
+            <span class="lang-th">12 ขั้นตอน 9 โมดูล ระบบ CRM ครบวงจรสำหรับการจัดการวงจรชีวิตการติดตั้งโซลาร์ — ตั้งแต่ลูกค้าเป้าหมายแรกจนถึงการบำรุงรักษา</span>
+        </p>
+        <div style="margin-top:3rem;">
+            <span class="badge badge-gold" style="font-size:0.85rem;padding:0.5rem 1.2rem;">Ko Phangan Solar — TM Energy CRM</span>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 2: PIPELINE FLOW -->
+<section class="slide" id="pipeline">
+    <span class="slide-num">02</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">12 שלבים</span> מליד לתפעול</span>
+            <span class="lang-en"><span class="accent">12 Steps</span> from Lead to Operations</span>
+            <span class="lang-th"><span class="accent">12 ขั้นตอน</span> จากลูกค้าเป้าหมายสู่การดำเนินงาน</span>
+        </h2>
+        <div class="pipeline">
+            <div class="pipe-step active"><div class="pipe-circle"><span>📥</span></div><div class="pipe-label tri-text"><span class="lang-he">ליד</span><span class="lang-en">Lead</span><span class="lang-th">ลีด</span></div></div>
+            <div class="pipe-step active"><div class="pipe-circle"><span>📋</span></div><div class="pipe-label tri-text"><span class="lang-he">סקר</span><span class="lang-en">Survey</span><span class="lang-th">สำรวจ</span></div></div>
+            <div class="pipe-step active"><div class="pipe-circle"><span>⚡</span></div><div class="pipe-label tri-text"><span class="lang-he">חשמל</span><span class="lang-en">Electric</span><span class="lang-th">ไฟฟ้า</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>🎨</span></div><div class="pipe-label tri-text"><span class="lang-he">עיצוב</span><span class="lang-en">Design</span><span class="lang-th">ออกแบบ</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>📐</span></div><div class="pipe-label tri-text"><span class="lang-he">SLD</span><span class="lang-en">SLD</span><span class="lang-th">SLD</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>💰</span></div><div class="pipe-label tri-text"><span class="lang-he">הצעה</span><span class="lang-en">Proposal</span><span class="lang-th">เสนอราคา</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>📝</span></div><div class="pipe-label tri-text"><span class="lang-he">חוזה</span><span class="lang-en">Contract</span><span class="lang-th">สัญญา</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>📦</span></div><div class="pipe-label tri-text"><span class="lang-he">רכש</span><span class="lang-en">Procure</span><span class="lang-th">จัดซื้อ</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>🔨</span></div><div class="pipe-label tri-text"><span class="lang-he">התקנה</span><span class="lang-en">Install</span><span class="lang-th">ติดตั้ง</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>🏛</span></div><div class="pipe-label tri-text"><span class="lang-he">PEA</span><span class="lang-en">PEA</span><span class="lang-th">กฟภ</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>✅</span></div><div class="pipe-label tri-text"><span class="lang-he">הפעלה</span><span class="lang-en">Commission</span><span class="lang-th">เริ่มใช้</span></div></div>
+            <div class="pipe-step"><div class="pipe-circle"><span>🔧</span></div><div class="pipe-label tri-text"><span class="lang-he">תחזוקה</span><span class="lang-en">O&M</span><span class="lang-th">บำรุงรักษา</span></div></div>
+        </div>
+
+        <div class="grid-4" style="margin-top:2rem;">
+            <div class="card" style="border-color:rgba(30,136,229,0.3);">
+                <div style="font-size:0.75rem;color:var(--blue);font-weight:700;">PHASE 1 — CORE</div>
+                <div style="font-size:0.85rem;margin-top:0.3rem;" class="tri-text">
+                    <span class="lang-he">Pipeline · סקר · חשמל</span>
+                    <span class="lang-en">Pipeline · Survey · Electricity</span>
+                    <span class="lang-th">ไปป์ไลน์ · สำรวจ · ไฟฟ้า</span>
+                </div>
+                <div class="badge badge-green" style="margin-top:0.5rem;">✓ LIVE</div>
+            </div>
+            <div class="card" style="border-color:rgba(232,168,32,0.3);">
+                <div style="font-size:0.75rem;color:var(--sun);font-weight:700;">PHASE 2 — DESIGN</div>
+                <div style="font-size:0.85rem;margin-top:0.3rem;" class="tri-text">
+                    <span class="lang-he">עיצוב מערכת · SLD · PEA</span>
+                    <span class="lang-en">System Design · SLD · PEA</span>
+                    <span class="lang-th">ออกแบบระบบ · SLD · กฟภ</span>
+                </div>
+                <div class="badge badge-green" style="margin-top:0.5rem;">✓ LIVE</div>
+            </div>
+            <div class="card" style="border-color:rgba(123,31,162,0.3);">
+                <div style="font-size:0.75rem;color:var(--purple);font-weight:700;">PHASE 3 — OPS</div>
+                <div style="font-size:0.85rem;margin-top:0.3rem;" class="tri-text">
+                    <span class="lang-he">חוזים · מלאי · התקנה</span>
+                    <span class="lang-en">Contracts · Inventory · Install</span>
+                    <span class="lang-th">สัญญา · สินค้าคงคลัง · ติดตั้ง</span>
+                </div>
+                <div class="badge badge-green" style="margin-top:0.5rem;">✓ LIVE</div>
+            </div>
+            <div class="card" style="border-color:rgba(67,160,71,0.3);">
+                <div style="font-size:0.75rem;color:var(--green);font-weight:700;">PHASE 4 — O&M</div>
+                <div style="font-size:0.85rem;margin-top:0.3rem;" class="tri-text">
+                    <span class="lang-he">תחזוקה · Tickets · מדדים</span>
+                    <span class="lang-en">Maintenance · Tickets · KPIs</span>
+                    <span class="lang-th">บำรุงรักษา · ตั๋ว · KPIs</span>
+                </div>
+                <div class="badge badge-green" style="margin-top:0.5rem;">✓ LIVE</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 3: PHASE 1 OVERVIEW -->
+<section class="slide" id="phase1" style="background: linear-gradient(135deg, rgba(30,136,229,0.08), transparent);">
+    <span class="slide-num">03</span>
+    <div class="container">
+        <h2><span class="accent">Phase 1</span> — <span class="tri-text"><span class="lang-he">ליבה</span><span class="lang-en">Core</span><span class="lang-th">หลัก</span></span></h2>
+        <p class="subtitle tri-text">
+            <span class="lang-he">Pipeline + סקר אתר + ניתוח חשמל — שלושת הצעדים הראשונים שהופכים ליד ללקוח פוטנציאלי אמיתי</span>
+            <span class="lang-en">Pipeline + Site Survey + Electricity Analysis — the three first steps that turn a lead into a qualified prospect</span>
+            <span class="lang-th">ไปป์ไลน์ + สำรวจไซต์ + วิเคราะห์ไฟฟ้า — สามขั้นตอนแรกที่เปลี่ยนลูกค้าเป้าหมายเป็นผู้มุ่งหวังที่มีคุณภาพ</span>
+        </p>
+
+        <!-- Pipeline Kanban mockup -->
+        <div class="mockup" style="margin-top:2rem;">
+            <div class="mockup-bar">
+                <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+                <span style="margin-right:auto;font-size:0.7rem;color:rgba(255,255,255,0.4);">kophangan-solar-crm.vercel.app/pipeline</span>
+            </div>
+            <div class="mockup-body">
+                <div class="kanban">
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--blue);">Lead <span style="color:var(--blue)">57</span></div>
+                        <div class="kanban-card"><div class="name">Anantara Rasananda</div><div class="meta">Resort · ฿3.2M</div></div>
+                        <div class="kanban-card"><div class="name">Santhiya Resort</div><div class="meta">Resort · ฿4.5M</div></div>
+                        <div class="kanban-card"><div class="name">Baan Thai Yoga</div><div class="meta">Wellness · ฿850K</div></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--sun);">Survey <span style="color:var(--sun)">0</span></div>
+                        <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);text-align:center;padding:1rem;">Drag leads here</div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--purple);">Design <span style="color:var(--purple)">0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:rgba(255,255,255,0.3);">Proposal <span>0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:rgba(255,255,255,0.3);">Contract <span>0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:rgba(255,255,255,0.3);">Install <span>0</span></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-header" style="border-color:var(--green);">Live <span style="color:var(--green)">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 4: SITE SURVEY -->
+<section class="slide" id="survey">
+    <span class="slide-num">04</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">2</div>
+            <div>
+                <div class="module-title tri-text">
+                    <span class="lang-he">סקר אתר</span>
+                    <span class="lang-en">Site Survey</span>
+                    <span class="lang-th">สำรวจไซต์</span>
+                </div>
+                <div class="module-subtitle">/site-survey</div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <h3 class="tri-text">
+                    <span class="lang-he">📱 <span class="accent">מותאם למובייל</span> — אוסף נתונים בשטח</span>
+                    <span class="lang-en">📱 <span class="accent">Mobile-Optimized</span> — Field Data Collection</span>
+                    <span class="lang-th">📱 <span class="accent">รองรับมือถือ</span> — เก็บข้อมูลภาคสนาม</span>
+                </h3>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">סוג גג: מתכת / אסבסט / בטון / רעפים</span><span class="lang-en">Roof type: Metal / Concrete / Tile / Asbestos</span><span class="lang-th">ประเภทหลังคา: โลหะ / คอนกรีต / กระเบื้อง</span></li>
+                    <li class="tri-text"><span class="lang-he">מצב, שטח, זווית, כיוון</span><span class="lang-en">Condition, area, angle, direction</span><span class="lang-th">สภาพ พื้นที่ มุม ทิศทาง</span></li>
+                    <li class="tri-text"><span class="lang-he">חשמל: לוח, מונה, פאזה, מפסק</span><span class="lang-en">Electrical: panel, meter, phase, breaker</span><span class="lang-th">ไฟฟ้า: แผงจ่ายไฟ มิเตอร์ เฟส เบรกเกอร์</span></li>
+                    <li class="tri-text"><span class="lang-he">הצללות, נגישות, GPS</span><span class="lang-en">Shading, access, GPS</span><span class="lang-th">เงา การเข้าถึง GPS</span></li>
+                    <li class="tri-text"><span class="lang-he">חישוב שטח שמיש אוטומטי: 70% מהגג</span><span class="lang-en">Auto usable area calc: 70% of roof</span><span class="lang-th">คำนวณพื้นที่ใช้ได้อัตโนมัติ: 70% ของหลังคา</span></li>
+                    <li class="tri-text"><span class="lang-he">רשימת סקרים עם כרטיסי סטטוס</span><span class="lang-en">Survey list with status cards</span><span class="lang-th">รายการสำรวจพร้อมการ์ดสถานะ</span></li>
+                </ul>
+            </div>
+            <div>
+                <div class="mockup">
+                    <div class="mockup-bar"><div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div></div>
+                    <div class="mockup-body" style="font-size:0.75rem;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                            <div style="background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:6px;">
+                                <div style="color:rgba(255,255,255,0.4);font-size:0.6rem;">Roof Type</div>
+                                <div style="color:var(--sun);font-weight:700;">Metal Sheet</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:6px;">
+                                <div style="color:rgba(255,255,255,0.4);font-size:0.6rem;">Total Area</div>
+                                <div style="color:var(--sun);font-weight:700;">450 m²</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:6px;">
+                                <div style="color:rgba(255,255,255,0.4);font-size:0.6rem;">Usable (70%)</div>
+                                <div style="color:var(--green);font-weight:700;">315 m²</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:6px;">
+                                <div style="color:rgba(255,255,255,0.4);font-size:0.6rem;">Max kWp</div>
+                                <div style="color:var(--green);font-weight:700;">57.3 kWp</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:6px;">
+                                <div style="color:rgba(255,255,255,0.4);font-size:0.6rem;">Angle</div>
+                                <div>15°</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.05);padding:0.5rem;border-radius:6px;">
+                                <div style="color:rgba(255,255,255,0.4);font-size:0.6rem;">Direction</div>
+                                <div>South ☀️</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 5: ELECTRICITY ANALYSIS -->
+<section class="slide" id="electricity">
+    <span class="slide-num">05</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">3</div>
+            <div>
+                <div class="module-title tri-text">
+                    <span class="lang-he">ניתוח חשמל</span>
+                    <span class="lang-en">Electricity Analysis</span>
+                    <span class="lang-th">วิเคราะห์ไฟฟ้า</span>
+                </div>
+                <div class="module-subtitle">/electricity</div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">הזנת 12 חשבונות PEA חודשיים</span><span class="lang-en">Input 12 monthly PEA bills</span><span class="lang-th">กรอกบิลค่าไฟ กฟภ 12 เดือน</span></li>
+                    <li class="tri-text"><span class="lang-he">חישוב אוטומטי: ממוצע kWh, תעריף, עלות שנתית</span><span class="lang-en">Auto calc: avg kWh, rate, annual cost</span><span class="lang-th">คำนวณอัตโนมัติ: kWh เฉลี่ย อัตรา ต้นทุนรายปี</span></li>
+                    <li class="tri-text"><span class="lang-he">המלצת kWp = ממוצע ÷ 135</span><span class="lang-en">Recommended kWp = avg ÷ 135</span><span class="lang-th">kWp แนะนำ = เฉลี่ย ÷ 135</span></li>
+                    <li class="tri-text"><span class="lang-he">חיסכון: 70% צריכה עצמית × צריכה × תעריף</span><span class="lang-en">Savings: 70% self-consumption × usage × rate</span><span class="lang-th">ประหยัด: 70% ใช้เอง × การใช้ × อัตรา</span></li>
+                    <li class="tri-text"><span class="lang-he">CO₂: 0.5 kg/kWh</span><span class="lang-en">CO₂ offset: 0.5 kg/kWh</span><span class="lang-th">CO₂: 0.5 กก./kWh</span></li>
+                    <li class="tri-text"><span class="lang-he">Payback = (kWp × ฿32,500) ÷ חיסכון שנתי</span><span class="lang-en">Payback = (kWp × ฿32,500) ÷ annual savings</span><span class="lang-th">คืนทุน = (kWp × ฿32,500) ÷ ประหยัดรายปี</span></li>
+                    <li class="tri-text"><span class="lang-he">גרף עמודות חודשי</span><span class="lang-en">Monthly bar chart</span><span class="lang-th">กราฟแท่งรายเดือน</span></li>
+                </ul>
+            </div>
+            <div>
+                <div class="grid-2" style="gap:1rem;">
+                    <div class="card" style="text-align:center;">
+                        <div class="stat-big">6,200</div>
+                        <div class="stat-label tri-text"><span class="lang-he">kWh/חודש ממוצע</span><span class="lang-en">avg kWh/month</span><span class="lang-th">kWh/เดือน เฉลี่ย</span></div>
+                    </div>
+                    <div class="card" style="text-align:center;">
+                        <div class="stat-big">46</div>
+                        <div class="stat-label tri-text"><span class="lang-he">kWp מומלץ</span><span class="lang-en">recommended kWp</span><span class="lang-th">kWp แนะนำ</span></div>
+                    </div>
+                    <div class="card" style="text-align:center;">
+                        <div class="stat-big" style="color:var(--green);">฿312K</div>
+                        <div class="stat-label tri-text"><span class="lang-he">חיסכון שנתי</span><span class="lang-en">annual savings</span><span class="lang-th">ประหยัดรายปี</span></div>
+                    </div>
+                    <div class="card" style="text-align:center;">
+                        <div class="stat-big">4.8</div>
+                        <div class="stat-label tri-text"><span class="lang-he">שנות החזר (EPC)</span><span class="lang-en">year payback (EPC)</span><span class="lang-th">ปีคืนทุน (EPC)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 6: PHASE 2 — DESIGN -->
+<section class="slide" id="phase2" style="background: linear-gradient(135deg, rgba(232,168,32,0.08), transparent);">
+    <span class="slide-num">06</span>
+    <div class="container">
+        <h2><span class="accent">Phase 2</span> — <span class="tri-text"><span class="lang-he">תכנון</span><span class="lang-en">Design</span><span class="lang-th">การออกแบบ</span></span></h2>
+        <p class="subtitle tri-text">
+            <span class="lang-he">עיצוב מערכת, SLD אוטומטי, ומעקב PEA — הפיכת נתוני שטח לתוכנית טכנית מלאה</span>
+            <span class="lang-en">System design, auto-SLD, and PEA tracking — turning field data into a complete technical plan</span>
+            <span class="lang-th">ออกแบบระบบ SLD อัตโนมัติ และติดตาม กฟภ — เปลี่ยนข้อมูลภาคสนามเป็นแผนทางเทคนิคที่สมบูรณ์</span>
+        </p>
+    </div>
+</section>
+
+<!-- SLIDE 7: SYSTEM DESIGN -->
+<section class="slide" id="design">
+    <span class="slide-num">07</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">4</div>
+            <div>
+                <div class="module-title tri-text">
+                    <span class="lang-he">עיצוב מערכת</span>
+                    <span class="lang-en">System Design</span>
+                    <span class="lang-th">ออกแบบระบบ</span>
+                </div>
+                <div class="module-subtitle">/system-design</div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <h3 class="tri-text">
+                    <span class="lang-he"><span class="accent">בוחר ציוד חכם</span></span>
+                    <span class="lang-en"><span class="accent">Smart Equipment Selector</span></span>
+                    <span class="lang-th"><span class="accent">เลือกอุปกรณ์อัจฉริยะ</span></span>
+                </h3>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">5 דגמי פאנלים: LONGi, JA Solar, Trina (440–580W)</span><span class="lang-en">5 panel models: LONGi, JA Solar, Trina (440–580W)</span><span class="lang-th">แผงโซลาร์ 5 รุ่น: LONGi, JA Solar, Trina (440–580W)</span></li>
+                    <li class="tri-text"><span class="lang-he">12 ממירי Huawei + Sungrow (5–50kW)</span><span class="lang-en">12 Huawei + Sungrow inverters (5–50kW)</span><span class="lang-th">อินเวอร์เตอร์ 12 รุ่น Huawei + Sungrow (5–50kW)</span></li>
+                    <li class="tri-text"><span class="lang-he">6 סוללות: Huawei LUNA + BYD (5–15kWh)</span><span class="lang-en">6 batteries: Huawei LUNA + BYD (5–15kWh)</span><span class="lang-th">แบตเตอรี่ 6 รุ่น: Huawei LUNA + BYD (5–15kWh)</span></li>
+                    <li class="tri-text"><span class="lang-he">DC:AC Ratio אוטומטי עם חיווי (ירוק/צהוב/אדום)</span><span class="lang-en">Auto DC:AC Ratio with indicator (green/yellow/red)</span><span class="lang-th">อัตราส่วน DC:AC อัตโนมัติ (เขียว/เหลือง/แดง)</span></li>
+                    <li class="tri-text"><span class="lang-he">חישוב תפוקה: 4.5 שעות שמש × 0.82 PR × 365 ימים</span><span class="lang-en">Production calc: 4.5 sun hrs × 0.82 PR × 365 days</span><span class="lang-th">คำนวณผลผลิต: 4.5 ชม.แดด × 0.82 PR × 365 วัน</span></li>
+                    <li class="tri-text"><span class="lang-he">צריכה עצמית: 70% (בלי סוללה) / 85% (עם סוללה)</span><span class="lang-en">Self-consumption: 70% (no battery) / 85% (with battery)</span><span class="lang-th">ใช้เอง: 70% (ไม่มีแบต) / 85% (มีแบต)</span></li>
+                    <li class="tri-text"><span class="lang-he">Auto-suggest: מס׳ פאנלים מסקר + ממיר לפי kWp</span><span class="lang-en">Auto-suggest: panel count from survey + inverter by kWp</span><span class="lang-th">แนะนำอัตโนมัติ: จำนวนแผงจากสำรวจ + อินเวอร์เตอร์ตาม kWp</span></li>
+                </ul>
+            </div>
+            <div>
+                <div class="grid-2" style="gap:1rem;">
+                    <div class="card" style="text-align:center;"><div class="stat-big">33.6</div><div class="stat-label">kWp Total</div></div>
+                    <div class="card" style="text-align:center;"><div class="stat-big" style="color:var(--green);">1.12</div><div class="stat-label">DC:AC Ratio ✅</div></div>
+                    <div class="card" style="text-align:center;"><div class="stat-big">50,600</div><div class="stat-label">kWh/year</div></div>
+                    <div class="card" style="text-align:center;"><div class="stat-big">1,506</div><div class="stat-label">kWh/kWp</div></div>
+                </div>
+                <div style="margin-top:1rem;background:rgba(255,255,255,0.04);border-radius:8px;padding:1rem;">
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Equipment</div>
+                    <div style="font-size:0.85rem;margin-top:0.3rem;">☀️ 58× LONGi Hi-MO X6 580W</div>
+                    <div style="font-size:0.85rem;">⚡ 1× Huawei SUN2000-30KTL-M3</div>
+                    <div style="font-size:0.85rem;">🔋 2× Huawei LUNA2000-10kWh</div>
+                    <div style="font-size:0.85rem;">🏗 Roof mount</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 8: SLD GENERATOR -->
+<section class="slide" id="sld">
+    <span class="slide-num">08</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">5</div>
+            <div>
+                <div class="module-title tri-text">
+                    <span class="lang-he">SLD & PEA Tracker</span>
+                    <span class="lang-en">SLD Generator & PEA Tracker</span>
+                    <span class="lang-th">SLD Generator & ติดตาม กฟภ</span>
+                </div>
+                <div class="module-subtitle">/sld</div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <h3 class="tri-text">
+                    <span class="lang-he"><span class="accent">תוכנית חד-קווית אוטומטית</span></span>
+                    <span class="lang-en"><span class="accent">Automatic Single-Line Diagram</span></span>
+                    <span class="lang-th"><span class="accent">แผนภาพเส้นเดียวอัตโนมัติ</span></span>
+                </h3>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">חישוב אוטומטי: זרם DC/AC, חתך כבל, מפסקים</span><span class="lang-en">Auto calc: DC/AC current, cable size, breakers</span><span class="lang-th">คำนวณอัตโนมัติ: กระแส DC/AC ขนาดสาย เบรกเกอร์</span></li>
+                    <li class="tri-text"><span class="lang-he">3 תבניות: מגורים / מסחרי / היברידי</span><span class="lang-en">3 templates: Residential / Commercial / Hybrid</span><span class="lang-th">3 เทมเพลต: ที่อยู่อาศัย / พาณิชย์ / ไฮบริด</span></li>
+                    <li class="tri-text"><span class="lang-he">הגנה: SPD Type II, RCD 30mA, הארקה</span><span class="lang-en">Protection: SPD Type II, RCD 30mA, grounding</span><span class="lang-th">ป้องกัน: SPD Type II, RCD 30mA, กราวด์</span></li>
+                    <li class="tri-text"><span class="lang-he">מעקב PEA: 7 סטטוסים (הכנה → חיבור)</span><span class="lang-en">PEA tracking: 7 statuses (preparing → connected)</span><span class="lang-th">ติดตาม กฟภ: 7 สถานะ (เตรียม → เชื่อมต่อ)</span></li>
+                </ul>
+            </div>
+            <div>
+                <!-- SLD mockup -->
+                <div class="mockup">
+                    <div class="mockup-bar"><div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div></div>
+                    <div class="mockup-body" style="font-size:0.7rem;">
+                        <div style="text-align:center;color:var(--sun);font-weight:700;margin-bottom:0.5rem;">33.6 kWp — COMMERCIAL</div>
+                        <div class="sld-box" style="border-color:rgba(30,136,229,0.3);">☀️ PV Array<br>58× LONGi 580W<br>4 strings × 14-15 panels</div>
+                        <div class="sld-wire">│ DC 6mm² │</div>
+                        <div class="sld-box" style="border-color:rgba(245,158,11,0.3);">⚡ DC Combiner<br>MCB: 70A × 4 | SPD: Type II DC</div>
+                        <div class="sld-wire">│ DC 6mm² │</div>
+                        <div class="sld-box" style="border-color:rgba(16,185,129,0.3);">🔄 Inverter<br>Huawei SUN2000-30KTL-M3<br>30kW</div>
+                        <div class="sld-wire">│ AC 10mm² │</div>
+                        <div class="sld-box" style="border-color:rgba(168,85,247,0.3);border-style:dashed;">🔋 Battery<br>2× LUNA2000-10kWh (20kWh)</div>
+                        <div class="sld-wire">│</div>
+                        <div class="sld-box" style="border-color:rgba(249,115,22,0.3);">📋 AC Panel<br>MCCB: 60A | RCD: 30mA | SPD: Type II</div>
+                        <div class="sld-wire">│ 10mm² │</div>
+                        <div class="sld-box" style="border-color:rgba(6,182,212,0.3);">📊 Bi-Directional Meter (PEA)</div>
+                        <div class="sld-wire">│</div>
+                        <div class="sld-box" style="border-color:rgba(239,68,68,0.3);">🔌 Grid — 230/400V 50Hz</div>
+                        <div style="text-align:center;color:rgba(255,255,255,0.3);margin-top:0.3rem;">⏚ Earth Rod</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 9: PHASE 3 -->
+<section class="slide" id="phase3" style="background: linear-gradient(135deg, rgba(123,31,162,0.08), transparent);">
+    <span class="slide-num">09</span>
+    <div class="container">
+        <h2><span class="accent">Phase 3</span> — <span class="tri-text"><span class="lang-he">תפעול</span><span class="lang-en">Operations</span><span class="lang-th">การดำเนินงาน</span></span></h2>
+        <p class="subtitle tri-text">
+            <span class="lang-he">חוזים, מלאי, והתקנה — ניהול הביצוע מחתימה ועד הפעלה</span>
+            <span class="lang-en">Contracts, inventory, and installation — managing execution from signature to go-live</span>
+            <span class="lang-th">สัญญา สินค้าคงคลัง และการติดตั้ง — จัดการดำเนินงานตั้งแต่เซ็นสัญญาจนเปิดใช้</span>
+        </p>
+    </div>
+</section>
+
+<!-- SLIDE 10: CONTRACTS -->
+<section class="slide" id="contracts">
+    <span class="slide-num">10</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">7</div>
+            <div>
+                <div class="module-title tri-text"><span class="lang-he">ניהול חוזים</span><span class="lang-en">Contract Manager</span><span class="lang-th">จัดการสัญญา</span></div>
+                <div class="module-subtitle">/contracts</div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">4 סוגי חוזים: EPC / PPA / O&M / Lease</span><span class="lang-en">4 contract types: EPC / PPA / O&M / Lease</span><span class="lang-th">สัญญา 4 ประเภท: EPC / PPA / O&M / เช่า</span></li>
+                    <li class="tri-text"><span class="lang-he">Milestones אוטומטיים: EPC = 30/40/30, PPA = 0/100</span><span class="lang-en">Auto milestones: EPC = 30/40/30, PPA = 0/100</span><span class="lang-th">Milestones อัตโนมัติ: EPC = 30/40/30, PPA = 0/100</span></li>
+                    <li class="tri-text"><span class="lang-he">מעקב תשלומים: Pending → Invoiced → Paid → Overdue</span><span class="lang-en">Payment tracking: Pending → Invoiced → Paid → Overdue</span><span class="lang-th">ติดตามชำระเงิน: Pending → Invoiced → Paid → Overdue</span></li>
+                    <li class="tri-text"><span class="lang-he">אחריות, תנאי תשלום, מספר חוזה אוטומטי</span><span class="lang-en">Warranty, payment terms, auto contract number</span><span class="lang-th">การรับประกัน เงื่อนไขชำระ เลขสัญญาอัตโนมัติ</span></li>
+                    <li class="tri-text"><span class="lang-he">סיכום כולל: שווי חוזים + נגבה</span><span class="lang-en">Summary: total value + collected</span><span class="lang-th">สรุป: มูลค่ารวม + เก็บแล้ว</span></li>
+                </ul>
+            </div>
+            <div>
+                <div class="card" style="border-right:3px solid var(--sun);">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.8rem;">
+                        <div>
+                            <span class="badge badge-gold">EPC</span>
+                            <span style="margin-right:0.5rem;font-weight:700;">TM-KP3R47X</span>
+                            <span class="badge badge-green">signed</span>
+                        </div>
+                        <div style="color:var(--sun);font-weight:700;font-size:1.1rem;">฿1,495,000</div>
+                    </div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">✍️ Signed: 2026-03-15 · 🛡 5yr warranty · 💳 30/40/30</div>
+                    <div style="margin-top:0.8rem;space-y:0.4rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.3rem;">
+                            <span style="font-size:0.8rem;">✅ Advance Payment (30%)</span>
+                            <span style="color:var(--green);font-size:0.85rem;font-weight:700;">฿448,500 PAID</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:0.4rem 0.6rem;border-radius:6px;margin-bottom:0.3rem;">
+                            <span style="font-size:0.8rem;">⏳ Equipment Delivered (40%)</span>
+                            <span style="color:var(--sun);font-size:0.85rem;font-weight:700;">฿598,000 INVOICED</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.04);padding:0.4rem 0.6rem;border-radius:6px;">
+                            <span style="font-size:0.8rem;">⏳ Installation Complete (30%)</span>
+                            <span style="color:rgba(255,255,255,0.4);font-size:0.85rem;">฿448,500 PENDING</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 11: INVENTORY -->
+<section class="slide" id="inventory">
+    <span class="slide-num">11</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">8</div>
+            <div>
+                <div class="module-title tri-text"><span class="lang-he">מלאי ורכש</span><span class="lang-en">Inventory & Procurement</span><span class="lang-th">สินค้าคงคลังและจัดซื้อ</span></div>
+                <div class="module-subtitle">/inventory</div>
+            </div>
+        </div>
+        <div class="grid-3">
+            <div class="card" style="text-align:center;">
+                <div class="card-icon">☀️</div>
+                <h3>Panels</h3>
+                <div class="stat-big">240</div>
+                <div class="stat-label tri-text"><span class="lang-he">יחידות במלאי</span><span class="lang-en">units in stock</span><span class="lang-th">หน่วยในคลัง</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="card-icon">⚡</div>
+                <h3>Inverters</h3>
+                <div class="stat-big">12</div>
+                <div class="stat-label tri-text"><span class="lang-he">יחידות במלאי</span><span class="lang-en">units in stock</span><span class="lang-th">หน่วยในคลัง</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="card-icon">🔋</div>
+                <h3>Batteries</h3>
+                <div class="stat-big" style="color:var(--red);">2</div>
+                <div class="stat-label" style="color:var(--red);">⚠️ LOW STOCK</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:15%;background:var(--red);"></div></div>
+            </div>
+        </div>
+        <div style="margin-top:2rem;">
+            <ul class="feat-list">
+                <li class="tri-text"><span class="lang-he">9 קטגוריות: פאנל, ממיר, סוללה, כבל, הגנה, מחברים, מטר, הרכבה, אחר</span><span class="lang-en">9 categories: panel, inverter, battery, cable, protection, connector, meter, mounting, other</span><span class="lang-th">9 หมวด: แผง อินเวอร์เตอร์ แบต สาย ป้องกัน คอนเนกเตอร์ มิเตอร์ โครงยึด อื่นๆ</span></li>
+                <li class="tri-text"><span class="lang-he">4 מדדים: In Stock / In Transit / Allocated / Available</span><span class="lang-en">4 metrics: In Stock / In Transit / Allocated / Available</span><span class="lang-th">4 ตัวชี้วัด: ในคลัง / ระหว่างส่ง / จัดสรร / พร้อมใช้</span></li>
+                <li class="tri-text"><span class="lang-he">התראת מלאי נמוך אוטומטית</span><span class="lang-en">Auto low stock alerts</span><span class="lang-th">แจ้งเตือนสินค้าใกล้หมดอัตโนมัติ</span></li>
+                <li class="tri-text"><span class="lang-he">שווי מלאי כולל בזמן אמת</span><span class="lang-en">Real-time total stock value</span><span class="lang-th">มูลค่าสินค้าคงคลังแบบเรียลไทม์</span></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 12: INSTALLATION TRACKER -->
+<section class="slide" id="installation">
+    <span class="slide-num">12</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">9</div>
+            <div>
+                <div class="module-title tri-text"><span class="lang-he">מעקב התקנה</span><span class="lang-en">Installation Tracker</span><span class="lang-th">ติดตามการติดตั้ง</span></div>
+                <div class="module-subtitle">/installation</div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <h3 class="tri-text">
+                    <span class="lang-he"><span class="accent">צ'קליסט 12 משימות</span></span>
+                    <span class="lang-en"><span class="accent">12-Task Checklist</span></span>
+                    <span class="lang-th"><span class="accent">เช็คลิสต์ 12 งาน</span></span>
+                </h3>
+                <ul class="checklist">
+                    <li><span class="check-done">✅</span> Roof preparation & cleaning</li>
+                    <li><span class="check-done">✅</span> Install mounting rails</li>
+                    <li><span class="check-done">✅</span> Place solar panels</li>
+                    <li><span class="check-done">✅</span> DC wiring (strings)</li>
+                    <li><span class="check-done">✅</span> Install inverter</li>
+                    <li><span class="check-progress">🔄</span> AC wiring</li>
+                    <li><span class="check-pending">⏳</span> Install battery</li>
+                    <li><span class="check-pending">⏳</span> Grounding & surge protection</li>
+                    <li><span class="check-pending">⏳</span> DC testing (Voc, Isc, polarity)</li>
+                    <li><span class="check-pending">⏳</span> AC testing (voltage, frequency)</li>
+                    <li><span class="check-pending">⏳</span> Insulation resistance test</li>
+                    <li><span class="check-pending">⏳</span> Photo documentation</li>
+                </ul>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom:1rem;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                        <span style="font-size:0.85rem;">Team Lead: <b>Somchai</b> · Crew: <b>4</b></span>
+                        <span style="font-size:1.3rem;font-weight:900;color:var(--sun);">5/12</span>
+                    </div>
+                    <div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:42%"></div></div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Started: 2026-03-10 · Est. completion: 2026-03-12</div>
+                </div>
+                <div style="margin-top:1rem;">
+                    <h3 class="tri-text" style="font-size:1rem;">
+                        <span class="lang-he"><span class="accent">פיצ'רים</span></span>
+                        <span class="lang-en"><span class="accent">Features</span></span>
+                        <span class="lang-th"><span class="accent">คุณสมบัติ</span></span>
+                    </h3>
+                    <ul class="feat-list">
+                        <li class="tri-text"><span class="lang-he">Click-to-toggle: pending → in progress → done</span><span class="lang-en">Click-to-toggle: pending → in progress → done</span><span class="lang-th">คลิกสลับ: pending → in progress → done</span></li>
+                        <li class="tri-text"><span class="lang-he">Progress bar עם % ביצוע</span><span class="lang-en">Progress bar with completion %</span><span class="lang-th">แถบความคืบหน้าแสดง %</span></li>
+                        <li class="tri-text"><span class="lang-he">תיעוד issues לפי severity</span><span class="lang-en">Issue logging by severity</span><span class="lang-th">บันทึกปัญหาตามความรุนแรง</span></li>
+                        <li class="tri-text"><span class="lang-he">Team lead, crew size, site notes</span><span class="lang-en">Team lead, crew size, site notes</span><span class="lang-th">หัวหน้าทีม ขนาดทีม หมายเหตุ</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 13: PHASE 4 -->
+<section class="slide" id="phase4" style="background: linear-gradient(135deg, rgba(67,160,71,0.08), transparent);">
+    <span class="slide-num">13</span>
+    <div class="container">
+        <h2><span class="accent">Phase 4</span> — <span class="tri-text"><span class="lang-he">תחזוקה</span><span class="lang-en">O&M</span><span class="lang-th">บำรุงรักษา</span></span></h2>
+        <p class="subtitle tri-text">
+            <span class="lang-he">דשבורד תחזוקה — MRR שוטף מחוזי O&M, tickets, ומשימות מתוזמנות</span>
+            <span class="lang-en">O&M Dashboard — recurring MRR from O&M contracts, tickets, and scheduled tasks</span>
+            <span class="lang-th">แดชบอร์ด O&M — MRR ประจำจากสัญญา O&M ตั๋ว และงานที่กำหนดเวลา</span>
+        </p>
+    </div>
+</section>
+
+<!-- SLIDE 14: O&M DASHBOARD -->
+<section class="slide" id="om">
+    <span class="slide-num">14</span>
+    <div class="container">
+        <div class="module-header">
+            <div class="module-num">12</div>
+            <div>
+                <div class="module-title tri-text"><span class="lang-he">O&M Dashboard</span><span class="lang-en">O&M Dashboard</span><span class="lang-th">แดชบอร์ด O&M</span></div>
+                <div class="module-subtitle">/om</div>
+            </div>
+        </div>
+        <div class="grid-4" style="margin-bottom:2rem;">
+            <div class="card" style="text-align:center;">
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Active Contracts</div>
+                <div class="stat-big">12</div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Monthly Revenue</div>
+                <div class="stat-big">฿180K</div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Open Tickets</div>
+                <div class="stat-big" style="color:var(--red);">3</div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Overdue Tasks</div>
+                <div class="stat-big" style="color:var(--green);">0</div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <h3 class="tri-text">
+                    <span class="lang-he">🎫 <span class="accent">Tickets</span></span>
+                    <span class="lang-en">🎫 <span class="accent">Tickets</span></span>
+                    <span class="lang-th">🎫 <span class="accent">ตั๋ว</span></span>
+                </h3>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">4 רמות עדיפות: Low / Medium / High / Critical</span><span class="lang-en">4 priority levels: Low / Medium / High / Critical</span><span class="lang-th">4 ระดับความสำคัญ: Low / Medium / High / Critical</span></li>
+                    <li class="tri-text"><span class="lang-he">5 סטטוסים: Open → Assigned → In Progress → Resolved → Closed</span><span class="lang-en">5 statuses: Open → Assigned → In Progress → Resolved → Closed</span><span class="lang-th">5 สถานะ: Open → Assigned → In Progress → Resolved → Closed</span></li>
+                    <li class="tri-text"><span class="lang-he">שיוך לטכנאי, תאריך דיווח, פתרון</span><span class="lang-en">Assign to technician, report date, resolution</span><span class="lang-th">มอบหมายช่าง วันรายงาน การแก้ไข</span></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="tri-text">
+                    <span class="lang-he">📅 <span class="accent">משימות תחזוקה</span></span>
+                    <span class="lang-en">📅 <span class="accent">Maintenance Tasks</span></span>
+                    <span class="lang-th">📅 <span class="accent">งานบำรุงรักษา</span></span>
+                </h3>
+                <ul class="feat-list">
+                    <li class="tri-text"><span class="lang-he">5 סוגים: ניקוי / בדיקה / תיקון / החלפה / חירום</span><span class="lang-en">5 types: cleaning / inspection / repair / replacement / emergency</span><span class="lang-th">5 ประเภท: ทำความสะอาด / ตรวจสอบ / ซ่อม / เปลี่ยน / ฉุกเฉิน</span></li>
+                    <li class="tri-text"><span class="lang-he">תזמון לטכנאי ספציפי</span><span class="lang-en">Schedule to specific technician</span><span class="lang-th">กำหนดเวลาให้ช่างเฉพาะ</span></li>
+                    <li class="tri-text"><span class="lang-he">חיווי Overdue אוטומטי באדום</span><span class="lang-en">Auto overdue flag in red</span><span class="lang-th">แจ้งเตือนเกินกำหนดอัตโนมัติเป็นสีแดง</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 15: SUMMARY -->
+<section class="slide" id="summary" style="background: linear-gradient(160deg, var(--ocean-deep), #0A0A0A 60%);">
+    <span class="slide-num">15</span>
+    <div class="container" style="text-align:center;">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">הכל במקום אחד</span></span>
+            <span class="lang-en"><span class="accent">Everything in One Place</span></span>
+            <span class="lang-th"><span class="accent">ทุกอย่างในที่เดียว</span></span>
+        </h2>
+
+        <div class="grid-3" style="margin-top:2rem;text-align:center;">
+            <div class="card">
+                <div class="stat-big">9</div>
+                <div class="stat-label tri-text"><span class="lang-he">מודולים</span><span class="lang-en">Modules</span><span class="lang-th">โมดูล</span></div>
+            </div>
+            <div class="card">
+                <div class="stat-big">22</div>
+                <div class="stat-label tri-text"><span class="lang-he">טבלאות DB</span><span class="lang-en">DB Tables</span><span class="lang-th">ตาราง DB</span></div>
+            </div>
+            <div class="card">
+                <div class="stat-big">12</div>
+                <div class="stat-label tri-text"><span class="lang-he">שלבי Pipeline</span><span class="lang-en">Pipeline Steps</span><span class="lang-th">ขั้นตอนไปป์ไลน์</span></div>
+            </div>
+        </div>
+
+        <div style="margin-top:3rem;">
+            <a href="https://kophangan-solar-crm.vercel.app" target="_blank" style="display:inline-block;padding:1rem 2.5rem;background:var(--sun);color:#0A0A0A;text-decoration:none;border-radius:12px;font-weight:900;font-size:1.1rem;">
+                🚀 Open CRM →
+            </a>
+        </div>
+
+        <div style="margin-top:2rem;font-size:0.85rem;color:rgba(255,255,255,0.4);">
+            TM Energy — Ko Phangan Solar — Value Chain CRM<br>
+            <span class="tri-text">
+                <span class="lang-he">מערכת CRM מלאה לניהול מחזור חיי ההתקנה הסולארית</span>
+                <span class="lang-en">Complete CRM for managing the solar installation lifecycle</span>
+                <span class="lang-th">ระบบ CRM ครบวงจรสำหรับจัดการวงจรชีวิตการติดตั้งโซลาร์</span>
+            </span>
+        </div>
+    </div>
+</section>
+
+<script>
+function setLang(lang) {
+    document.body.setAttribute('data-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    localStorage.setItem('tm-lang', lang);
+}
+// Restore
+const saved = localStorage.getItem('tm-lang');
+if (saved) {
+    document.body.setAttribute('data-lang', saved);
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.includes(saved === 'he' ? 'עברית' : saved === 'en' ? 'English' : 'ไทย'));
+    });
+}
+// Close TOC on link click
+document.querySelectorAll('.toc-link').forEach(a => a.addEventListener('click', () => document.querySelector('.toc-panel').classList.remove('open')));
+</script>
+</body>
+</html>

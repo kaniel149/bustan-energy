@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFQ Email Preview — TM Energy</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', Arial, sans-serif; background: #f0f2f5; color: #1a2332; }
+.header { background: #0D2137; color: #fff; padding: 24px 32px; text-align: center; position: sticky; top: 0; z-index: 10; }
+.header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+.header p { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 4px; }
+.container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+.email-card { background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.06); margin-bottom: 24px; overflow: hidden; }
+.email-header { background: #f7f8fa; padding: 16px 24px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.email-num { background: #0D2137; color: #E8A820; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; }
+.email-meta { display: flex; align-items: center; gap: 12px; }
+.email-to { font-size: 14px; }
+.email-to strong { color: #0D2137; }
+.email-to span { color: #6b7a8d; font-size: 12px; }
+.email-subject { font-size: 12px; color: #6b7a8d; padding: 8px 24px; border-bottom: 1px solid #f0f0f0; }
+.email-body { padding: 24px; }
+.email-body p { margin-bottom: 12px; line-height: 1.7; font-size: 14px; }
+.email-body h3 { color: #0D2137; margin: 20px 0 10px; font-size: 15px; }
+.email-body h4 { color: #0D2137; margin: 0 0 8px; font-size: 14px; }
+.email-body table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 13px; }
+.email-body th { background: #0D2137; color: #fff; padding: 10px; text-align: left; }
+.email-body td { padding: 8px; border-bottom: 1px solid #eee; }
+.email-body tr:nth-child(even) { background: #f9f9f9; }
+.email-body ol { padding-left: 20px; line-height: 2; font-size: 14px; margin: 8px 0 16px; }
+.project-box { background: #f7f8fa; padding: 16px 20px; border-radius: 8px; margin: 16px 0; }
+.project-box table { margin: 0; }
+.project-box td:first-child { padding-right: 16px; color: #6b7a8d; white-space: nowrap; }
+.custom-line { background: #fffbeb; border-left: 3px solid #E8A820; padding: 10px 16px; margin: 12px 0; font-size: 13px; border-radius: 0 8px 8px 0; }
+.btn-approve { display: inline-block; background: #1A7A5A; color: #fff; padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 16px; text-decoration: none; margin: 24px 0; text-align: center; }
+.btn-approve:hover { background: #15654a; }
+.footer { text-align: center; padding: 32px 16px; color: #6b7a8d; font-size: 12px; }
+.tm-logo { display: inline-block; width: 36px; height: 36px; border-radius: 50%; border: 2px solid #E8A820; text-align: center; line-height: 32px; color: #E8A820; font-weight: 900; font-size: 12px; }
+.sig { font-size: 14px; line-height: 1.8; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📧 RFQ Email Preview — 5 Suppliers</h1>
+  <p>Review before sending from k@kanielt.com as "TM Energy"</p>
+</div>
+
+<div class="container">
+
+<!-- EMAIL 1 -->
+<div class="email-card">
+  <div class="email-header">
+    <div class="email-meta">
+      <div class="email-num">1</div>
+      <div class="email-to">
+        <strong>Solaris Green Energy</strong><br>
+        <span>info@solaris.co.th</span>
+      </div>
+    </div>
+  </div>
+  <div class="email-subject">Subject: RFQ — 32.5 kWp Solar System (56× LONGi + 2× Huawei) — Koh Phangan Project</div>
+  <div class="email-body">
+    <div style="background:#0D2137;padding:16px 24px;border-radius:12px 12px 0 0;margin:-24px -24px 24px;">
+      <span class="tm-logo">TM</span>
+      <span style="color:#E8A820;font-weight:700;font-size:14px;letter-spacing:2px;margin-left:8px;">TM ENERGY</span>
+    </div>
+    
+    <p>Dear Solaris Green Energy Team,</p>
+    <p>We are <b>TM Energy</b>, a solar EPC company based on <b>Koh Phangan, Surat Thani</b>, backed by <b>TM Developers</b> (established local construction company with 30+ employees and in-house concrete plant).</p>
+    
+    <div class="custom-line">As a Krabi-based company, you are the closest major solar distributor to our Koh Phangan operations. We're particularly interested in your LONGi and Huawei product lines and potential logistics advantages for southern Thailand delivery.</div>
+    
+    <p>We are preparing our <b>first commercial project</b> — a <b>32.5 kWp</b> rooftop installation on 2 residential buildings (24 units) and would like to request a quotation for the following equipment:</p>
+    
+    <h3>Equipment Required</h3>
+    <table>
+      <tr><th>Item</th><th>Specification</th><th style="text-align:center;">Qty</th></tr>
+      <tr><td>Solar Panels</td><td>LONGi Hi-MO X6 LR5-72HGD <b>580W</b></td><td style="text-align:center;"><b>56 pcs</b></td></tr>
+      <tr><td>Inverter</td><td>Huawei SUN2000-<b>11KTL-M5</b> (3-phase)</td><td style="text-align:center;"><b>2 pcs</b></td></tr>
+      <tr><td>Battery Storage</td><td>Huawei LUNA2000-<b>15-S0</b> (15kWh)</td><td style="text-align:center;"><b>2 pcs</b> (optional)</td></tr>
+      <tr><td>Mounting System</td><td>Metal roof clamps, no-drill, for 0.35mm sheet</td><td style="text-align:center;"><b>56 sets</b></td></tr>
+      <tr><td>DC Cabling</td><td>4mm² TUV solar cable</td><td style="text-align:center;">~200m</td></tr>
+      <tr><td>AC Cabling</td><td>Per PEA standard</td><td style="text-align:center;">~100m</td></tr>
+      <tr><td>Protection</td><td>SPD Type II + RCD 30mA + MCB + earthing kit</td><td style="text-align:center;"><b>2 sets</b></td></tr>
+      <tr><td>Smart Meter</td><td>Huawei DTSU666-H (or equivalent)</td><td style="text-align:center;"><b>2 pcs</b></td></tr>
+    </table>
+    
+    <h3>Please Include in Your Quotation</h3>
+    <ol>
+      <li><b>Unit price and total</b> for each item</li>
+      <li><b>Delivery time</b> to Surat Thani / Koh Phangan</li>
+      <li><b>Shipping cost</b> to Surat Thani port</li>
+      <li><b>Payment terms</b> (deposit, credit, etc.)</li>
+      <li><b>Warranty terms</b> from manufacturer</li>
+      <li><b>Availability</b> — can you fulfill within 2-3 weeks?</li>
+      <li><b>Volume discount</b> — we plan 5-10 similar projects in 2026</li>
+    </ol>
+    
+    <div class="project-box">
+      <h4>Project Details</h4>
+      <table>
+        <tr><td>Location:</td><td>Koh Phangan, Surat Thani 84280</td></tr>
+        <tr><td>Building:</td><td>2× two-story RC residential, metal sheet gable roof</td></tr>
+        <tr><td>System:</td><td>32.5 kWp DC / 22 kW AC (DC:AC = 150%)</td></tr>
+        <tr><td>Timeline:</td><td>Installation planned for April 2026</td></tr>
+        <tr><td>Company:</td><td>TM Energy (powered by TM Developers)</td></tr>
+      </table>
+    </div>
+    
+    <p>We are evaluating multiple suppliers and will make a decision within <b>7 days</b> of receiving all quotes.</p>
+    
+    <div class="sig">
+      Best regards,<br>
+      <b style="color:#0D2137;">TM Energy</b><br>
+      Koh Phangan, Surat Thani<br>
+      📞 062-348-0119 · 💬 WhatsApp: +66 62 348 0119<br>
+      📧 k@kanielt.com
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL 2 -->
+<div class="email-card">
+  <div class="email-header">
+    <div class="email-meta">
+      <div class="email-num">2</div>
+      <div class="email-to">
+        <strong>BayWa r.e. Solar Systems</strong><br>
+        <span>solarsystems.asia@baywa-re.com</span>
+      </div>
+    </div>
+  </div>
+  <div class="email-subject">Subject: RFQ — 32.5 kWp Solar System (56× LONGi + 2× Huawei) — Koh Phangan Project</div>
+  <div class="email-body">
+    <div class="custom-line">We've reviewed your online solar shop and are impressed by your product range. As a German company with strong Thai operations, we value the quality assurance and product authenticity you provide.</div>
+    <p><i>Same BOM table, questions, project details, and signature as Email #1</i></p>
+  </div>
+</div>
+
+<!-- EMAIL 3 -->
+<div class="email-card">
+  <div class="email-header">
+    <div class="email-meta">
+      <div class="email-num">3</div>
+      <div class="email-to">
+        <strong>VST ECS Thailand</strong><br>
+        <span>pr@vstecs.co.th</span>
+      </div>
+    </div>
+  </div>
+  <div class="email-subject">Subject: RFQ — 32.5 kWp Solar System (56× LONGi + 2× Huawei) — Koh Phangan Project</div>
+  <div class="email-body">
+    <div class="custom-line">As the official Huawei distributor in Thailand, we'd like to get the best pricing on Huawei SUN2000 inverters and LUNA2000 battery storage. We're also open to discussing Huawei's EPC partnership programs.</div>
+    <p><i>Same BOM table, questions, project details, and signature as Email #1</i></p>
+  </div>
+</div>
+
+<!-- EMAIL 4 -->
+<div class="email-card">
+  <div class="email-header">
+    <div class="email-meta">
+      <div class="email-num">4</div>
+      <div class="email-to">
+        <strong>High Solar</strong><br>
+        <span>info@high-solar.com</span>
+      </div>
+    </div>
+  </div>
+  <div class="email-subject">Subject: RFQ — 32.5 kWp Solar System (56× LONGi + 2× Huawei) — Koh Phangan Project</div>
+  <div class="email-body">
+    <div class="custom-line">We understand you specialize in Huawei solar products with 7+ years of experience. We're looking for a reliable supplier with strong after-sales support for our island-based operations.</div>
+    <p><i>Same BOM table, questions, project details, and signature as Email #1</i></p>
+  </div>
+</div>
+
+<!-- EMAIL 5 -->
+<div class="email-card">
+  <div class="email-header">
+    <div class="email-meta">
+      <div class="email-num">5</div>
+      <div class="email-to">
+        <strong>Solar-Thailand</strong><br>
+        <span>Solar-Thailand@hotmail.com</span>
+      </div>
+    </div>
+  </div>
+  <div class="email-subject">Subject: RFQ — 32.5 kWp Solar System (56× LONGi + 2× Huawei) — Koh Phangan Project</div>
+  <div class="email-body">
+    <div class="custom-line">We're interested in competitive wholesale pricing for our first project, with the potential for recurring orders as we scale our Koh Phangan solar operations throughout 2026.</div>
+    <p><i>Same BOM table, questions, project details, and signature as Email #1</i></p>
+  </div>
+</div>
+
+<div style="text-align:center;padding:24px;">
+  <p style="font-size:14px;color:#6b7a8d;margin-bottom:16px;">All 5 emails are identical except for the <span style="background:#fffbeb;border-left:3px solid #E8A820;padding:2px 8px;font-size:12px;">highlighted custom line</span> per supplier.</p>
+  <p style="font-size:13px;color:#999;">Approve in Discord → G sends all 5 from k@kanielt.com</p>
+</div>
+
+</div>
+
+<div class="footer">
+  TM Energy — RFQ Preview · Not yet sent
+</div>
+
+</body>
+</html>

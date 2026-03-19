@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Ko Phangan Solar — רכש והנדסה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);overflow:hidden;height:100vh}
+.slide-container{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:40px 60px;opacity:0;transform:translateX(100px);transition:all .6s cubic-bezier(.23,1,.32,1);pointer-events:none;overflow-y:auto;padding-bottom:80px}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit{opacity:0;transform:translateX(-100px)}
+.slide-cover{background:linear-gradient(135deg,var(--ocean),var(--night));justify-content:center;align-items:center;text-align:center}
+.slide-dark{background:var(--night)}.slide-ocean{background:linear-gradient(180deg,var(--ocean),var(--night))}
+.slide-reef{background:linear-gradient(135deg,#0D3B2E,var(--night))}.slide-gold{background:linear-gradient(135deg,#3D2E0A,var(--night))}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px 30px;background:rgba(13,33,55,.95);backdrop-filter:blur(10px);border-top:1px solid rgba(232,168,32,.2);z-index:100}
+.nav-btn{background:none;border:2px solid var(--gold);color:var(--gold);padding:8px 24px;border-radius:6px;cursor:pointer;font-family:'Heebo';font-size:14px;font-weight:500;transition:all .3s}
+.nav-btn:hover{background:var(--gold);color:var(--night)}.nav-btn:disabled{opacity:.3;cursor:default}
+.slide-counter{font-family:'Space Grotesk';color:rgba(255,255,255,.5);font-size:14px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--gold);transition:width .4s;z-index:101}
+.toc-btn{position:fixed;top:20px;left:20px;background:rgba(232,168,32,.15);border:1px solid rgba(232,168,32,.3);color:var(--gold);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:102}
+.toc-btn:hover{background:var(--gold);color:var(--night)}
+.toc-panel{position:fixed;top:0;left:-350px;width:350px;height:100vh;background:rgba(13,33,55,.98);backdrop-filter:blur(20px);border-right:1px solid rgba(232,168,32,.2);z-index:103;transition:left .4s;padding:60px 30px 30px;overflow-y:auto}
+.toc-panel.open{left:0}
+.toc-item{padding:10px 16px;margin:4px 0;border-radius:8px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.7);transition:all .2s;display:flex;align-items:center;gap:10px}
+.toc-item:hover{background:rgba(232,168,32,.1);color:var(--white)}.toc-item.active{background:rgba(232,168,32,.2);color:var(--gold)}
+.toc-num{font-family:'Space Grotesk';font-weight:700;font-size:12px;color:var(--gold);min-width:24px}
+h1{font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.1;margin-bottom:16px}
+h2{font-size:clamp(24px,3.5vw,40px);font-weight:700;line-height:1.2;margin-bottom:12px}
+h3{font-size:clamp(16px,2vw,22px);font-weight:700;margin-bottom:8px}
+.subtitle{font-size:clamp(16px,2vw,22px);font-weight:300;opacity:.8;margin-bottom:24px}
+.gold{color:var(--gold)}.reef-text{color:#2ED89A}.coral-text{color:var(--coral)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;transition:all .3s}
+.card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.card-icon{font-size:28px;margin-bottom:10px}.card h3{font-size:16px;margin-bottom:6px}.card p{font-size:13px;opacity:.7;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:rgba(232,168,32,.15);padding:10px 14px;text-align:right;font-weight:600;white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
+tr:hover td{background:rgba(255,255,255,.03)}
+.alert{padding:16px 20px;border-radius:10px;margin:12px 0;font-size:14px;line-height:1.6}
+.alert-warn{background:rgba(232,93,58,.15);border-right:3px solid var(--coral)}
+.alert-info{background:rgba(232,168,32,.1);border-right:3px solid var(--gold)}
+.alert-success{background:rgba(46,216,154,.1);border-right:3px solid #2ED89A}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}.slide{padding:24px 20px}}
+.slide::-webkit-scrollbar{width:4px}.slide::-webkit-scrollbar-thumb{background:rgba(232,168,32,.3);border-radius:2px}
+.section-num{font-family:'Space Grotesk';font-size:64px;font-weight:700;color:var(--gold);opacity:.15;position:absolute;top:20px;left:40px}
+.big-num{font-family:'Space Grotesk';font-size:clamp(36px,6vw,72px);font-weight:700;color:var(--gold)}
+.stat-label{font-size:14px;opacity:.6;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;margin:20px 0;text-align:center}
+.bar-chart{margin:16px 0}
+.bar-row{display:flex;align-items:center;gap:12px;margin:6px 0}
+.bar-label{font-size:13px;min-width:100px;text-align:left}
+.bar-wrap{flex:1;height:28px;background:rgba(255,255,255,.05);border-radius:14px;overflow:hidden}
+.bar-fill{height:100%;border-radius:14px;display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;font-family:'Space Grotesk'}
+
+.slide-img{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:12px 0;border:1px solid rgba(232,168,32,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.slide-img-sm{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;border:1px solid rgba(255,255,255,.1)}
+.img-float{float:left;width:45%;max-height:240px;object-fit:cover;border-radius:12px;margin:0 20px 12px 0;border:1px solid rgba(232,168,32,.15)}
+.img-row{display:flex;gap:12px;margin:12px 0}.img-row img{flex:1;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+
+
+
+<div class="progress-bar" id="progress"></div>
+<button class="toc-btn" onclick="toggleTOC()">☰</button>
+<div class="toc-panel" id="tocPanel"><h3 style="color:var(--gold);margin-bottom:20px;">תוכן עניינים</h3><div id="tocList"></div></div>
+<div class="slide-container" id="slides">
+
+<!-- SLIDE 0: Cover -->
+<div class="slide slide-cover active" data-title="שער">
+  <div style="margin-bottom:30px">
+    <div style="font-size:56px;margin-bottom:16px">📦⚙️</div>
+    <h1>רכש והנדסה<br><span class="gold">Ko Phangan Solar</span></h1>
+    <p class="subtitle">שרשרת אספקה, ציוד, עיצוב מערכות</p>
+  </div>
+  <p style="opacity:.4;font-size:13px">TM Energy — מרץ 2026</p>
+</div>
+
+<!-- SLIDE 1: Supply Chain -->
+<div class="slide slide-ocean" data-title="שרשרת אספקה">
+  <span class="section-num">01</span>
+  <h2></h2>
+  <p class="subtitle">סין → בנגקוק → סורת תאני → מעבורת → קו פנגן</p>
+  <div class="card-grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="card" style="text-align:center"><div class="card-icon">🏭</div><h3>יצרן</h3><p>Longi (סין)<br>Huawei (סין)</p></div>
+    <div class="card" style="text-align:center"><div class="card-icon">🚛</div><h3>מפיץ</h3><p>BayWa r.e.<br>Bangkok Solar</p></div>
+    <div class="card" style="text-align:center"><div class="card-icon">🏪</div><h3>מחסן BKK</h3><p>שחרור מכס<br>איחסון זמני</p></div>
+    <div class="card" style="text-align:center"><div class="card-icon">⛴️</div><h3>מעבורת</h3><p>Raja Ferry<br>Surat → KP 2.5h</p></div>
+    <div class="card" style="text-align:center"><div class="card-icon">📍</div><h3>מחסן באי</h3><p>Thong Sala<br>→ אתר התקנה</p></div>
+  </div>
+  <div class="two-col" style="margin-top:16px">
+    <div>
+      <h3>זמני אספקה</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>שלב</th><th>זמן</th></tr>
+          <tr><td>הזמנה → יצרן</td><td>2-4 שבועות (sea freight)</td></tr>
+          <tr><td>מכס + שחרור</td><td>3-5 ימי עבודה</td></tr>
+          <tr><td>BKK → Surat Thani (משאית)</td><td>8 שעות</td></tr>
+          <tr><td>Surat → Koh Phangan (ferry)</td><td>2.5 שעות</td></tr>
+          <tr style="background:rgba(232,168,32,.1)"><td><strong>סה"כ (חדש)</strong></td><td><strong>3-5 שבועות</strong></td></tr>
+          <tr><td><strong>מלאי במפיץ</strong></td><td><strong>3-5 ימים</strong></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>לוגיסטיקה באי</h3>
+      <div class="alert alert-warn">
+        <strong>אתגרים:</strong><br>
+        ▸ גודל משאית מוגבל (כבישים צרים)<br>
+        ▸ Ferry schedule: 3 יציאות/יום בלבד<br>
+        ▸ מונסון: ferry מבוטל בסערות<br>
+        ▸ אין מנוף באי — פריקה ידנית<br>
+        ▸ אחסון: צריך מחסן יבש 20m²
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Panels -->
+<div class="slide slide-dark" data-title="פאנלים">
+<img src="visuals/procure-02-panel.png" class="slide-img" alt="Longi panel">
+  <span class="section-num">02</span>
+  <h2>☀️ בחירת פאנלים — Longi Hi-MO</h2>
+  <div class="two-col">
+    <div>
+      <h3>למה Longi?</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>Hi-MO X6 Explorer (580W)</h3>
+        <ul style="font-size:13px;line-height:2;list-style:none;padding:0">
+          <li>▸ <strong>580W</strong> — נמוך יותר = פחות פאנלים לkWp</li>
+          <li>▸ <strong>22.3% יעילות</strong> — HPBC technology</li>
+          <li>▸ <strong>30 שנות אחריות ביצועים</strong> (≥87.4%)</li>
+          <li>▸ <strong>12 שנות אחריות מוצר</strong></li>
+          <li>▸ <strong>BNEF Tier 1</strong> — bankable, בנקים מכירים</li>
+          <li>▸ <strong>זמין</strong> — מלאי קבוע ב-BayWa Thailand</li>
+        </ul>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Hi-MO 7 (600W+)</h3>
+        <p>דור חדש. BC (Back Contact) technology. 23%+ יעילות. יקר יותר ~10%. <strong>לפרויקטים premium.</strong></p>
+      </div>
+    </div>
+    <div>
+      <h3>למה Tier-1 חשוב</h3>
+      <div style="font-size:13px;line-height:2">
+        <p>▸ <strong>Bankability:</strong> בנקים (Krungsri, Bangkok Bank) מממנים רק Tier-1</p>
+        <p>▸ <strong>אחריות אמיתית:</strong> Longi = $50B company. לא יעלם</p>
+        <p>▸ <strong>ביצועים מוכחים:</strong> מעבדות עצמאיות (TÜV, UL)</p>
+        <p>▸ <strong>Insurance:</strong> חברות ביטוח דורשות Tier-1</p>
+      </div>
+      <div class="table-wrap" style="margin-top:16px">
+        <table>
+          <tr><th>מפרט</th><th>Hi-MO X6 (580W)</th></tr>
+          <tr><td>מידות</td><td>2278 × 1134 × 30 mm</td></tr>
+          <tr><td>משקל</td><td>27.5 kg</td></tr>
+          <tr><td>Voc</td><td>51.7V</td></tr>
+          <tr><td>Isc</td><td>14.18A</td></tr>
+          <tr><td>Vmp</td><td>43.4V</td></tr>
+          <tr><td>Imp</td><td>13.37A</td></tr>
+          <tr><td>Temp Coefficient</td><td>-0.29%/°C (חשוב בתאילנד!)</td></tr>
+          <tr><td>Wind Load</td><td>2400 Pa</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Inverters -->
+<div class="slide slide-ocean" data-title="אינוורטרים">
+<img src="visuals/procure-03-inverter.png" class="slide-img" alt="Huawei inverter">
+  <span class="section-num">03</span>
+  <h2>⚡ אינוורטרים — Huawei SUN2000</h2>
+  <div class="two-col">
+    <div>
+      <h3>סדרת SUN2000</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>דגם</th><th>הספק</th><th>MPPT</th><th>שימוש</th><th>עלות</th></tr>
+          <tr><td>SUN2000-3KTL</td><td>3kW</td><td>2</td><td>וילות קטנות</td><td>฿15K</td></tr>
+          <tr><td>SUN2000-6KTL</td><td>6kW</td><td>2</td><td>וילות</td><td>฿22K</td></tr>
+          <tr><td>SUN2000-10KTL</td><td>10kW</td><td>2</td><td>וילות גדולות</td><td>฿30K</td></tr>
+          <tr><td>SUN2000-20KTL</td><td>20kW</td><td>4</td><td>עסקים קטנים</td><td>฿50K</td></tr>
+          <tr><td>SUN2000-36KTL</td><td>36kW</td><td>4</td><td>רזורטים</td><td>฿75K</td></tr>
+          <tr><td>SUN2000-50KTL</td><td>50kW</td><td>6</td><td>רזורטים גדולים</td><td>฿95K</td></tr>
+          <tr><td>SUN2000-100KTL</td><td>100kW</td><td>10</td><td>מסחרי גדול</td><td>฿170K</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>למה Huawei?</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <ul style="font-size:13px;line-height:2;list-style:none;padding:0">
+          <li>▸ <strong>#1 global inverter</strong> — 40%+ market share</li>
+          <li>▸ <strong>FusionSolar</strong> — monitoring חינם, fleet mgmt</li>
+          <li>▸ <strong>AI-powered MPPT</strong> — ייצור מקסימלי</li>
+          <li>▸ <strong>IP65</strong> — חוץ, עמיד לגשם</li>
+          <li>▸ <strong>WiFi + 4G dongle</strong> — תקשורת מובנית</li>
+          <li>▸ <strong>10yr warranty</strong> (15 בהרחבה)</li>
+          <li>▸ <strong>שירות בתאילנד</strong> — מחסן בבנגקוק</li>
+          <li>▸ <strong>עלות/W מצוינת</strong> — ฿3K/kWp</li>
+        </ul>
+      </div>
+      <div class="alert alert-info">
+        <strong>DC/AC Ratio:</strong> 1.1-1.3 מומלץ בתאילנד (oversizing). חום מוריד ביצועי אינוורטר — oversizing DC מפצה.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Mounting -->
+<div class="slide slide-reef" data-title="קונסטרוקציה">
+  <span class="section-num">04</span>
+  <h2>🏗️ מערכות הרכבה — Marine Grade</h2>
+  <div class="two-col">
+    <div>
+      <h3>חומרים חובה (island environment)</h3>
+      <div class="alert alert-warn">
+        <strong>כלל ברזל:</strong> Koh Phangan = אוויר מלוח. ברגים מגולוונים = חלודה תוך 6-12 חודשים. <strong>רק SS316 + aluminum 6005-T5!</strong>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>רכיב</th><th>חומר</th><th>עלות/kWp</th></tr>
+          <tr><td>Rails</td><td>Aluminum 6005-T5 anodized</td><td>฿600</td></tr>
+          <tr><td>Mid/End clamps</td><td>Aluminum anodized</td><td>฿200</td></tr>
+          <tr><td>Tile hooks / L-feet</td><td>Stainless Steel 316</td><td>฿400</td></tr>
+          <tr><td>Bolts, nuts, washers</td><td>SS 316</td><td>฿150</td></tr>
+          <tr><td>Earthing bonding</td><td>Copper tinned</td><td>฿100</td></tr>
+          <tr><td>Sealant</td><td>UV + salt resistant</td><td>฿100</td></tr>
+          <tr style="background:rgba(232,168,32,.1)"><td><strong>סה"כ</strong></td><td></td><td><strong>฿1,550/kWp</strong></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>לפי סוג גג</h3>
+      <div class="card" style="margin:8px 0"><h3>רעפים (Tile)</h3><p>Hook מתחת לרעף → rail → clamp. לא קודחים דרך הרעף. נפוץ ברזורטים.</p></div>
+      <div class="card" style="margin:8px 0"><h3>מתכת (Standing Seam)</h3><p>Clamp ישירות על seam. בלי חורים = בלי נזילות. מחסנים ותעשייה.</p></div>
+      <div class="card" style="margin:8px 0"><h3>מתכת (Corrugated)</h3><p>L-foot + bolt דרך הגג. חובה: butyl tape + sealant. איטום קריטי.</p></div>
+      <div class="card" style="margin:8px 0"><h3>שטוח (Flat)</h3><p>Tilt frame 10-15°. בלסט או עיגון. ניקוז גשם חשוב בטרופי.</p></div>
+      <div class="alert alert-info" style="margin-top:8px">
+        <strong>Wind Load:</strong> Zone 2 = עד 130 km/h. עיגון כל 1.2m. Rail spacing ≤ 1.4m.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: BOS -->
+<div class="slide slide-dark" data-title="BOS — Balance of System">
+  <span class="section-num">05</span>
+  <h2>🔌 BOS — Balance of System</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🔌</div>
+      <h3>כבלי DC</h3>
+      <p><strong>PV1-F 4mm²</strong> (≤30A) / <strong>6mm²</strong> (≤40A). UV-resistant, double insulated. תעלות PVC בחוץ.</p>
+      <p style="margin-top:8px;font-size:12px">฿30/m (4mm²) / ฿45/m (6mm²)</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <h3>MC4 Connectors</h3>
+      <p>IP67, 1000V DC, 30A. <strong>רק מקוריים!</strong> MC4 מזויפים = arc fault = שריפה.</p>
+      <p style="margin-top:8px;font-size:12px">฿100/זוג (Stäubli/Amphenol)</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔴</div>
+      <h3>DC Isolator</h3>
+      <p>1000V DC, 32A per string. ליד האינוורטר. חובה לפי PEA.</p>
+      <p style="margin-top:8px;font-size:12px">฿1,500/unit</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>SPD — Surge Protection</h3>
+      <p><strong>Type I+II DC</strong> (1000V) + <strong>Type I+II AC</strong>. קריטי באי — ברקים!</p>
+      <p style="margin-top:8px;font-size:12px">DC: ฿2,000 / AC: ฿1,500</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔵</div>
+      <h3>AC Breakers</h3>
+      <p>MCB C-curve. Solar dedicated breaker בלוח ראשי. גודל לפי אינוורטר output.</p>
+      <p style="margin-top:8px;font-size:12px">฿300-800/unit</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌍</div>
+      <h3>הארקה (Earthing)</h3>
+      <p>PE conductor 6mm² Cu. Earthing rod 2.4m × 16mm (copper-bonded). Resistance < 5Ω.</p>
+      <p style="margin-top:8px;font-size:12px">฿2,000/set</p>
+    </div>
+  </div>
+  <div class="alert alert-success" style="margin-top:12px">
+    <strong>סה"כ BOS/kWp:</strong> ~฿1,000 (כבלים ฿300, MC4 ฿150, DC isolator ฿150, SPD ฿200, breakers ฿100, earthing ฿100)
+  </div>
+</div>
+
+<!-- SLIDE 6: Suppliers -->
+<div class="slide slide-ocean" data-title="ספקים">
+<img src="visuals/procure-05-warehouse.png" class="slide-img-sm" alt="Solar warehouse">
+  <span class="section-num">06</span>
+  <h2>🏪 ספקים ומפיצים</h2>
+  <div class="two-col">
+    <div>
+      <h3>מפיצים ראשיים</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>BayWa r.e. Thailand</h3>
+        <p><strong>מפיץ Tier-1 מוביל.</strong> Longi, Huawei, SMA, Fronius. מלאי בבנגקוק. אשראי 30-60 יום לשותפים. הדרכות טכניות.</p>
+        <p style="margin-top:8px;font-size:12px">📧 sales.th@baywa-re.com | 📞 02-XXX-XXXX</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Bangkok Solar</h3>
+        <p>מפיץ מקומי ותיק. מלאי רחב. מחירים תחרותיים על volumes. משלוח לכל תאילנד.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Leonics</h3>
+        <p>יצרן תאילנדי של אינוורטרים + UPS. alternative מקומי. שירות מהיר. מחיר נמוך.</p>
+      </div>
+    </div>
+    <div>
+      <h3>ישיר מיצרן</h3>
+      <div class="card" style="margin:8px 0">
+        <h3>Longi Direct</h3>
+        <p>MOQ: 1 container (20ft = ~550 panels = ~320kWp). משתלם מ-10 פרויקטים+. Lead time: 4-6 שבועות.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Huawei Direct</h3>
+        <p>MOQ: 20 units per model. נציגות בבנגקוק. warranty direct. Training programs.</p>
+      </div>
+      <div class="alert alert-info" style="margin-top:12px">
+        <strong>אסטרטגיה:</strong><br>
+        שנה 1: BayWa (אין MOQ, מלאי מיידי)<br>
+        שנה 2+: Direct import (מרווח גבוה יותר)<br>
+        <strong>חיסכון direct: 15-25% vs מפיץ</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Customs -->
+<div class="slide slide-gold" data-title="מכס וייבוא">
+  <span class="section-num">07</span>
+  <h2>🛃 מכס וייבוא — הטבות מפתיעות</h2>
+  <div class="two-col">
+    <div>
+      <h3>שיעורי מכס</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>HS Code</th><th>מכס רגיל</th><th>ACFTA*</th><th>הטבה</th></tr>
+          <tr><td>פאנלים סולאריים</td><td>8541.40</td><td>0%</td><td>0%</td><td>0%</td></tr>
+          <tr><td>אינוורטרים</td><td>8504.40</td><td>5%</td><td>0%</td><td>0%</td></tr>
+          <tr><td>כבלים חשמל</td><td>8544.49</td><td>10%</td><td>5%</td><td>0%</td></tr>
+          <tr><td>קונסטרוקציה AL</td><td>7610.90</td><td>10%</td><td>5%</td><td>0%</td></tr>
+          <tr><td>VAT (על הכל)</td><td>—</td><td>7%</td><td>7%</td><td>0%**</td></tr>
+        </table>
+      </div>
+      <p style="font-size:11px;opacity:.5;margin-top:4px">* ASEAN-China FTA. ** הטבות = VAT exempt on imported machinery.</p>
+    </div>
+    <div>
+      <h3>תהליך ייבוא</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><span class="gold">1.</span> הזמנה + PO ליצרן</p>
+        <p><span class="gold">2.</span> תשלום (30% מקדמה, 70% T/T before ship)</p>
+        <p><span class="gold">3.</span> Sea freight — Shenzhen → Laem Chabang (12-16 ימים)</p>
+        <p><span class="gold">4.</span> Customs broker — שחרור מכס (3-5 ימים)</p>
+        <p><span class="gold">5.</span> משאית → Surat Thani (8 שעות)</p>
+        <p><span class="gold">6.</span> Ferry → Koh Phangan (2.5 שעות)</p>
+      </div>
+      <div class="alert alert-success" style="margin-top:12px">
+        <strong>עם הטבות ממשלתיות:</strong> 0% מכס + 0% VAT = חיסכון ~12% על ייבוא ציוד סולארי.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Design Process -->
+<div class="slide slide-dark" data-title="תהליך עיצוב">
+  <span class="section-num">08</span>
+  <h2>📐 תהליך עיצוב מערכת</h2>
+  <div class="two-col">
+    <div>
+      <h3>6 שלבים</h3>
+      <div style="font-size:13px;line-height:2.4">
+        <p><span class="gold">1. Survey Data →</span> תמונות drone, מדידות, חשבונות חשמל, סוג גג</p>
+        <p><span class="gold">2. PVsyst Simulation →</span> ייצור שנתי, PR, הפסדים (temp, shading, soiling). <strong>TMY data: Koh Phangan (9.7°N, 100.0°E)</strong></p>
+        <p><span class="gold">3. String Design →</span> כמות פאנלים/string, Voc range vs MPPT window, temperature correction (min 22°C, max 45°C cell)</p>
+        <p><span class="gold">4. SLD (Single Line) →</span> סכמה חשמלית: DC strings → isolators → inverter → AC isolator → SPD → breaker → grid</p>
+        <p><span class="gold">5. Layout Drawing →</span> פריסת פאנלים על הגג. מרווחים: wind gaps, fire access, maintenance access</p>
+        <p><span class="gold">6. BOM + Quote →</span> Bill of Materials מלא → הצעת מחיר → CRM → PDF ללקוח</p>
+      </div>
+    </div>
+    <div>
+      <h3>כלי תכנון</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)"><h3>PVsyst 8</h3><p>Gold standard. סימולציה שעתית. Shading scene 3D. Bankable reports.</p><p style="font-size:12px;opacity:.6">רישיון: CHF 450/שנה</p></div>
+      <div class="card" style="margin:8px 0"><h3>Helioscope</h3><p>Quick design online. Drag-and-drop panels on satellite image. Instant proposal.</p><p style="font-size:12px;opacity:.6">$95/חודש</p></div>
+      <div class="card" style="margin:8px 0"><h3>AutoCAD LT</h3><p>SLD drawings, layout plans, PEA submission documents.</p><p style="font-size:12px;opacity:.6">$500/שנה</p></div>
+      <div class="card" style="margin:8px 0"><h3>Ko Phangan Solar CRM</h3><p>Roof Scanner מובנה. הצעות מחיר אוטומטיות. BOM generator.</p><p style="font-size:12px;opacity:.6">חינם (שלנו)</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Design Standards -->
+<div class="slide slide-ocean" data-title="תקנים">
+  <span class="section-num">09</span>
+  <h2>📏 תקנים ודרישות טכניות</h2>
+  <div class="two-col">
+    <div>
+      <h3>תקנים בינלאומיים</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>תקן</th><th>נושא</th><th>רלוונטיות</th></tr>
+          <tr><td>IEC 61215</td><td>פאנלים — design qualification</td><td>חובה</td></tr>
+          <tr><td>IEC 61730</td><td>פאנלים — safety</td><td>חובה</td></tr>
+          <tr><td>IEC 62109</td><td>אינוורטרים — safety</td><td>חובה</td></tr>
+          <tr><td>IEC 62116</td><td>Anti-islanding test</td><td>חובה PEA</td></tr>
+          <tr><td>IEC 60364-7-712</td><td>PV system installation</td><td>מומלץ</td></tr>
+          <tr><td>IEC 62305</td><td>Lightning protection</td><td>מומלץ (באי!)</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>דרישות PEA</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><span class="gold">▸</span> Anti-islanding protection (חובה)</p>
+        <p><span class="gold">▸</span> Power Factor ≥ 0.85</p>
+        <p><span class="gold">▸</span> THD < 5%</p>
+        <p><span class="gold">▸</span> DC injection < 1%</p>
+        <p><span class="gold">▸</span> Frequency range: 49.5-50.5 Hz</p>
+        <p><span class="gold">▸</span> Voltage range: ±10% nominal</p>
+        <p><span class="gold">▸</span> Earth fault protection</p>
+        <p><span class="gold">▸</span> Isolation resistance > 1MΩ</p>
+      </div>
+      <div class="alert alert-info" style="margin-top:12px">
+        <strong>Huawei SUN2000:</strong> עומד בכל דרישות PEA out-of-the-box. Anti-islanding certified. Plug and play.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Cost Structure -->
+<div class="slide slide-dark" data-title="מבנה עלויות">
+  <span class="section-num">10</span>
+  <h2>💰 מבנה עלויות — ฿/kWp</h2>
+  <div class="stat-grid">
+    <div><div class="big-num">฿9.5K</div><div class="stat-label">עלות ציוד<br>per kWp</div></div>
+    <div><div class="big-num">฿30K</div><div class="stat-label">מחיר EPC ללקוח<br>per kWp</div></div>
+    <div><div class="big-num">60%</div><div class="stat-label">מרווח גולמי</div></div>
+    <div><div class="big-num">฿18K</div><div class="stat-label">רווח גולמי<br>per kWp</div></div>
+  </div>
+  <div class="bar-chart" style="margin-top:16px">
+    <div class="bar-row"><div class="bar-label">פאנלים Longi</div><div class="bar-wrap"><div class="bar-fill" style="width:55%;background:var(--gold)">฿5,200</div></div></div>
+    <div class="bar-row"><div class="bar-label">אינוורטר Huawei</div><div class="bar-wrap"><div class="bar-fill" style="width:21%;background:#6496FF">฿2,000</div></div></div>
+    <div class="bar-row"><div class="bar-label">קונסטרוקציה</div><div class="bar-wrap"><div class="bar-fill" style="width:16%;background:#2ED89A">฿1,550</div></div></div>
+    <div class="bar-row"><div class="bar-label">BOS</div><div class="bar-wrap"><div class="bar-fill" style="width:8%;background:var(--coral)">฿750</div></div></div>
+  </div>
+  <div class="alert alert-success" style="margin-top:16px">
+    <strong>ציוד + עבודה (฿12K/kWp):</strong> כולל עלות התקנה. Direct import (שנה 2+): עלות ציוד בלבד יורדת ל-฿8K/kWp (חיסכון ~15%). מרווח עולה ל-65%+.
+  </div>
+</div>
+
+<!-- SLIDE 11: Inventory -->
+<div class="slide slide-gold" data-title="ניהול מלאי">
+  <span class="section-num">11</span>
+  <h2>📦 ניהול מלאי באי</h2>
+  <div class="two-col">
+    <div>
+      <h3>מלאי רצוי (20kWp)</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>כמות</th><th>ערך</th></tr>
+          <tr><td>Longi 580W panels</td><td>35</td><td>฿280K</td></tr>
+          <tr><td>Huawei 10kW inverter</td><td>2</td><td>฿60K</td></tr>
+          <tr><td>Mounting system set</td><td>20kWp</td><td>฿31K</td></tr>
+          <tr><td>BOS (cables, MC4, etc.)</td><td>20kWp</td><td>฿20K</td></tr>
+          <tr><td>Spare parts</td><td>misc</td><td>฿30K</td></tr>
+          <tr style="background:rgba(232,168,32,.1)"><td><strong>סה"כ</strong></td><td></td><td><strong>฿421K</strong></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>כללי מלאי</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><strong class="gold">Keep 20kWp in stock</strong> — מספיק ל-2 וילות או 1 עסק קטן</p>
+        <p><strong class="gold">Reorder Point:</strong> כשמלאי < 10kWp → הזמנה</p>
+        <p><strong class="gold">לפני מונסון (ספט):</strong> Double stock = 40kWp</p>
+        <p><strong class="gold">מחסן:</strong> 20m², יבש, מוצל, מאוורר, מנעול</p>
+        <p><strong class="gold">ביטוח מלאי:</strong> ฿5K/שנה (שריפה, גניבה, הצפה)</p>
+      </div>
+      <div class="alert alert-info" style="margin-top:12px">
+        <strong>תזרים מזומנים:</strong> מלאי = הון חסום ฿421K. הכנסה מפרויקט 20kWp = ฿700K. <strong>ROI על מלאי: 66% תוך חודש.</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end slides -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">→ הקודם</button>
+  <span class="slide-counter" id="counter"></span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">הבא ←</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function show(n){slides.forEach((s,i)=>{s.classList.remove('active','exit');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('exit')});document.getElementById('counter').textContent=`${n+1} / ${total}`;document.getElementById('progress').style.width=`${((n+1)/total)*100}%`;document.getElementById('prevBtn').disabled=n===0;document.getElementById('nextBtn').disabled=n===total-1;document.querySelectorAll('.toc-item').forEach((t,i)=>{t.classList.toggle('active',i===n)})}
+function navigate(d){current=Math.max(0,Math.min(total-1,current+d));show(current)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')navigate(1);if(e.key==='ArrowRight')navigate(-1);if(e.key==='Escape')toggleTOC()});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)navigate(d>0?1:-1)});
+function toggleTOC(){document.getElementById('tocPanel').classList.toggle('open')}
+document.addEventListener('click',e=>{const p=document.getElementById('tocPanel');if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.classList.contains('toc-btn'))p.classList.remove('open')});
+(function(){const l=document.getElementById('tocList');slides.forEach((s,i)=>{const d=document.createElement('div');d.className='toc-item';d.innerHTML=`<span class="toc-num">${String(i+1).padStart(2,'0')}</span>${s.dataset.title}`;d.onclick=()=>{current=i;show(i);toggleTOC()};l.appendChild(d)})})();
+show(0);
+</script>
+
+
+
+
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "תוכן עניינים": {en: "Table of Contents", th: "สารบัญ"},
+  "שער": {en: "Cover", th: "หน้าปก"},
+  "רכש והנדסה": {en: "Procurement & Engineering", th: "การจัดซื้อและวิศวกรรม"},
+  "שרשרת אספקה, ציוד, עיצוב מערכות": {en: "Supply chain, equipment, system design", th: "ห่วงโซ่อุปทาน อุปกรณ์ การออกแบบระบบ"},
+  "מרץ 2026": {en: "March 2026", th: "มีนาคม 2026"},
+  "שרשרת אספקה": {en: "Supply Chain", th: "ห่วงโซ่อุปทาน"},
+  "סין → בנגקוק → סורת תאני → מעבורת → קו פנגן": {en: "China → Bangkok → Surat Thani → Ferry → Ko Phangan", th: "จีน → กรุงเทพฯ → สุราษฎร์ธานี → เรือเฟอร์รี่ → เกาะพะงัน"},
+  "יצרן": {en: "Manufacturer", th: "ผู้ผลิต"},
+  "מפיץ": {en: "Distributor", th: "ผู้จัดจำหน่าย"},
+  "מחסן BKK": {en: "BKK Warehouse", th: "คลังสินค้า BKK"},
+  "שחרור מכס": {en: "Customs clearance", th: "การผ่านพิธีศุลกากร"},
+  "איחסון זמני": {en: "Temporary storage", th: "การจัดเก็บชั่วคราว"},
+  "מעבורת": {en: "Ferry", th: "เรือเฟอร์รี่"},
+  "מחסן באי": {en: "Island Warehouse", th: "คลังสินค้าบนเกาะ"},
+  "אתר התקנה": {en: "Installation site", th: "สถานที่ติดตั้ง"},
+  "זמני אספקה": {en: "Lead Times", th: "ระยะเวลาการจัดส่ง"},
+  "שלב": {en: "Stage", th: "ขั้นตอน"},
+  "זמן": {en: "Time", th: "เวลา"},
+  "הזמנה → יצרן": {en: "Order → Manufacturer", th: "สั่งซื้อ → ผู้ผลิต"},
+  "מכס + שחרור": {en: "Customs + clearance", th: "ศุลกากร + การผ่านพิธี"},
+  "סה\"כ (חדש)": {en: "Total (new order)", th: "รวม (สั่งใหม่)"},
+  "מלאי במפיץ": {en: "Distributor stock", th: "สินค้าคงคลังที่ผู้จัดจำหน่าย"},
+  "לוגיסטיקה באי": {en: "Island Logistics", th: "โลจิสติกส์บนเกาะ"},
+  "אתגרים:": {en: "Challenges:", th: "ความท้าทาย:"},
+  "גודל משאית מוגבל (כבישים צרים)": {en: "Limited truck size (narrow roads)", th: "ขนาดรถบรรทุกจำกัด (ถนนแคบ)"},
+  "Ferry schedule: 3 יציאות/יום בלבד": {en: "Ferry schedule: 3 departures/day only", th: "ตารางเรือเฟอร์รี่: 3 เที่ยวต่อวันเท่านั้น"},
+  "מונסון: ferry מבוטל בסערות": {en: "Monsoon: ferry cancelled in storms", th: "มรสุม: เรือเฟอร์รี่ถูกยกเลิกในช่วงพายุ"},
+  "אין מנוף באי — פריקה ידנית": {en: "No crane on island — manual unloading", th: "ไม่มีเครนบนเกาะ — ขนถ่ายด้วยมือ"},
+  "אחסון: צריך מחסן יבש 20m²": {en: "Storage: need dry warehouse 20m²", th: "การจัดเก็บ: ต้องการโกดังแห้ง 20m²"},
+  "פאנלים": {en: "Panels", th: "แผงโซลาร์"},
+  "בחירת פאנלים — Longi Hi-MO": {en: "Panel Selection — Longi Hi-MO", th: "การเลือกแผงโซลาร์ — Longi Hi-MO"},
+  "למה Longi?": {en: "Why Longi?", th: "ทำไมต้อง Longi?"},
+  "נמוך יותר = פחות פאנלים לkWp": {en: "Higher wattage = fewer panels per kWp", th: "วัตต์สูงกว่า = ใช้แผงน้อยกว่าต่อ kWp"},
+  "22.3% יעילות": {en: "22.3% efficiency", th: "ประสิทธิภาพ 22.3%"},
+  "30 שנות אחריות ביצועים": {en: "30-year performance warranty", th: "การรับประกันประสิทธิภาพ 30 ปี"},
+  "12 שנות אחריות מוצר": {en: "12-year product warranty", th: "การรับประกันผลิตภัณฑ์ 12 ปี"},
+  "בנקים מכירים": {en: "banks recognize it", th: "ธนาคารให้การยอมรับ"},
+  "זמין": {en: "Available", th: "มีพร้อม"},
+  "מלאי קבוע ב-BayWa Thailand": {en: "Permanent stock at BayWa Thailand", th: "สต็อกถาวรที่ BayWa Thailand"},
+  "דור חדש. BC (Back Contact) technology. 23%+ יעילות. יקר יותר ~10%. לפרויקטים premium.": {en: "New generation. BC (Back Contact) technology. 23%+ efficiency. ~10% more expensive. For premium projects.", th: "รุ่นใหม่ เทคโนโลยี BC (Back Contact) ประสิทธิภาพ 23%+ ราคาแพงกว่า ~10% สำหรับโครงการระดับพรีเมียม"},
+  "למה Tier-1 חשוב": {en: "Why Tier-1 Matters", th: "ทำไม Tier-1 จึงสำคัญ"},
+  "בנקים (Krungsri, Bangkok Bank) מממנים רק Tier-1": {en: "Banks (Krungsri, Bangkok Bank) only finance Tier-1", th: "ธนาคาร (กรุงศรี, กรุงเทพ) ให้สินเชื่อเฉพาะ Tier-1"},
+  "אחריות אמיתית:": {en: "Real warranty:", th: "การรับประกันจริง:"},
+  "לא יעלם": {en: "won't disappear", th: "ไม่หายไปไหน"},
+  "ביצועים מוכחים:": {en: "Proven performance:", th: "ประสิทธิภาพที่พิสูจน์แล้ว:"},
+  "מעבדות עצמאיות (TÜV, UL)": {en: "Independent labs (TÜV, UL)", th: "ห้องปฏิบัติการอิสระ (TÜV, UL)"},
+  "חברות ביטוח דורשות Tier-1": {en: "Insurance companies require Tier-1", th: "บริษัทประกันภัยต้องการ Tier-1"},
+  "מפרט": {en: "Spec", th: "ข้อมูลจำเพาะ"},
+  "מידות": {en: "Dimensions", th: "ขนาด"},
+  "משקל": {en: "Weight", th: "น้ำหนัก"},
+  "חשוב בתאילנד!": {en: "Important in Thailand!", th: "สำคัญในประเทศไทย!"},
+  "אינוורטרים": {en: "Inverters", th: "อินเวอร์เตอร์"},
+  "סדרת SUN2000": {en: "SUN2000 Series", th: "ซีรีส์ SUN2000"},
+  "דגם": {en: "Model", th: "รุ่น"},
+  "הספק": {en: "Power", th: "กำลังไฟ"},
+  "שימוש": {en: "Use", th: "การใช้งาน"},
+  "עלות": {en: "Cost", th: "ราคา"},
+  "וילות קטנות": {en: "Small villas", th: "วิลล่าขนาดเล็ก"},
+  "וילות": {en: "Villas", th: "วิลล่า"},
+  "וילות גדולות": {en: "Large villas", th: "วิลล่าขนาดใหญ่"},
+  "עסקים קטנים": {en: "Small businesses", th: "ธุรกิจขนาดเล็ก"},
+  "רזורטים": {en: "Resorts", th: "รีสอร์ท"},
+  "רזורטים גדולים": {en: "Large resorts", th: "รีสอร์ทขนาดใหญ่"},
+  "מסחרי גדול": {en: "Large commercial", th: "เชิงพาณิชย์ขนาดใหญ่"},
+  "למה Huawei?": {en: "Why Huawei?", th: "ทำไมต้อง Huawei?"},
+  "ייצור מקסימלי": {en: "Maximum production", th: "การผลิตสูงสุด"},
+  "חוץ, עמיד לגשם": {en: "Outdoor, rain-resistant", th: "ภายนอก ทนต่อฝน"},
+  "תקשורת מובנית": {en: "Built-in communications", th: "การสื่อสารในตัว"},
+  "15 בהרחבה": {en: "15 with extended warranty", th: "15 ปีพร้อมการรับประกันเพิ่มเติม"},
+  "שירות בתאילנד": {en: "Service in Thailand", th: "บริการในประเทศไทย"},
+  "מחסן בבנגקוק": {en: "Warehouse in Bangkok", th: "คลังสินค้าในกรุงเทพฯ"},
+  "עלות/W מצוינת": {en: "Excellent cost/W", th: "ต้นทุน/W ที่ยอดเยี่ยม"},
+  "מומלץ בתאילנד (oversizing). חום מוריד ביצועי אינוורטר — oversizing DC מפצה.": {en: "Recommended in Thailand (oversizing). Heat reduces inverter performance — DC oversizing compensates.", th: "แนะนำในประเทศไทย (oversizing) ความร้อนลดประสิทธิภาพอินเวอร์เตอร์ — การ oversizing DC ชดเชย"},
+  "קונסטרוקציה": {en: "Mounting", th: "โครงยึด"},
+  "מערכות הרכבה — Marine Grade": {en: "Mounting Systems — Marine Grade", th: "ระบบโครงยึด — เกรดทางทะเล"},
+  "חומרים חובה (island environment)": {en: "Required materials (island environment)", th: "วัสดุที่จำเป็น (สภาพแวดล้อมบนเกาะ)"},
+  "כלל ברזל:": {en: "Iron rule:", th: "กฎเหล็ก:"},
+  "Koh Phangan = אוויר מלוח. ברגים מגולוונים = חלודה תוך 6-12 חודשים.": {en: "Koh Phangan = salty air. Galvanized bolts = rust within 6-12 months.", th: "เกาะพะงัน = อากาศเค็ม สลักเกลียวชุบกัลวาไนซ์ = เกิดสนิมภายใน 6-12 เดือน"},
+  "רכיב": {en: "Component", th: "ส่วนประกอบ"},
+  "חומר": {en: "Material", th: "วัสดุ"},
+  "סה\"כ": {en: "Total", th: "รวม"},
+  "לפי סוג גג": {en: "By Roof Type", th: "ตามประเภทหลังคา"},
+  "רעפים (Tile)": {en: "Tile Roof", th: "หลังคากระเบื้อง"},
+  "Hook מתחת לרעף → rail → clamp. לא קודחים דרך הרעף. נפוץ ברזורטים.": {en: "Hook under tile → rail → clamp. No drilling through tile. Common in resorts.", th: "ตะขอใต้กระเบื้อง → ราง → แคลมป์ ไม่ต้องเจาะผ่านกระเบื้อง พบมากในรีสอร์ท"},
+  "מתכת (Standing Seam)": {en: "Metal (Standing Seam)", th: "โลหะ (Standing Seam)"},
+  "Clamp ישירות על seam. בלי חורים = בלי נזילות. מחסנים ותעשייה.": {en: "Clamp directly on seam. No holes = no leaks. Warehouses and industry.", th: "แคลมป์โดยตรงบน seam ไม่มีรู = ไม่มีการรั่วซึม โกดังและอุตสาหกรรม"},
+  "מתכת (Corrugated)": {en: "Metal (Corrugated)", th: "โลหะ (ลอนคลื่น)"},
+  "L-foot + bolt דרך הגג. חובה: butyl tape + sealant. איטום קריטי.": {en: "L-foot + bolt through roof. Required: butyl tape + sealant. Sealing is critical.", th: "L-foot + สลักเกลียวผ่านหลังคา จำเป็น: butyl tape + sealant การปิดผนึกสำคัญมาก"},
+  "שטוח (Flat)": {en: "Flat Roof", th: "หลังคาแบน"},
+  "Tilt frame 10-15°. בלסט או עיגון. ניקוז גשם חשוב בטרופי.": {en: "Tilt frame 10-15°. Ballast or anchor. Rain drainage important in tropics.", th: "โครงเอียง 10-15° บาลาสต์หรือยึดด้วยสมอ การระบายน้ำฝนสำคัญในเขตร้อน"},
+  "עד 130 km/h. עיגון כל 1.2m. Rail spacing ≤ 1.4m.": {en: "Up to 130 km/h. Anchor every 1.2m. Rail spacing ≤ 1.4m.", th: "สูงสุด 130 km/h ยึดทุก 1.2m ระยะห่างราง ≤ 1.4m"},
+  "כבלי DC": {en: "DC Cables", th: "สายเคเบิล DC"},
+  "תעלות PVC בחוץ.": {en: "PVC conduits outdoors.", th: "ท่อ PVC ภายนอก"},
+  "רק מקוריים!": {en: "Originals only!", th: "ของแท้เท่านั้น!"},
+  "MC4 מזויפים = arc fault = שריפה.": {en: "Fake MC4 = arc fault = fire.", th: "MC4 ปลอม = arc fault = ไฟไหม้"},
+  "ליד האינוורטר. חובה לפי PEA.": {en: "Next to inverter. Mandatory per PEA.", th: "ติดตั้งข้างอินเวอร์เตอร์ บังคับตาม PEA"},
+  "קריטי באי — ברקים!": {en: "Critical on island — lightning!", th: "สำคัญมากบนเกาะ — ฟ้าผ่า!"},
+  "MCB C-curve. Solar dedicated breaker בלוח ראשי. גודל לפי אינוורטר output.": {en: "MCB C-curve. Solar dedicated breaker in main panel. Size per inverter output.", th: "MCB C-curve เบรกเกอร์เฉพาะโซลาร์ในตู้หลัก ขนาดตาม output ของอินเวอร์เตอร์"},
+  "הארקה (Earthing)": {en: "Earthing (Grounding)", th: "การต่อสายดิน"},
+  "סה\"כ BOS/kWp:": {en: "Total BOS/kWp:", th: "รวม BOS/kWp:"},
+  "ספקים": {en: "Suppliers", th: "ผู้จัดหา"},
+  "ספקים ומפיצים": {en: "Suppliers & Distributors", th: "ผู้จัดหาและผู้จัดจำหน่าย"},
+  "מפיצים ראשיים": {en: "Main Distributors", th: "ผู้จัดจำหน่ายหลัก"},
+  "מפיץ Tier-1 מוביל.": {en: "Leading Tier-1 distributor.", th: "ผู้จัดจำหน่าย Tier-1 ชั้นนำ"},
+  "מלאי בבנגקוק. אשראי 30-60 יום לשותפים. הדרכות טכניות.": {en: "Stock in Bangkok. 30-60 day credit for partners. Technical training.", th: "สต็อกในกรุงเทพฯ เครดิต 30-60 วันสำหรับพันธมิตร อบรมเทคนิค"},
+  "מפיץ מקומי ותיק. מלאי רחב. מחירים תחרותיים על volumes. משלוח לכל תאילנד.": {en: "Established local distributor. Wide stock. Competitive pricing on volumes. Delivery across Thailand.", th: "ผู้จัดจำหน่ายท้องถิ่นที่มีประสบการณ์ สต็อกกว้าง ราคาแข่งขันสำหรับปริมาณมาก จัดส่งทั่วประเทศไทย"},
+  "יצרן תאילנדי של אינוורטרים + UPS. alternative מקומי. שירות מהיר. מחיר נמוך.": {en: "Thai manufacturer of inverters + UPS. Local alternative. Fast service. Low price.", th: "ผู้ผลิตไทยของอินเวอร์เตอร์ + UPS ทางเลือกในท้องถิ่น บริการรวดเร็ว ราคาต่ำ"},
+  "ישיר מיצרן": {en: "Direct from Manufacturer", th: "ตรงจากผู้ผลิต"},
+  "MOQ: 1 container (20ft = ~550 panels = ~320kWp). משתלם מ-10 פרויקטים+. Lead time: 4-6 שבועות.": {en: "MOQ: 1 container (20ft = ~550 panels = ~320kWp). Worth it from 10+ projects. Lead time: 4-6 weeks.", th: "MOQ: 1 ตู้คอนเทนเนอร์ (20ft = ~550 แผง = ~320kWp) คุ้มค่าตั้งแต่ 10+ โครงการ Lead time: 4-6 สัปดาห์"},
+  "MOQ: 20 units per model. נציגות בבנגקוק. warranty direct. Training programs.": {en: "MOQ: 20 units per model. Representative in Bangkok. Direct warranty. Training programs.", th: "MOQ: 20 หน่วยต่อรุ่น ตัวแทนในกรุงเทพฯ การรับประกันโดยตรง โปรแกรมฝึกอบรม"},
+  "אסטרטגיה:": {en: "Strategy:", th: "กลยุทธ์:"},
+  "שנה 1: BayWa (אין MOQ, מלאי מיידי)": {en: "Year 1: BayWa (no MOQ, immediate stock)", th: "ปีที่ 1: BayWa (ไม่มี MOQ สต็อกทันที)"},
+  "שנה 2+: Direct import (מרווח גבוה יותר)": {en: "Year 2+: Direct import (higher margin)", th: "ปีที่ 2+: นำเข้าตรง (กำไรมากขึ้น)"},
+  "חיסכון direct: 15-25% vs מפיץ": {en: "Direct saving: 15-25% vs distributor", th: "ประหยัดจากการสั่งตรง: 15-25% เทียบกับผู้จัดจำหน่าย"},
+  "מכס וייבוא": {en: "Customs & Import", th: "ศุลกากรและการนำเข้า"},
+  "מכס וייבוא — הטבות מפתיעות": {en: "Customs & Import — Surprising Benefits", th: "ศุลกากรและการนำเข้า — สิทธิประโยชน์ที่น่าประหลาดใจ"},
+  "שיעורי מכס": {en: "Customs Rates", th: "อัตราภาษีศุลกากร"},
+  "פריט": {en: "Item", th: "รายการ"},
+  "מכס רגיל": {en: "Standard Duty", th: "ภาษีปกติ"},
+  "הטבה": {en: "Benefit", th: "สิทธิประโยชน์"},
+  "פאנלים סולאריים": {en: "Solar panels", th: "แผงโซลาร์เซลล์"},
+  "כבלים חשמל": {en: "Electrical cables", th: "สายไฟ"},
+  "קונסטרוקציה AL": {en: "AL mounting structure", th: "โครงยึดอลูมิเนียม"},
+  "הטבות = VAT exempt on imported machinery.": {en: "Benefits = VAT exempt on imported machinery.", th: "สิทธิประโยชน์ = ยกเว้น VAT สำหรับเครื่องจักรนำเข้า"},
+  "תהליך ייבוא": {en: "Import Process", th: "กระบวนการนำเข้า"},
+  "הזמנה + PO ליצרן": {en: "Order + PO to manufacturer", th: "สั่งซื้อ + PO ไปยังผู้ผลิต"},
+  "תשלום (30% מקדמה, 70% T/T before ship)": {en: "Payment (30% advance, 70% T/T before ship)", th: "การชำระเงิน (30% มัดจำ, 70% T/T ก่อนส่งสินค้า)"},
+  "Sea freight — Shenzhen → Laem Chabang (12-16 ימים)": {en: "Sea freight — Shenzhen → Laem Chabang (12-16 days)", th: "ขนส่งทางเรือ — เซินเจิ้น → แหลมฉบัง (12-16 วัน)"},
+  "Customs broker — שחרור מכס (3-5 ימים)": {en: "Customs broker — customs clearance (3-5 days)", th: "โบรกเกอร์ศุลกากร — ผ่านพิธีศุลกากร (3-5 วัน)"},
+  "משאית → Surat Thani (8 שעות)": {en: "Truck → Surat Thani (8 hours)", th: "รถบรรทุก → สุราษฎร์ธานี (8 ชั่วโมง)"},
+  "Ferry → Koh Phangan (2.5 שעות)": {en: "Ferry → Koh Phangan (2.5 hours)", th: "เรือเฟอร์รี่ → เกาะพะงัน (2.5 ชั่วโมง)"},
+  "עם הטבות ממשלתיות:": {en: "With government benefits:", th: "พร้อมสิทธิประโยชน์จากรัฐบาล:"},
+  "0% מכס + 0% VAT = חיסכון ~12% על ייבוא ציוד סולארי.": {en: "0% customs + 0% VAT = ~12% savings on solar equipment import.", th: "0% ภาษีศุลกากร + 0% VAT = ประหยัด ~12% จากการนำเข้าอุปกรณ์โซลาร์"},
+  "תהליך עיצוב": {en: "Design Process", th: "กระบวนการออกแบบ"},
+  "תהליך עיצוב מערכת": {en: "System Design Process", th: "กระบวนการออกแบบระบบ"},
+  "6 שלבים": {en: "6 Steps", th: "6 ขั้นตอน"},
+  "תמונות drone, מדידות, חשבונות חשמל, סוג גג": {en: "Drone photos, measurements, electricity bills, roof type", th: "ภาพถ่ายโดรน การวัด ใบเรียกเก็บค่าไฟ ประเภทหลังคา"},
+  "ייצור שנתי, PR, הפסדים (temp, shading, soiling).": {en: "Annual production, PR, losses (temp, shading, soiling).", th: "การผลิตประจำปี PR การสูญเสีย (อุณหภูมิ เงา ความสกปรก)"},
+  "כמות פאנלים/string, Voc range vs MPPT window, temperature correction (min 22°C, max 45°C cell)": {en: "Number of panels/string, Voc range vs MPPT window, temperature correction (min 22°C, max 45°C cell)", th: "จำนวนแผง/string ช่วง Voc เทียบกับช่วง MPPT การแก้ไขอุณหภูมิ (ต่ำสุด 22°C สูงสุด 45°C cell)"},
+  "סכמה חשמלית: DC strings → isolators → inverter → AC isolator → SPD → breaker → grid": {en: "Electrical diagram: DC strings → isolators → inverter → AC isolator → SPD → breaker → grid", th: "แผนผังไฟฟ้า: DC strings → isolators → inverter → AC isolator → SPD → breaker → grid"},
+  "פריסת פאנלים על הגג. מרווחים: wind gaps, fire access, maintenance access": {en: "Panel layout on roof. Gaps: wind gaps, fire access, maintenance access", th: "การจัดวางแผงบนหลังคา ระยะห่าง: ช่องลม การเข้าถึงกรณีไฟไหม้ การเข้าถึงเพื่อซ่อมบำรุง"},
+  "Bill of Materials מלא → הצעת מחיר → CRM → PDF ללקוח": {en: "Full Bill of Materials → Quote → CRM → PDF to client", th: "Bill of Materials ครบถ้วน → ใบเสนอราคา → CRM → PDF ถึงลูกค้า"},
+  "כלי תכנון": {en: "Design Tools", th: "เครื่องมือออกแบบ"},
+  "סימולציה שעתית. Shading scene 3D. Bankable reports.": {en: "Hourly simulation. 3D shading scene. Bankable reports.", th: "การจำลองรายชั่วโมง ฉากเงา 3D รายงานที่ธนาคารยอมรับ"},
+  "רישיון: CHF 450/שנה": {en: "License: CHF 450/year", th: "ใบอนุญาต: CHF 450/ปี"},
+  "Roof Scanner מובנה. הצעות מחיר אוטומטיות. BOM generator.": {en: "Built-in Roof Scanner. Automatic quotes. BOM generator.", th: "Roof Scanner ในตัว ใบเสนอราคาอัตโนมัติ ตัวสร้าง BOM"},
+  "חינם (שלנו)": {en: "Free (ours)", th: "ฟรี (ของเรา)"},
+  "$95/חודש": {en: "$95/month", th: "$95/เดือน"},
+  "$500/שנה": {en: "$500/year", th: "$500/ปี"},
+  "תקנים": {en: "Standards", th: "มาตรฐาน"},
+  "תקנים ודרישות טכניות": {en: "Standards & Technical Requirements", th: "มาตรฐานและข้อกำหนดทางเทคนิค"},
+  "תקנים בינלאומיים": {en: "International Standards", th: "มาตรฐานสากล"},
+  "תקן": {en: "Standard", th: "มาตรฐาน"},
+  "נושא": {en: "Subject", th: "หัวข้อ"},
+  "רלוונטיות": {en: "Relevance", th: "ความเกี่ยวข้อง"},
+  "פאנלים — design qualification": {en: "Panels — design qualification", th: "แผงโซลาร์ — คุณสมบัติการออกแบบ"},
+  "פאנלים — safety": {en: "Panels — safety", th: "แผงโซลาร์ — ความปลอดภัย"},
+  "אינוורטרים — safety": {en: "Inverters — safety", th: "อินเวอร์เตอร์ — ความปลอดภัย"},
+  "חובה": {en: "Mandatory", th: "บังคับ"},
+  "חובה PEA": {en: "Mandatory (PEA)", th: "บังคับโดย PEA"},
+  "מומלץ": {en: "Recommended", th: "แนะนำ"},
+  "מומלץ (באי!)": {en: "Recommended (on island!)", th: "แนะนำ (บนเกาะ!)"},
+  "דרישות PEA": {en: "PEA Requirements", th: "ข้อกำหนดของ PEA"},
+  "Anti-islanding protection (חובה)": {en: "Anti-islanding protection (mandatory)", th: "การป้องกัน Anti-islanding (บังคับ)"},
+  "עומד בכל דרישות PEA out-of-the-box. Anti-islanding certified. Plug and play.": {en: "Meets all PEA requirements out-of-the-box. Anti-islanding certified. Plug and play.", th: "ตรงตามข้อกำหนด PEA ทุกข้อแบบ out-of-the-box ผ่านการรับรอง Anti-islanding ใช้งานได้ทันที"},
+  "מבנה עלויות": {en: "Cost Structure", th: "โครงสร้างต้นทุน"},
+  "מבנה עלויות — ฿/kWp": {en: "Cost Structure — ฿/kWp", th: "โครงสร้างต้นทุน — ฿/kWp"},
+  "עלות ציוד": {en: "Equipment cost", th: "ต้นทุนอุปกรณ์"},
+  "מחיר EPC ללקוח": {en: "EPC price to client", th: "ราคา EPC สำหรับลูกค้า"},
+  "מרווח גולמי": {en: "Gross margin", th: "กำไรขั้นต้น"},
+  "רווח גולמי": {en: "Gross profit", th: "กำไรขั้นต้น"},
+  "פאנלים Longi": {en: "Longi Panels", th: "แผง Longi"},
+  "אינוורטר Huawei": {en: "Huawei Inverter", th: "อินเวอร์เตอร์ Huawei"},
+  "ציוד + עבודה (฿12K/kWp):": {en: "Equipment + labor (฿12K/kWp):", th: "อุปกรณ์ + แรงงาน (฿12K/kWp):"},
+  "כולל עלות התקנה. Direct import (שנה 2+): עלות ציוד בלבד יורדת ל-฿8K/kWp (חיסכון ~15%). מרווח עולה ל-65%+.": {en: "Includes installation cost. Direct import (Year 2+): equipment cost alone drops to ฿8K/kWp (saving ~15%). Margin rises to 65%+.", th: "รวมค่าติดตั้ง นำเข้าตรง (ปีที่ 2+): ต้นทุนอุปกรณ์อย่างเดียวลดลงเหลือ ฿8K/kWp (ประหยัด ~15%) กำไรเพิ่มขึ้นเป็น 65%+"},
+  "ניהול מלאי": {en: "Inventory Management", th: "การจัดการสินค้าคงคลัง"},
+  "ניהול מלאי באי": {en: "Island Inventory Management", th: "การจัดการสินค้าคงคลังบนเกาะ"},
+  "מלאי רצוי (20kWp)": {en: "Desired inventory (20kWp)", th: "สินค้าคงคลังที่ต้องการ (20kWp)"},
+  "כמות": {en: "Quantity", th: "จำนวน"},
+  "ערך": {en: "Value", th: "มูลค่า"},
+  "כללי מלאי": {en: "Inventory Rules", th: "กฎการจัดการสินค้าคงคลัง"},
+  "מספיק ל-2 וילות או 1 עסק קטן": {en: "Enough for 2 villas or 1 small business", th: "เพียงพอสำหรับ 2 วิลล่าหรือ 1 ธุรกิจขนาดเล็ก"},
+  "כשמלאי < 10kWp → הזמנה": {en: "When stock < 10kWp → reorder", th: "เมื่อสต็อก < 10kWp → สั่งซื้อ"},
+  "לפני מונסון (ספט):": {en: "Before monsoon (Sept):", th: "ก่อนมรสุม (ก.ย.):"},
+  "מחסן:": {en: "Warehouse:", th: "โกดัง:"},
+  "20m², יבש, מוצל, מאוורר, מנעול": {en: "20m², dry, shaded, ventilated, locked", th: "20m² แห้ง ร่มเย็น มีการระบายอากาศ ล็อค"},
+  "ביטוח מלאי:": {en: "Inventory insurance:", th: "ประกันสินค้าคงคลัง:"},
+  "שריפה, גניבה, הצפה": {en: "fire, theft, flooding", th: "ไฟไหม้ การโจรกรรม น้ำท่วม"},
+  "תזרים מזומנים:": {en: "Cash flow:", th: "กระแสเงินสด:"},
+  "מלאי = הון חסום ฿421K. הכנסה מפרויקט 20kWp = ฿700K.": {en: "Inventory = locked capital ฿421K. Revenue from 20kWp project = ฿700K.", th: "สินค้าคงคลัง = เงินทุนถูกล็อค ฿421K รายได้จากโครงการ 20kWp = ฿700K"},
+  "ROI על מלאי: 66% תוך חודש.": {en: "ROI on inventory: 66% within a month.", th: "ROI จากสินค้าคงคลัง: 66% ภายในหนึ่งเดือน"},
+  "→ הקודם": {en: "← Prev", th: "← ก่อนหน้า"},
+  "הבא ←": {en: "Next →", th: "ถัดไป →"},
+  "3-5 ימי עבודה": {en: "3-5 working days", th: "3-5 วันทำงาน"},
+  "8 שעות": {en: "8 hours", th: "8 ชั่วโมง"},
+  "2.5 שעות": {en: "2.5 hours", th: "2.5 ชั่วโมง"},
+  "3-5 שבועות": {en: "3-5 weeks", th: "3-5 สัปดาห์"},
+  "3-5 ימים": {en: "3-5 days", th: "3-5 วัน"},
+  "monitoring חינם, fleet mgmt": {en: "free monitoring, fleet mgmt", th: "ติดตามฟรี fleet mgmt"},
+  "סין": {en: "China", th: "จีน"},
+  "2-4 שבועות": {en: "2-4 weeks", th: "2-4 สัปดาห์"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

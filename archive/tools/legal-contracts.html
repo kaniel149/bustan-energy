@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Ko Phangan Solar — משפטי, חוזים והסכמים</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);overflow:hidden;height:100vh}
+.slide-container{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:40px 60px;opacity:0;transform:translateX(100px);transition:all .6s cubic-bezier(.23,1,.32,1);pointer-events:none;overflow-y:auto;padding-bottom:80px}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit{opacity:0;transform:translateX(-100px)}
+.slide-cover{background:linear-gradient(135deg,var(--ocean),var(--night));justify-content:center;align-items:center;text-align:center}
+.slide-dark{background:var(--night)}.slide-ocean{background:linear-gradient(180deg,var(--ocean),var(--night))}
+.slide-reef{background:linear-gradient(135deg,#0D3B2E,var(--night))}.slide-gold{background:linear-gradient(135deg,#3D2E0A,var(--night))}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px 30px;background:rgba(13,33,55,.95);backdrop-filter:blur(10px);border-top:1px solid rgba(232,168,32,.2);z-index:100}
+.nav-btn{background:none;border:2px solid var(--gold);color:var(--gold);padding:8px 24px;border-radius:6px;cursor:pointer;font-family:'Heebo';font-size:14px;font-weight:500;transition:all .3s}
+.nav-btn:hover{background:var(--gold);color:var(--night)}.nav-btn:disabled{opacity:.3;cursor:default}
+.slide-counter{font-family:'Space Grotesk';color:rgba(255,255,255,.5);font-size:14px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--gold);transition:width .4s;z-index:101}
+.toc-btn{position:fixed;top:20px;left:20px;background:rgba(232,168,32,.15);border:1px solid rgba(232,168,32,.3);color:var(--gold);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:102}
+.toc-btn:hover{background:var(--gold);color:var(--night)}
+.toc-panel{position:fixed;top:0;left:-350px;width:350px;height:100vh;background:rgba(13,33,55,.98);backdrop-filter:blur(20px);border-right:1px solid rgba(232,168,32,.2);z-index:103;transition:left .4s;padding:60px 30px 30px;overflow-y:auto}
+.toc-panel.open{left:0}
+.toc-item{padding:10px 16px;margin:4px 0;border-radius:8px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.7);transition:all .2s;display:flex;align-items:center;gap:10px}
+.toc-item:hover{background:rgba(232,168,32,.1);color:var(--white)}.toc-item.active{background:rgba(232,168,32,.2);color:var(--gold)}
+.toc-num{font-family:'Space Grotesk';font-weight:700;font-size:12px;color:var(--gold);min-width:24px}
+h1{font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.1;margin-bottom:16px}
+h2{font-size:clamp(24px,3.5vw,40px);font-weight:700;line-height:1.2;margin-bottom:12px}
+h3{font-size:clamp(16px,2vw,22px);font-weight:700;margin-bottom:8px}
+.subtitle{font-size:clamp(16px,2vw,22px);font-weight:300;opacity:.8;margin-bottom:24px}
+.gold{color:var(--gold)}.reef-text{color:#2ED89A}.coral-text{color:var(--coral)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;transition:all .3s}
+.card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.card-icon{font-size:28px;margin-bottom:10px}.card h3{font-size:16px;margin-bottom:6px}.card p{font-size:13px;opacity:.7;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:rgba(232,168,32,.15);padding:10px 14px;text-align:right;font-weight:600;white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
+tr:hover td{background:rgba(255,255,255,.03)}
+.alert{padding:16px 20px;border-radius:10px;margin:12px 0;font-size:14px;line-height:1.6}
+.alert-warn{background:rgba(232,93,58,.15);border-right:3px solid var(--coral)}
+.alert-info{background:rgba(232,168,32,.1);border-right:3px solid var(--gold)}
+.alert-success{background:rgba(46,216,154,.1);border-right:3px solid #2ED89A}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}.slide{padding:24px 20px}}
+.slide::-webkit-scrollbar{width:4px}.slide::-webkit-scrollbar-thumb{background:rgba(232,168,32,.3);border-radius:2px}
+.section-num{font-family:'Space Grotesk';font-size:64px;font-weight:700;color:var(--gold);opacity:.15;position:absolute;top:20px;left:40px}
+.big-num{font-family:'Space Grotesk';font-size:clamp(36px,6vw,72px);font-weight:700;color:var(--gold)}
+.stat-label{font-size:14px;opacity:.6;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;margin:20px 0;text-align:center}
+
+.slide-img{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:12px 0;border:1px solid rgba(232,168,32,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.slide-img-sm{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;border:1px solid rgba(255,255,255,.1)}
+.img-float{float:left;width:45%;max-height:240px;object-fit:cover;border-radius:12px;margin:0 20px 12px 0;border:1px solid rgba(232,168,32,.15)}
+.img-row{display:flex;gap:12px;margin:12px 0}.img-row img{flex:1;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+
+
+
+<div class="progress-bar" id="progress"></div>
+<button class="toc-btn" onclick="toggleTOC()">☰</button>
+<div class="toc-panel" id="tocPanel"><h3 style="color:var(--gold);margin-bottom:20px;">תוכן עניינים</h3><div id="tocList"></div></div>
+<div class="slide-container" id="slides">
+
+<!-- SLIDE 0: Cover -->
+<div class="slide slide-cover active" data-title="שער">
+  <div style="margin-bottom:30px">
+    <div style="font-size:56px;margin-bottom:16px">⚖️📑</div>
+    <h1>משפטי, חוזים והסכמים<br><span class="gold">Ko Phangan Solar</span></h1>
+    <p class="subtitle">מסגרת חוקית לעסקי סולאר בתאילנד</p>
+  </div>
+  <p style="opacity:.4;font-size:13px">TM Energy — מרץ 2026</p>
+</div>
+
+<!-- SLIDE 1: Legal Framework -->
+<div class="slide slide-ocean" data-title="מסגרת חוקית">
+  <span class="section-num">01</span>
+  <h2>⚖️ מסגרת חוקית — סולאר בתאילנד 2026</h2>
+  <p class="subtitle">מה מותר, מה אסור, מה השתנה</p>
+  <div class="two-col">
+    <div>
+      <h3>רגולציה נוכחית</h3>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3 class="reef-text">✅ אין צורך בהיתר בנייה (11/2025)</h3>
+        <p>מערכות סולאריות על גגות פטורות מהיתר בנייה. שינוי דרמטי — חוסך 3-6 חודשים.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3 class="reef-text">✅ אין רישיון מפעל (12/2024)</h3>
+        <p>Factory License ≤ 1MW — בוטל. גם מערכות מסחריות גדולות — בלי רישיון.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(232,168,32,.3)">
+        <h3 class="gold">⚡ Net Metering — פעיל</h3>
+        <p>PEA מאפשר 1:1 net metering. עודף ייצור מפחית חשבון. ללא פיצוי על עודף שנתי.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(100,150,255,.3)">
+        <h3 style="color:#6496FF">📋 רק תיאום PEA נדרש</h3>
+        <p>הגשת טפסים + SLD + מפרט טכני. בדיקה בשטח. אישור תוך 7-14 יום.</p>
+      </div>
+    </div>
+    <div>
+      <h3>חוקים רלוונטיים</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>חוק / תקנה</th><th>רלוונטיות</th></tr>
+          <tr><td>Foreign Business Act (FBA)</td><td>הגבלות בעלות זרה</td></tr>
+          <tr><td>Government Investment Incentives</td><td>הטבות מס ותמריצים</td></tr>
+          <tr><td>Energy Industry Act 2007</td><td>רישוי ייצור חשמל</td></tr>
+          <tr><td>Building Control Act</td><td>פטור מ-11/2025</td></tr>
+          <tr><td>Civil & Commercial Code</td><td>חוזים, אחריות, ביטוח</td></tr>
+          <tr><td>Revenue Code</td><td>מס, VAT, ניכוי מואץ</td></tr>
+          <tr><td>Labor Protection Act</td><td>העסקת עובדים</td></tr>
+          <tr><td>Workmen's Compensation Act</td><td>ביטוח תאונות עבודה</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Company Structure -->
+<!-- Company structure slide removed — to be determined with TM Developers -->
+
+<!-- SLIDE 3: EPC Contract -->
+<div class="slide slide-ocean" data-title="חוזה EPC">
+<img src="visuals/legal-02-contract.png" class="slide-img" alt="Contract signing">
+  <span class="section-num">03</span>
+  <h2>📋 חוזה EPC — מכירה ישירה</h2>
+  <p class="subtitle">סעיפים חובה בכל חוזה התקנה</p>
+  <div class="two-col">
+    <div>
+      <h3>סעיפים עיקריים</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><span class="gold">1. הגדרת הפרויקט:</span> כתובת, גודל מערכת (kWp), ציוד ספציפי (model numbers)</p>
+        <p><span class="gold">2. היקף העבודה:</span> עיצוב, רכש, הרכבה, חיבור PEA, commissioning, הדרכה</p>
+        <p><span class="gold">3. לוח זמנים:</span> תאריך התחלה, אבני דרך, תאריך סיום. פיצוי על איחור: ฿X/יום</p>
+        <p><span class="gold">4. מחיר ותשלום:</span> סכום כולל, מע"מ 7%, תנאי תשלום (30/40/30)</p>
+        <p><span class="gold">5. אחריות:</span> עבודה 10 שנים, פאנלים 25 שנים (יצרן), אינוורטר 10 שנים (יצרן)</p>
+        <p><span class="gold">6. ביצועים מובטחים:</span> Performance Ratio ≥ 75%, ייצור שנתי מינימלי (kWh)</p>
+        <p><span class="gold">7. ביטוח:</span> CAR במהלך ההתקנה, אחריות צד ג'</p>
+        <p><span class="gold">8. סיום והפרה:</span> תנאי ביטול, החזר כספי, סנקציות</p>
+      </div>
+    </div>
+    <div>
+      <h3>תנאי תשלום סטנדרטיים</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>30% — מקדמה</h3>
+        <p>עם חתימת חוזה. מממן הזמנת ציוד.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>40% — אמצע עבודה</h3>
+        <p>לאחר השלמת קונסטרוקציה + פאנלים על הגג.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>30% — חיבור לרשת</h3>
+        <p>לאחר אישור PEA + commissioning + מסירת תיעוד.</p>
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <strong>חשוב:</strong> חוזה חייב להיות <strong>דו-לשוני (EN + TH)</strong>. הגרסה התאילנדית גוברת במקרה של סתירה. שפה משפטית מקומית חובה.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: PPA Agreement -->
+<div class="slide slide-reef" data-title="הסכם PPA/ESCO">
+  <span class="section-num">04</span>
+  <h2>📜 הסכם PPA/ESCO — <span class="gold">הכנסה חוזרת</span></h2>
+  <p class="subtitle">Power Purchase Agreement — 15 שנים</p>
+  <div class="two-col">
+    <div>
+      <h3>סעיפים קריטיים</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><span class="gold">1. תקופה:</span> 15 שנים. אופציה להארכה.</p>
+        <p><span class="gold">2. תעריף:</span> ฿4.50/kWh (מול PEA ฿6-8). <strong>הצמדה: CPI או עליית תעריפי PEA — הגבוה מביניהם (~3%/שנה).</strong></p>
+        <p><span class="gold">3. בעלות:</span> Ko Phangan Solar = בעלים של המערכת. הלקוח = צרכן.</p>
+        <p><span class="gold">4. תחזוקה:</span> אחריות שלנו. O&M כלול בתעריף.</p>
+        <p><span class="gold">5. ביצועים:</span> מינימום 80% availability/שנה. פיצוי אם פחות.</p>
+        <p><span class="gold">6. גישה לאתר:</span> זכות גישה לגג 24/7 לתחזוקה. הודעה 24 שעות מראש.</p>
+        <p><span class="gold">7. העברת בעלות:</span> בתום 15 שנה — מערכת עוברת ללקוח ב-฿1 (nominal).</p>
+        <p><span class="gold">8. סיום מוקדם:</span> קנס = שווי חוזה שנותר × 70%.</p>
+        <p><span class="gold">9. ביטוח רכוש:</span> שלנו — ציוד. לקוח — מבנה.</p>
+      </div>
+    </div>
+    <div>
+      <h3>דוגמה: רזורט 50kWp</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>Year 1</h3>
+        <p>ייצור: 82,000 kWh × ฿4.50 = <strong class="gold">฿369,000</strong></p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Year 5 (הצמדה ~3%/שנה)</h3>
+        <p>82,000 × ฿5.07 = <strong class="gold">฿415,740</strong></p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Year 10</h3>
+        <p>78,000 (degradation) × ฿5.87 = <strong class="gold">฿457,860</strong></p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>Year 15</h3>
+        <p>76,000 (degradation) × ฿6.81 = <strong class="gold">฿517,560</strong></p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3 class="reef-text">סה"כ 15 שנים</h3>
+        <p style="font-size:24px;font-weight:700;color:#2ED89A">฿6.6M הכנסות</p>
+        <p>עלות מערכת: ฿600K<br><strong>Payback: 1.8 שנים</strong></p>
+      </div>
+      <div class="alert alert-info">
+        <strong>יתרון מימוני:</strong> ניתן למנף את ה-PPA כביטחון להלוואה בנקאית. הבנק רואה 15 שנות הכנסה מובטחת + הצמדה.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: O&M Agreement -->
+<div class="slide slide-dark" data-title="הסכם O&M">
+  <span class="section-num">05</span>
+  <h2>🔧 הסכם תחזוקה (O&M)</h2>
+  <div class="two-col">
+    <div>
+      <h3>3 חבילות</h3>
+      <div class="card" style="margin:8px 0">
+        <h3>Basic — ฿1,500/חודש</h3>
+        <p>ניטור מרחוק 24/7, דו"ח חודשי, ביקור שנתי אחד, תגובה 48 שעות.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>Standard — ฿3,000/חודש</h3>
+        <p>כל מה ב-Basic + ניקוי פאנלים רבעוני, בדיקה חשמלית חצי שנתית, תגובה 24 שעות. <strong>מומלץ.</strong></p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3>Premium — ฿5,000/חודש</h3>
+        <p>כל מה ב-Standard + SLA 4 שעות, חלקי חילוף כלולים (אינוורטר loan), ביטוח ציוד, דו"ח שבועי.</p>
+      </div>
+    </div>
+    <div>
+      <h3>סעיפי חוזה O&M</h3>
+      <div style="font-size:13px;line-height:2">
+        <p>▸ תקופה: 12 חודשים, חידוש אוטומטי</p>
+        <p>▸ SLA: זמן תגובה לפי חבילה</p>
+        <p>▸ היקף: ניקוי, בדיקות, תיקונים, ניטור</p>
+        <p>▸ מה לא כלול: נזק מכוח עליון, vandalism, שדרוגים</p>
+        <p>▸ ביטול: הודעה 30 יום מראש</p>
+        <p>▸ הצמדה: 3% העלאה שנתית</p>
+        <p>▸ דיווח: דו"ח חודשי (kWh, health, issues)</p>
+      </div>
+      <div class="alert alert-success" style="margin-top:12px">
+        <strong>פוטנציאל MRR:</strong><br>
+        20 לקוחות × Standard = <strong>฿60K/חודש</strong><br>
+        = <strong>฿720K/שנה</strong> הכנסה חוזרת
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Warranties -->
+<div class="slide slide-ocean" data-title="אחריות">
+  <span class="section-num">06</span>
+  <h2>🛡️ ניהול אחריות</h2>
+  <div class="two-col">
+    <div>
+      <h3>מפת אחריות</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>רכיב</th><th>אחריות</th><th>אחראי</th><th>תהליך תביעה</th></tr>
+          <tr><td>פאנלים — ביצועים</td><td>25 שנים (≥80% ביצועים)</td><td>Longi</td><td>IV test → דו"ח → RMA</td></tr>
+          <tr><td>פאנלים — מוצר</td><td>12 שנים</td><td>Longi</td><td>בדיקה ויזואלית → RMA</td></tr>
+          <tr><td>אינוורטר</td><td>10 שנים (15 בהרחבה)</td><td>Huawei</td><td>Error log → support ticket</td></tr>
+          <tr><td>קונסטרוקציה</td><td>10 שנים</td><td>אנחנו</td><td>בדיקה שנתית</td></tr>
+          <tr><td>עבודת חשמל</td><td>10 שנים</td><td>אנחנו</td><td>בדיקה + תיקון</td></tr>
+          <tr><td>BOS (כבלים, מחברים)</td><td>5 שנים</td><td>אנחנו</td><td>החלפה</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>תהליך RMA</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><span class="gold">1.</span> לקוח מדווח על תקלה (Line/WhatsApp/CRM)</p>
+        <p><span class="gold">2.</span> צוות מאבחן (מרחוק → שטח)</p>
+        <p><span class="gold">3.</span> זיהוי רכיב פגום + תיעוד</p>
+        <p><span class="gold">4.</span> הגשת RMA ליצרן (Longi: 14-21 ימים, Huawei: 5-7)</p>
+        <p><span class="gold">5.</span> קבלת החלפה + התקנה</p>
+        <p><span class="gold">6.</span> בינתיים: רכיב loan מהמלאי שלנו</p>
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <strong>באי:</strong> RMA לוקח יותר זמן (משלוח). חובה להחזיק מלאי חלפים: 2 פאנלים + 1 אינוורטר + SPDs + MC4.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Insurance -->
+<div class="slide slide-gold" data-title="ביטוח">
+<img src="visuals/legal-07-storm.png" class="slide-img" alt="Storm damage">
+  <span class="section-num">07</span>
+  <h2>🛡️ ביטוח — חובה ומומלץ</h2>
+  <div class="card-grid">
+    <div class="card" style="border-color:var(--coral)">
+      <div class="card-icon">🏗️</div>
+      <h3>CAR — Contractor All Risk</h3>
+      <p><strong>חובה בכל אתר.</strong> מכסה: נזק לציוד, נזק לרכוש הלקוח, תאונות עבודה, אסונות טבע.</p>
+      <p style="margin-top:8px">עלות: ~0.3% מערך הפרויקט<br>דוגמה: פרויקט ฿1M → ฿3,000</p>
+    </div>
+    <div class="card" style="border-color:rgba(100,150,255,.3)">
+      <div class="card-icon">🤝</div>
+      <h3>אחריות צד שלישי</h3>
+      <p>מכסה: נזק לשכנים, עוברי אורח, רכוש צמוד. <strong>חובה חוקית.</strong></p>
+      <p style="margin-top:8px">כיסוי: ฿5M/אירוע<br>עלות: ~฿15K/שנה</p>
+    </div>
+    <div class="card" style="border-color:rgba(46,216,154,.3)">
+      <div class="card-icon">⚡</div>
+      <h3>ביטוח ציוד (PPA)</h3>
+      <p>כשהמערכת שלנו על גג הלקוח — <strong>אנחנו מבטחים.</strong> ברקים, שריפה, גניבה, סערות.</p>
+      <p style="margin-top:8px">כיסוי: שווי מלא<br>עלות: ~1% מערך/שנה</p>
+    </div>
+    <div class="card" style="border-color:rgba(232,168,32,.3)">
+      <div class="card-icon">👷</div>
+      <h3>Workmen's Compensation</h3>
+      <p><strong>חובה חוקית</strong> — Social Security + ביטוח תאונות עבודה. כיסוי: רפואי + פיצוי נכות.</p>
+      <p style="margin-top:8px">Social Security: 5% משכר<br>ביטוח נוסף: ฿1K/עובד/שנה</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏠</div>
+      <h3>ביטוח מקצועי (PI)</h3>
+      <p>Professional Indemnity — מכסה טעויות בתכנון שגורמות לנזק. <strong>מומלץ מאוד לחברת EPC.</strong></p>
+      <p style="margin-top:8px">כיסוי: ฿10M<br>עלות: ~฿25K/שנה</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚗</div>
+      <h3>ביטוח רכב + ציוד</h3>
+      <p>רכב עבודה (pickup), כלי עבודה, מלאי חלפים. Class 1 compulsory + voluntary.</p>
+      <p style="margin-top:8px">עלות: ~฿20K/שנה/רכב</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Tax & VAT -->
+<div class="slide slide-dark" data-title="מיסוי">
+  <span class="section-num">08</span>
+  <h2>💰 מיסוי — הזדמנויות ומחויבויות</h2>
+  <div class="two-col">
+    <div>
+      <h3>מסים חובה</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>מס</th><th>שיעור</th><th>פירוט</th></tr>
+          <tr><td>Corporate Tax</td><td>20%</td><td>על רווח נקי. BOI = 0% ל-8 שנים</td></tr>
+          <tr><td>VAT</td><td>7%</td><td>על מכירות. ניתן לקיזוז input VAT</td></tr>
+          <tr><td>Withholding Tax</td><td>1-5%</td><td>על תשלומים לספקים/קבלנים</td></tr>
+          <tr><td>Social Security</td><td>5%</td><td>חלק מעביד (5% עובד)</td></tr>
+          <tr><td>Personal Income Tax</td><td>0-35%</td><td>על משכורת/דיבידנדים</td></tr>
+        </table>
+      </div>
+      <div class="alert alert-warn">
+        <strong>רישום VAT חובה</strong> אם הכנסות > ฿1.8M/שנה. הלקוח מקבל tax invoice ← מקזז VAT. זה יתרון מכירתי לעסקים.
+      </div>
+    </div>
+    <div>
+      <h3>הטבות מס על סולאר</h3>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3 class="reef-text">ניכוי מואץ 50%</h3>
+        <p>עסקים שקונים סולאר → מנכים 50% מהעלות בשנה ראשונה + 50% נוסף על פני שנים. <strong>חיסכון מס עצום.</strong></p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(232,168,32,.3)">
+        <h3 class="gold">BOI Tax Holiday</h3>
+        <p>8 שנים 0% מס חברות. אחרי זה: 50% הנחה ל-5 שנים נוספים. פטור מכס על ייבוא ציוד.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>VAT Refund</h3>
+        <p>VAT על ייבוא ציוד (7%) — ניתן להחזר. VAT על מכירות — מקוזז מול input. <strong>BOI = 0% מכס.</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Subcontractors -->
+<div class="slide slide-ocean" data-title="קבלני משנה">
+  <span class="section-num">09</span>
+  <h2>🤝 הסכמי קבלני משנה</h2>
+  <div class="two-col">
+    <div>
+      <h3>סוגי קבלני משנה</h3>
+      <div class="card" style="margin:8px 0"><h3>חשמלאי מוסמך</h3><p>רישיון PEA Class 1-4. אחראי: DC+AC חיבורים, בדיקות, commissioning. <strong>חובה תאילנדי.</strong></p></div>
+      <div class="card" style="margin:8px 0"><h3>קבלן קונסטרוקציה</h3><p>עבודת מתכת/אלומיניום. רכיבה על גגות. ניסיון בעבודה בגובה.</p></div>
+      <div class="card" style="margin:8px 0"><h3>Drone operator</h3><p>צילום אוויר, סקרי גג. רישיון CAAT נדרש.</p></div>
+      <div class="card" style="margin:8px 0"><h3>משלוח + מנוף</h3><p>הובלת ציוד מהנמל לאתר. כולל מנוף לפריקה.</p></div>
+    </div>
+    <div>
+      <h3>סעיפים בחוזה</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><span class="gold">▸ היקף:</span> מפורט — מה כלול ומה לא</p>
+        <p><span class="gold">▸ תשלום:</span> 50% מקדמה, 50% בסיום</p>
+        <p><span class="gold">▸ ביטוח:</span> CAR + Social Security חובה</p>
+        <p><span class="gold">▸ בטיחות:</span> ציוד מגן חובה, הדרכה</p>
+        <p><span class="gold">▸ אחריות:</span> 1 שנה על עבודה</p>
+        <p><span class="gold">▸ פיצוי:</span> על נזקים שנגרמו ע"י הקבלן</p>
+        <p><span class="gold">▸ סודיות:</span> NDA על מידע עסקי</p>
+        <p><span class="gold">▸ שפה:</span> TH + EN</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Dispute Resolution -->
+<div class="slide slide-dark" data-title="יישוב סכסוכים">
+  <span class="section-num">10</span>
+  <h2>⚖️ יישוב סכסוכים</h2>
+  <div class="two-col">
+    <div>
+      <h3>מנגנון 3 שלבים</h3>
+      <div class="card" style="margin:10px 0;border-color:rgba(46,216,154,.3)">
+        <h3 class="reef-text">שלב 1: משא ומתן</h3>
+        <p>30 יום לפתרון ישיר בין הצדדים. רוב הסכסוכים נפתרים כאן.</p>
+      </div>
+      <div class="card" style="margin:10px 0;border-color:rgba(232,168,32,.3)">
+        <h3 class="gold">שלב 2: גישור (Mediation)</h3>
+        <p>מגשר מוסכם. Thai Arbitration Institute (TAI). 60 יום. עלות: ~฿30K.</p>
+      </div>
+      <div class="card" style="margin:10px 0;border-color:var(--coral)">
+        <h3 class="coral-text">שלב 3: בוררות (Arbitration)</h3>
+        <p>TAI arbitration. פסק סופי. סמכות שיפוט: Surat Thani Provincial Court. דין תאילנדי.</p>
+      </div>
+    </div>
+    <div>
+      <h3>טיפים מעשיים</h3>
+      <div class="alert alert-info">
+        <strong>כלל הזהב:</strong> תאילנד = תרבות של "face". מעדיפים לפתור מחוץ לבית משפט. לעולם לא לגרום ללקוח "לאבד פנים" בפומבי.
+      </div>
+      <div class="alert alert-warn">
+        <strong>Work Permit:</strong> זר חייב Work Permit כדי לעבוד. בלי WP = עברה פלילית. BOI מנפיק WP מהיר.
+      </div>
+      <h3 style="margin-top:16px">משרדי עו"ד מומלצים</h3>
+      <div style="font-size:13px;line-height:2">
+        <p>▸ <strong>Siam Legal</strong> — Bangkok + Samui. EN/TH. מתמחים ב-BOI + FBA.</p>
+        <p>▸ <strong>Isaan Lawyers</strong> — שירות Online. זול. חוזים סטנדרטיים.</p>
+        <p>▸ <strong>Baker McKenzie</strong> — Enterprise. יקר. פרויקטים גדולים.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Document Checklist -->
+<div class="slide slide-gold" data-title="צ'קליסט מסמכים">
+  <span class="section-num">11</span>
+  <h2>📋 צ'קליסט מסמכים — לפי סוג פרויקט</h2>
+  <div class="two-col">
+    <div>
+      <h3>EPC — מכירה ישירה</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p>☐ חוזה EPC (EN + TH)</p>
+        <p>☐ הצעת מחיר חתומה</p>
+        <p>☐ SLD + Layout Drawings</p>
+        <p>☐ PVsyst Report</p>
+        <p>☐ PEA Application</p>
+        <p>☐ CAR Insurance Certificate</p>
+        <p>☐ Warranty Cards (פאנלים + אינוורטר)</p>
+        <p>☐ As-Built Drawings</p>
+        <p>☐ Commissioning Report</p>
+        <p>☐ O&M Manual</p>
+        <p>☐ מסירה חתומה</p>
+        <p>☐ Tax Invoice (VAT)</p>
+      </div>
+    </div>
+    <div>
+      <h3>PPA/ESCO — הכנסה חוזרת</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p>☐ כל מה שב-EPC, ובנוסף:</p>
+        <p>☐ PPA Agreement (EN + TH)</p>
+        <p>☐ Roof Lease Agreement</p>
+        <p>☐ Equipment Insurance Policy</p>
+        <p>☐ Performance Guarantee</p>
+        <p>☐ Monthly Invoice Template</p>
+        <p>☐ Meter Reading Protocol</p>
+        <p>☐ Transfer Agreement (end of term)</p>
+        <p>☐ Early Termination Schedule</p>
+      </div>
+      <h3 style="margin-top:16px">חברה</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p>☐ Company Registration (DBD)</p>
+        <p>☐ VAT Registration</p>
+        <p>☐ Work Permit(s)</p>
+        <p>☐ BOI Certificate (אם רלוונטי)</p>
+        <p>☐ Business Bank Account</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end slides -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">→ הקודם</button>
+  <span class="slide-counter" id="counter"></span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">הבא ←</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function show(n){slides.forEach((s,i)=>{s.classList.remove('active','exit');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('exit')});document.getElementById('counter').textContent=`${n+1} / ${total}`;document.getElementById('progress').style.width=`${((n+1)/total)*100}%`;document.getElementById('prevBtn').disabled=n===0;document.getElementById('nextBtn').disabled=n===total-1;document.querySelectorAll('.toc-item').forEach((t,i)=>{t.classList.toggle('active',i===n)})}
+function navigate(d){current=Math.max(0,Math.min(total-1,current+d));show(current)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')navigate(1);if(e.key==='ArrowRight')navigate(-1);if(e.key==='Escape')toggleTOC()});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)navigate(d>0?1:-1)});
+function toggleTOC(){document.getElementById('tocPanel').classList.toggle('open')}
+document.addEventListener('click',e=>{const p=document.getElementById('tocPanel');if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.classList.contains('toc-btn'))p.classList.remove('open')});
+(function(){const l=document.getElementById('tocList');slides.forEach((s,i)=>{const d=document.createElement('div');d.className='toc-item';d.innerHTML=`<span class="toc-num">${String(i+1).padStart(2,'0')}</span>${s.dataset.title}`;d.onclick=()=>{current=i;show(i);toggleTOC()};l.appendChild(d)})})();
+show(0);
+</script>
+
+
+
+
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "תוכן עניינים": {en: "Table of Contents", th: "สารบัญ"},
+  "שער": {en: "Cover", th: "หน้าปก"},
+  "משפטי, חוזים והסכמים": {en: "Legal, Contracts & Agreements", th: "กฎหมาย สัญญา และข้อตกลง"},
+  "מסגרת חוקית לעסקי סולאר בתאילנד": {en: "Legal framework for solar business in Thailand", th: "กรอบกฎหมายสำหรับธุรกิจโซลาร์ในประเทศไทย"},
+  "מרץ 2026": {en: "March 2026", th: "มีนาคม 2026"},
+  "מסגרת חוקית": {en: "Legal Framework", th: "กรอบกฎหมาย"},
+  "מסגרת חוקית — סולאר בתאילנד 2026": {en: "Legal Framework — Solar in Thailand 2026", th: "กรอบกฎหมาย — โซลาร์ในประเทศไทย 2026"},
+  "מה מותר, מה אסור, מה השתנה": {en: "What is allowed, what is prohibited, what has changed", th: "อะไรได้รับอนุญาต อะไรต้องห้าม อะไรเปลี่ยนไป"},
+  "רגולציה נוכחית": {en: "Current Regulation", th: "กฎระเบียบปัจจุบัน"},
+  "אין צורך בהיתר בנייה (11/2025)": {en: "No building permit required (11/2025)", th: "ไม่จำเป็นต้องมีใบอนุญาตก่อสร้าง (11/2025)"},
+  "מערכות סולאריות על גגות פטורות מהיתר בנייה. שינוי דרמטי — חוסך 3-6 חודשים.": {en: "Rooftop solar systems are exempt from building permits. Dramatic change — saves 3-6 months.", th: "ระบบโซลาร์บนหลังคาได้รับการยกเว้นจากใบอนุญาตก่อสร้าง การเปลี่ยนแปลงครั้งใหญ่ — ประหยัด 3-6 เดือน"},
+  "אין רישיון מפעל (12/2024)": {en: "No factory license required (12/2024)", th: "ไม่จำเป็นต้องมีใบอนุญาตโรงงาน (12/2024)"},
+  "Factory License ≤ 1MW — בוטל. גם מערכות מסחריות גדולות — בלי רישיון.": {en: "Factory License ≤ 1MW — cancelled. Even large commercial systems — no license needed.", th: "ใบอนุญาตโรงงาน ≤ 1MW — ยกเลิก แม้แต่ระบบเชิงพาณิชย์ขนาดใหญ่ — ไม่ต้องมีใบอนุญาต"},
+  "Net Metering — פעיל": {en: "Net Metering — Active", th: "Net Metering — ใช้งานอยู่"},
+  "PEA מאפשר 1:1 net metering. עודף ייצור מפחית חשבון. ללא פיצוי על עודף שנתי.": {en: "PEA allows 1:1 net metering. Excess production reduces bill. No compensation for annual excess.", th: "PEA อนุญาต net metering 1:1 การผลิตส่วนเกินช่วยลดค่าไฟ ไม่มีการชดเชยสำหรับส่วนเกินรายปี"},
+  "רק תיאום PEA נדרש": {en: "Only PEA coordination required", th: "ต้องการเพียงการประสานงานกับ PEA เท่านั้น"},
+  "הגשת טפסים + SLD + מפרט טכני. בדיקה בשטח. אישור תוך 7-14 יום.": {en: "Submit forms + SLD + technical spec. On-site inspection. Approval within 7-14 days.", th: "ยื่นแบบฟอร์ม + SLD + ข้อกำหนดทางเทคนิค การตรวจสอบในพื้นที่ อนุมัติภายใน 7-14 วัน"},
+  "חוקים רלוונטיים": {en: "Relevant Laws", th: "กฎหมายที่เกี่ยวข้อง"},
+  "חוק / תקנה": {en: "Law / Regulation", th: "กฎหมาย / ข้อบังคับ"},
+  "רלוונטיות": {en: "Relevance", th: "ความเกี่ยวข้อง"},
+  "הגבלות בעלות זרה": {en: "Foreign ownership restrictions", th: "ข้อจำกัดการถือครองโดยชาวต่างชาติ"},
+  "הטבות מס ותמריצים": {en: "Tax benefits and incentives", th: "สิทธิประโยชน์ทางภาษีและแรงจูงใจ"},
+  "רישוי ייצור חשמל": {en: "Electricity production licensing", th: "การอนุญาตผลิตไฟฟ้า"},
+  "פטור מ-11/2025": {en: "Exempt from 11/2025", th: "ได้รับการยกเว้นตั้งแต่ 11/2025"},
+  "חוזים, אחריות, ביטוח": {en: "Contracts, liability, insurance", th: "สัญญา ความรับผิด ประกันภัย"},
+  "מס, VAT, ניכוי מואץ": {en: "Tax, VAT, accelerated depreciation", th: "ภาษี VAT การหักค่าเสื่อมราคาเร่ง"},
+  "העסקת עובדים": {en: "Employment of workers", th: "การจ้างงาน"},
+  "ביטוח תאונות עבודה": {en: "Workmen's accident insurance", th: "ประกันอุบัติเหตุการทำงาน"},
+  "חוזה EPC": {en: "EPC Contract", th: "สัญญา EPC"},
+  "חוזה EPC — מכירה ישירה": {en: "EPC Contract — Direct Sale", th: "สัญญา EPC — การขายตรง"},
+  "סעיפים חובה בכל חוזה התקנה": {en: "Mandatory clauses in every installation contract", th: "ข้อกำหนดบังคับในทุกสัญญาติดตั้ง"},
+  "סעיפים עיקריים": {en: "Main Clauses", th: "ข้อกำหนดหลัก"},
+  "הגדרת הפרויקט:": {en: "Project definition:", th: "คำจำกัดความโครงการ:"},
+  "כתובת, גודל מערכת (kWp), ציוד ספציפי (model numbers)": {en: "Address, system size (kWp), specific equipment (model numbers)", th: "ที่อยู่ ขนาดระบบ (kWp) อุปกรณ์ที่ระบุ (model numbers)"},
+  "היקף העבודה:": {en: "Scope of work:", th: "ขอบเขตการทำงาน:"},
+  "עיצוב, רכש, הרכבה, חיבור PEA, commissioning, הדרכה": {en: "Design, procurement, installation, PEA connection, commissioning, training", th: "การออกแบบ การจัดซื้อ การติดตั้ง การเชื่อมต่อ PEA การ commissioning การฝึกอบรม"},
+  "לוח זמנים:": {en: "Timeline:", th: "ตารางเวลา:"},
+  "תאריך התחלה, אבני דרך, תאריך סיום. פיצוי על איחור: ฿X/יום": {en: "Start date, milestones, completion date. Delay penalty: ฿X/day", th: "วันเริ่มต้น จุดสำคัญ วันเสร็จสิ้น ค่าปรับความล่าช้า: ฿X/วัน"},
+  "מחיר ותשלום:": {en: "Price and payment:", th: "ราคาและการชำระเงิน:"},
+  "סכום כולל, מע\"מ 7%, תנאי תשלום (30/40/30)": {en: "Total amount, VAT 7%, payment terms (30/40/30)", th: "จำนวนเงินรวม VAT 7% เงื่อนไขการชำระเงิน (30/40/30)"},
+  "אחריות:": {en: "Warranty:", th: "การรับประกัน:"},
+  "עבודה 10 שנים, פאנלים 25 שנים (יצרן), אינוורטר 10 שנים (יצרן)": {en: "Labor 10 years, panels 25 years (manufacturer), inverter 10 years (manufacturer)", th: "ฝีมือแรงงาน 10 ปี แผงโซลาร์ 25 ปี (ผู้ผลิต) อินเวอร์เตอร์ 10 ปี (ผู้ผลิต)"},
+  "ביצועים מובטחים:": {en: "Guaranteed performance:", th: "ประสิทธิภาพที่รับประกัน:"},
+  "Performance Ratio ≥ 75%, ייצור שנתי מינימלי (kWh)": {en: "Performance Ratio ≥ 75%, minimum annual production (kWh)", th: "Performance Ratio ≥ 75% การผลิตขั้นต่ำรายปี (kWh)"},
+  "ביטוח:": {en: "Insurance:", th: "ประกันภัย:"},
+  "CAR במהלך ההתקנה, אחריות צד ג'": {en: "CAR during installation, third-party liability", th: "CAR ระหว่างการติดตั้ง ความรับผิดต่อบุคคลที่สาม"},
+  "סיום והפרה:": {en: "Termination and breach:", th: "การยุติสัญญาและการละเมิด:"},
+  "תנאי ביטול, החזר כספי, סנקציות": {en: "Cancellation conditions, refund, sanctions", th: "เงื่อนไขการยกเลิก การคืนเงิน บทลงโทษ"},
+  "תנאי תשלום סטנדרטיים": {en: "Standard Payment Terms", th: "เงื่อนไขการชำระเงินมาตรฐาน"},
+  "30% — מקדמה": {en: "30% — Advance", th: "30% — มัดจำ"},
+  "עם חתימת חוזה. מממן הזמנת ציוד.": {en: "Upon contract signing. Funds equipment order.", th: "เมื่อลงนามสัญญา ใช้เพื่อสั่งซื้ออุปกรณ์"},
+  "40% — אמצע עבודה": {en: "40% — Mid-work", th: "40% — กลางงาน"},
+  "לאחר השלמת קונסטרוקציה + פאנלים על הגג.": {en: "After completing structure + panels on roof.", th: "หลังจากเสร็จสิ้นโครงสร้าง + แผงบนหลังคา"},
+  "30% — חיבור לרשת": {en: "30% — Grid connection", th: "30% — การเชื่อมต่อกริด"},
+  "לאחר אישור PEA + commissioning + מסירת תיעוד.": {en: "After PEA approval + commissioning + handover of documentation.", th: "หลังจากได้รับอนุมัติจาก PEA + commissioning + ส่งมอบเอกสาร"},
+  "חשוב:": {en: "Important:", th: "สำคัญ:"},
+  "חוזה חייב להיות דו-לשוני (EN + TH). הגרסה התאילנדית גוברת במקרה של סתירה. שפה משפטית מקומית חובה.": {en: "Contract must be bilingual (EN + TH). The Thai version prevails in case of conflict. Local legal language is mandatory.", th: "สัญญาต้องเป็นสองภาษา (EN + TH) ฉบับภาษาไทยมีผลเหนือกว่าในกรณีขัดแย้ง ภาษากฎหมายท้องถิ่นบังคับ"},
+  "הסכם PPA/ESCO": {en: "PPA/ESCO Agreement", th: "สัญญา PPA/ESCO"},
+  "הסכם PPA/ESCO — הכנסה חוזרת": {en: "PPA/ESCO Agreement — Recurring Revenue", th: "สัญญา PPA/ESCO — รายได้ที่เกิดซ้ำ"},
+  "הכנסה חוזרת": {en: "Recurring Revenue", th: "รายได้ที่เกิดซ้ำ"},
+  "Power Purchase Agreement — 15 שנים": {en: "Power Purchase Agreement — 15 years", th: "สัญญาซื้อขายพลังงาน — 15 ปี"},
+  "סעיפים קריטיים": {en: "Critical Clauses", th: "ข้อกำหนดสำคัญ"},
+  "תקופה:": {en: "Term:", th: "ระยะเวลา:"},
+  "15 שנים. אופציה להארכה.": {en: "15 years. Option to extend.", th: "15 ปี มีตัวเลือกในการต่ออายุ"},
+  "תעריף:": {en: "Rate:", th: "อัตรา:"},
+  "הצמדה: CPI או עליית תעריפי PEA — הגבוה מביניהם (~3%/שנה).": {en: "Indexation: CPI or PEA tariff increase — whichever is higher (~3%/year).", th: "การปรับตาม: CPI หรือการขึ้นอัตราของ PEA — อย่างใดที่สูงกว่า (~3%/ปี)"},
+  "בעלות:": {en: "Ownership:", th: "การเป็นเจ้าของ:"},
+  "Ko Phangan Solar = בעלים של המערכת. הלקוח = צרכן.": {en: "Ko Phangan Solar = system owner. Client = consumer.", th: "Ko Phangan Solar = เจ้าของระบบ ลูกค้า = ผู้บริโภค"},
+  "תחזוקה:": {en: "Maintenance:", th: "การบำรุงรักษา:"},
+  "אחריות שלנו. O&M כלול בתעריף.": {en: "Our responsibility. O&M included in the rate.", th: "ความรับผิดชอบของเรา O&M รวมอยู่ในอัตรา"},
+  "ביצועים:": {en: "Performance:", th: "ประสิทธิภาพ:"},
+  "מינימום 80% availability/שנה. פיצוי אם פחות.": {en: "Minimum 80% availability/year. Compensation if less.", th: "ความพร้อมขั้นต่ำ 80%/ปี ชดเชยหากต่ำกว่า"},
+  "גישה לאתר:": {en: "Site access:", th: "การเข้าถึงสถานที่:"},
+  "זכות גישה לגג 24/7 לתחזוקה. הודעה 24 שעות מראש.": {en: "Right of roof access 24/7 for maintenance. 24 hours advance notice.", th: "สิทธิ์การเข้าถึงหลังคา 24/7 เพื่อการบำรุงรักษา แจ้งล่วงหน้า 24 ชั่วโมง"},
+  "העברת בעלות:": {en: "Transfer of ownership:", th: "การโอนกรรมสิทธิ์:"},
+  "בתום 15 שנה — מערכת עוברת ללקוח ב-฿1 (nominal).": {en: "At the end of 15 years — system transfers to client for ฿1 (nominal).", th: "เมื่อสิ้นสุด 15 ปี — ระบบโอนให้ลูกค้าในราคา ฿1 (ในนาม)"},
+  "סיום מוקדם:": {en: "Early termination:", th: "การยุติสัญญาก่อนกำหนด:"},
+  "קנס = שווי חוזה שנותר × 70%.": {en: "Penalty = remaining contract value × 70%.", th: "ค่าปรับ = มูลค่าสัญญาที่เหลือ × 70%"},
+  "ביטוח רכוש:": {en: "Property insurance:", th: "ประกันทรัพย์สิน:"},
+  "שלנו — ציוד. לקוח — מבנה.": {en: "Us — equipment. Client — structure.", th: "เรา — อุปกรณ์ ลูกค้า — โครงสร้าง"},
+  "דוגמה: רזורט 50kWp": {en: "Example: 50kWp Resort", th: "ตัวอย่าง: รีสอร์ท 50kWp"},
+  "Year 5 (הצמדה ~3%/שנה)": {en: "Year 5 (indexation ~3%/year)", th: "ปีที่ 5 (การปรับ ~3%/ปี)"},
+  "סה\"כ 15 שנים": {en: "Total 15 years", th: "รวม 15 ปี"},
+  "הכנסות": {en: "revenue", th: "รายได้"},
+  "עלות מערכת:": {en: "System cost:", th: "ต้นทุนระบบ:"},
+  "Payback: 1.8 שנים": {en: "Payback: 1.8 years", th: "คืนทุน: 1.8 ปี"},
+  "יתרון מימוני:": {en: "Financial advantage:", th: "ข้อได้เปรียบทางการเงิน:"},
+  "ניתן למנף את ה-PPA כביטחון להלוואה בנקאית. הבנק רואה 15 שנות הכנסה מובטחת + הצמדה.": {en: "The PPA can be leveraged as collateral for a bank loan. The bank sees 15 years of guaranteed income + indexation.", th: "สามารถใช้ PPA เป็นหลักประกันสำหรับสินเชื่อธนาคาร ธนาคารมองเห็น 15 ปีของรายได้ที่รับประกัน + การปรับ"},
+  "הסכם O&M": {en: "O&M Agreement", th: "สัญญา O&M"},
+  "הסכם תחזוקה (O&M)": {en: "Maintenance Agreement (O&M)", th: "สัญญาการบำรุงรักษา (O&M)"},
+  "3 חבילות": {en: "3 Packages", th: "3 แพ็กเกจ"},
+  "Basic — ฿1,500/חודש": {en: "Basic — ฿1,500/month", th: "Basic — ฿1,500/เดือน"},
+  "ניטור מרחוק 24/7, דו\"ח חודשי, ביקור שנתי אחד, תגובה 48 שעות.": {en: "Remote monitoring 24/7, monthly report, one annual visit, 48-hour response.", th: "การติดตามระยะไกล 24/7 รายงานรายเดือน การเยี่ยมชม 1 ครั้งต่อปี การตอบสนอง 48 ชั่วโมง"},
+  "Standard — ฿3,000/חודש": {en: "Standard — ฿3,000/month", th: "Standard — ฿3,000/เดือน"},
+  "כל מה ב-Basic + ניקוי פאנלים רבעוני, בדיקה חשמלית חצי שנתית, תגובה 24 שעות. מומלץ.": {en: "Everything in Basic + quarterly panel cleaning, semi-annual electrical check, 24-hour response. Recommended.", th: "ทุกอย่างใน Basic + ทำความสะอาดแผงรายไตรมาส ตรวจสอบไฟฟ้ารายครึ่งปี การตอบสนอง 24 ชั่วโมง แนะนำ"},
+  "Premium — ฿5,000/חודש": {en: "Premium — ฿5,000/month", th: "Premium — ฿5,000/เดือน"},
+  "כל מה ב-Standard + SLA 4 שעות, חלקי חילוף כלולים (אינוורטר loan), ביטוח ציוד, דו\"ח שבועי.": {en: "Everything in Standard + 4-hour SLA, spare parts included (inverter loan), equipment insurance, weekly report.", th: "ทุกอย่างใน Standard + SLA 4 ชั่วโมง อะไหล่รวม (อินเวอร์เตอร์ยืม) ประกันอุปกรณ์ รายงานรายสัปดาห์"},
+  "סעיפי חוזה O&M": {en: "O&M Contract Clauses", th: "ข้อกำหนดในสัญญา O&M"},
+  "תקופה: 12 חודשים, חידוש אוטומטי": {en: "Term: 12 months, auto-renewal", th: "ระยะเวลา: 12 เดือน ต่ออายุอัตโนมัติ"},
+  "SLA: זמן תגובה לפי חבילה": {en: "SLA: response time per package", th: "SLA: เวลาตอบสนองตามแพ็กเกจ"},
+  "היקף: ניקוי, בדיקות, תיקונים, ניטור": {en: "Scope: cleaning, inspections, repairs, monitoring", th: "ขอบเขต: การทำความสะอาด การตรวจสอบ การซ่อมแซม การติดตาม"},
+  "מה לא כלול: נזק מכוח עליון, vandalism, שדרוגים": {en: "Not included: force majeure damage, vandalism, upgrades", th: "ไม่รวม: ความเสียหายจากเหตุสุดวิสัย การก่อกวน การอัปเกรด"},
+  "ביטול: הודעה 30 יום מראש": {en: "Cancellation: 30 days notice in advance", th: "การยกเลิก: แจ้งล่วงหน้า 30 วัน"},
+  "הצמדה: 3% העלאה שנתית": {en: "Indexation: 3% annual increase", th: "การปรับ: เพิ่มขึ้น 3% ต่อปี"},
+  "דיווח: דו\"ח חודשי (kWh, health, issues)": {en: "Reporting: monthly report (kWh, health, issues)", th: "การรายงาน: รายงานรายเดือน (kWh สถานะ ปัญหา)"},
+  "פוטנציאל MRR:": {en: "MRR potential:", th: "ศักยภาพ MRR:"},
+  "20 לקוחות × Standard =": {en: "20 clients × Standard =", th: "20 ลูกค้า × Standard ="},
+  "אחריות": {en: "Warranty", th: "การรับประกัน"},
+  "ניהול אחריות": {en: "Warranty Management", th: "การจัดการการรับประกัน"},
+  "מפת אחריות": {en: "Warranty Map", th: "แผนที่การรับประกัน"},
+  "רכיב": {en: "Component", th: "ส่วนประกอบ"},
+  "אחראי": {en: "Responsible", th: "ผู้รับผิดชอบ"},
+  "תהליך תביעה": {en: "Claim Process", th: "กระบวนการเรียกร้อง"},
+  "פאנלים — ביצועים": {en: "Panels — performance", th: "แผงโซลาร์ — ประสิทธิภาพ"},
+  "25 שנים (≥80% ביצועים)": {en: "25 years (≥80% performance)", th: "25 ปี (≥80% ประสิทธิภาพ)"},
+  "IV test → דו\"ח → RMA": {en: "IV test → report → RMA", th: "IV test → รายงาน → RMA"},
+  "פאנלים — מוצר": {en: "Panels — product", th: "แผงโซลาร์ — ผลิตภัณฑ์"},
+  "12 שנים": {en: "12 years", th: "12 ปี"},
+  "בדיקה ויזואלית → RMA": {en: "Visual inspection → RMA", th: "การตรวจสอบด้วยตา → RMA"},
+  "אינוורטר": {en: "Inverter", th: "อินเวอร์เตอร์"},
+  "10 שנים (15 בהרחבה)": {en: "10 years (15 with extension)", th: "10 ปี (15 ปีพร้อมส่วนขยาย)"},
+  "Error log → support ticket": {en: "Error log → support ticket", th: "Error log → support ticket"},
+  "קונסטרוקציה": {en: "Mounting structure", th: "โครงยึด"},
+  "10 שנים": {en: "10 years", th: "10 ปี"},
+  "בדיקה שנתית": {en: "Annual inspection", th: "การตรวจสอบประจำปี"},
+  "עבודת חשמל": {en: "Electrical work", th: "งานไฟฟ้า"},
+  "בדיקה + תיקון": {en: "Inspection + repair", th: "การตรวจสอบ + การซ่อมแซม"},
+  "BOS (כבלים, מחברים)": {en: "BOS (cables, connectors)", th: "BOS (สายเคเบิล ขั้วต่อ)"},
+  "5 שנים": {en: "5 years", th: "5 ปี"},
+  "החלפה": {en: "Replacement", th: "การเปลี่ยนทดแทน"},
+  "תהליך RMA": {en: "RMA Process", th: "กระบวนการ RMA"},
+  "לקוח מדווח על תקלה (Line/WhatsApp/CRM)": {en: "Client reports a fault (Line/WhatsApp/CRM)", th: "ลูกค้าแจ้งความผิดปกติ (Line/WhatsApp/CRM)"},
+  "צוות מאבחן (מרחוק → שטח)": {en: "Team diagnoses (remotely → on-site)", th: "ทีมวินิจฉัย (ระยะไกล → ในพื้นที่)"},
+  "זיהוי רכיב פגום + תיעוד": {en: "Identify faulty component + documentation", th: "ระบุส่วนประกอบที่เสียหาย + บันทึก"},
+  "הגשת RMA ליצרן (Longi: 14-21 ימים, Huawei: 5-7)": {en: "Submit RMA to manufacturer (Longi: 14-21 days, Huawei: 5-7)", th: "ยื่น RMA ต่อผู้ผลิต (Longi: 14-21 วัน, Huawei: 5-7)"},
+  "קבלת החלפה + התקנה": {en: "Receive replacement + installation", th: "รับการเปลี่ยนทดแทน + ติดตั้ง"},
+  "בינתיים: רכיב loan מהמלאי שלנו": {en: "In the meantime: loan component from our stock", th: "ในระหว่างนั้น: ส่วนประกอบยืมจากสต็อกของเรา"},
+  "באי: RMA לוקח יותר זמן (משלוח). חובה להחזיק מלאי חלפים: 2 פאנלים + 1 אינוורטר + SPDs + MC4.": {en: "On island: RMA takes longer (shipping). Must keep spare stock: 2 panels + 1 inverter + SPDs + MC4.", th: "บนเกาะ: RMA ใช้เวลานานกว่า (การจัดส่ง) ต้องสำรองอะไหล่: 2 แผง + 1 อินเวอร์เตอร์ + SPDs + MC4"},
+  "ביטוח": {en: "Insurance", th: "ประกันภัย"},
+  "ביטוח — חובה ומומלץ": {en: "Insurance — Mandatory & Recommended", th: "ประกันภัย — บังคับและแนะนำ"},
+  "CAR — Contractor All Risk": {en: "CAR — Contractor All Risk", th: "CAR — Contractor All Risk"},
+  "חובה בכל אתר. מכסה: נזק לציוד, נזק לרכוש הלקוח, תאונות עבודה, אסונות טבע.": {en: "Mandatory at every site. Covers: equipment damage, damage to client property, work accidents, natural disasters.", th: "บังคับในทุกไซต์งาน ครอบคลุม: ความเสียหายของอุปกรณ์ ความเสียหายต่อทรัพย์สินของลูกค้า อุบัติเหตุจากการทำงาน ภัยธรรมชาติ"},
+  "עלות: ~0.3% מערך הפרויקט": {en: "Cost: ~0.3% of project value", th: "ต้นทุน: ~0.3% ของมูลค่าโครงการ"},
+  "דוגמה: פרויקט ฿1M → ฿3,000": {en: "Example: ฿1M project → ฿3,000", th: "ตัวอย่าง: โครงการ ฿1M → ฿3,000"},
+  "אחריות צד שלישי": {en: "Third-party liability", th: "ความรับผิดต่อบุคคลที่สาม"},
+  "מכסה: נזק לשכנים, עוברי אורח, רכוש צמוד. חובה חוקית.": {en: "Covers: damage to neighbors, passersby, adjacent property. Legal requirement.", th: "ครอบคลุม: ความเสียหายต่อเพื่อนบ้าน ผู้สัญจร ทรัพย์สินใกล้เคียง ข้อกำหนดทางกฎหมาย"},
+  "כיסוי: ฿5M/אירוע": {en: "Coverage: ฿5M/event", th: "ความคุ้มครอง: ฿5M/เหตุการณ์"},
+  "עלות: ~฿15K/שנה": {en: "Cost: ~฿15K/year", th: "ต้นทุน: ~฿15K/ปี"},
+  "ביטוח ציוד (PPA)": {en: "Equipment Insurance (PPA)", th: "ประกันอุปกรณ์ (PPA)"},
+  "כשהמערכת שלנו על גג הלקוח — אנחנו מבטחים. ברקים, שריפה, גניבה, סערות.": {en: "When our system is on the client's roof — we insure. Lightning, fire, theft, storms.", th: "เมื่อระบบของเราอยู่บนหลังคาของลูกค้า — เราทำประกัน ฟ้าผ่า ไฟไหม้ การโจรกรรม พายุ"},
+  "כיסוי: שווי מלא": {en: "Coverage: full value", th: "ความคุ้มครอง: มูลค่าเต็ม"},
+  "עלות: ~1% מערך/שנה": {en: "Cost: ~1% of value/year", th: "ต้นทุน: ~1% ของมูลค่า/ปี"},
+  "Workmen's Compensation": {en: "Workmen's Compensation", th: "การชดเชยแรงงาน"},
+  "חובה חוקית — Social Security + ביטוח תאונות עבודה. כיסוי: רפואי + פיצוי נכות.": {en: "Legal requirement — Social Security + work accident insurance. Coverage: medical + disability compensation.", th: "ข้อกำหนดทางกฎหมาย — ประกันสังคม + ประกันอุบัติเหตุจากการทำงาน ความคุ้มครอง: การแพทย์ + ค่าชดเชยทุพพลภาพ"},
+  "Social Security: 5% משכר": {en: "Social Security: 5% of salary", th: "ประกันสังคม: 5% ของเงินเดือน"},
+  "ביטוח נוסף: ฿1K/עובד/שנה": {en: "Additional insurance: ฿1K/worker/year", th: "ประกันเพิ่มเติม: ฿1K/พนักงาน/ปี"},
+  "ביטוח מקצועי (PI)": {en: "Professional Indemnity (PI)", th: "ประกันภัยความรับผิดวิชาชีพ (PI)"},
+  "Professional Indemnity — מכסה טעויות בתכנון שגורמות לנזק. מומלץ מאוד לחברת EPC.": {en: "Professional Indemnity — covers design errors that cause damage. Highly recommended for EPC company.", th: "Professional Indemnity — ครอบคลุมข้อผิดพลาดในการออกแบบที่ก่อให้เกิดความเสียหาย แนะนำอย่างยิ่งสำหรับบริษัท EPC"},
+  "כיסוי: ฿10M": {en: "Coverage: ฿10M", th: "ความคุ้มครอง: ฿10M"},
+  "עלות: ~฿25K/שנה": {en: "Cost: ~฿25K/year", th: "ต้นทุน: ~฿25K/ปี"},
+  "ביטוח רכב + ציוד": {en: "Vehicle + Equipment Insurance", th: "ประกันรถยนต์ + อุปกรณ์"},
+  "רכב עבודה (pickup), כלי עבודה, מלאי חלפים. Class 1 compulsory + voluntary.": {en: "Work vehicle (pickup), tools, spare parts stock. Class 1 compulsory + voluntary.", th: "รถยนต์ทำงาน (pickup) เครื่องมือ สต็อกอะไหล่ Class 1 บังคับ + ความสมัครใจ"},
+  "עלות: ~฿20K/שנה/רכב": {en: "Cost: ~฿20K/year/vehicle", th: "ต้นทุน: ~฿20K/ปี/คัน"},
+  "מיסוי": {en: "Taxation", th: "ภาษี"},
+  "מיסוי — הזדמנויות ומחויבויות": {en: "Taxation — Opportunities & Obligations", th: "ภาษี — โอกาสและภาระผูกพัน"},
+  "מסים חובה": {en: "Mandatory Taxes", th: "ภาษีบังคับ"},
+  "מס": {en: "Tax", th: "ภาษี"},
+  "שיעור": {en: "Rate", th: "อัตรา"},
+  "פירוט": {en: "Details", th: "รายละเอียด"},
+  "על רווח נקי. BOI = 0% ל-8 שנים": {en: "On net profit. BOI = 0% for 8 years", th: "จากกำไรสุทธิ BOI = 0% เป็นเวลา 8 ปี"},
+  "על מכירות. ניתן לקיזוז input VAT": {en: "On sales. Input VAT can be offset", th: "จากยอดขาย สามารถหักกลบ input VAT ได้"},
+  "על תשלומים לספקים/קבלנים": {en: "On payments to suppliers/contractors", th: "จากการชำระเงินให้ผู้จัดหา/ผู้รับเหมา"},
+  "חלק מעביד (5% עובד)": {en: "Employer portion (5% employee)", th: "ส่วนของนายจ้าง (5% พนักงาน)"},
+  "על משכורת/דיבידנדים": {en: "On salary/dividends", th: "จากเงินเดือน/เงินปันผล"},
+  "רישום VAT חובה": {en: "VAT registration mandatory", th: "การลงทะเบียน VAT บังคับ"},
+  "אם הכנסות > ฿1.8M/שנה. הלקוח מקבל tax invoice ← מקזז VAT. זה יתרון מכירתי לעסקים.": {en: "If revenue > ฿1.8M/year. Client receives tax invoice ← offsets VAT. This is a sales advantage for businesses.", th: "หากรายได้ > ฿1.8M/ปี ลูกค้าได้รับใบกำกับภาษี ← หักกลบ VAT นี่คือข้อได้เปรียบด้านการขายสำหรับธุรกิจ"},
+  "הטבות מס על סולאר": {en: "Solar Tax Benefits", th: "สิทธิประโยชน์ทางภาษีสำหรับโซลาร์"},
+  "ניכוי מואץ 50%": {en: "50% Accelerated Depreciation", th: "การหักค่าเสื่อมราคาเร่ง 50%"},
+  "עסקים שקונים סולאר → מנכים 50% מהעלות בשנה ראשונה + 50% נוסף על פני שנים. חיסכון מס עצום.": {en: "Businesses buying solar → deduct 50% of cost in year one + 50% more over years. Massive tax saving.", th: "ธุรกิจที่ซื้อโซลาร์ → หัก 50% ของต้นทุนในปีแรก + อีก 50% ตลอดหลายปี ประหยัดภาษีอย่างมาก"},
+  "BOI Tax Holiday": {en: "BOI Tax Holiday", th: "ช่วงพักภาษี BOI"},
+  "8 שנים 0% מס חברות. אחרי זה: 50% הנחה ל-5 שנים נוספים. פטור מכס על ייבוא ציוד.": {en: "8 years 0% corporate tax. After that: 50% discount for 5 more years. Customs exemption on equipment import.", th: "0% ภาษีนิติบุคคล 8 ปี จากนั้น: ส่วนลด 50% อีก 5 ปี ยกเว้นภาษีศุลกากรสำหรับการนำเข้าอุปกรณ์"},
+  "VAT Refund": {en: "VAT Refund", th: "การคืน VAT"},
+  "VAT על ייבוא ציוד (7%) — ניתן להחזר. VAT על מכירות — מקוזז מול input. BOI = 0% מכס.": {en: "VAT on equipment import (7%) — refundable. VAT on sales — offset against input. BOI = 0% customs.", th: "VAT จากการนำเข้าอุปกรณ์ (7%) — สามารถขอคืนได้ VAT จากยอดขาย — หักกลบกับ input BOI = 0% ศุลกากร"},
+  "קבלני משנה": {en: "Subcontractors", th: "ผู้รับเหมาช่วง"},
+  "הסכמי קבלני משנה": {en: "Subcontractor Agreements", th: "สัญญาผู้รับเหมาช่วง"},
+  "סוגי קבלני משנה": {en: "Types of Subcontractors", th: "ประเภทของผู้รับเหมาช่วง"},
+  "חשמלאי מוסמך": {en: "Licensed electrician", th: "ช่างไฟฟ้าที่มีใบอนุญาต"},
+  "רישיון PEA Class 1-4. אחראי: DC+AC חיבורים, בדיקות, commissioning. חובה תאילנדי.": {en: "PEA Class 1-4 license. Responsible: DC+AC connections, tests, commissioning. Must be Thai.", th: "ใบอนุญาต PEA Class 1-4 รับผิดชอบ: การเชื่อมต่อ DC+AC การทดสอบ commissioning ต้องเป็นคนไทย"},
+  "קבלן קונסטרוקציה": {en: "Construction contractor", th: "ผู้รับเหมาก่อสร้าง"},
+  "עבודת מתכת/אלומיניום. רכיבה על גגות. ניסיון בעבודה בגובה.": {en: "Metal/aluminum work. Roof climbing. Experience working at heights.", th: "งานโลหะ/อลูมิเนียม การปีนหลังคา ประสบการณ์ทำงานบนที่สูง"},
+  "Drone operator": {en: "Drone operator", th: "ผู้ปฏิบัติงานโดรน"},
+  "צילום אוויר, סקרי גג. רישיון CAAT נדרש.": {en: "Aerial photography, roof surveys. CAAT license required.", th: "การถ่ายภาพทางอากาศ การสำรวจหลังคา ต้องมีใบอนุญาต CAAT"},
+  "משלוח + מנוף": {en: "Delivery + crane", th: "การจัดส่ง + เครน"},
+  "הובלת ציוד מהנמל לאתר. כולל מנוף לפריקה.": {en: "Transport equipment from port to site. Includes crane for unloading.", th: "ขนส่งอุปกรณ์จากท่าเรือไปยังไซต์งาน รวมเครนสำหรับการขนถ่าย"},
+  "סעיפים בחוזה": {en: "Contract Clauses", th: "ข้อกำหนดในสัญญา"},
+  "היקף: מפורט — מה כלול ומה לא": {en: "Scope: detailed — what is included and what is not", th: "ขอบเขต: รายละเอียด — สิ่งที่รวมและไม่รวม"},
+  "תשלום: 50% מקדמה, 50% בסיום": {en: "Payment: 50% advance, 50% on completion", th: "การชำระเงิน: 50% มัดจำ 50% เมื่อเสร็จสิ้น"},
+  "ביטוח: CAR + Social Security חובה": {en: "Insurance: CAR + Social Security mandatory", th: "ประกันภัย: CAR + ประกันสังคม บังคับ"},
+  "בטיחות: ציוד מגן חובה, הדרכה": {en: "Safety: PPE mandatory, training", th: "ความปลอดภัย: อุปกรณ์ป้องกันบังคับ การฝึกอบรม"},
+  "אחריות: 1 שנה על עבודה": {en: "Warranty: 1 year on workmanship", th: "การรับประกัน: 1 ปีสำหรับฝีมือแรงงาน"},
+  "פיצוי: על נזקים שנגרמו ע\"י הקבלן": {en: "Compensation: for damages caused by contractor", th: "การชดเชย: สำหรับความเสียหายที่เกิดจากผู้รับเหมา"},
+  "סודיות: NDA על מידע עסקי": {en: "Confidentiality: NDA on business information", th: "การรักษาความลับ: NDA สำหรับข้อมูลธุรกิจ"},
+  "שפה: TH + EN": {en: "Language: TH + EN", th: "ภาษา: TH + EN"},
+  "יישוב סכסוכים": {en: "Dispute Resolution", th: "การระงับข้อพิพาท"},
+  "מנגנון 3 שלבים": {en: "3-Step Mechanism", th: "กลไก 3 ขั้นตอน"},
+  "שלב 1: משא ומתן": {en: "Step 1: Negotiation", th: "ขั้นตอนที่ 1: การเจรจา"},
+  "30 יום לפתרון ישיר בין הצדדים. רוב הסכסוכים נפתרים כאן.": {en: "30 days for direct resolution between parties. Most disputes resolved here.", th: "30 วันสำหรับการแก้ไขโดยตรงระหว่างคู่สัญญา ข้อพิพาทส่วนใหญ่ได้รับการแก้ไขที่นี่"},
+  "שלב 2: גישור (Mediation)": {en: "Step 2: Mediation", th: "ขั้นตอนที่ 2: การไกล่เกลี่ย"},
+  "מגשר מוסכם. Thai Arbitration Institute (TAI). 60 יום. עלות: ~฿30K.": {en: "Agreed mediator. Thai Arbitration Institute (TAI). 60 days. Cost: ~฿30K.", th: "ผู้ไกล่เกลี่ยที่ตกลงกัน สถาบันอนุญาโตตุลาการไทย (TAI) 60 วัน ค่าใช้จ่าย: ~฿30K"},
+  "שלב 3: בוררות (Arbitration)": {en: "Step 3: Arbitration", th: "ขั้นตอนที่ 3: อนุญาโตตุลาการ"},
+  "TAI arbitration. פסק סופי. סמכות שיפוט: Surat Thani Provincial Court. דין תאילנדי.": {en: "TAI arbitration. Final ruling. Jurisdiction: Surat Thani Provincial Court. Thai law.", th: "อนุญาโตตุลาการ TAI คำตัดสินขั้นสุดท้าย เขตอำนาจศาล: ศาลจังหวัดสุราษฎร์ธานี กฎหมายไทย"},
+  "טיפים מעשיים": {en: "Practical Tips", th: "เคล็ดลับเชิงปฏิบัติ"},
+  "כלל הזהב:": {en: "Golden rule:", th: "กฎทอง:"},
+  "תאילנד = תרבות של \"face\". מעדיפים לפתור מחוץ לבית משפט. לעולם לא לגרום ללקוח \"לאבד פנים\" בפומבי.": {en: "Thailand = \"face\" culture. Prefer to resolve outside court. Never cause a client to \"lose face\" publicly.", th: "ประเทศไทย = วัฒนธรรม \"หน้า\" ชอบแก้ไขนอกศาล อย่าทำให้ลูกค้า \"เสียหน้า\" ต่อสาธารณะ"},
+  "Work Permit:": {en: "Work Permit:", th: "ใบอนุญาตทำงาน:"},
+  "זר חייב Work Permit כדי לעבוד. בלי WP = עברה פלילית. BOI מנפיק WP מהיר.": {en: "Foreigner must have Work Permit to work. Without WP = criminal offense. BOI issues WP fast.", th: "ชาวต่างชาติต้องมีใบอนุญาตทำงาน ไม่มี WP = ความผิดทางอาญา BOI ออก WP รวดเร็ว"},
+  "משרדי עו\"ד מומלצים": {en: "Recommended Law Firms", th: "สำนักงานกฎหมายที่แนะนำ"},
+  "שירות Online. זול. חוזים סטנדרטיים.": {en: "Online service. Affordable. Standard contracts.", th: "บริการออนไลน์ ราคาประหยัด สัญญามาตรฐาน"},
+  "Enterprise. יקר. פרויקטים גדולים.": {en: "Enterprise. Expensive. Large projects.", th: "Enterprise ราคาแพง โครงการขนาดใหญ่"},
+  "Bangkok + Samui. EN/TH. מתמחים ב-BOI + FBA.": {en: "Bangkok + Samui. EN/TH. Specialists in BOI + FBA.", th: "กรุงเทพฯ + สมุย EN/TH ผู้เชี่ยวชาญด้าน BOI + FBA"},
+  "צ'קליסט מסמכים": {en: "Document Checklist", th: "รายการตรวจสอบเอกสาร"},
+  "צ'קליסט מסמכים — לפי סוג פרויקט": {en: "Document Checklist — by project type", th: "รายการตรวจสอบเอกสาร — ตามประเภทโครงการ"},
+  "EPC — מכירה ישירה": {en: "EPC — Direct Sale", th: "EPC — การขายตรง"},
+  "חוזה EPC (EN + TH)": {en: "EPC Contract (EN + TH)", th: "สัญญา EPC (EN + TH)"},
+  "הצעת מחיר חתומה": {en: "Signed quote", th: "ใบเสนอราคาที่ลงนาม"},
+  "Warranty Cards (פאנלים + אינוורטר)": {en: "Warranty Cards (panels + inverter)", th: "บัตรรับประกัน (แผงโซลาร์ + อินเวอร์เตอร์)"},
+  "מסירה חתומה": {en: "Signed handover", th: "การส่งมอบที่ลงนาม"},
+  "PPA/ESCO — הכנסה חוזרת": {en: "PPA/ESCO — Recurring Revenue", th: "PPA/ESCO — รายได้ที่เกิดซ้ำ"},
+  "כל מה שב-EPC, ובנוסף:": {en: "Everything in EPC, plus:", th: "ทุกอย่างใน EPC บวกเพิ่มเติม:"},
+  "חברה": {en: "Company", th: "บริษัท"},
+  "BOI Certificate (אם רלוונטי)": {en: "BOI Certificate (if applicable)", th: "ใบรับรอง BOI (ถ้าเกี่ยวข้อง)"},
+  "→ הקודם": {en: "← Prev", th: "← ก่อนหน้า"},
+  "הבא ←": {en: "Next →", th: "ถัดไป →"},
+  "ייצור: 82,000 kWh × ฿4.50 =": {en: "Production: 82,000 kWh × ฿4.50 =", th: "การผลิต: 82,000 kWh × ฿4.50 ="},
+  "25 שנים": {en: "25 years", th: "25 ปี"},
+  "1 שנה": {en: "1 year", th: "1 ปี"},
+  "מול PEA": {en: "vs. PEA", th: "เทียบกับ PEA"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

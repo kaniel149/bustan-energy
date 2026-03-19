@@ -1,0 +1,733 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.995048,
+              9.7069711
+            ],
+            [
+              99.9950775,
+              9.7062361
+            ],
+            [
+              99.9946189,
+              9.7062097
+            ],
+            [
+              99.994643,
+              9.706905
+            ],
+            [
+              99.995048,
+              9.7069711
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_546094911",
+        "osm_id": 546094911,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "koh_phangan",
+        "source": "osm",
+        "voltage": "115000"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.946806,
+              9.4314505
+            ],
+            [
+              99.9464734,
+              9.430782
+            ],
+            [
+              99.946941,
+              9.4305553
+            ],
+            [
+              99.9472611,
+              9.4312741
+            ],
+            [
+              99.946806,
+              9.4314505
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_1362331920",
+        "osm_id": 1362331920,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "koh_samui",
+        "source": "osm",
+        "voltage": "115000;22000"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            99.9465399,
+            9.4306037
+          ],
+          [
+            99.9463048,
+            9.4301246
+          ],
+          [
+            99.9467197,
+            9.4299933
+          ],
+          [
+            99.9469081,
+            9.4304355
+          ],
+          [
+            99.9465399,
+            9.4306037
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_1362331921",
+        "osm_id": 1362331921,
+        "osm_type": "way",
+        "power_type": "converter",
+        "region": "koh_samui",
+        "source": "osm",
+        "name": "\u0e2a\u0e16\u0e32\u0e19\u0e35\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e40\u0e01\u0e32\u0e30\u0e2a\u0e21\u0e38\u0e22 1",
+        "name:en": "Koh Samui Substation 1",
+        "operator": "PEA",
+        "voltage": "115000;23000"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              100.0198839,
+              9.4407484
+            ],
+            [
+              100.0198559,
+              9.4406125
+            ],
+            [
+              100.0203829,
+              9.440502
+            ],
+            [
+              100.0204093,
+              9.4406402
+            ],
+            [
+              100.0198839,
+              9.4407484
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_1362362267",
+        "osm_id": 1362362267,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "koh_samui",
+        "source": "osm",
+        "name": "\u0e2a\u0e16\u0e32\u0e19\u0e35\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e40\u0e01\u0e32\u0e30\u0e2a\u0e21\u0e38\u0e22 3 (\u0e0a\u0e31\u0e48\u0e27\u0e04\u0e23\u0e32\u0e27)",
+        "name:en": "Koh Samui Substation 3",
+        "voltage": "115000;22000",
+        "substation": "minor_distribution"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              100.0030101,
+              9.5674526
+            ],
+            [
+              100.0029193,
+              9.566588
+            ],
+            [
+              100.0031293,
+              9.5665359
+            ],
+            [
+              100.0033733,
+              9.5673805
+            ],
+            [
+              100.0030101,
+              9.5674526
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_1362369500",
+        "osm_id": 1362369500,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "koh_samui",
+        "source": "osm",
+        "voltage": "115000",
+        "substation": "transition"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              98.8084326,
+              8.969777
+            ],
+            [
+              98.8075636,
+              8.9693269
+            ],
+            [
+              98.8073407,
+              8.9697468
+            ],
+            [
+              98.8072352,
+              8.9696922
+            ],
+            [
+              98.8069259,
+              8.970275
+            ],
+            [
+              98.8073165,
+              8.9704774
+            ],
+            [
+              98.8069368,
+              8.9711928
+            ],
+            [
+              98.8078325,
+              8.9716567
+            ],
+            [
+              98.8084991,
+              8.9704008
+            ],
+            [
+              98.8081872,
+              8.9702393
+            ],
+            [
+              98.8084326,
+              8.969777
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_239587274",
+        "osm_id": 239587274,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "surat_thani",
+        "source": "osm",
+        "name": "\u0e42\u0e23\u0e07\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e40\u0e02\u0e37\u0e48\u0e2d\u0e19\u0e23\u0e31\u0e0a\u0e0a\u0e1b\u0e23\u0e30\u0e20\u0e32",
+        "voltage": "230000;115000",
+        "substation": "transmission"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.2218651,
+              9.0730833
+            ],
+            [
+              99.2228428,
+              9.0741957
+            ],
+            [
+              99.2234798,
+              9.0739759
+            ],
+            [
+              99.2241745,
+              9.0733919
+            ],
+            [
+              99.2243354,
+              9.0735574
+            ],
+            [
+              99.2245741,
+              9.0733323
+            ],
+            [
+              99.2236447,
+              9.0722953
+            ],
+            [
+              99.2232062,
+              9.0726794
+            ],
+            [
+              99.2228267,
+              9.0722556
+            ],
+            [
+              99.2218651,
+              9.0730833
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_550862967",
+        "osm_id": 550862967,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "surat_thani",
+        "source": "osm",
+        "name": "\u0e2a\u0e16\u0e32\u0e19\u0e35\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e41\u0e23\u0e07\u0e2a\u0e39\u0e07\u0e2a\u0e38\u0e23\u0e32\u0e29\u0e0e\u0e23\u0e4c\u0e18\u0e32\u0e19\u0e351",
+        "operator": "EGAT",
+        "voltage": "230000;115000",
+        "substation": "transmission"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.3433852,
+              9.0869712
+            ],
+            [
+              99.3434121,
+              9.0863647
+            ],
+            [
+              99.3424317,
+              9.0865488
+            ],
+            [
+              99.3423633,
+              9.0876744
+            ],
+            [
+              99.3433397,
+              9.0876903
+            ],
+            [
+              99.3433557,
+              9.0872771
+            ],
+            [
+              99.3440089,
+              9.0873063
+            ],
+            [
+              99.3441725,
+              9.0870202
+            ],
+            [
+              99.3433852,
+              9.0869712
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_550867992",
+        "osm_id": 550867992,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "surat_thani",
+        "source": "osm",
+        "name": "\u0e2a\u0e16\u0e32\u0e19\u0e35\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e41\u0e23\u0e07\u0e2a\u0e39\u0e07\u0e1a\u0e49\u0e32\u0e19\u0e14\u0e2d\u0e19",
+        "operator": "EGAT",
+        "voltage": "115000",
+        "substation": "transmission"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.2571384,
+              9.0853517
+            ],
+            [
+              99.2570301,
+              9.085628
+            ],
+            [
+              99.2576165,
+              9.0858521
+            ],
+            [
+              99.2577248,
+              9.0855758
+            ],
+            [
+              99.2571384,
+              9.0853517
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_659499159",
+        "osm_id": 659499159,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "surat_thani",
+        "source": "osm",
+        "name": "\u0e2a\u0e16\u0e32\u0e19\u0e35\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e41\u0e23\u0e07\u0e2a\u0e39\u0e07\u0e1e\u0e38\u0e19\u0e1e\u0e34\u0e19",
+        "operator": "EGAT",
+        "voltage": "115000",
+        "substation": "transmission"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.8583363,
+              9.2347267
+            ],
+            [
+              99.8577033,
+              9.2339219
+            ],
+            [
+              99.8584758,
+              9.2333183
+            ],
+            [
+              99.8591142,
+              9.2341496
+            ],
+            [
+              99.8583363,
+              9.2347267
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_865261246",
+        "osm_id": 865261246,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "surat_thani",
+        "source": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.8594897,
+              9.2342343
+            ],
+            [
+              99.8596184,
+              9.234372
+            ],
+            [
+              99.8597364,
+              9.2343243
+            ],
+            [
+              99.8599081,
+              9.2341707
+            ],
+            [
+              99.8600368,
+              9.2343561
+            ],
+            [
+              99.8580145,
+              9.2358651
+            ],
+            [
+              99.8577784,
+              9.235558
+            ],
+            [
+              99.8585026,
+              9.2350073
+            ],
+            [
+              99.8584007,
+              9.234822
+            ],
+            [
+              99.8592215,
+              9.2341972
+            ],
+            [
+              99.8593127,
+              9.2343084
+            ],
+            [
+              99.8594736,
+              9.2341866
+            ],
+            [
+              99.8594897,
+              9.2342343
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_865261247",
+        "osm_id": 865261247,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "surat_thani",
+        "source": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            99.8592268,
+            9.2340701
+          ],
+          [
+            99.8591678,
+            9.2339219
+          ],
+          [
+            99.8588513,
+            9.2336518
+          ],
+          [
+            99.8596828,
+            9.2330429
+          ],
+          [
+            99.8599349,
+            9.2333394
+          ],
+          [
+            99.8592751,
+            9.2338531
+          ],
+          [
+            99.8593824,
+            9.2339695
+          ],
+          [
+            99.8592268,
+            9.2340701
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_865261248",
+        "osm_id": 865261248,
+        "osm_type": "way",
+        "power_type": "converter",
+        "region": "surat_thani",
+        "source": "osm",
+        "voltage": "115000"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              99.2354047,
+              9.0635056
+            ],
+            [
+              99.2374337,
+              9.0645628
+            ],
+            [
+              99.2370706,
+              9.0652424
+            ],
+            [
+              99.238082,
+              9.0657694
+            ],
+            [
+              99.2371516,
+              9.0675104
+            ],
+            [
+              99.2341113,
+              9.0659261
+            ],
+            [
+              99.2354047,
+              9.0635056
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_876135539",
+        "osm_id": 876135539,
+        "osm_type": "way",
+        "power_type": "substation",
+        "region": "surat_thani",
+        "source": "osm",
+        "name": "\u0e2a\u0e16\u0e32\u0e19\u0e35\u0e44\u0e1f\u0e1f\u0e49\u0e32\u0e41\u0e23\u0e07\u0e2a\u0e39\u0e07\u0e2a\u0e38\u0e23\u0e32\u0e29\u0e0f\u0e23\u0e4c\u0e18\u0e32\u0e19\u0e35 2",
+        "operator": "EGAT",
+        "voltage": "500000",
+        "substation": "distribution"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            99.2360714,
+            9.066651
+          ],
+          [
+            99.2362228,
+            9.066729
+          ],
+          [
+            99.2368076,
+            9.0656218
+          ],
+          [
+            99.2366561,
+            9.0655438
+          ],
+          [
+            99.2360714,
+            9.066651
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_1456029059",
+        "osm_id": 1456029059,
+        "osm_type": "way",
+        "power_type": "switchgear",
+        "region": "surat_thani",
+        "source": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            99.2350039,
+            9.0659703
+          ],
+          [
+            99.2351932,
+            9.0660701
+          ],
+          [
+            99.2362527,
+            9.06411
+          ],
+          [
+            99.2360634,
+            9.0640102
+          ],
+          [
+            99.2350039,
+            9.0659703
+          ]
+        ]
+      },
+      "properties": {
+        "id": "osm_1456029060",
+        "osm_id": 1456029060,
+        "osm_type": "way",
+        "power_type": "switchgear",
+        "region": "surat_thani",
+        "source": "osm",
+        "voltage": "500000"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9948,
+          9.7066
+        ]
+      },
+      "properties": {
+        "id": "kp_sub_pea_115_kv_substation_koh_phangan",
+        "power_type": "substation",
+        "name": "PEA 115 kV Substation Koh Phangan",
+        "name:th": "\u0e2a\u0e16\u0e32\u0e19\u0e35\u0e44\u0e1f\u0e1f\u0e49\u0e32 115 kV \u0e40\u0e01\u0e32\u0e30\u0e1e\u0e30\u0e07\u0e31\u0e19",
+        "voltage": "115000",
+        "substation": "transmission",
+        "operator": "PEA",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html"
+      }
+    }
+  ]
+}

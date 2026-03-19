@@ -1,0 +1,5043 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-03-13T03:44:28Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 11762762720,
+  "lat": 9.5391138,
+  "lon": 100.0602984,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762721,
+  "lat": 9.5390577,
+  "lon": 100.0604443,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762722,
+  "lat": 9.5392720,
+  "lon": 100.0603498,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762723,
+  "lat": 9.5393855,
+  "lon": 100.0603877,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762724,
+  "lat": 9.5395329,
+  "lon": 100.0604381,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762725,
+  "lat": 9.5391129,
+  "lon": 100.0604629,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762726,
+  "lat": 9.5389945,
+  "lon": 100.0606217,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762727,
+  "lat": 9.5389288,
+  "lon": 100.0607939,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762728,
+  "lat": 9.5388642,
+  "lon": 100.0609601,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762729,
+  "lat": 9.5388066,
+  "lon": 100.0611256,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 11762762730,
+  "lat": 9.5386999,
+  "lon": 100.0614200,
+  "tags": {
+    "height": "6.5",
+    "power": "catenary_mast"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076975,
+  "lat": 9.4304066,
+  "lon": 99.9464141,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076976,
+  "lat": 9.4305784,
+  "lon": 99.9464974,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076977,
+  "lat": 9.4307422,
+  "lon": 99.9465753,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076978,
+  "lat": 9.4307936,
+  "lon": 99.9464575,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076979,
+  "lat": 9.4308845,
+  "lon": 99.9462494,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076980,
+  "lat": 9.4310276,
+  "lon": 99.9459438,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076981,
+  "lat": 9.4308698,
+  "lon": 99.9458212,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076982,
+  "lat": 9.4306232,
+  "lon": 99.9456234,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076983,
+  "lat": 9.4302723,
+  "lon": 99.9453476,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076984,
+  "lat": 9.4299474,
+  "lon": 99.9451409,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613076985,
+  "lat": 9.4302767,
+  "lon": 99.9465856,
+  "tags": {
+    "power": "transformer"
+  }
+},
+{
+  "type": "node",
+  "id": 12613082394,
+  "lat": 9.4392444,
+  "lon": 99.9469078,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613082395,
+  "lat": 9.4389269,
+  "lon": 99.9469319,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613082396,
+  "lat": 9.4385518,
+  "lon": 99.9469554,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613082397,
+  "lat": 9.4381933,
+  "lon": 99.9469580,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613082398,
+  "lat": 9.4378923,
+  "lon": 99.9469601,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613082399,
+  "lat": 9.4376092,
+  "lon": 99.9469607,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613082400,
+  "lat": 9.4373837,
+  "lon": 99.9469648,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144301,
+  "lat": 9.4371138,
+  "lon": 99.9469580,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144302,
+  "lat": 9.4369014,
+  "lon": 99.9469420,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144303,
+  "lat": 9.4366177,
+  "lon": 99.9469198,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144304,
+  "lat": 9.4362902,
+  "lon": 99.9468950,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144305,
+  "lat": 9.4359463,
+  "lon": 99.9468762,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144306,
+  "lat": 9.4356407,
+  "lon": 99.9468548,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144307,
+  "lat": 9.4352934,
+  "lon": 99.9468407,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144308,
+  "lat": 9.4349574,
+  "lon": 99.9468246,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144309,
+  "lat": 9.4346081,
+  "lon": 99.9468052,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144310,
+  "lat": 9.4342588,
+  "lon": 99.9467783,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144311,
+  "lat": 9.4338428,
+  "lon": 99.9467488,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144312,
+  "lat": 9.4334829,
+  "lon": 99.9467260,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144313,
+  "lat": 9.4331932,
+  "lon": 99.9467133,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144314,
+  "lat": 9.4329127,
+  "lon": 99.9466999,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144315,
+  "lat": 9.4326997,
+  "lon": 99.9466865,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144316,
+  "lat": 9.4324933,
+  "lon": 99.9466731,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144317,
+  "lat": 9.4323213,
+  "lon": 99.9466503,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144318,
+  "lat": 9.4321348,
+  "lon": 99.9466040,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144319,
+  "lat": 9.4319886,
+  "lon": 99.9465584,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144320,
+  "lat": 9.4318923,
+  "lon": 99.9465115,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144321,
+  "lat": 9.4317933,
+  "lon": 99.9464486,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144322,
+  "lat": 9.4316942,
+  "lon": 99.9463856,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144323,
+  "lat": 9.4315952,
+  "lon": 99.9463227,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144324,
+  "lat": 9.4314962,
+  "lon": 99.9462597,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144325,
+  "lat": 9.4313972,
+  "lon": 99.9461967,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144326,
+  "lat": 9.4312982,
+  "lon": 99.9461338,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144327,
+  "lat": 9.4311992,
+  "lon": 99.9460708,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144328,
+  "lat": 9.4311002,
+  "lon": 99.9460079,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144329,
+  "lat": 9.4310354,
+  "lon": 99.9461564,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144330,
+  "lat": 9.4309706,
+  "lon": 99.9463049,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144331,
+  "lat": 9.4309058,
+  "lon": 99.9464535,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613144332,
+  "lat": 9.4308409,
+  "lon": 99.9466020,
+  "tags": {
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388020,
+  "lat": 9.4423010,
+  "lon": 100.0205532,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388021,
+  "lat": 9.4420305,
+  "lon": 100.0204110,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388022,
+  "lat": 9.4417752,
+  "lon": 100.0202856,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388023,
+  "lat": 9.4415026,
+  "lon": 100.0201368,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388024,
+  "lat": 9.4411408,
+  "lon": 100.0199819,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388025,
+  "lat": 9.4405892,
+  "lon": 100.0203051,
+  "tags": {
+    "design": "h-frame",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388026,
+  "lat": 9.4405501,
+  "lon": 100.0201354,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388027,
+  "lat": 9.4408134,
+  "lon": 100.0198699,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388028,
+  "lat": 9.4406216,
+  "lon": 100.0198236,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388029,
+  "lat": 9.4403014,
+  "lon": 100.0197472,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388030,
+  "lat": 9.4400110,
+  "lon": 100.0196969,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388031,
+  "lat": 9.4397041,
+  "lon": 100.0196613,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388032,
+  "lat": 9.4393806,
+  "lon": 100.0196365,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388033,
+  "lat": 9.4389977,
+  "lon": 100.0195970,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388034,
+  "lat": 9.4386286,
+  "lon": 100.0195587,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388035,
+  "lat": 9.4382442,
+  "lon": 100.0194696,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388036,
+  "lat": 9.4379294,
+  "lon": 100.0193408,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388037,
+  "lat": 9.4376654,
+  "lon": 100.0191309,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388038,
+  "lat": 9.4374240,
+  "lon": 100.0188956,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388039,
+  "lat": 9.4371601,
+  "lon": 100.0186394,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388040,
+  "lat": 9.4369537,
+  "lon": 100.0184429,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388041,
+  "lat": 9.4366838,
+  "lon": 100.0181754,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388042,
+  "lat": 9.4364470,
+  "lon": 100.0179286,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388043,
+  "lat": 9.4362459,
+  "lon": 100.0177308,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388044,
+  "lat": 9.4360382,
+  "lon": 100.0174948,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388045,
+  "lat": 9.4358219,
+  "lon": 100.0172608,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388046,
+  "lat": 9.4355772,
+  "lon": 100.0169946,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388047,
+  "lat": 9.4353317,
+  "lon": 100.0167210,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388048,
+  "lat": 9.4350870,
+  "lon": 100.0164507,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388049,
+  "lat": 9.4348608,
+  "lon": 100.0162147,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388050,
+  "lat": 9.4346293,
+  "lon": 100.0159579,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388051,
+  "lat": 9.4344077,
+  "lon": 100.0157064,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388052,
+  "lat": 9.4341821,
+  "lon": 100.0154449,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388053,
+  "lat": 9.4339797,
+  "lon": 100.0151854,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388054,
+  "lat": 9.4338289,
+  "lon": 100.0149132,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388055,
+  "lat": 9.4336880,
+  "lon": 100.0146416,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388056,
+  "lat": 9.4335087,
+  "lon": 100.0143016,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388057,
+  "lat": 9.4333321,
+  "lon": 100.0140542,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388058,
+  "lat": 9.4331085,
+  "lon": 100.0137652,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388059,
+  "lat": 9.4329372,
+  "lon": 100.0135573,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388060,
+  "lat": 9.4326772,
+  "lon": 100.0132314,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388061,
+  "lat": 9.4324920,
+  "lon": 100.0129873,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388062,
+  "lat": 9.4323829,
+  "lon": 100.0128559,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388063,
+  "lat": 9.4323485,
+  "lon": 100.0126762,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388064,
+  "lat": 9.4324305,
+  "lon": 100.0124133,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388065,
+  "lat": 9.4325641,
+  "lon": 100.0121056,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388066,
+  "lat": 9.4326706,
+  "lon": 100.0118574,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388067,
+  "lat": 9.4327850,
+  "lon": 100.0115470,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388068,
+  "lat": 9.4328757,
+  "lon": 100.0112721,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388069,
+  "lat": 9.4329206,
+  "lon": 100.0109898,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388070,
+  "lat": 9.4329451,
+  "lon": 100.0106907,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388071,
+  "lat": 9.4329498,
+  "lon": 100.0103554,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388072,
+  "lat": 9.4328373,
+  "lon": 100.0100892,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388073,
+  "lat": 9.4326296,
+  "lon": 100.0098337,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388074,
+  "lat": 9.4323888,
+  "lon": 100.0095702,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388075,
+  "lat": 9.4322076,
+  "lon": 100.0093684,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388076,
+  "lat": 9.4320025,
+  "lon": 100.0091524,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388077,
+  "lat": 9.4317525,
+  "lon": 100.0088668,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388078,
+  "lat": 9.4315534,
+  "lon": 100.0086596,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388079,
+  "lat": 9.4313079,
+  "lon": 100.0084054,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388080,
+  "lat": 9.4311829,
+  "lon": 100.0082371,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388081,
+  "lat": 9.4311366,
+  "lon": 100.0080145,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388082,
+  "lat": 9.4311664,
+  "lon": 100.0077416,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388083,
+  "lat": 9.4312795,
+  "lon": 100.0071026,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388084,
+  "lat": 9.4313370,
+  "lon": 100.0067599,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388085,
+  "lat": 9.4314019,
+  "lon": 100.0063978,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388086,
+  "lat": 9.4314601,
+  "lon": 100.0060941,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388087,
+  "lat": 9.4315229,
+  "lon": 100.0057340,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388088,
+  "lat": 9.4316109,
+  "lon": 100.0054128,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388089,
+  "lat": 9.4317796,
+  "lon": 100.0051090,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388090,
+  "lat": 9.4320468,
+  "lon": 100.0047603,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388091,
+  "lat": 9.4322777,
+  "lon": 100.0044465,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388092,
+  "lat": 9.4325456,
+  "lon": 100.0040589,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388093,
+  "lat": 9.4327162,
+  "lon": 100.0037699,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388094,
+  "lat": 9.4328730,
+  "lon": 100.0034762,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388095,
+  "lat": 9.4330424,
+  "lon": 100.0031778,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388096,
+  "lat": 9.4331793,
+  "lon": 100.0028915,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388097,
+  "lat": 9.4333400,
+  "lon": 100.0024731,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388098,
+  "lat": 9.4334333,
+  "lon": 100.0021639,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388099,
+  "lat": 9.4335047,
+  "lon": 100.0018729,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613388100,
+  "lat": 9.4335517,
+  "lon": 100.0016268,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421201,
+  "lat": 9.4335729,
+  "lon": 100.0013506,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421202,
+  "lat": 9.4335768,
+  "lon": 100.0010280,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421203,
+  "lat": 9.4335735,
+  "lon": 100.0006646,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421204,
+  "lat": 9.4335696,
+  "lon": 100.0003508,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421205,
+  "lat": 9.4335636,
+  "lon": 100.0001040,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421206,
+  "lat": 9.4335583,
+  "lon": 99.9998552,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421207,
+  "lat": 9.4335133,
+  "lon": 99.9996521,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421208,
+  "lat": 9.4334207,
+  "lon": 99.9994670,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421209,
+  "lat": 9.4332659,
+  "lon": 99.9993134,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421210,
+  "lat": 9.4330860,
+  "lon": 99.9991880,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421211,
+  "lat": 9.4328710,
+  "lon": 99.9991089,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421212,
+  "lat": 9.4326732,
+  "lon": 99.9990915,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421213,
+  "lat": 9.4324695,
+  "lon": 99.9990861,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421214,
+  "lat": 9.4322922,
+  "lon": 99.9990801,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421215,
+  "lat": 9.4320290,
+  "lon": 99.9989748,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421216,
+  "lat": 9.4317551,
+  "lon": 99.9987314,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421217,
+  "lat": 9.4315216,
+  "lon": 99.9985121,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421218,
+  "lat": 9.4312894,
+  "lon": 99.9983284,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421219,
+  "lat": 9.4310222,
+  "lon": 99.9981138,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421220,
+  "lat": 9.4307463,
+  "lon": 99.9979261,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421221,
+  "lat": 9.4304817,
+  "lon": 99.9977403,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421222,
+  "lat": 9.4302052,
+  "lon": 99.9975485,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421223,
+  "lat": 9.4299248,
+  "lon": 99.9973494,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421224,
+  "lat": 9.4296522,
+  "lon": 99.9971623,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421225,
+  "lat": 9.4293579,
+  "lon": 99.9969558,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421226,
+  "lat": 9.4290800,
+  "lon": 99.9967774,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421227,
+  "lat": 9.4287738,
+  "lon": 99.9965622,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421228,
+  "lat": 9.4285700,
+  "lon": 99.9963677,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421229,
+  "lat": 9.4284344,
+  "lon": 99.9961632,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421230,
+  "lat": 9.4283557,
+  "lon": 99.9959171,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421231,
+  "lat": 9.4282856,
+  "lon": 99.9956006,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421232,
+  "lat": 9.4282175,
+  "lon": 99.9952955,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421233,
+  "lat": 9.4281963,
+  "lon": 99.9950373,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421234,
+  "lat": 9.4282347,
+  "lon": 99.9947859,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421235,
+  "lat": 9.4283689,
+  "lon": 99.9942742,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421236,
+  "lat": 9.4284675,
+  "lon": 99.9938994,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421237,
+  "lat": 9.4285727,
+  "lon": 99.9935058,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421238,
+  "lat": 9.4286679,
+  "lon": 99.9931329,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421239,
+  "lat": 9.4287771,
+  "lon": 99.9927253,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421240,
+  "lat": 9.4288955,
+  "lon": 99.9922471,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421241,
+  "lat": 9.4289735,
+  "lon": 99.9919166,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421242,
+  "lat": 9.4290529,
+  "lon": 99.9915994,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421243,
+  "lat": 9.4291416,
+  "lon": 99.9912393,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421244,
+  "lat": 9.4292242,
+  "lon": 99.9909027,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421245,
+  "lat": 9.4292831,
+  "lon": 99.9905473,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421246,
+  "lat": 9.4293155,
+  "lon": 99.9901544,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421247,
+  "lat": 9.4293281,
+  "lon": 99.9898030,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421248,
+  "lat": 9.4293288,
+  "lon": 99.9894617,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421249,
+  "lat": 9.4293109,
+  "lon": 99.9891385,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421250,
+  "lat": 9.4292507,
+  "lon": 99.9888280,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421251,
+  "lat": 9.4291872,
+  "lon": 99.9885048,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421252,
+  "lat": 9.4291297,
+  "lon": 99.9882111,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421253,
+  "lat": 9.4290695,
+  "lon": 99.9879000,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421254,
+  "lat": 9.4290086,
+  "lon": 99.9876069,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421255,
+  "lat": 9.4289524,
+  "lon": 99.9873682,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421256,
+  "lat": 9.4289378,
+  "lon": 99.9871235,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421257,
+  "lat": 9.4288300,
+  "lon": 99.9868217,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421258,
+  "lat": 9.4286567,
+  "lon": 99.9865066,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421259,
+  "lat": 9.4284867,
+  "lon": 99.9862196,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421260,
+  "lat": 9.4282995,
+  "lon": 99.9859238,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421261,
+  "lat": 9.4281169,
+  "lon": 99.9856228,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421262,
+  "lat": 9.4279317,
+  "lon": 99.9853183,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421263,
+  "lat": 9.4277504,
+  "lon": 99.9850260,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421264,
+  "lat": 9.4275970,
+  "lon": 99.9847765,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421265,
+  "lat": 9.4274217,
+  "lon": 99.9844962,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421266,
+  "lat": 9.4272378,
+  "lon": 99.9841958,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421267,
+  "lat": 9.4270744,
+  "lon": 99.9839357,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421268,
+  "lat": 9.4269474,
+  "lon": 99.9837352,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421269,
+  "lat": 9.4267278,
+  "lon": 99.9833576,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421270,
+  "lat": 9.4265584,
+  "lon": 99.9830519,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421271,
+  "lat": 9.4263950,
+  "lon": 99.9827488,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421272,
+  "lat": 9.4262449,
+  "lon": 99.9824591,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421273,
+  "lat": 9.4260239,
+  "lon": 99.9819414,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421274,
+  "lat": 9.4259201,
+  "lon": 99.9815498,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421275,
+  "lat": 9.4258215,
+  "lon": 99.9811690,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421276,
+  "lat": 9.4257236,
+  "lon": 99.9808075,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421277,
+  "lat": 9.4256164,
+  "lon": 99.9804407,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421278,
+  "lat": 9.4255133,
+  "lon": 99.9800961,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421279,
+  "lat": 9.4254312,
+  "lon": 99.9797782,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421280,
+  "lat": 9.4253611,
+  "lon": 99.9794362,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421281,
+  "lat": 9.4252645,
+  "lon": 99.9788502,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421282,
+  "lat": 9.4251640,
+  "lon": 99.9783339,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421283,
+  "lat": 9.4250581,
+  "lon": 99.9778645,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421284,
+  "lat": 9.4249444,
+  "lon": 99.9773723,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421285,
+  "lat": 9.4248385,
+  "lon": 99.9768962,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421286,
+  "lat": 9.4247327,
+  "lon": 99.9764456,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421287,
+  "lat": 9.4246255,
+  "lon": 99.9759889,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421288,
+  "lat": 9.4245356,
+  "lon": 99.9756047,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421289,
+  "lat": 9.4244549,
+  "lon": 99.9752466,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421290,
+  "lat": 9.4243834,
+  "lon": 99.9749328,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421291,
+  "lat": 9.4243093,
+  "lon": 99.9745895,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421292,
+  "lat": 9.4242247,
+  "lon": 99.9742690,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421293,
+  "lat": 9.4241135,
+  "lon": 99.9739659,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421294,
+  "lat": 9.4239759,
+  "lon": 99.9736762,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421295,
+  "lat": 9.4238079,
+  "lon": 99.9733691,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421296,
+  "lat": 9.4236491,
+  "lon": 99.9730942,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421297,
+  "lat": 9.4234798,
+  "lon": 99.9727683,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421298,
+  "lat": 9.4233105,
+  "lon": 99.9724196,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421299,
+  "lat": 9.4231610,
+  "lon": 99.9720991,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421300,
+  "lat": 9.4230273,
+  "lon": 99.9718148,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421301,
+  "lat": 9.4228884,
+  "lon": 99.9715224,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421302,
+  "lat": 9.4227310,
+  "lon": 99.9711777,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421303,
+  "lat": 9.4226357,
+  "lon": 99.9708961,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421304,
+  "lat": 9.4225497,
+  "lon": 99.9705273,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421305,
+  "lat": 9.4225087,
+  "lon": 99.9701893,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421306,
+  "lat": 9.4224836,
+  "lon": 99.9699131,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421307,
+  "lat": 9.4226304,
+  "lon": 99.9699050,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421308,
+  "lat": 9.4226119,
+  "lon": 99.9697300,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421309,
+  "lat": 9.4225630,
+  "lon": 99.9693149,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421310,
+  "lat": 9.4224836,
+  "lon": 99.9690246,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421311,
+  "lat": 9.4223929,
+  "lon": 99.9687617,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421312,
+  "lat": 9.4222567,
+  "lon": 99.9684211,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421313,
+  "lat": 9.4221105,
+  "lon": 99.9680751,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421314,
+  "lat": 9.4219689,
+  "lon": 99.9677452,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421315,
+  "lat": 9.4218505,
+  "lon": 99.9674562,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421316,
+  "lat": 9.4216898,
+  "lon": 99.9670887,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421317,
+  "lat": 9.4215310,
+  "lon": 99.9667675,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421318,
+  "lat": 9.4213689,
+  "lon": 99.9664617,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421319,
+  "lat": 9.4212466,
+  "lon": 99.9661928,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421320,
+  "lat": 9.4210785,
+  "lon": 99.9657885,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421321,
+  "lat": 9.4209595,
+  "lon": 99.9654733,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421322,
+  "lat": 9.4208450,
+  "lon": 99.9651656,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421323,
+  "lat": 9.4207379,
+  "lon": 99.9648993,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421324,
+  "lat": 9.4206658,
+  "lon": 99.9647082,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421325,
+  "lat": 9.4205434,
+  "lon": 99.9644186,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421326,
+  "lat": 9.4204230,
+  "lon": 99.9640893,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421327,
+  "lat": 9.4203429,
+  "lon": 99.9638586,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421328,
+  "lat": 9.4202761,
+  "lon": 99.9635623,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421329,
+  "lat": 9.4202331,
+  "lon": 99.9632605,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421330,
+  "lat": 9.4202040,
+  "lon": 99.9629588,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421331,
+  "lat": 9.4201756,
+  "lon": 99.9626141,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421332,
+  "lat": 9.4201610,
+  "lon": 99.9622694,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421333,
+  "lat": 9.4201630,
+  "lon": 99.9619623,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421334,
+  "lat": 9.4201736,
+  "lon": 99.9616894,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421335,
+  "lat": 9.4201888,
+  "lon": 99.9613488,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421336,
+  "lat": 9.4202001,
+  "lon": 99.9609974,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421337,
+  "lat": 9.4202040,
+  "lon": 99.9607084,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421338,
+  "lat": 9.4201478,
+  "lon": 99.9604965,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421339,
+  "lat": 9.4200545,
+  "lon": 99.9602833,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421340,
+  "lat": 9.4199249,
+  "lon": 99.9601002,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421341,
+  "lat": 9.4197350,
+  "lon": 99.9599171,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421342,
+  "lat": 9.4195266,
+  "lon": 99.9597274,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421343,
+  "lat": 9.4193573,
+  "lon": 99.9595839,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421344,
+  "lat": 9.4262982,
+  "lon": 99.9495916,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421345,
+  "lat": 9.4192025,
+  "lon": 99.9594638,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421346,
+  "lat": 9.4190477,
+  "lon": 99.9593318,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421347,
+  "lat": 9.4190067,
+  "lon": 99.9592157,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421348,
+  "lat": 9.4190477,
+  "lon": 99.9590950,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421349,
+  "lat": 9.4191635,
+  "lon": 99.9589562,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421350,
+  "lat": 9.4192987,
+  "lon": 99.9587925,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421351,
+  "lat": 9.4194261,
+  "lon": 99.9586411,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421352,
+  "lat": 9.4196245,
+  "lon": 99.9584104,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421353,
+  "lat": 9.4198495,
+  "lon": 99.9581194,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421354,
+  "lat": 9.4199831,
+  "lon": 99.9578807,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421355,
+  "lat": 9.4201365,
+  "lon": 99.9574998,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421356,
+  "lat": 9.4202702,
+  "lon": 99.9571283,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421357,
+  "lat": 9.4203972,
+  "lon": 99.9567743,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421358,
+  "lat": 9.4205215,
+  "lon": 99.9564497,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421359,
+  "lat": 9.4206856,
+  "lon": 99.9560460,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421360,
+  "lat": 9.4208272,
+  "lon": 99.9556772,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421361,
+  "lat": 9.4209198,
+  "lon": 99.9554144,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421362,
+  "lat": 9.4210150,
+  "lon": 99.9551193,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421363,
+  "lat": 9.4211063,
+  "lon": 99.9547666,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421364,
+  "lat": 9.4211738,
+  "lon": 99.9544689,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421365,
+  "lat": 9.4213246,
+  "lon": 99.9538507,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421366,
+  "lat": 9.4214966,
+  "lon": 99.9535717,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421367,
+  "lat": 9.4217321,
+  "lon": 99.9533384,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421368,
+  "lat": 9.4219835,
+  "lon": 99.9531077,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421369,
+  "lat": 9.4222401,
+  "lon": 99.9528851,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421370,
+  "lat": 9.4224915,
+  "lon": 99.9526973,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421371,
+  "lat": 9.4227971,
+  "lon": 99.9525337,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421372,
+  "lat": 9.4230988,
+  "lon": 99.9523862,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421373,
+  "lat": 9.4233965,
+  "lon": 99.9522413,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421374,
+  "lat": 9.4236611,
+  "lon": 99.9520630,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421375,
+  "lat": 9.4239574,
+  "lon": 99.9518564,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421376,
+  "lat": 9.4242471,
+  "lon": 99.9516606,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421377,
+  "lat": 9.4245250,
+  "lon": 99.9514461,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421378,
+  "lat": 9.4247658,
+  "lon": 99.9512047,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421379,
+  "lat": 9.4249933,
+  "lon": 99.9509378,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421380,
+  "lat": 9.4252024,
+  "lon": 99.9506924,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421381,
+  "lat": 9.4254233,
+  "lon": 99.9504402,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421382,
+  "lat": 9.4256535,
+  "lon": 99.9501868,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421383,
+  "lat": 9.4258969,
+  "lon": 99.9499266,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421384,
+  "lat": 9.4261324,
+  "lon": 99.9497080,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421385,
+  "lat": 9.4263904,
+  "lon": 99.9495269,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421386,
+  "lat": 9.4266722,
+  "lon": 99.9493231,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421387,
+  "lat": 9.4269262,
+  "lon": 99.9491233,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421388,
+  "lat": 9.4271816,
+  "lon": 99.9488651,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421389,
+  "lat": 9.4274057,
+  "lon": 99.9486136,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421390,
+  "lat": 9.4276298,
+  "lon": 99.9483622,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421391,
+  "lat": 9.4278540,
+  "lon": 99.9481107,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421392,
+  "lat": 9.4280781,
+  "lon": 99.9478593,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421393,
+  "lat": 9.4283022,
+  "lon": 99.9476078,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421394,
+  "lat": 9.4285264,
+  "lon": 99.9473564,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421395,
+  "lat": 9.4287374,
+  "lon": 99.9471009,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421396,
+  "lat": 9.4289114,
+  "lon": 99.9468400,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421397,
+  "lat": 9.4290576,
+  "lon": 99.9465422,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421398,
+  "lat": 9.4292038,
+  "lon": 99.9462444,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421399,
+  "lat": 9.4293501,
+  "lon": 99.9459465,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421400,
+  "lat": 9.4294963,
+  "lon": 99.9456487,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421401,
+  "lat": 9.4296426,
+  "lon": 99.9453508,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "node",
+  "id": 12613421402,
+  "lat": 9.4297888,
+  "lon": 99.9450530,
+  "tags": {
+    "design": "flag",
+    "line_attachment": "suspension",
+    "material": "concrete",
+    "power": "pole"
+  }
+},
+{
+  "type": "way",
+  "id": 1266358075,
+  "bounds": {
+    "minlat": 9.5386999,
+    "minlon": 100.0602984,
+    "maxlat": 9.5395329,
+    "maxlon": 100.0614200
+  },
+  "nodes": [
+    11762762724,
+    11762762723,
+    11762762722,
+    11762762720,
+    11762762721,
+    11762762726,
+    11762762727,
+    11762762728,
+    11762762729,
+    11762762730
+  ],
+  "geometry": [
+    { "lat": 9.5395329, "lon": 100.0604381 },
+    { "lat": 9.5393855, "lon": 100.0603877 },
+    { "lat": 9.5392720, "lon": 100.0603498 },
+    { "lat": 9.5391138, "lon": 100.0602984 },
+    { "lat": 9.5390577, "lon": 100.0604443 },
+    { "lat": 9.5389945, "lon": 100.0606217 },
+    { "lat": 9.5389288, "lon": 100.0607939 },
+    { "lat": 9.5388642, "lon": 100.0609601 },
+    { "lat": 9.5388066, "lon": 100.0611256 },
+    { "lat": 9.5386999, "lon": 100.0614200 }
+  ],
+  "tags": {
+    "layer": "1",
+    "operator": "PEA",
+    "power": "minor_line",
+    "voltage": "220000"
+  }
+},
+{
+  "type": "way",
+  "id": 1278630038,
+  "bounds": {
+    "minlat": 9.5390577,
+    "minlon": 100.0604443,
+    "maxlat": 9.5391129,
+    "maxlon": 100.0604629
+  },
+  "nodes": [
+    11762762725,
+    11762762721
+  ],
+  "geometry": [
+    { "lat": 9.5391129, "lon": 100.0604629 },
+    { "lat": 9.5390577, "lon": 100.0604443 }
+  ],
+  "tags": {
+    "operator": "PEA",
+    "power": "minor_line",
+    "voltage": "220000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362331920,
+  "bounds": {
+    "minlat": 9.4305553,
+    "minlon": 99.9464734,
+    "maxlat": 9.4314505,
+    "maxlon": 99.9472611
+  },
+  "nodes": [
+    12613076967,
+    12613076968,
+    12613076969,
+    12613076970,
+    12613076967
+  ],
+  "geometry": [
+    { "lat": 9.4314505, "lon": 99.9468060 },
+    { "lat": 9.4307820, "lon": 99.9464734 },
+    { "lat": 9.4305553, "lon": 99.9469410 },
+    { "lat": 9.4312741, "lon": 99.9472611 },
+    { "lat": 9.4314505, "lon": 99.9468060 }
+  ],
+  "tags": {
+    "power": "substation",
+    "voltage": "115000;22000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362331921,
+  "bounds": {
+    "minlat": 9.4299933,
+    "minlon": 99.9463048,
+    "maxlat": 9.4306037,
+    "maxlon": 99.9469081
+  },
+  "nodes": [
+    12613076971,
+    12613076972,
+    12613076973,
+    12613076974,
+    12613076971
+  ],
+  "geometry": [
+    { "lat": 9.4306037, "lon": 99.9465399 },
+    { "lat": 9.4301246, "lon": 99.9463048 },
+    { "lat": 9.4299933, "lon": 99.9467197 },
+    { "lat": 9.4304355, "lon": 99.9469081 },
+    { "lat": 9.4306037, "lon": 99.9465399 }
+  ],
+  "tags": {
+    "name": "สถานีไฟฟ้าเกาะสมุย 1",
+    "name:en": "Koh Samui Substation 1",
+    "operator": "PEA",
+    "operator:wikidata": "Q13013017",
+    "power": "converter",
+    "voltage": "115000;23000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362331922,
+  "bounds": {
+    "minlat": 9.4190067,
+    "minlon": 99.9450530,
+    "maxlat": 9.4423010,
+    "maxlon": 100.0205532
+  },
+  "nodes": [
+    12613076975,
+    12613076976,
+    12613076977,
+    12613076978,
+    12613076979,
+    12613076980,
+    12613076981,
+    12613076982,
+    12613076983,
+    12613076984,
+    12613421402,
+    12613421401,
+    12613421400,
+    12613421399,
+    12613421398,
+    12613421397,
+    12613421396,
+    12613421395,
+    12613421394,
+    12613421393,
+    12613421392,
+    12613421391,
+    12613421390,
+    12613421389,
+    12613421388,
+    12613421387,
+    12613421386,
+    12613421385,
+    12613421344,
+    12613421384,
+    12613421383,
+    12613421382,
+    12613421381,
+    12613421380,
+    12613421379,
+    12613421378,
+    12613421377,
+    12613421376,
+    12613421375,
+    12613421374,
+    12613421373,
+    12613421372,
+    12613421371,
+    12613421370,
+    12613421369,
+    12613421368,
+    12613421367,
+    12613421366,
+    12613421365,
+    12613421364,
+    12613421363,
+    12613421362,
+    12613421361,
+    12613421360,
+    12613421359,
+    12613421358,
+    12613421357,
+    12613421356,
+    12613421355,
+    12613421354,
+    12613421353,
+    12613421352,
+    12613421351,
+    12613421350,
+    12613421349,
+    12613421348,
+    12613421347,
+    12613421346,
+    12613421345,
+    12613421343,
+    12613421342,
+    12613421341,
+    12613421340,
+    12613421339,
+    12613421338,
+    12613421337,
+    12613421336,
+    12613421335,
+    12613421334,
+    12613421333,
+    12613421332,
+    12613421331,
+    12613421330,
+    12613421329,
+    12613421328,
+    12613421327,
+    12613421326,
+    12613421325,
+    12613421324,
+    12613421323,
+    12613421322,
+    12613421321,
+    12613421320,
+    12613421319,
+    12613421318,
+    12613421317,
+    12613421316,
+    12613421315,
+    12613421314,
+    12613421313,
+    12613421312,
+    12613421311,
+    12613421310,
+    12613421309,
+    12613421308,
+    12613421307,
+    12613421306,
+    12613421305,
+    12613421304,
+    12613421303,
+    12613421302,
+    12613421301,
+    12613421300,
+    12613421299,
+    12613421298,
+    12613421297,
+    12613421296,
+    12613421295,
+    12613421294,
+    12613421293,
+    12613421292,
+    12613421291,
+    12613421290,
+    12613421289,
+    12613421288,
+    12613421287,
+    12613421286,
+    12613421285,
+    12613421284,
+    12613421283,
+    12613421282,
+    12613421281,
+    12613421280,
+    12613421279,
+    12613421278,
+    12613421277,
+    12613421276,
+    12613421275,
+    12613421274,
+    12613421273,
+    12613421272,
+    12613421271,
+    12613421270,
+    12613421269,
+    12613421268,
+    12613421267,
+    12613421266,
+    12613421265,
+    12613421264,
+    12613421263,
+    12613421262,
+    12613421261,
+    12613421260,
+    12613421259,
+    12613421258,
+    12613421257,
+    12613421256,
+    12613421255,
+    12613421254,
+    12613421253,
+    12613421252,
+    12613421251,
+    12613421250,
+    12613421249,
+    12613421248,
+    12613421247,
+    12613421246,
+    12613421245,
+    12613421244,
+    12613421243,
+    12613421242,
+    12613421241,
+    12613421240,
+    12613421239,
+    12613421238,
+    12613421237,
+    12613421236,
+    12613421235,
+    12613421234,
+    12613421233,
+    12613421232,
+    12613421231,
+    12613421230,
+    12613421229,
+    12613421228,
+    12613421227,
+    12613421226,
+    12613421225,
+    12613421224,
+    12613421223,
+    12613421222,
+    12613421221,
+    12613421220,
+    12613421219,
+    12613421218,
+    12613421217,
+    12613421216,
+    12613421215,
+    12613421214,
+    12613421213,
+    12613421212,
+    12613421211,
+    12613421210,
+    12613421209,
+    12613421208,
+    12613421207,
+    12613421206,
+    12613421205,
+    12613421204,
+    12613421203,
+    12613421202,
+    12613421201,
+    12613388100,
+    12613388099,
+    12613388098,
+    12613388097,
+    12613388096,
+    12613388095,
+    12613388094,
+    12613388093,
+    12613388092,
+    12613388091,
+    12613388090,
+    12613388089,
+    12613388088,
+    12613388087,
+    12613388086,
+    12613388085,
+    12613388084,
+    12613388083,
+    12613388082,
+    12613388081,
+    12613388080,
+    12613388079,
+    12613388078,
+    12613388077,
+    12613388076,
+    12613388075,
+    12613388074,
+    12613388073,
+    12613388072,
+    12613388071,
+    12613388070,
+    12613388069,
+    12613388068,
+    12613388067,
+    12613388066,
+    12613388065,
+    12613388064,
+    12613388063,
+    12613388062,
+    12613388061,
+    12613388060,
+    12613388059,
+    12613388058,
+    12613388057,
+    12613388056,
+    12613388055,
+    12613388054,
+    12613388053,
+    12613388052,
+    12613388051,
+    12613388050,
+    12613388049,
+    12613388048,
+    12613388047,
+    12613388046,
+    12613388045,
+    12613388044,
+    12613388043,
+    12613388042,
+    12613388041,
+    12613388040,
+    12613388039,
+    12613388038,
+    12613388037,
+    12613388036,
+    12613388035,
+    12613388034,
+    12613388033,
+    12613388032,
+    12613388031,
+    12613388030,
+    12613388029,
+    12613388028,
+    12613388027,
+    12613388024,
+    12613388023,
+    12613388022,
+    12613388021,
+    12613388020
+  ],
+  "geometry": [
+    { "lat": 9.4304066, "lon": 99.9464141 },
+    { "lat": 9.4305784, "lon": 99.9464974 },
+    { "lat": 9.4307422, "lon": 99.9465753 },
+    { "lat": 9.4307936, "lon": 99.9464575 },
+    { "lat": 9.4308845, "lon": 99.9462494 },
+    { "lat": 9.4310276, "lon": 99.9459438 },
+    { "lat": 9.4308698, "lon": 99.9458212 },
+    { "lat": 9.4306232, "lon": 99.9456234 },
+    { "lat": 9.4302723, "lon": 99.9453476 },
+    { "lat": 9.4299474, "lon": 99.9451409 },
+    { "lat": 9.4297888, "lon": 99.9450530 },
+    { "lat": 9.4296426, "lon": 99.9453508 },
+    { "lat": 9.4294963, "lon": 99.9456487 },
+    { "lat": 9.4293501, "lon": 99.9459465 },
+    { "lat": 9.4292038, "lon": 99.9462444 },
+    { "lat": 9.4290576, "lon": 99.9465422 },
+    { "lat": 9.4289114, "lon": 99.9468400 },
+    { "lat": 9.4287374, "lon": 99.9471009 },
+    { "lat": 9.4285264, "lon": 99.9473564 },
+    { "lat": 9.4283022, "lon": 99.9476078 },
+    { "lat": 9.4280781, "lon": 99.9478593 },
+    { "lat": 9.4278540, "lon": 99.9481107 },
+    { "lat": 9.4276298, "lon": 99.9483622 },
+    { "lat": 9.4274057, "lon": 99.9486136 },
+    { "lat": 9.4271816, "lon": 99.9488651 },
+    { "lat": 9.4269262, "lon": 99.9491233 },
+    { "lat": 9.4266722, "lon": 99.9493231 },
+    { "lat": 9.4263904, "lon": 99.9495269 },
+    { "lat": 9.4262982, "lon": 99.9495916 },
+    { "lat": 9.4261324, "lon": 99.9497080 },
+    { "lat": 9.4258969, "lon": 99.9499266 },
+    { "lat": 9.4256535, "lon": 99.9501868 },
+    { "lat": 9.4254233, "lon": 99.9504402 },
+    { "lat": 9.4252024, "lon": 99.9506924 },
+    { "lat": 9.4249933, "lon": 99.9509378 },
+    { "lat": 9.4247658, "lon": 99.9512047 },
+    { "lat": 9.4245250, "lon": 99.9514461 },
+    { "lat": 9.4242471, "lon": 99.9516606 },
+    { "lat": 9.4239574, "lon": 99.9518564 },
+    { "lat": 9.4236611, "lon": 99.9520630 },
+    { "lat": 9.4233965, "lon": 99.9522413 },
+    { "lat": 9.4230988, "lon": 99.9523862 },
+    { "lat": 9.4227971, "lon": 99.9525337 },
+    { "lat": 9.4224915, "lon": 99.9526973 },
+    { "lat": 9.4222401, "lon": 99.9528851 },
+    { "lat": 9.4219835, "lon": 99.9531077 },
+    { "lat": 9.4217321, "lon": 99.9533384 },
+    { "lat": 9.4214966, "lon": 99.9535717 },
+    { "lat": 9.4213246, "lon": 99.9538507 },
+    { "lat": 9.4211738, "lon": 99.9544689 },
+    { "lat": 9.4211063, "lon": 99.9547666 },
+    { "lat": 9.4210150, "lon": 99.9551193 },
+    { "lat": 9.4209198, "lon": 99.9554144 },
+    { "lat": 9.4208272, "lon": 99.9556772 },
+    { "lat": 9.4206856, "lon": 99.9560460 },
+    { "lat": 9.4205215, "lon": 99.9564497 },
+    { "lat": 9.4203972, "lon": 99.9567743 },
+    { "lat": 9.4202702, "lon": 99.9571283 },
+    { "lat": 9.4201365, "lon": 99.9574998 },
+    { "lat": 9.4199831, "lon": 99.9578807 },
+    { "lat": 9.4198495, "lon": 99.9581194 },
+    { "lat": 9.4196245, "lon": 99.9584104 },
+    { "lat": 9.4194261, "lon": 99.9586411 },
+    { "lat": 9.4192987, "lon": 99.9587925 },
+    { "lat": 9.4191635, "lon": 99.9589562 },
+    { "lat": 9.4190477, "lon": 99.9590950 },
+    { "lat": 9.4190067, "lon": 99.9592157 },
+    { "lat": 9.4190477, "lon": 99.9593318 },
+    { "lat": 9.4192025, "lon": 99.9594638 },
+    { "lat": 9.4193573, "lon": 99.9595839 },
+    { "lat": 9.4195266, "lon": 99.9597274 },
+    { "lat": 9.4197350, "lon": 99.9599171 },
+    { "lat": 9.4199249, "lon": 99.9601002 },
+    { "lat": 9.4200545, "lon": 99.9602833 },
+    { "lat": 9.4201478, "lon": 99.9604965 },
+    { "lat": 9.4202040, "lon": 99.9607084 },
+    { "lat": 9.4202001, "lon": 99.9609974 },
+    { "lat": 9.4201888, "lon": 99.9613488 },
+    { "lat": 9.4201736, "lon": 99.9616894 },
+    { "lat": 9.4201630, "lon": 99.9619623 },
+    { "lat": 9.4201610, "lon": 99.9622694 },
+    { "lat": 9.4201756, "lon": 99.9626141 },
+    { "lat": 9.4202040, "lon": 99.9629588 },
+    { "lat": 9.4202331, "lon": 99.9632605 },
+    { "lat": 9.4202761, "lon": 99.9635623 },
+    { "lat": 9.4203429, "lon": 99.9638586 },
+    { "lat": 9.4204230, "lon": 99.9640893 },
+    { "lat": 9.4205434, "lon": 99.9644186 },
+    { "lat": 9.4206658, "lon": 99.9647082 },
+    { "lat": 9.4207379, "lon": 99.9648993 },
+    { "lat": 9.4208450, "lon": 99.9651656 },
+    { "lat": 9.4209595, "lon": 99.9654733 },
+    { "lat": 9.4210785, "lon": 99.9657885 },
+    { "lat": 9.4212466, "lon": 99.9661928 },
+    { "lat": 9.4213689, "lon": 99.9664617 },
+    { "lat": 9.4215310, "lon": 99.9667675 },
+    { "lat": 9.4216898, "lon": 99.9670887 },
+    { "lat": 9.4218505, "lon": 99.9674562 },
+    { "lat": 9.4219689, "lon": 99.9677452 },
+    { "lat": 9.4221105, "lon": 99.9680751 },
+    { "lat": 9.4222567, "lon": 99.9684211 },
+    { "lat": 9.4223929, "lon": 99.9687617 },
+    { "lat": 9.4224836, "lon": 99.9690246 },
+    { "lat": 9.4225630, "lon": 99.9693149 },
+    { "lat": 9.4226119, "lon": 99.9697300 },
+    { "lat": 9.4226304, "lon": 99.9699050 },
+    { "lat": 9.4224836, "lon": 99.9699131 },
+    { "lat": 9.4225087, "lon": 99.9701893 },
+    { "lat": 9.4225497, "lon": 99.9705273 },
+    { "lat": 9.4226357, "lon": 99.9708961 },
+    { "lat": 9.4227310, "lon": 99.9711777 },
+    { "lat": 9.4228884, "lon": 99.9715224 },
+    { "lat": 9.4230273, "lon": 99.9718148 },
+    { "lat": 9.4231610, "lon": 99.9720991 },
+    { "lat": 9.4233105, "lon": 99.9724196 },
+    { "lat": 9.4234798, "lon": 99.9727683 },
+    { "lat": 9.4236491, "lon": 99.9730942 },
+    { "lat": 9.4238079, "lon": 99.9733691 },
+    { "lat": 9.4239759, "lon": 99.9736762 },
+    { "lat": 9.4241135, "lon": 99.9739659 },
+    { "lat": 9.4242247, "lon": 99.9742690 },
+    { "lat": 9.4243093, "lon": 99.9745895 },
+    { "lat": 9.4243834, "lon": 99.9749328 },
+    { "lat": 9.4244549, "lon": 99.9752466 },
+    { "lat": 9.4245356, "lon": 99.9756047 },
+    { "lat": 9.4246255, "lon": 99.9759889 },
+    { "lat": 9.4247327, "lon": 99.9764456 },
+    { "lat": 9.4248385, "lon": 99.9768962 },
+    { "lat": 9.4249444, "lon": 99.9773723 },
+    { "lat": 9.4250581, "lon": 99.9778645 },
+    { "lat": 9.4251640, "lon": 99.9783339 },
+    { "lat": 9.4252645, "lon": 99.9788502 },
+    { "lat": 9.4253611, "lon": 99.9794362 },
+    { "lat": 9.4254312, "lon": 99.9797782 },
+    { "lat": 9.4255133, "lon": 99.9800961 },
+    { "lat": 9.4256164, "lon": 99.9804407 },
+    { "lat": 9.4257236, "lon": 99.9808075 },
+    { "lat": 9.4258215, "lon": 99.9811690 },
+    { "lat": 9.4259201, "lon": 99.9815498 },
+    { "lat": 9.4260239, "lon": 99.9819414 },
+    { "lat": 9.4262449, "lon": 99.9824591 },
+    { "lat": 9.4263950, "lon": 99.9827488 },
+    { "lat": 9.4265584, "lon": 99.9830519 },
+    { "lat": 9.4267278, "lon": 99.9833576 },
+    { "lat": 9.4269474, "lon": 99.9837352 },
+    { "lat": 9.4270744, "lon": 99.9839357 },
+    { "lat": 9.4272378, "lon": 99.9841958 },
+    { "lat": 9.4274217, "lon": 99.9844962 },
+    { "lat": 9.4275970, "lon": 99.9847765 },
+    { "lat": 9.4277504, "lon": 99.9850260 },
+    { "lat": 9.4279317, "lon": 99.9853183 },
+    { "lat": 9.4281169, "lon": 99.9856228 },
+    { "lat": 9.4282995, "lon": 99.9859238 },
+    { "lat": 9.4284867, "lon": 99.9862196 },
+    { "lat": 9.4286567, "lon": 99.9865066 },
+    { "lat": 9.4288300, "lon": 99.9868217 },
+    { "lat": 9.4289378, "lon": 99.9871235 },
+    { "lat": 9.4289524, "lon": 99.9873682 },
+    { "lat": 9.4290086, "lon": 99.9876069 },
+    { "lat": 9.4290695, "lon": 99.9879000 },
+    { "lat": 9.4291297, "lon": 99.9882111 },
+    { "lat": 9.4291872, "lon": 99.9885048 },
+    { "lat": 9.4292507, "lon": 99.9888280 },
+    { "lat": 9.4293109, "lon": 99.9891385 },
+    { "lat": 9.4293288, "lon": 99.9894617 },
+    { "lat": 9.4293281, "lon": 99.9898030 },
+    { "lat": 9.4293155, "lon": 99.9901544 },
+    { "lat": 9.4292831, "lon": 99.9905473 },
+    { "lat": 9.4292242, "lon": 99.9909027 },
+    { "lat": 9.4291416, "lon": 99.9912393 },
+    { "lat": 9.4290529, "lon": 99.9915994 },
+    { "lat": 9.4289735, "lon": 99.9919166 },
+    { "lat": 9.4288955, "lon": 99.9922471 },
+    { "lat": 9.4287771, "lon": 99.9927253 },
+    { "lat": 9.4286679, "lon": 99.9931329 },
+    { "lat": 9.4285727, "lon": 99.9935058 },
+    { "lat": 9.4284675, "lon": 99.9938994 },
+    { "lat": 9.4283689, "lon": 99.9942742 },
+    { "lat": 9.4282347, "lon": 99.9947859 },
+    { "lat": 9.4281963, "lon": 99.9950373 },
+    { "lat": 9.4282175, "lon": 99.9952955 },
+    { "lat": 9.4282856, "lon": 99.9956006 },
+    { "lat": 9.4283557, "lon": 99.9959171 },
+    { "lat": 9.4284344, "lon": 99.9961632 },
+    { "lat": 9.4285700, "lon": 99.9963677 },
+    { "lat": 9.4287738, "lon": 99.9965622 },
+    { "lat": 9.4290800, "lon": 99.9967774 },
+    { "lat": 9.4293579, "lon": 99.9969558 },
+    { "lat": 9.4296522, "lon": 99.9971623 },
+    { "lat": 9.4299248, "lon": 99.9973494 },
+    { "lat": 9.4302052, "lon": 99.9975485 },
+    { "lat": 9.4304817, "lon": 99.9977403 },
+    { "lat": 9.4307463, "lon": 99.9979261 },
+    { "lat": 9.4310222, "lon": 99.9981138 },
+    { "lat": 9.4312894, "lon": 99.9983284 },
+    { "lat": 9.4315216, "lon": 99.9985121 },
+    { "lat": 9.4317551, "lon": 99.9987314 },
+    { "lat": 9.4320290, "lon": 99.9989748 },
+    { "lat": 9.4322922, "lon": 99.9990801 },
+    { "lat": 9.4324695, "lon": 99.9990861 },
+    { "lat": 9.4326732, "lon": 99.9990915 },
+    { "lat": 9.4328710, "lon": 99.9991089 },
+    { "lat": 9.4330860, "lon": 99.9991880 },
+    { "lat": 9.4332659, "lon": 99.9993134 },
+    { "lat": 9.4334207, "lon": 99.9994670 },
+    { "lat": 9.4335133, "lon": 99.9996521 },
+    { "lat": 9.4335583, "lon": 99.9998552 },
+    { "lat": 9.4335636, "lon": 100.0001040 },
+    { "lat": 9.4335696, "lon": 100.0003508 },
+    { "lat": 9.4335735, "lon": 100.0006646 },
+    { "lat": 9.4335768, "lon": 100.0010280 },
+    { "lat": 9.4335729, "lon": 100.0013506 },
+    { "lat": 9.4335517, "lon": 100.0016268 },
+    { "lat": 9.4335047, "lon": 100.0018729 },
+    { "lat": 9.4334333, "lon": 100.0021639 },
+    { "lat": 9.4333400, "lon": 100.0024731 },
+    { "lat": 9.4331793, "lon": 100.0028915 },
+    { "lat": 9.4330424, "lon": 100.0031778 },
+    { "lat": 9.4328730, "lon": 100.0034762 },
+    { "lat": 9.4327162, "lon": 100.0037699 },
+    { "lat": 9.4325456, "lon": 100.0040589 },
+    { "lat": 9.4322777, "lon": 100.0044465 },
+    { "lat": 9.4320468, "lon": 100.0047603 },
+    { "lat": 9.4317796, "lon": 100.0051090 },
+    { "lat": 9.4316109, "lon": 100.0054128 },
+    { "lat": 9.4315229, "lon": 100.0057340 },
+    { "lat": 9.4314601, "lon": 100.0060941 },
+    { "lat": 9.4314019, "lon": 100.0063978 },
+    { "lat": 9.4313370, "lon": 100.0067599 },
+    { "lat": 9.4312795, "lon": 100.0071026 },
+    { "lat": 9.4311664, "lon": 100.0077416 },
+    { "lat": 9.4311366, "lon": 100.0080145 },
+    { "lat": 9.4311829, "lon": 100.0082371 },
+    { "lat": 9.4313079, "lon": 100.0084054 },
+    { "lat": 9.4315534, "lon": 100.0086596 },
+    { "lat": 9.4317525, "lon": 100.0088668 },
+    { "lat": 9.4320025, "lon": 100.0091524 },
+    { "lat": 9.4322076, "lon": 100.0093684 },
+    { "lat": 9.4323888, "lon": 100.0095702 },
+    { "lat": 9.4326296, "lon": 100.0098337 },
+    { "lat": 9.4328373, "lon": 100.0100892 },
+    { "lat": 9.4329498, "lon": 100.0103554 },
+    { "lat": 9.4329451, "lon": 100.0106907 },
+    { "lat": 9.4329206, "lon": 100.0109898 },
+    { "lat": 9.4328757, "lon": 100.0112721 },
+    { "lat": 9.4327850, "lon": 100.0115470 },
+    { "lat": 9.4326706, "lon": 100.0118574 },
+    { "lat": 9.4325641, "lon": 100.0121056 },
+    { "lat": 9.4324305, "lon": 100.0124133 },
+    { "lat": 9.4323485, "lon": 100.0126762 },
+    { "lat": 9.4323829, "lon": 100.0128559 },
+    { "lat": 9.4324920, "lon": 100.0129873 },
+    { "lat": 9.4326772, "lon": 100.0132314 },
+    { "lat": 9.4329372, "lon": 100.0135573 },
+    { "lat": 9.4331085, "lon": 100.0137652 },
+    { "lat": 9.4333321, "lon": 100.0140542 },
+    { "lat": 9.4335087, "lon": 100.0143016 },
+    { "lat": 9.4336880, "lon": 100.0146416 },
+    { "lat": 9.4338289, "lon": 100.0149132 },
+    { "lat": 9.4339797, "lon": 100.0151854 },
+    { "lat": 9.4341821, "lon": 100.0154449 },
+    { "lat": 9.4344077, "lon": 100.0157064 },
+    { "lat": 9.4346293, "lon": 100.0159579 },
+    { "lat": 9.4348608, "lon": 100.0162147 },
+    { "lat": 9.4350870, "lon": 100.0164507 },
+    { "lat": 9.4353317, "lon": 100.0167210 },
+    { "lat": 9.4355772, "lon": 100.0169946 },
+    { "lat": 9.4358219, "lon": 100.0172608 },
+    { "lat": 9.4360382, "lon": 100.0174948 },
+    { "lat": 9.4362459, "lon": 100.0177308 },
+    { "lat": 9.4364470, "lon": 100.0179286 },
+    { "lat": 9.4366838, "lon": 100.0181754 },
+    { "lat": 9.4369537, "lon": 100.0184429 },
+    { "lat": 9.4371601, "lon": 100.0186394 },
+    { "lat": 9.4374240, "lon": 100.0188956 },
+    { "lat": 9.4376654, "lon": 100.0191309 },
+    { "lat": 9.4379294, "lon": 100.0193408 },
+    { "lat": 9.4382442, "lon": 100.0194696 },
+    { "lat": 9.4386286, "lon": 100.0195587 },
+    { "lat": 9.4389977, "lon": 100.0195970 },
+    { "lat": 9.4393806, "lon": 100.0196365 },
+    { "lat": 9.4397041, "lon": 100.0196613 },
+    { "lat": 9.4400110, "lon": 100.0196969 },
+    { "lat": 9.4403014, "lon": 100.0197472 },
+    { "lat": 9.4406216, "lon": 100.0198236 },
+    { "lat": 9.4408134, "lon": 100.0198699 },
+    { "lat": 9.4411408, "lon": 100.0199819 },
+    { "lat": 9.4415026, "lon": 100.0201368 },
+    { "lat": 9.4417752, "lon": 100.0202856 },
+    { "lat": 9.4420305, "lon": 100.0204110 },
+    { "lat": 9.4423010, "lon": 100.0205532 }
+  ],
+  "tags": {
+    "cables": "3",
+    "circuits": "2",
+    "power": "minor_line",
+    "voltage": "115000;22000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362331923,
+  "bounds": {
+    "minlat": 9.2338174,
+    "minlon": 99.8597419,
+    "maxlat": 9.4303431,
+    "maxlon": 99.9467152
+  },
+  "nodes": [
+    12613076986,
+    12613076987,
+    12613076988,
+    12613076989,
+    12613076990,
+    12613076991,
+    12613076992,
+    12613076993,
+    12613076994,
+    12613076995,
+    12613076996,
+    12613076997,
+    12613076998,
+    12613076999,
+    12613077000,
+    12613105501,
+    12613105502,
+    12613105503,
+    12613105504,
+    12613105505
+  ],
+  "geometry": [
+    { "lat": 9.2338174, "lon": 99.8597419 },
+    { "lat": 9.2351764, "lon": 99.8609670 },
+    { "lat": 9.2373995, "lon": 99.8626718 },
+    { "lat": 9.2377366, "lon": 99.8636312 },
+    { "lat": 9.2381298, "lon": 99.8649376 },
+    { "lat": 9.4214179, "lon": 99.9441084 },
+    { "lat": 9.4238534, "lon": 99.9451304 },
+    { "lat": 9.4251129, "lon": 99.9444080 },
+    { "lat": 9.4258044, "lon": 99.9440361 },
+    { "lat": 9.4269218, "lon": 99.9438816 },
+    { "lat": 9.4271051, "lon": 99.9437892 },
+    { "lat": 9.4272834, "lon": 99.9438405 },
+    { "lat": 9.4280058, "lon": 99.9441435 },
+    { "lat": 9.4282895, "lon": 99.9442781 },
+    { "lat": 9.4288336, "lon": 99.9446170 },
+    { "lat": 9.4296481, "lon": 99.9449240 },
+    { "lat": 9.4298001, "lon": 99.9450196 },
+    { "lat": 9.4292844, "lon": 99.9460291 },
+    { "lat": 9.4291811, "lon": 99.9462325 },
+    { "lat": 9.4303431, "lon": 99.9467152 }
+  ],
+  "tags": {
+    "frequency": "0",
+    "layer": "-2",
+    "location": "underground",
+    "name": "HVDC Koh Samui Connector",
+    "power": "cable",
+    "voltage": "115000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362334858,
+  "bounds": {
+    "minlat": 9.4308409,
+    "minlon": 99.9460079,
+    "maxlat": 9.4392444,
+    "maxlon": 99.9469648
+  },
+  "nodes": [
+    12613144332,
+    12613144331,
+    12613144330,
+    12613144329,
+    12613144328,
+    12613144327,
+    12613144326,
+    12613144325,
+    12613144324,
+    12613144323,
+    12613144322,
+    12613144321,
+    12613144320,
+    12613144319,
+    12613144318,
+    12613144317,
+    12613144316,
+    12613144315,
+    12613144314,
+    12613144313,
+    12613144312,
+    12613144311,
+    12613144310,
+    12613144309,
+    12613144308,
+    12613144307,
+    12613144306,
+    12613144305,
+    12613144304,
+    12613144303,
+    12613144302,
+    12613144301,
+    12613082400,
+    12613082399,
+    12613082398,
+    12613082397,
+    12613082396,
+    12613082395,
+    12613082394
+  ],
+  "geometry": [
+    { "lat": 9.4308409, "lon": 99.9466020 },
+    { "lat": 9.4309058, "lon": 99.9464535 },
+    { "lat": 9.4309706, "lon": 99.9463049 },
+    { "lat": 9.4310354, "lon": 99.9461564 },
+    { "lat": 9.4311002, "lon": 99.9460079 },
+    { "lat": 9.4311992, "lon": 99.9460708 },
+    { "lat": 9.4312982, "lon": 99.9461338 },
+    { "lat": 9.4313972, "lon": 99.9461967 },
+    { "lat": 9.4314962, "lon": 99.9462597 },
+    { "lat": 9.4315952, "lon": 99.9463227 },
+    { "lat": 9.4316942, "lon": 99.9463856 },
+    { "lat": 9.4317933, "lon": 99.9464486 },
+    { "lat": 9.4318923, "lon": 99.9465115 },
+    { "lat": 9.4319886, "lon": 99.9465584 },
+    { "lat": 9.4321348, "lon": 99.9466040 },
+    { "lat": 9.4323213, "lon": 99.9466503 },
+    { "lat": 9.4324933, "lon": 99.9466731 },
+    { "lat": 9.4326997, "lon": 99.9466865 },
+    { "lat": 9.4329127, "lon": 99.9466999 },
+    { "lat": 9.4331932, "lon": 99.9467133 },
+    { "lat": 9.4334829, "lon": 99.9467260 },
+    { "lat": 9.4338428, "lon": 99.9467488 },
+    { "lat": 9.4342588, "lon": 99.9467783 },
+    { "lat": 9.4346081, "lon": 99.9468052 },
+    { "lat": 9.4349574, "lon": 99.9468246 },
+    { "lat": 9.4352934, "lon": 99.9468407 },
+    { "lat": 9.4356407, "lon": 99.9468548 },
+    { "lat": 9.4359463, "lon": 99.9468762 },
+    { "lat": 9.4362902, "lon": 99.9468950 },
+    { "lat": 9.4366177, "lon": 99.9469198 },
+    { "lat": 9.4369014, "lon": 99.9469420 },
+    { "lat": 9.4371138, "lon": 99.9469580 },
+    { "lat": 9.4373837, "lon": 99.9469648 },
+    { "lat": 9.4376092, "lon": 99.9469607 },
+    { "lat": 9.4378923, "lon": 99.9469601 },
+    { "lat": 9.4381933, "lon": 99.9469580 },
+    { "lat": 9.4385518, "lon": 99.9469554 },
+    { "lat": 9.4389269, "lon": 99.9469319 },
+    { "lat": 9.4392444, "lon": 99.9469078 }
+  ],
+  "tags": {
+    "power": "minor_line",
+    "voltage": "22000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362362267,
+  "bounds": {
+    "minlat": 9.4405020,
+    "minlon": 100.0198559,
+    "maxlat": 9.4407484,
+    "maxlon": 100.0204093
+  },
+  "nodes": [
+    12613395295,
+    12613395296,
+    12613395297,
+    12613395298,
+    12613395295
+  ],
+  "geometry": [
+    { "lat": 9.4407484, "lon": 100.0198839 },
+    { "lat": 9.4406125, "lon": 100.0198559 },
+    { "lat": 9.4405020, "lon": 100.0203829 },
+    { "lat": 9.4406402, "lon": 100.0204093 },
+    { "lat": 9.4407484, "lon": 100.0198839 }
+  ],
+  "tags": {
+    "name": "สถานีไฟฟ้าเกาะสมุย 3 (ชั่วคราว)",
+    "name:en": "Koh Samui Substation 3",
+    "power": "substation",
+    "substation": "minor_distribution",
+    "voltage": "115000;22000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362364725,
+  "bounds": {
+    "minlat": 9.4405501,
+    "minlon": 100.0198236,
+    "maxlat": 9.4406216,
+    "maxlon": 100.0203051
+  },
+  "nodes": [
+    12613388028,
+    12613388026,
+    12613388025
+  ],
+  "geometry": [
+    { "lat": 9.4406216, "lon": 100.0198236 },
+    { "lat": 9.4405501, "lon": 100.0201354 },
+    { "lat": 9.4405892, "lon": 100.0203051 }
+  ],
+  "tags": {
+    "cables": "3",
+    "power": "minor_line",
+    "voltage": "115000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362369500,
+  "bounds": {
+    "minlat": 9.5665359,
+    "minlon": 100.0029193,
+    "maxlat": 9.5674526,
+    "maxlon": 100.0033733
+  },
+  "nodes": [
+    12613449763,
+    12613449764,
+    12613449765,
+    12613449766,
+    12613449763
+  ],
+  "geometry": [
+    { "lat": 9.5674526, "lon": 100.0030101 },
+    { "lat": 9.5665880, "lon": 100.0029193 },
+    { "lat": 9.5665359, "lon": 100.0031293 },
+    { "lat": 9.5673805, "lon": 100.0033733 },
+    { "lat": 9.5674526, "lon": 100.0030101 }
+  ],
+  "tags": {
+    "power": "substation",
+    "substation": "transition",
+    "voltage": "115000"
+  }
+},
+{
+  "type": "way",
+  "id": 1362369501,
+  "bounds": {
+    "minlat": 9.5672669,
+    "minlon": 99.9947288,
+    "maxlat": 9.7064741,
+    "maxlon": 100.0035566
+  },
+  "nodes": [
+    12613449767,
+    12613449768,
+    12613449769,
+    12613449770,
+    12613449771,
+    12613449772,
+    12613449773,
+    4757176341
+  ],
+  "geometry": [
+    { "lat": 9.5672669, "lon": 100.0032039 },
+    { "lat": 9.5691125, "lon": 100.0034376 },
+    { "lat": 9.5733183, "lon": 100.0034569 },
+    { "lat": 9.5885082, "lon": 100.0035566 },
+    { "lat": 9.7055602, "lon": 99.9948770 },
+    { "lat": 9.7063099, "lon": 99.9948196 },
+    { "lat": 9.7064041, "lon": 99.9947288 },
+    { "lat": 9.7064741, "lon": 99.9947557 }
+  ],
+  "tags": {
+    "layer": "-1",
+    "location": "underground",
+    "name": "Koh Samui Export",
+    "operator": "PEA",
+    "power": "cable",
+    "voltage": "115000"
+  }
+}
+
+  ]
+}

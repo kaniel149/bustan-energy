@@ -1,0 +1,46 @@
+{
+  "generated": "2026-03-13",
+  "regions": [
+    "koh_phangan",
+    "koh_samui",
+    "surat_thani"
+  ],
+  "stats": {
+    "koh_phangan": {
+      "total": 7,
+      "generators": 3,
+      "towers": 2,
+      "substations": 1,
+      "cables": 1
+    },
+    "koh_samui": {
+      "total": 355,
+      "poles": 343,
+      "transformers": 1,
+      "distribution_lines": 5,
+      "substations": 4,
+      "cables": 2
+    },
+    "surat_thani": {
+      "total": 1966,
+      "towers": 1905,
+      "transformers": 2,
+      "transmission_lines": 39,
+      "substations": 10,
+      "generators": 9,
+      "cables": 1
+    }
+  },
+  "layers": {
+    "substations": 16,
+    "transmission_lines": 39,
+    "distribution_lines": 8,
+    "cables": 5,
+    "towers": 1907,
+    "poles": 343,
+    "transformers": 12,
+    "generators": 12,
+    "other": 0
+  },
+  "total_features": 2342
+}

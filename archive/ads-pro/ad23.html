@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Inter',sans-serif;position:relative;background:url("bg23.png") center/cover no-repeat;}
+.overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(13,33,55,.88),rgba(10,25,41,.85));}
+.logo{position:absolute;top:40px;left:40px;display:flex;align-items:center;gap:12px;}
+.logo-circle{width:44px;height:44px;border-radius:50%;background:#1A1A1A;border:2px solid #E8A820;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#E8A820;}
+.logo-text{font-weight:700;font-size:16px;color:#E8A820;letter-spacing:2px;}
+.badge{position:absolute;top:44px;right:40px;background:rgba(232,168,32,.15);border:1px solid rgba(232,168,32,.3);color:#E8A820;padding:8px 20px;border-radius:100px;font-size:13px;font-weight:700;letter-spacing:1px;}
+.headline{position:absolute;top:120px;left:60px;right:60px;font-family:'Playfair Display',serif;font-size:56px;font-weight:900;line-height:1.15;color:#fff;}
+.headline span{color:#E8A820;}
+.calc{position:absolute;top:300px;left:60px;right:60px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:40px;}
+.calc-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.calc-row:last-child{border-bottom:none;}
+.calc-label{font-size:18px;color:rgba(255,255,255,.6);}
+.calc-value{font-size:24px;font-weight:800;color:#fff;}
+.calc-value.gold{color:#E8A820;font-size:28px;}
+.calc-value.green{color:#43A047;font-size:28px;}
+.calc-value.red{color:#E53935;text-decoration:line-through;opacity:.5;}
+.total{margin-top:20px;background:rgba(232,168,32,.1);border:2px solid rgba(232,168,32,.3);border-radius:16px;padding:24px;display:flex;justify-content:space-between;align-items:center;}
+.total-label{font-size:20px;font-weight:700;color:#E8A820;}
+.total-value{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;color:#E8A820;}
+.cta{position:absolute;bottom:60px;left:60px;right:60px;display:flex;align-items:center;justify-content:space-between;}
+.cta-btn{background:#E8A820;color:#0D2137;font-weight:800;font-size:20px;padding:18px 40px;border-radius:12px;}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.4);}
+</style></head>
+<body>
+<div class="overlay"></div>
+<div class="logo"><div class="logo-circle">TM</div><div class="logo-text">TM ENERGY</div></div>
+<div class="badge">KOH PHANGAN</div>
+<div class="headline">How Much Can <span>Your Roof</span> Save?</div>
+<div class="calc">
+<div class="calc-row"><div class="calc-label">Your current PEA bill</div><div class="calc-value red">฿35,000/mo</div></div>
+<div class="calc-row"><div class="calc-label">With TM Energy solar</div><div class="calc-value green">฿10,500/mo</div></div>
+<div class="calc-row"><div class="calc-label">Monthly savings</div><div class="calc-value gold">฿24,500/mo</div></div>
+</div>
+<div class="total"><div class="total-label">Annual Savings</div><div class="total-value">฿294,000</div></div>
+<div class="cta">
+<div class="cta-btn">CALCULATE YOUR SAVINGS →</div>
+<div class="cta-sub">Based on 30kWp system · ฿6/kWh average</div>
+</div>
+</body></html>

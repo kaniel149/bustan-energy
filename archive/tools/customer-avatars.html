@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Avatars — TM Energy Koh Phangan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#0A1929;color:#E8E8E8;direction:rtl;line-height:1.6}
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+.lang-bar{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:200;display:flex;gap:4px;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);border-radius:20px;padding:3px}
+.lang-btn{padding:4px 12px;border-radius:16px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:rgba(255,255,255,.5);transition:all .2s}
+.lang-btn.active{background:rgba(232,168,32,.2);color:#E8A820}
+.container{max-width:1200px;margin:0 auto;padding:80px 24px 40px}
+h1{font-size:2.5rem;text-align:center;margin-bottom:8px;color:#fff}
+.subtitle{text-align:center;color:rgba(255,255,255,.5);margin-bottom:48px;font-size:1.1rem}
+.avatar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:24px;margin-bottom:48px}
+.avatar-card{background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px;transition:transform .2s}
+.avatar-card:hover{transform:translateY(-2px)}
+.avatar-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.avatar-emoji{font-size:3rem;width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex-shrink:0}
+.avatar-name{font-size:1.3rem;font-weight:700;color:#fff}
+.avatar-title{font-size:.85rem;color:#E8A820}
+.avatar-stats{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}
+.stat{background:rgba(232,168,32,.1);border:1px solid rgba(232,168,32,.2);border-radius:8px;padding:4px 10px;font-size:.75rem;color:#E8A820}
+.section-title{font-size:.85rem;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px}
+.pain-list,.objection-list,.onboard-list{list-style:none;padding:0}
+.pain-list li,.objection-list li,.onboard-list li{padding:6px 0;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.pain-list li:last-child,.objection-list li:last-child,.onboard-list li:last-child{border:none}
+.pain-list li::before{content:'🔥 ';margin-left:4px}
+.objection-list li::before{content:'🛡️ ';margin-left:4px}
+.objection-list .response{color:rgba(255,255,255,.5);font-size:.8rem;margin-top:2px;padding-right:24px}
+.model-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:.85rem;font-weight:700;margin:8px 4px 0}
+.ppa{background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);color:#22C55E}
+.epc{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#3B82F6}
+.both{background:rgba(232,168,32,.15);border:1px solid rgba(232,168,32,.3);color:#E8A820}
+.model-reason{font-size:.8rem;color:rgba(255,255,255,.4);margin-top:4px}
+.onboard-list li{position:relative;padding-right:32px}
+.onboard-list li .step-num{position:absolute;right:0;top:6px;width:22px;height:22px;border-radius:50%;background:rgba(232,168,32,.15);color:#E8A820;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.deal-size{font-size:1.1rem;font-weight:700;color:#E8A820;text-align:center;margin-top:16px;padding:12px;background:rgba(232,168,32,.05);border-radius:8px}
+.funnel-section{margin-top:64px}
+.funnel-section h2{font-size:1.8rem;color:#fff;text-align:center;margin-bottom:32px}
+.funnel{display:flex;flex-direction:column;gap:16px;max-width:800px;margin:0 auto}
+.funnel-step{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border-radius:12px;padding:16px 20px}
+.funnel-num{width:40px;height:40px;border-radius:50%;background:rgba(232,168,32,.15);color:#E8A820;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.funnel-content h3{font-size:1rem;color:#fff;margin-bottom:2px}
+.funnel-content p{font-size:.85rem;color:rgba(255,255,255,.5)}
+.split-section{margin-top:64px}
+.split-section h2{font-size:1.8rem;color:#fff;text-align:center;margin-bottom:32px}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;margin:0 auto}
+.split-card{border-radius:16px;padding:28px}
+.split-ppa{background:linear-gradient(135deg,rgba(22,163,74,.1),rgba(22,163,74,.03));border:1px solid rgba(22,163,74,.2)}
+.split-epc{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(59,130,246,.03));border:1px solid rgba(59,130,246,.2)}
+.split-card h3{font-size:1.3rem;margin-bottom:12px}
+.split-card ul{list-style:none;padding:0}
+.split-card li{padding:4px 0;font-size:.9rem}
+@media(max-width:768px){
+  .avatar-grid{grid-template-columns:1fr}
+  .split-grid{grid-template-columns:1fr}
+  h1{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+</div>
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('he')" data-l="he">עב</button>
+  <button class="lang-btn" onclick="setLang('en')" data-l="en">EN</button>
+  <button class="lang-btn" onclick="setLang('th')" data-l="th">ไทย</button>
+</div>
+
+<div class="container">
+
+<h1>6 אווטרים של לקוחות — קופנגן סולאר</h1>
+<p class="subtitle">פרסונות, התנגדויות, אונבורדינג, חלוקת PPA/EPC</p>
+
+<div class="avatar-grid">
+
+<!-- AVATAR 1: Resort Owner -->
+<div class="avatar-card">
+  <div class="avatar-header">
+    <div class="avatar-emoji" style="background:rgba(232,168,32,.1)">🏨</div>
+    <div>
+      <div class="avatar-name">סוֹמְצ'אי — בעל ריזורט</div>
+      <div class="avatar-title">Luxury Resort, 40-80 חדרים, Thong Nai Pan / Haad Yao</div>
+    </div>
+  </div>
+  <div class="avatar-stats">
+    <span class="stat">חשמל: ฿500K-1.2M/חודש</span>
+    <span class="stat">גג: 300-800 m²</span>
+    <span class="stat">מערכת: 30-80 kWp</span>
+  </div>
+
+  <div class="section-title">כאבים</div>
+  <ul class="pain-list">
+    <li>חשבון חשמל ענק — 40% מתקציב תפעול</li>
+    <li>הפסקות חשמל = אורחים כועסים, ביקורות שליליות</li>
+    <li>מתחרים מפרסמים "eco-friendly" והוא לא</li>
+    <li>גנרטור דיזל עולה ฿50K/חודש בהפסקות</li>
+  </ul>
+
+  <div class="section-title">התנגדויות</div>
+  <ul class="objection-list">
+    <li>"אין לי תקציב ל-3 מיליון באט"
+      <div class="response">→ PPA: אפס מראש. אתה חוסך מיום 1. אנחנו מממנים, אתה רק משלם פחות ממה שמשלם היום.</div>
+    </li>
+    <li>"הגג יראה מכוער, האורחים ירגישו תעשייתי"
+      <div class="response">→ פאנלים שחורים (all-black LONGi), מותקנים flush על הגג. אורחים מצלמים ומשתפים — eco = luxury.</div>
+    </li>
+    <li>"מי יתקן אם משהו נשבר? אנחנו על אי"
+      <div class="response">→ צוות מקומי באי + monitoring 24/7 + SLA תגובה 4 שעות. אנחנו חיים פה.</div>
+    </li>
+    <li>"אני צריך לשאול את הרשת (Minor Hotels, Santhiya Group)"
+      <div class="response">→ נכין תיק השקעה עם ROI, payback, case study — אתה מביא למטה, אנחנו נהיה בzoom עם ה-CFO.</div>
+    </li>
+  </ul>
+
+  <div class="section-title">מודל מומלץ</div>
+  <span class="model-badge ppa">PPA ⚡</span>
+  <div class="model-reason">חשבון גדול = חיסכון גדול מיום 1. לא רוצה CapEx. חוזה 15-20 שנה, אנחנו מרוויחים recurring.</div>
+
+  <div class="deal-size">עסקה: ฿1.5M-3M התקנה | PPA ฿25-60K/חודש לנו</div>
+</div>
+
+<!-- AVATAR 2: Expat Villa Owner -->
+<div class="avatar-card">
+  <div class="avatar-header">
+    <div class="avatar-emoji" style="background:rgba(59,130,246,.1)">🏠</div>
+    <div>
+      <div class="avatar-name">מארק — בעל וילה אקספט</div>
+      <div class="avatar-title">European/Australian, 2-3 וילות להשכרה, Srithanu</div>
+    </div>
+  </div>
+  <div class="avatar-stats">
+    <span class="stat">חשמל: ฿15-40K/חודש לוילה</span>
+    <span class="stat">גג: 50-120 m²</span>
+    <span class="stat">מערכת: 5-15 kWp</span>
+  </div>
+
+  <div class="section-title">כאבים</div>
+  <ul class="pain-list">
+    <li>AC רץ 24/7 — ฿25K/חודש על חשמל בלבד</li>
+    <li>שוכרי Airbnb לא מכבים מזגנים — הוא משלם</li>
+    <li>רוצה להיות "eco" לדירוג Airbnb גבוה יותר</li>
+    <li>הפסקות = שוכרים מתלוננים, ביקורות ירודות</li>
+  </ul>
+
+  <div class="section-title">התנגדויות</div>
+  <ul class="objection-list">
+    <li>"כמה זה עולה ומתי אני מרוויח בחזרה?"
+      <div class="response">→ ฿250-350K, חזרת השקעה 3-4 שנים. אחרי זה חשמל חינם 25 שנה. עם סוללה = חסינות מהפסקות.</div>
+    </li>
+    <li>"אני לא פה כל השנה, מי מפקח?"
+      <div class="response">→ Monitoring app בטלפון. רואה ייצור בזמן אמת מכל מקום בעולם. + חבילת O&M שלנו.</div>
+    </li>
+    <li>"חבר שלי התקין בסמוי ויש לו בעיות"
+      <div class="response">→ אנחנו משתמשים ב-Tier 1 בלבד (LONGi + Huawei). 25 שנות אחריות על פאנלים. לא סיניים גנריים.</div>
+    </li>
+  </ul>
+
+  <div class="section-title">מודל מומלץ</div>
+  <span class="model-badge epc">EPC 🔧</span>
+  <div class="model-reason">יש תקציב, רוצה בעלות. מבין ROI. עסקה פשוטה — מוכרים, מתקינים, חוזה O&M.</div>
+
+  <div class="deal-size">עסקה: ฿250-500K חד-פעמי + O&M ฿3K/חודש</div>
+</div>
+
+<!-- AVATAR 3: Yoga/Wellness Center -->
+<div class="avatar-card">
+  <div class="avatar-header">
+    <div class="avatar-emoji" style="background:rgba(168,85,247,.1)">🧘</div>
+    <div>
+      <div class="avatar-name">אמנדה — מנהלת מרכז יוגה/Wellness</div>
+      <div class="avatar-title">Retreat Center, 15-25 חדרים, Srithanu / Hin Kong</div>
+    </div>
+  </div>
+  <div class="avatar-stats">
+    <span class="stat">חשמל: ฿60-150K/חודש</span>
+    <span class="stat">גג: 100-300 m²</span>
+    <span class="stat">מערכת: 10-30 kWp</span>
+  </div>
+
+  <div class="section-title">כאבים</div>
+  <ul class="pain-list">
+    <li>אורחים מגיעים בשביל "eco" וטבע — חשמל מהרשת = סתירה</li>
+    <li>AC בחדרים + מטבח + בריכה = חשבון שמן</li>
+    <li>שיווק "sustainable" בלי הוכחה = Greenwashing</li>
+    <li>עונתיות — high season ינואר-אפריל, שאר השנה תזרים נמוך</li>
+  </ul>
+
+  <div class="section-title">התנגדויות</div>
+  <ul class="objection-list">
+    <li>"אנחנו לא עסק גדול, אין לנו תקציב"
+      <div class="response">→ PPA = אפס מראש. חוסכים 20-30% מחשבון החשמל. זה משתלם גם ל-10 kW.</div>
+    </li>
+    <li>"המבנה שלנו הוא סככה/עץ, לא בטון"
+      <div class="response">→ סקר גג חינמי. מרכבי אלומיניום קלים, מתאימים לכל גג. אם צריך חיזוק — TM Developers מטפלים.</div>
+    </li>
+    <li>"רוצה 100% off-grid, בלי PEA בכלל"
+      <div class="response">→ אפשר עם סוללות. עלות גבוהה יותר אבל עצמאות מלאה. מומלץ: היברידי — grid + סוללה לגיבוי.</div>
+    </li>
+  </ul>
+
+  <div class="section-title">מודל מומלץ</div>
+  <span class="model-badge ppa">PPA ⚡</span>
+  <div class="model-reason">תזרים עונתי, אין CapEx פנוי. PPA מושלם — חוסכים בלי סיכון. Eco branding מובנה.</div>
+
+  <div class="deal-size">עסקה: ฿500K-1.2M התקנה | PPA ฿8-20K/חודש לנו</div>
+</div>
+
+<!-- AVATAR 4: Restaurant/Beach Bar -->
+<div class="avatar-card">
+  <div class="avatar-header">
+    <div class="avatar-emoji" style="background:rgba(234,88,12,.1)">🍹</div>
+    <div>
+      <div class="avatar-name">ניק — בעל מסעדה/ביץ' בר</div>
+      <div class="avatar-title">Beachfront Bar & Restaurant, Haad Rin / Ban Tai</div>
+    </div>
+  </div>
+  <div class="avatar-stats">
+    <span class="stat">חשמל: ฿30-80K/חודש</span>
+    <span class="stat">גג: 40-100 m²</span>
+    <span class="stat">מערכת: 5-15 kWp</span>
+  </div>
+
+  <div class="section-title">כאבים</div>
+  <ul class="pain-list">
+    <li>מקררים + תאורה + AC רצים כל היום</li>
+    <li>הפסקות חשמל = אוכל נרקב, מקררים מתים</li>
+    <li>גנרטור רועש, מסריח, עולה ฿20K/חודש</li>
+    <li>Full Moon Party = spike בחשמל, חשבון מטורף</li>
+  </ul>
+
+  <div class="section-title">התנגדויות</div>
+  <ul class="objection-list">
+    <li>"אני שוכר, לא בעל הבניין"
+      <div class="response">→ שני מסלולים: 1) שכנע את הבעלים (PPA שלנו ישירות עם בעל הנכס). 2) מערכת ניידת על מרכב — עוברת איתך.</div>
+    </li>
+    <li>"העונה מתה מאי-נובמבר, לא שווה"
+      <div class="response">→ סולאר מייצר כל השנה (גם בעונת גשמים 70% ייצור). Net metering = מוכרים עודפים ל-PEA.</div>
+    </li>
+    <li>"יותר מדי בירוקרטיה תאילנדית"
+      <div class="response">→ אנחנו מטפלים בהכל — רק הודעה 30 יום ל-DEDE. אין רישיון, אין היתר. אתה רק חותם.</div>
+    </li>
+  </ul>
+
+  <div class="section-title">מודל מומלץ</div>
+  <span class="model-badge epc">EPC 🔧</span>
+  <div class="model-reason">עסקה קטנה, ROI מהיר. רוב בעלי מסעדות מעדיפים לקנות ולסגור. O&M חבילה בסיסית.</div>
+
+  <div class="deal-size">עסקה: ฿150-400K חד-פעמי + O&M ฿2K/חודש</div>
+</div>
+
+<!-- AVATAR 5: Developer/Construction -->
+<div class="avatar-card">
+  <div class="avatar-header">
+    <div class="avatar-emoji" style="background:rgba(22,163,74,.1)">🏗️</div>
+    <div>
+      <div class="avatar-name">ริאן — יזם נדל"ן / Developer</div>
+      <div class="avatar-title">בונה 3-10 וילות חדשות בשנה, מערב האי</div>
+    </div>
+  </div>
+  <div class="avatar-stats">
+    <span class="stat">פרויקט: 3-10 וילות</span>
+    <span class="stat">גג לוילה: 60-120 m²</span>
+    <span class="stat">מערכת: 5-10 kWp × כמות</span>
+  </div>
+
+  <div class="section-title">כאבים</div>
+  <ul class="pain-list">
+    <li>קונים שואלים "יש סולאר?" ואין לו תשובה</li>
+    <li>מתחרים מתחילים להוסיף סולאר כ-selling point</li>
+    <li>כל וילה חדשה = עלות חיבור PEA ฿50-100K</li>
+    <li>רוצה לשווק "eco villa" במחיר premium</li>
+  </ul>
+
+  <div class="section-title">התנגדויות</div>
+  <ul class="objection-list">
+    <li>"זה מייקר לי את הבנייה, הקונה לא ישלם על זה"
+      <div class="response">→ סולאר מוסיף 10-15% לערך הנכס. קונה ששומע "חשמל חינם 25 שנה" משלם premium. ROI לקונה = selling point לך.</div>
+    </li>
+    <li>"אני רוצה חבילה קבועה לכל וילה, לא כל פעם מחדש"
+      <div class="response">→ חבילת Developer: מחיר קבוע per kWp, SLA התקנה 5 ימים, bundle pricing. ככל שיותר וילות = יותר הנחה.</div>
+    </li>
+    <li>"אני כבר עובד עם חשמלאי, למה צריך אתכם?"
+      <div class="response">→ סולאר = DC, לא AC. צריך מומחיות ספציפית + אישורי PEA. החשמלאי שלך עושה את ה-AC, אנחנו את הסולאר. שיתוף פעולה.</div>
+    </li>
+  </ul>
+
+  <div class="section-title">מודל מומלץ</div>
+  <span class="model-badge epc">EPC 🔧</span>
+  <span class="model-badge ppa">PPA לקונים ⚡</span>
+  <div class="model-reason">EPC ליזם (מוכר וילה "solar-ready"). PPA כאופציה לקונה הסופי שלא רוצה לשלם מראש.</div>
+
+  <div class="deal-size">עסקה: ฿200-350K × 5-10 וילות = ฿1-3.5M לפרויקט</div>
+</div>
+
+<!-- AVATAR 6: Coworking/Digital Nomad Hub -->
+<div class="avatar-card">
+  <div class="avatar-header">
+    <div class="avatar-emoji" style="background:rgba(139,92,246,.1)">💻</div>
+    <div>
+      <div class="avatar-name">ליסה — מנהלת Coworking Space</div>
+      <div class="avatar-title">Coworking + Coliving, 30-50 מקומות, Ban Tai / Srithanu</div>
+    </div>
+  </div>
+  <div class="avatar-stats">
+    <span class="stat">חשמל: ฿80-200K/חודש</span>
+    <span class="stat">גג: 100-250 m²</span>
+    <span class="stat">מערכת: 10-25 kWp</span>
+  </div>
+
+  <div class="section-title">כאבים</div>
+  <ul class="pain-list">
+    <li>AC + מחשבים + WiFi 24/7 = חשמל ענק</li>
+    <li>הפסקת חשמל = nomads עוזבים, ביקורות רעות</li>
+    <li>קהל דיגיטלי שמעריך sustainability מאוד</li>
+    <li>תחרות — צריך USP לבדל מ-10 coworkings אחרים</li>
+  </ul>
+
+  <div class="section-title">התנגדויות</div>
+  <ul class="objection-list">
+    <li>"אני צריך חשמל 24/7 בלי הפסקה — סולאר לא מספיק בלילה"
+      <div class="response">→ היברידי: סולאר + סוללה + grid. בהפסקה — הסוללה תופסת אוטומטית. UPS מובנה. אפס downtime.</div>
+    </li>
+    <li>"הנומדים שלי לא ישלמו יותר על membership"
+      <div class="response">→ לא מעלים מחיר. אתה חוסכת 30% על חשמל = margin שלך עולה. + שיווק: "Solar-Powered Workspace" = magnet.</div>
+    </li>
+    <li>"אני שוכרת, חוזה ל-3 שנים"
+      <div class="response">→ PPA = המערכת שלנו, לא שלך. אם עוזבים — אנחנו מפרקים. או: שכנע את הבעלים — ערך הנכס עולה.</div>
+    </li>
+  </ul>
+
+  <div class="section-title">מודל מומלץ</div>
+  <span class="model-badge both">PPA ⚡ + סוללה 🔋</span>
+  <div class="model-reason">חייבים UPS. PPA + סוללה = אפס upfront + חסינות מהפסקות. Premium package שלנו.</div>
+
+  <div class="deal-size">עסקה: ฿800K-1.5M התקנה | PPA ฿12-30K/חודש לנו</div>
+</div>
+
+</div><!-- end avatar-grid -->
+
+<!-- ONBOARDING FUNNEL -->
+<div class="funnel-section">
+<h2>🎯 תהליך אונבורדינג — 7 שלבים</h2>
+<div class="funnel">
+
+<div class="funnel-step">
+  <div class="funnel-num">1</div>
+  <div class="funnel-content">
+    <h3>פנייה ראשונית / ליד נכנס</h3>
+    <p>Facebook, WhatsApp, LINE, הפניה, site visit. תוך 2 שעות — תגובה + תיאום סקר.</p>
+  </div>
+</div>
+
+<div class="funnel-step">
+  <div class="funnel-num">2</div>
+  <div class="funnel-content">
+    <h3>סקר גג + ניתוח צריכה (יום 1-3)</h3>
+    <p>ביקור באתר, צילום דרון, מדידת גג, איסוף חשבונות חשמל 3 חודשים. חינם.</p>
+  </div>
+</div>
+
+<div class="funnel-step">
+  <div class="funnel-num">3</div>
+  <div class="funnel-content">
+    <h3>עיצוב מערכת + הצעת מחיר (יום 3-7)</h3>
+    <p>PVsyst simulation, בחירת ציוד, layout על הגג. הצעה דיגיטלית עם TM Energy Proposal.</p>
+  </div>
+</div>
+
+<div class="funnel-step">
+  <div class="funnel-num">4</div>
+  <div class="funnel-content">
+    <h3>החלטת מודל: PPA או EPC (יום 7-14)</h3>
+    <p><strong>EPC:</strong> הסכם מכירה + התקנה, מקדמה 50%, תשלום שני בסיום.<br>
+    <strong>PPA:</strong> הסכם רכישת חשמל 15-20 שנה, אפס מראש, הנחה ของ 20-30% מ-PEA.</p>
+  </div>
+</div>
+
+<div class="funnel-step">
+  <div class="funnel-num">5</div>
+  <div class="funnel-content">
+    <h3>הזמנת ציוד + הכנת אתר (יום 14-21)</h3>
+    <p>הזמנה מ-Solaris Green / BayWa. משלוח לאי (מעבורת). הכנת גג, חשמל, מרכבים.</p>
+  </div>
+</div>
+
+<div class="funnel-step">
+  <div class="funnel-num">6</div>
+  <div class="funnel-content">
+    <h3>התקנה + חיבור (יום 21-30)</h3>
+    <p>צוות TM Developers + חשמלאי מוסמך. 3-7 ימי התקנה. חיבור PEA + מונה דו-כיווני.</p>
+  </div>
+</div>
+
+<div class="funnel-step">
+  <div class="funnel-num">7</div>
+  <div class="funnel-content">
+    <h3>הפעלה + מסירה + O&M (יום 30+)</h3>
+    <p>בדיקות, הפעלה, הדרכת לקוח, חיבור monitoring. חוזה O&M: ניקוי, ניטור, תחזוקה שוטפת.</p>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- PPA vs EPC SPLIT -->
+<div class="split-section">
+<h2>⚡ PPA vs 🔧 EPC — מתי מה?</h2>
+<div class="split-grid">
+
+<div class="split-card split-ppa">
+  <h3 style="color:#22C55E">⚡ PPA — רכישת חשמל</h3>
+  <ul>
+    <li>✅ חשבון חשמל > ฿100K/חודש</li>
+    <li>✅ אין תקציב CapEx</li>
+    <li>✅ רוצה חיסכון מיידי בלי סיכון</li>
+    <li>✅ שוכר (לא בעלים)</li>
+    <li>✅ ריזורט, מלון, wellness, coworking</li>
+    <li>✅ חוזה 15-20 שנה</li>
+    <li>—</li>
+    <li><strong>לנו:</strong> Recurring revenue, IRR ~45%</li>
+    <li><strong>ללקוח:</strong> חיסכון 20-30% מיום 1</li>
+    <li><strong>Payback שלנו:</strong> 1.6-2 שנים</li>
+    <li><strong>יעד:</strong> 60% מהעסקאות</li>
+  </ul>
+</div>
+
+<div class="split-card split-epc">
+  <h3 style="color:#3B82F6">🔧 EPC — מכירה + התקנה</h3>
+  <ul>
+    <li>✅ בעלים שרוצה בעלות על המערכת</li>
+    <li>✅ יש תקציב (฿200K-3M)</li>
+    <li>✅ וילות פרטיות, מסעדות קטנות</li>
+    <li>✅ Developers (bulk per villa)</li>
+    <li>✅ רוצה ROI ברור (3-5 שנים)</li>
+    <li>✅ עסקה חד-פעמית + O&M</li>
+    <li>—</li>
+    <li><strong>לנו:</strong> Cash flow מיידי, margin 64%</li>
+    <li><strong>ללקוח:</strong> בעלות מלאה, חשמל חינם 25 שנה</li>
+    <li><strong>Payback ללקוח:</strong> 3-5 שנים</li>
+    <li><strong>יעד:</strong> 40% מהעסקאות</li>
+  </ul>
+</div>
+
+</div>
+</div>
+
+</div><!-- end container -->
+
+<script src="tm-lang.js"></script>
+</body>
+</html>

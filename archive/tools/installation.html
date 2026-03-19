@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Ko Phangan Solar — תהליך הקמה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);overflow:hidden;height:100vh}
+.slide-container{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:40px 60px;opacity:0;transform:translateX(100px);transition:all .6s cubic-bezier(.23,1,.32,1);pointer-events:none;overflow-y:auto;padding-bottom:80px}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit{opacity:0;transform:translateX(-100px)}
+.slide-cover{background:linear-gradient(135deg,var(--ocean),var(--night));justify-content:center;align-items:center;text-align:center}
+.slide-dark{background:var(--night)}.slide-ocean{background:linear-gradient(180deg,var(--ocean),var(--night))}
+.slide-reef{background:linear-gradient(135deg,#0D3B2E,var(--night))}.slide-gold{background:linear-gradient(135deg,#3D2E0A,var(--night))}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px 30px;background:rgba(13,33,55,.95);backdrop-filter:blur(10px);border-top:1px solid rgba(232,168,32,.2);z-index:100}
+.nav-btn{background:none;border:2px solid var(--gold);color:var(--gold);padding:8px 24px;border-radius:6px;cursor:pointer;font-family:'Heebo';font-size:14px;font-weight:500;transition:all .3s}
+.nav-btn:hover{background:var(--gold);color:var(--night)}.nav-btn:disabled{opacity:.3;cursor:default}
+.slide-counter{font-family:'Space Grotesk';color:rgba(255,255,255,.5);font-size:14px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--gold);transition:width .4s;z-index:101}
+.toc-btn{position:fixed;top:20px;left:20px;background:rgba(232,168,32,.15);border:1px solid rgba(232,168,32,.3);color:var(--gold);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:102}
+.toc-btn:hover{background:var(--gold);color:var(--night)}
+.toc-panel{position:fixed;top:0;left:-350px;width:350px;height:100vh;background:rgba(13,33,55,.98);backdrop-filter:blur(20px);border-right:1px solid rgba(232,168,32,.2);z-index:103;transition:left .4s;padding:60px 30px 30px;overflow-y:auto}
+.toc-panel.open{left:0}
+.toc-item{padding:10px 16px;margin:4px 0;border-radius:8px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.7);transition:all .2s;display:flex;align-items:center;gap:10px}
+.toc-item:hover{background:rgba(232,168,32,.1);color:var(--white)}.toc-item.active{background:rgba(232,168,32,.2);color:var(--gold)}
+.toc-num{font-family:'Space Grotesk';font-weight:700;font-size:12px;color:var(--gold);min-width:24px}
+h1{font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.1;margin-bottom:16px}
+h2{font-size:clamp(24px,3.5vw,40px);font-weight:700;line-height:1.2;margin-bottom:12px}
+h3{font-size:clamp(16px,2vw,22px);font-weight:700;margin-bottom:8px}
+.subtitle{font-size:clamp(16px,2vw,22px);font-weight:300;opacity:.8;margin-bottom:24px}
+.gold{color:var(--gold)}.reef-text{color:#2ED89A}.coral-text{color:var(--coral)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;transition:all .3s}
+.card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.card-icon{font-size:28px;margin-bottom:10px}.card h3{font-size:16px;margin-bottom:6px}.card p{font-size:13px;opacity:.7;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:rgba(232,168,32,.15);padding:10px 14px;text-align:right;font-weight:600;white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
+tr:hover td{background:rgba(255,255,255,.03)}
+.alert{padding:16px 20px;border-radius:10px;margin:12px 0;font-size:14px;line-height:1.6}
+.alert-warn{background:rgba(232,93,58,.15);border-right:3px solid var(--coral)}
+.alert-info{background:rgba(232,168,32,.1);border-right:3px solid var(--gold)}
+.alert-success{background:rgba(46,216,154,.1);border-right:3px solid #2ED89A}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}.slide{padding:24px 20px}}
+.slide::-webkit-scrollbar{width:4px}.slide::-webkit-scrollbar-thumb{background:rgba(232,168,32,.3);border-radius:2px}
+.section-num{font-family:'Space Grotesk';font-size:64px;font-weight:700;color:var(--gold);opacity:.15;position:absolute;top:20px;left:40px}
+.big-num{font-family:'Space Grotesk';font-size:clamp(36px,6vw,72px);font-weight:700;color:var(--gold)}
+.stat-label{font-size:14px;opacity:.6;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;margin:20px 0;text-align:center}
+.flow-steps{display:flex;align-items:flex-start;gap:0;margin:20px 0;flex-wrap:wrap;justify-content:center}
+.flow-step{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:110px}
+.flow-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:8px}
+.flow-arrow{font-size:24px;color:var(--gold);margin-top:16px;padding:0 4px}
+.flow-label{font-size:12px;font-weight:600}.flow-sub{font-size:10px;opacity:.5;margin-top:2px}
+
+.slide-img{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:12px 0;border:1px solid rgba(232,168,32,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.slide-img-sm{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;border:1px solid rgba(255,255,255,.1)}
+.img-float{float:left;width:45%;max-height:240px;object-fit:cover;border-radius:12px;margin:0 20px 12px 0;border:1px solid rgba(232,168,32,.15)}
+.img-row{display:flex;gap:12px;margin:12px 0}.img-row img{flex:1;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+body.lang-en body.lang-th
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+
+
+
+<div class="progress-bar" id="progress"></div>
+<button class="toc-btn" onclick="toggleTOC()">☰</button>
+<div class="toc-panel" id="tocPanel"><h3 style="color:var(--gold);margin-bottom:20px;">תוכן עניינים</h3><div id="tocList"></div></div>
+<div class="slide-container" id="slides">
+
+<!-- SLIDE 0: Cover -->
+<div class="slide slide-cover active" data-title="שער">
+  <div style="margin-bottom:30px">
+    <div style="font-size:56px;margin-bottom:16px">🔧⚡</div>
+    <h1>תהליך הקמה<br><span class="gold">Ko Phangan Solar</span></h1>
+    <p class="subtitle">מסקר גג ועד חיבור לרשת — 7 שלבים</p>
+  </div>
+  <p style="opacity:.4;font-size:13px">TM Energy — מרץ 2026</p>
+</div>
+
+<!-- SLIDE 1: Overview 7 Phases -->
+<div class="slide slide-ocean" data-title="סקירת 7 שלבים">
+  <span class="section-num">01</span>
+  <h2>Process</h2>
+  <p class="subtitle">מהפנייה הראשונה ועד חשמל סולארי על הגג</p>
+  <div class="flow-steps">
+    <div class="flow-step"><div class="flow-icon" style="background:rgba(100,150,255,.2);color:#6496FF">📸</div><div class="flow-label">סקר גג</div><div class="flow-sub">יום 1</div></div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step"><div class="flow-icon" style="background:rgba(232,168,32,.2);color:var(--gold)">📐</div><div class="flow-label">תכנון</div><div class="flow-sub">ימים 2-4</div></div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step"><div class="flow-icon" style="background:rgba(46,216,154,.2);color:#2ED89A">📦</div><div class="flow-label">הזמנת ציוד</div><div class="flow-sub">ימים 5-14</div></div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step"><div class="flow-icon" style="background:rgba(232,93,58,.2);color:var(--coral)">🏗️</div><div class="flow-label">קונסטרוקציה</div><div class="flow-sub">ימים 15-17</div></div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step"><div class="flow-icon" style="background:rgba(100,150,255,.2);color:#6496FF">⚡</div><div class="flow-label">DC חשמל</div><div class="flow-sub">ימים 18-19</div></div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step"><div class="flow-icon" style="background:rgba(232,168,32,.2);color:var(--gold)">🔌</div><div class="flow-label">AC חשמל</div><div class="flow-sub">יום 20</div></div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step"><div class="flow-icon" style="background:rgba(46,216,154,.2);color:#2ED89A">✅</div><div class="flow-label">חיבור PEA</div><div class="flow-sub">ימים 21-28</div></div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:16px">
+    <strong>לו"ז טיפוסי:</strong> מערכת 30kWp — 5-7 ימי עבודה בשטח + 7-14 ימים תיאום PEA. <strong>סה"כ: 3-4 שבועות מחתימה ועד חשמל.</strong>
+  </div>
+
+  <div class="stat-grid" style="margin-top:16px">
+    <div><div class="big-num">4</div><div class="stat-label">אנשי צוות<br>בהתקנה</div></div>
+    <div><div class="big-num">5-7</div><div class="stat-label">ימי עבודה<br>בשטח</div></div>
+    <div><div class="big-num">60%</div><div class="stat-label">עלות חומרים<br>מסה"כ</div></div>
+    <div><div class="big-num">25</div><div class="stat-label">שנות אחריות<br>על פאנלים</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Roof Survey -->
+<div class="slide slide-dark" data-title="סקר גג">
+<img src="visuals/install-01-tools.png" class="slide-img" alt="Survey tools">
+  <span class="section-num">02</span>
+  <h2>📸 שלב 1: סקר גג — לפני הכל</h2>
+  <p class="subtitle">צילום, מדידות, הערכה מבנית</p>
+  <div class="two-col">
+    <div>
+      <h3>מה בודקים</h3>
+      <div class="card" style="margin:8px 0"><h3>📐 מדידות פיזיות</h3><p>שטח גג, זווית שיפוע (tilt), כיוון (azimuth). אופטימלי בתאילנד: 10-15° שיפוע, דרום.</p></div>
+      <div class="card" style="margin:8px 0"><h3>🏗️ מצב מבני</h3><p>סוג גג (רעפים, מתכת, שטוח), גיל, עומס מותר. בתאילנד: בדיקת נזקי מונסון קודמים.</p></div>
+      <div class="card" style="margin:8px 0"><h3>🌳 הצללות</h3><p>עצים, מבנים סמוכים, אנטנות. שימוש ב-Solar Pathfinder או SunEye.</p></div>
+      <div class="card" style="margin:8px 0"><h3>⚡ לוח חשמל</h3><p>מיקום Main Panel, גודל Main Breaker, מרחק מהגג. חיבור חד/תלת פאזי.</p></div>
+      <div class="card" style="margin:8px 0"><h3>📊 חשבונות חשמל</h3><p>12 חודשים אחרונים. דפוס צריכה: פיק, בסיס, עונתיות.</p></div>
+    </div>
+    <div>
+      <h3>כלים</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>כלי</th><th>שימוש</th><th>עלות</th></tr>
+          <tr><td>DJI Mini 4 Pro</td><td>צילום אווירי + מדידות</td><td>฿35K</td></tr>
+          <tr><td>לייזר מדידה Bosch</td><td>מרחקים ושטחים</td><td>฿3K</td></tr>
+          <tr><td>מד שיפוע דיגיטלי</td><td>זווית גג</td><td>฿1K</td></tr>
+          <tr><td>מצפן / אפליקציה</td><td>כיוון (azimuth)</td><td>฿0</td></tr>
+          <tr><td>מצלמה תרמית FLIR</td><td>בדיקת חשמל קיים</td><td>฿15K</td></tr>
+        </table>
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <strong>ספציפי לאי:</strong> אוויר מלוח → בדיקת קורוזיה על חיבורים קיימים. לחות גבוהה → בדיקת עמידות חיווט. קקטוסים וגלשנים על הגגות → ניקוי לפני צילום.
+      </div>
+      <h3 style="margin-top:16px">תוצר</h3>
+      <p style="font-size:13px;line-height:1.8">דו"ח סקר כולל: תמונות drone, מדידות, הערכה מבנית, המלצת גודל מערכת, סימולציית PVsyst ראשונית. <strong>נשלח ללקוח תוך 48 שעות.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: System Design -->
+<div class="slide slide-ocean" data-title="תכנון והנדסה">
+  <span class="section-num">03</span>
+  <h2>📐 שלב 2: תכנון והנדסה</h2>
+  <p class="subtitle">סימולציה, עיצוב חשמלי, חישובים מבניים</p>
+  <div class="two-col">
+    <div>
+      <h3>תהליך תכנון</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><strong class="gold">1. סימולציית PVsyst</strong> — ייצור שנתי, Performance Ratio, הפסדי הצללה, טמפרטורה (חשוב בתאילנד — ממוצע 35°C).</p>
+        <p><strong class="gold">2. String Configuration</strong> — חישוב כמות פאנלים בסטרינג, Voc בקור (בתאילנד min ~22°C), MPPT matching.</p>
+        <p><strong class="gold">3. Inverter Sizing</strong> — DC/AC ratio (1.1-1.3 בתאילנד), MPPT ranges, transformer matching.</p>
+        <p><strong class="gold">4. SLD — Single Line Diagram</strong> — סכמה חשמלית מלאה: DC isolators, AC breakers, SPD, earthing, meter.</p>
+        <p><strong class="gold">5. Layout Drawing</strong> — מיקום פאנלים על הגג, מרווחים (wind gaps), מסלולי כבלים.</p>
+        <p><strong class="gold">6. Structural Calc</strong> — עומס רוח (Koh Phangan zone), עומס עצמי, עומס גשם, עיגון.</p>
+      </div>
+    </div>
+    <div>
+      <h3>תוכנות</h3>
+      <div class="card-grid" style="grid-template-columns:1fr">
+        <div class="card"><h3>PVsyst 8</h3><p>סימולציית ייצור מדויקת. נתוני מזג אוויר TMY Koh Phangan. Output: דו"ח ייצור שנתי.</p></div>
+        <div class="card"><h3>Helioscope</h3><p>עיצוב מהיר online. פריסת פאנלים על תמונת drone. הצעת מחיר מיידית.</p></div>
+        <div class="card"><h3>AutoCAD / SketchUp</h3><p>שרטוט SLD, layout drawings, הגשה ל-PEA.</p></div>
+      </div>
+      <h3 style="margin-top:16px">תקנים</h3>
+      <div class="alert alert-info">
+        <strong>IEC 61215:</strong> פאנלים | <strong>IEC 62109:</strong> אינוורטרים<br>
+        <strong>NEC / Thai EE Code:</strong> חיווט + הארקה<br>
+        <strong>PEA Technical Requirements:</strong> חיבור לרשת<br>
+        <strong>Wind Load:</strong> Zone 2 — עד 130 km/h
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Construction - Structure -->
+<div class="slide slide-reef" data-title="קונסטרוקציה">
+  <span class="section-num">04</span>
+  <h2>🏗️ שלב 3: קונסטרוקציה — שלד הרכבה</h2>
+  <p class="subtitle">ימים 1-2 של עבודה בשטח</p>
+
+  <!-- SVG: 3 Roof Types Side by Side -->
+  <div style="display:flex;gap:16px;justify-content:center;margin:16px 0;flex-wrap:wrap">
+    <!-- Tile Roof -->
+    <svg viewBox="0 0 260 180" style="width:250px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(232,168,32,.2)">
+      <text x="130" y="16" text-anchor="middle" fill="#E8A820" font-size="11" font-weight="700" font-family="Heebo">גג רעפים — Tile Hook</text>
+      <!-- Roof slope -->
+      <polygon points="20,140 130,50 240,140" fill="none" stroke="#555" stroke-width="2"/>
+      <!-- Tiles -->
+      <path d="M40,130 Q55,122 70,130 Q85,122 100,130 Q115,122 130,130 Q145,122 160,130 Q175,122 190,130 Q205,122 220,130" fill="none" stroke="#8B6914" stroke-width="2.5"/>
+      <path d="M50,120 Q65,112 80,120 Q95,112 110,120 Q125,112 140,120 Q155,112 170,120 Q185,112 200,120" fill="none" stroke="#8B6914" stroke-width="2.5"/>
+      <path d="M60,110 Q75,102 90,110 Q105,102 120,110 Q135,102 150,110 Q165,102 180,110" fill="none" stroke="#8B6914" stroke-width="2.5"/>
+      <!-- Hook under tile -->
+      <rect x="95" y="105" width="4" height="20" fill="#E8A820" rx="1"/>
+      <rect x="155" y="95" width="4" height="20" fill="#E8A820" rx="1"/>
+      <!-- Rail -->
+      <rect x="80" y="90" width="95" height="5" fill="#AAA" rx="2"/>
+      <!-- Panel -->
+      <rect x="82" y="70" width="40" height="18" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="1"/>
+      <rect x="128" y="63" width="40" height="18" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="1"/>
+      <!-- Clamps -->
+      <rect x="80" y="87" width="6" height="6" fill="#E8A820" rx="1"/>
+      <rect x="120" y="87" width="6" height="6" fill="#E8A820" rx="1"/>
+      <rect x="166" y="87" width="6" height="6" fill="#E8A820" rx="1"/>
+      <!-- Labels -->
+      <text x="97" y="165" text-anchor="middle" fill="#E8A820" font-size="8" font-family="Space Grotesk">Hook</text>
+      <line x1="97" y1="157" x2="97" y2="125" stroke="#E8A820" stroke-width="0.5" stroke-dasharray="2"/>
+      <text x="128" y="165" text-anchor="middle" fill="#AAA" font-size="8" font-family="Space Grotesk">Rail</text>
+      <text x="165" y="165" text-anchor="middle" fill="#6496FF" font-size="8" font-family="Space Grotesk">Clamp</text>
+    </svg>
+    <!-- Metal Roof -->
+    <svg viewBox="0 0 260 180" style="width:250px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(46,216,154,.2)">
+      <text x="130" y="16" text-anchor="middle" fill="#2ED89A" font-size="11" font-weight="700" font-family="Heebo">גג מתכת — Standing Seam</text>
+      <!-- Metal roof -->
+      <rect x="20" y="100" width="220" height="40" fill="#3a3a3a" rx="2"/>
+      <!-- Seams -->
+      <rect x="60" y="95" width="4" height="50" fill="#555" rx="1"/><rect x="120" y="95" width="4" height="50" fill="#555" rx="1"/><rect x="180" y="95" width="4" height="50" fill="#555" rx="1"/>
+      <!-- Seam clamps -->
+      <rect x="56" y="88" width="12" height="8" fill="#2ED89A" rx="2"/><rect x="116" y="88" width="12" height="8" fill="#2ED89A" rx="2"/><rect x="176" y="88" width="12" height="8" fill="#2ED89A" rx="2"/>
+      <!-- Rails -->
+      <rect x="45" y="82" width="170" height="5" fill="#AAA" rx="2"/>
+      <!-- Panels -->
+      <rect x="48" y="55" width="50" height="25" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="1"/>
+      <rect x="104" y="55" width="50" height="25" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="1"/>
+      <rect x="160" y="55" width="50" height="25" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="1"/>
+      <!-- Panel grid lines -->
+      <line x1="73" y1="55" x2="73" y2="80" stroke="#2a6ab0" stroke-width="0.3"/>
+      <line x1="129" y1="55" x2="129" y2="80" stroke="#2a6ab0" stroke-width="0.3"/>
+      <line x1="185" y1="55" x2="185" y2="80" stroke="#2a6ab0" stroke-width="0.3"/>
+      <!-- Labels -->
+      <text x="62" y="165" text-anchor="middle" fill="#2ED89A" font-size="8" font-family="Space Grotesk">Seam Clamp</text>
+      <text x="185" y="165" text-anchor="middle" fill="#AAA" font-size="8" font-family="Space Grotesk">No Drilling!</text>
+    </svg>
+    <!-- Flat Roof Tilt -->
+    <svg viewBox="0 0 260 180" style="width:250px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(100,150,255,.2)">
+      <text x="130" y="16" text-anchor="middle" fill="#6496FF" font-size="11" font-weight="700" font-family="Heebo">גג שטוח — Tilt Frame</text>
+      <!-- Flat roof -->
+      <rect x="20" y="130" width="220" height="15" fill="#3a3a3a" rx="2"/>
+      <!-- Tilt frames (triangles) -->
+      <polygon points="50,130 50,95 90,130" fill="none" stroke="#AAA" stroke-width="2"/>
+      <polygon points="130,130 130,95 170,130" fill="none" stroke="#AAA" stroke-width="2"/>
+      <!-- Cross brace -->
+      <line x1="70" y1="112" x2="50" y2="112" stroke="#AAA" stroke-width="1.5"/>
+      <line x1="150" y1="112" x2="130" y2="112" stroke="#AAA" stroke-width="1.5"/>
+      <!-- Rails on angle -->
+      <line x1="45" y1="93" x2="200" y2="93" stroke="#AAA" stroke-width="3"/>
+      <!-- Panels tilted -->
+      <rect x="48" y="62" width="55" height="28" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="1" transform="rotate(-10 75 76)"/>
+      <rect x="118" y="62" width="55" height="28" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="1" transform="rotate(-10 145 76)"/>
+      <!-- Angle annotation -->
+      <path d="M80,130 L80,120" stroke="#E8A820" stroke-width="0.5"/>
+      <text x="92" y="118" fill="#E8A820" font-size="9" font-family="Space Grotesk">10-15°</text>
+      <!-- Labels -->
+      <text x="70" y="165" text-anchor="middle" fill="#6496FF" font-size="8" font-family="Space Grotesk">Tilt Frame</text>
+      <text x="180" y="165" text-anchor="middle" fill="#AAA" font-size="8" font-family="Space Grotesk">Ballast / Anchor</text>
+    </svg>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>לפי סוג גג</h3>
+      <div class="card" style="margin:8px 0;border-color:rgba(232,168,32,.3)">
+        <h3>גג רעפים (Tile Roof)</h3>
+        <p>הוקים ייעודיים (tile hooks) מתחת לרעף. <strong>לא קודחים דרך הרעף!</strong> הוק → rail → clamp → panel.</p>
+        <p style="margin-top:8px;font-size:12px;opacity:.6">נפוץ ברזורטים ווילות סגנון תאילנדי.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3>גג מתכת (Metal Roof)</h3>
+        <p>קלאמפים על ה-standing seam או L-feet + bolts. <strong>איטום סביב חורים חובה</strong> (butyl tape + sealant).</p>
+        <p style="margin-top:8px;font-size:12px;opacity:.6">נפוץ במבני תעשייה ומחסנים.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(100,150,255,.3)">
+        <h3>גג שטוח (Flat Roof)</h3>
+        <p>שתי אפשרויות: Ballast (משקולות, בלי קדיחה) או Tilt frame (שלד בזווית 10-15°). <strong>ב-Koh Phangan: tilt frame עדיף</strong> — ניקוז גשם.</p>
+      </div>
+    </div>
+    <div>
+      <h3>חומרים — Marine Grade</h3>
+      <div class="alert alert-warn">
+        <strong>קריטי באי:</strong> אוויר מלוח = קורוזיה מואצת. <strong>רק</strong> אלומיניום 6005-T5 (rails) + נירוסטה 316 (brgs). ברגים מגולוונים = חלודה תוך שנה!
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>רכיב</th><th>חומר</th><th>עלות/kWp</th></tr>
+          <tr><td>Rails (פסים)</td><td>Aluminum 6005-T5</td><td>฿600</td></tr>
+          <tr><td>Clamps (קלאמפים)</td><td>Aluminum anodized</td><td>฿200</td></tr>
+          <tr><td>Hooks / L-feet</td><td>SS 316</td><td>฿400</td></tr>
+          <tr><td>Bolts, nuts, washers</td><td>SS 316</td><td>฿150</td></tr>
+          <tr><td>Sealant / butyl</td><td>UV-resistant</td><td>฿100</td></tr>
+          <tr><td>Earthing strap</td><td>Copper tinned</td><td>฿100</td></tr>
+          <tr style="background:rgba(232,168,32,.1)"><td><strong>סה"כ</strong></td><td></td><td><strong>฿1,550</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: DC Electrical -->
+<div class="slide slide-dark" data-title="חשמל DC">
+<img src="visuals/install-04-mc4.png" class="slide-img-sm" alt="MC4 connector">
+  <span class="section-num">05</span>
+  <h2>⚡ שלב 4: חשמל DC</h2>
+  <p class="subtitle">שרשור פאנלים, כבלים, מפסקים</p>
+
+  <!-- SVG: MC4 Connector + String Wiring -->
+  <div style="display:flex;gap:16px;justify-content:center;margin:12px 0;flex-wrap:wrap">
+    <!-- MC4 Connector Diagram -->
+    <svg viewBox="0 0 300 140" style="width:290px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(232,168,32,.2);padding:4px">
+      <text x="150" y="16" text-anchor="middle" fill="#E8A820" font-size="11" font-weight="700" font-family="Heebo">חיבור MC4 — Male ↔ Female</text>
+      <!-- Male connector -->
+      <rect x="20" y="50" width="80" height="30" fill="#222" stroke="#555" stroke-width="1.5" rx="4"/>
+      <rect x="100" y="57" width="20" height="16" fill="#333" stroke="#555" stroke-width="1" rx="2"/>
+      <circle cx="115" cy="65" r="4" fill="#E8A820"/>
+      <text x="60" y="42" text-anchor="middle" fill="#E8A820" font-size="9" font-family="Space Grotesk">Male (+)</text>
+      <!-- Cable from male -->
+      <path d="M20,65 L5,65 Q0,65 0,70 L0,100" stroke="#E85D3A" stroke-width="3" fill="none"/>
+      <text x="8" y="115" fill="#E85D3A" font-size="8" font-family="Space Grotesk">DC+</text>
+      <!-- Female connector -->
+      <rect x="200" y="50" width="80" height="30" fill="#222" stroke="#555" stroke-width="1.5" rx="4"/>
+      <rect x="180" y="57" width="20" height="16" fill="#333" stroke="#555" stroke-width="1" rx="2"/>
+      <circle cx="190" cy="65" r="6" fill="none" stroke="#6496FF" stroke-width="2"/>
+      <text x="240" y="42" text-anchor="middle" fill="#6496FF" font-size="9" font-family="Space Grotesk">Female (-)</text>
+      <!-- Cable from female -->
+      <path d="M280,65 L295,65 Q300,65 300,70 L300,100" stroke="#6496FF" stroke-width="3" fill="none"/>
+      <text x="288" y="115" fill="#6496FF" font-size="8" font-family="Space Grotesk">DC-</text>
+      <!-- Click arrow -->
+      <text x="150" y="70" text-anchor="middle" fill="#2ED89A" font-size="16" font-family="Space Grotesk">⟷</text>
+      <text x="150" y="95" text-anchor="middle" fill="#2ED89A" font-size="9" font-family="Space Grotesk">Click!</text>
+      <!-- Specs -->
+      <text x="150" y="130" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="8" font-family="Space Grotesk">IP67 | 1000V DC | 30A | Stäubli/Amphenol</text>
+    </svg>
+    <!-- String Wiring Diagram -->
+    <svg viewBox="0 0 380 140" style="width:370px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(46,216,154,.2);padding:4px">
+      <text x="190" y="16" text-anchor="middle" fill="#2ED89A" font-size="11" font-weight="700" font-family="Heebo">שרשור סטרינג — 12 פאנלים</text>
+      <!-- Panels in series -->
+      <g transform="translate(10,30)">
+        <rect x="0" y="0" width="28" height="45" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="2"/><text x="14" y="25" text-anchor="middle" fill="#fff" font-size="7">P1</text>
+        <rect x="32" y="0" width="28" height="45" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="2"/><text x="46" y="25" text-anchor="middle" fill="#fff" font-size="7">P2</text>
+        <rect x="64" y="0" width="28" height="45" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="2"/><text x="78" y="25" text-anchor="middle" fill="#fff" font-size="7">P3</text>
+        <rect x="96" y="0" width="28" height="45" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="2"/><text x="110" y="25" text-anchor="middle" fill="#fff" font-size="7">P4</text>
+        <text x="135" y="25" fill="#E8A820" font-size="14">...</text>
+        <rect x="150" y="0" width="28" height="45" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="2"/><text x="164" y="25" text-anchor="middle" fill="#fff" font-size="7">P11</text>
+        <rect x="182" y="0" width="28" height="45" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1" rx="2"/><text x="196" y="25" text-anchor="middle" fill="#fff" font-size="7">P12</text>
+        <!-- MC4 connections between panels -->
+        <line x1="28" y1="22" x2="32" y2="22" stroke="#E8A820" stroke-width="2"/>
+        <line x1="60" y1="22" x2="64" y2="22" stroke="#E8A820" stroke-width="2"/>
+        <line x1="92" y1="22" x2="96" y2="22" stroke="#E8A820" stroke-width="2"/>
+        <line x1="178" y1="22" x2="182" y2="22" stroke="#E8A820" stroke-width="2"/>
+      </g>
+      <!-- DC cables to isolator -->
+      <line x1="10" y1="75" x2="10" y2="100" stroke="#E85D3A" stroke-width="2.5"/>
+      <line x1="220" y1="75" x2="220" y2="100" stroke="#6496FF" stroke-width="2.5"/>
+      <text x="10" y="112" text-anchor="middle" fill="#E85D3A" font-size="7" font-family="Space Grotesk">DC+</text>
+      <text x="220" y="112" text-anchor="middle" fill="#6496FF" font-size="7" font-family="Space Grotesk">DC-</text>
+      <!-- DC Isolator -->
+      <rect x="250" y="55" width="50" height="30" fill="#333" stroke="#E8A820" stroke-width="1.5" rx="4"/>
+      <text x="275" y="74" text-anchor="middle" fill="#E8A820" font-size="8" font-weight="700">DC ISO</text>
+      <!-- Cable from panels to isolator -->
+      <path d="M10,100 L10,110 L245,110 L245,70 L250,70" stroke="#E85D3A" stroke-width="1.5" fill="none"/>
+      <path d="M220,100 L220,120 L240,120 L240,70 L250,70" stroke="#6496FF" stroke-width="1.5" fill="none" stroke-dasharray="3"/>
+      <!-- To inverter -->
+      <line x1="300" y1="70" x2="340" y2="70" stroke="#E8A820" stroke-width="2"/>
+      <rect x="340" y="45" width="30" height="50" fill="#1A7A5A" stroke="#2ED89A" stroke-width="1.5" rx="4"/>
+      <text x="355" y="68" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">INV</text>
+      <text x="355" y="78" text-anchor="middle" fill="#fff" font-size="6">MPPT</text>
+      <!-- Voltage annotation -->
+      <text x="115" y="130" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="8" font-family="Space Grotesk">12 × 51.7V = 620V Voc | 12 × 43.4V = 521V Vmp</text>
+    </svg>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>רצף עבודה</h3>
+      <div style="font-size:13px;line-height:2.4">
+        <p><span class="gold">1.</span> הנחת פאנלים על Rails (clamps מהודקים ל-35 N·m)</p>
+        <p><span class="gold">2.</span> חיבור MC4 — שרשור פאנלים בסטרינג</p>
+        <p><span class="gold">3.</span> ניתוב כבלי DC בתעלות (UV-resistant conduit)</p>
+        <p><span class="gold">4.</span> התקנת DC Isolator ליד האינוורטר</p>
+        <p><span class="gold">5.</span> הארקת שלד (PE conductor → earthing rod)</p>
+        <p><span class="gold">6.</span> בדיקת Voc + Isc כל סטרינג (multimeter)</p>
+        <p><span class="gold">7.</span> בדיקת בידוד (insulation resistance > 1MΩ)</p>
+      </div>
+      <div class="alert alert-success">
+        <strong>זמן:</strong> 1-2 ימים לצוות של 4 (מערכת 30kWp)
+      </div>
+    </div>
+    <div>
+      <h3>מפרט כבלים</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>רכיב</th><th>מפרט</th></tr>
+          <tr><td>כבל DC</td><td>PV1-F 4mm² (עד 30A) / 6mm² (עד 40A)</td></tr>
+          <tr><td>MC4 connectors</td><td>IP67, 1000V DC, 30A rated</td></tr>
+          <tr><td>DC Isolator</td><td>1000V DC, 32A per string</td></tr>
+          <tr><td>Surge Protection</td><td>SPD Type II, 1000V DC</td></tr>
+          <tr><td>Cable tray</td><td>UV-resistant PVC conduit</td></tr>
+          <tr><td>Earthing</td><td>6mm² Cu, rod 2.4m × 16mm</td></tr>
+        </table>
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <strong>אזהרה:</strong> כבלי DC תחת מתח גם כשהמערכת "כבויה" (כל עוד יש אור). עבודה רק עם כפפות 1000V + כלים מבודדים. <strong>אין לעבוד ב-DC בגשם!</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: AC Electrical -->
+<div class="slide slide-ocean" data-title="חשמל AC">
+<div class="img-row"><img src="visuals/install-05-cables.png" alt="Cable routing"><img src="visuals/install-06-panel.png" alt="Distribution board"></div>
+  <span class="section-num">06</span>
+  <h2>🔌 שלב 5: חשמל AC — חיבור לרשת</h2>
+  <p class="subtitle">מהאינוורטר ועד הלוח הראשי</p>
+
+  <!-- SVG: Single Line Diagram -->
+  <svg viewBox="0 0 800 120" style="width:100%;max-width:780px;margin:8px auto;display:block;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(232,168,32,.2);padding:8px">
+    <text x="400" y="14" text-anchor="middle" fill="#E8A820" font-size="10" font-weight="700" font-family="Heebo">SLD — Single Line Diagram (תרשים חד-קווי)</text>
+    <!-- Panels -->
+    <rect x="10" y="35" width="60" height="50" fill="#1a4a7a" stroke="#2a6ab0" stroke-width="1.5" rx="4"/>
+    <text x="40" y="55" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">PV Array</text>
+    <text x="40" y="68" text-anchor="middle" fill="#aaa" font-size="7">30kWp</text>
+    <!-- DC Cable -->
+    <line x1="70" y1="60" x2="110" y2="60" stroke="#E85D3A" stroke-width="2"/>
+    <text x="90" y="50" text-anchor="middle" fill="#E85D3A" font-size="7">DC</text>
+    <!-- DC SPD -->
+    <rect x="110" y="45" width="40" height="30" fill="#333" stroke="#E8A820" stroke-width="1" rx="3"/>
+    <text x="130" y="60" text-anchor="middle" fill="#E8A820" font-size="7" font-weight="600">SPD</text>
+    <text x="130" y="70" text-anchor="middle" fill="#aaa" font-size="6">DC T.II</text>
+    <!-- DC Isolator -->
+    <line x1="150" y1="60" x2="175" y2="60" stroke="#E85D3A" stroke-width="2"/>
+    <rect x="175" y="45" width="40" height="30" fill="#333" stroke="#E8A820" stroke-width="1" rx="3"/>
+    <text x="195" y="60" text-anchor="middle" fill="#E8A820" font-size="7" font-weight="600">DC</text>
+    <text x="195" y="70" text-anchor="middle" fill="#aaa" font-size="6">ISO</text>
+    <!-- Inverter -->
+    <line x1="215" y1="60" x2="250" y2="60" stroke="#E85D3A" stroke-width="2"/>
+    <rect x="250" y="30" width="65" height="60" fill="#1A7A5A" stroke="#2ED89A" stroke-width="2" rx="6"/>
+    <text x="282" y="55" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Huawei</text>
+    <text x="282" y="68" text-anchor="middle" fill="#ddd" font-size="7">SUN2000</text>
+    <text x="282" y="80" text-anchor="middle" fill="#2ED89A" font-size="7">DC→AC</text>
+    <!-- AC Cable -->
+    <line x1="315" y1="60" x2="355" y2="60" stroke="#6496FF" stroke-width="2"/>
+    <text x="335" y="50" text-anchor="middle" fill="#6496FF" font-size="7">AC</text>
+    <!-- AC Isolator -->
+    <rect x="355" y="45" width="40" height="30" fill="#333" stroke="#6496FF" stroke-width="1" rx="3"/>
+    <text x="375" y="60" text-anchor="middle" fill="#6496FF" font-size="7" font-weight="600">AC</text>
+    <text x="375" y="70" text-anchor="middle" fill="#aaa" font-size="6">ISO</text>
+    <!-- AC SPD -->
+    <line x1="395" y1="60" x2="420" y2="60" stroke="#6496FF" stroke-width="2"/>
+    <rect x="420" y="45" width="40" height="30" fill="#333" stroke="#E8A820" stroke-width="1" rx="3"/>
+    <text x="440" y="60" text-anchor="middle" fill="#E8A820" font-size="7" font-weight="600">SPD</text>
+    <text x="440" y="70" text-anchor="middle" fill="#aaa" font-size="6">AC T.I+II</text>
+    <!-- Solar Breaker -->
+    <line x1="460" y1="60" x2="490" y2="60" stroke="#6496FF" stroke-width="2"/>
+    <rect x="490" y="45" width="40" height="30" fill="#333" stroke="#fff" stroke-width="1" rx="3"/>
+    <text x="510" y="58" text-anchor="middle" fill="#fff" font-size="7" font-weight="600">MCB</text>
+    <text x="510" y="70" text-anchor="middle" fill="#aaa" font-size="6">Solar</text>
+    <!-- Main Panel -->
+    <line x1="530" y1="60" x2="565" y2="60" stroke="#fff" stroke-width="2"/>
+    <rect x="565" y="28" width="55" height="65" fill="#444" stroke="#E8A820" stroke-width="2" rx="4"/>
+    <text x="592" y="50" text-anchor="middle" fill="#E8A820" font-size="8" font-weight="700">MDB</text>
+    <text x="592" y="62" text-anchor="middle" fill="#aaa" font-size="6">Main</text>
+    <text x="592" y="72" text-anchor="middle" fill="#aaa" font-size="6">Panel</text>
+    <text x="592" y="84" text-anchor="middle" fill="#aaa" font-size="6">3-Phase</text>
+    <!-- Meter -->
+    <line x1="620" y1="60" x2="655" y2="60" stroke="#fff" stroke-width="2"/>
+    <circle cx="672" cy="60" r="17" fill="none" stroke="#E8A820" stroke-width="2"/>
+    <text x="672" y="58" text-anchor="middle" fill="#E8A820" font-size="7" font-weight="700">kWh</text>
+    <text x="672" y="68" text-anchor="middle" fill="#aaa" font-size="6">Bi-Dir</text>
+    <!-- Grid -->
+    <line x1="689" y1="60" x2="720" y2="60" stroke="#fff" stroke-width="2"/>
+    <rect x="720" y="40" width="55" height="40" fill="#0A3D5C" stroke="#E8A820" stroke-width="2" rx="4"/>
+    <text x="747" y="58" text-anchor="middle" fill="#E8A820" font-size="9" font-weight="700">PEA</text>
+    <text x="747" y="70" text-anchor="middle" fill="#aaa" font-size="7">Grid</text>
+    <!-- Earth -->
+    <line x1="282" y1="90" x2="282" y2="108" stroke="#2ED89A" stroke-width="1.5"/>
+    <line x1="272" y1="108" x2="292" y2="108" stroke="#2ED89A" stroke-width="2"/>
+    <line x1="275" y1="112" x2="289" y2="112" stroke="#2ED89A" stroke-width="1.5"/>
+    <line x1="278" y1="116" x2="286" y2="116" stroke="#2ED89A" stroke-width="1"/>
+    <text x="282" y="98" text-anchor="middle" fill="#2ED89A" font-size="6">PE</text>
+  </svg>
+
+  <div class="two-col">
+    <div>
+      <h3>רצף עבודה</h3>
+      <div style="font-size:13px;line-height:2.4">
+        <p><span class="gold">1.</span> התקנת אינוורטר (Huawei SUN2000) — קיר מוצל, מאוורר</p>
+        <p><span class="gold">2.</span> חיבור סטרינגים DC → MPPT inputs</p>
+        <p><span class="gold">3.</span> AC Isolator — ליד האינוורטר</p>
+        <p><span class="gold">4.</span> כבל AC → Main Distribution Board</p>
+        <p><span class="gold">5.</span> Solar Breaker — dedicated, מתחת ל-Main Breaker</p>
+        <p><span class="gold">6.</span> SPD Type I+II (הגנת ברקים — קריטי באי!)</p>
+        <p><span class="gold">7.</span> CT Clamp / Smart Meter — לניטור ייצוא</p>
+        <p><span class="gold">8.</span> חיבור תקשורת — WiFi / Ethernet → FusionSolar</p>
+      </div>
+    </div>
+    <div>
+      <h3>חיבור פאזות</h3>
+      <div class="card" style="margin:8px 0;border-color:rgba(100,150,255,.3)">
+        <h3>חד-פאזי (< 5kW)</h3>
+        <p>וילות קטנות. L + N + PE. Breaker 32A.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(232,168,32,.3)">
+        <h3>תלת-פאזי (5-100kW)</h3>
+        <p>רזורטים ועסקים. 3L + N + PE. Balance בין פאזות. <strong>רוב ההתקנות שלנו.</strong></p>
+      </div>
+      <div class="alert alert-info" style="margin-top:12px">
+        <strong>Huawei SUN2000 יתרונות:</strong><br>
+        ▸ 2-6 MPPT trackers (גמישות בשרשור)<br>
+        ▸ Built-in WiFi + 4G dongle<br>
+        ▸ FusionSolar monitoring חינם<br>
+        ▸ IP65 — מתאים לחוץ<br>
+        ▸ 10 שנות אחריות (15 בהרחבה)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: PEA Connection -->
+<div class="slide slide-reef" data-title="חיבור PEA">
+<img src="visuals/install-08-meter.png" class="slide-img-sm" alt="PEA meter">
+  <span class="section-num">07</span>
+  <h2>✅ שלב 6: חיבור PEA + Net Metering</h2>
+  <p class="subtitle">הרגולטור — Provincial Electricity Authority</p>
+  <div class="two-col">
+    <div>
+      <h3>תהליך PEA (מפושט מ-11/2025)</h3>
+      <div style="font-size:13px;line-height:2.4">
+        <p><span class="gold">1.</span> הגשת בקשה — טופס + SLD + מפרט טכני</p>
+        <p><span class="gold">2.</span> PEA בודק מסמכים (3-5 ימי עבודה)</p>
+        <p><span class="gold">3.</span> בדיקה בשטח — מפקח PEA מגיע לאתר</p>
+        <p><span class="gold">4.</span> אישור → החלפת מונה לדו-כיווני</p>
+        <p><span class="gold">5.</span> Commissioning Test — בדיקת Anti-Islanding</p>
+        <p><span class="gold">6.</span> חיבור לרשת — <strong class="reef-text">LIVE!</strong></p>
+      </div>
+      <div class="alert alert-success">
+        <strong>חדש (2025):</strong> אין צורך בהיתר בנייה, אין רישיון מפעל. רק תיאום PEA. זמן: 7-14 יום מהגשה עד חיבור.
+      </div>
+    </div>
+    <div>
+      <h3>Net Metering בתאילנד</h3>
+      <div class="card" style="margin:8px 0">
+        <h3>איך זה עובד</h3>
+        <p>עודף ייצור → נזרק לרשת → מונה חוזר אחורה. <strong>יחס 1:1</strong> — כל kWh שמיוצא = kWh חינם בלילה.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>הגבלות</h3>
+        <p>מערכת ≤ גודל החיבור הקיים. ייצוא לא עולה על ייבוא שנתי. עודף סוף שנה → לא מפוצה.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>PEA Koh Phangan</h3>
+        <p>📞 077-377-084<br>
+        📍 Thong Sala<br>
+        🕐 8:30-16:30 Mon-Fri</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Quality Assurance -->
+<div class="slide slide-dark" data-title="בקרת איכות">
+  <span class="section-num">08</span>
+  <h2>🔍 שלב 7: בקרת איכות + מסירה</h2>
+  <div class="two-col">
+    <div>
+      <h3>בדיקות סיום</h3>
+      <div class="card" style="margin:8px 0"><h3>IV Curve Testing</h3><p>בדיקת ביצועי כל סטרינג מול מפרט יצרן. זיהוי פאנלים פגומים.</p></div>
+      <div class="card" style="margin:8px 0"><h3>Thermal Imaging</h3><p>מצלמת FLIR — זיהוי hot spots, חיבורים רופפים, תאים פגומים. <strong>חובה לפני מסירה.</strong></p></div>
+      <div class="card" style="margin:8px 0"><h3>Performance Ratio</h3><p>השוואת ייצור בפועל מול סימולציה. PR צפוי: 75-82% (תאילנד — טמפרטורה גבוהה).</p></div>
+      <div class="card" style="margin:8px 0"><h3>Punch List</h3><p>רשימת ליקויים → תיקון → אישור לקוח → מסירה.</p></div>
+    </div>
+    <div>
+      <h3>חבילת מסירה</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>מסמך</th><th>תיאור</th></tr>
+          <tr><td>As-Built Drawings</td><td>שרטוטים סופיים כולל שינויים</td></tr>
+          <tr><td>SLD Final</td><td>סכמה חשמלית סופית</td></tr>
+          <tr><td>O&M Manual</td><td>מדריך תפעול ותחזוקה</td></tr>
+          <tr><td>Warranty Cards</td><td>פאנלים (25yr) + אינוורטר (10yr)</td></tr>
+          <tr><td>PEA Approval</td><td>אישור חיבור</td></tr>
+          <tr><td>Commissioning Report</td><td>דו"ח בדיקות סיום</td></tr>
+          <tr><td>Monitoring Setup</td><td>אפליקציה + גישה ללקוח</td></tr>
+          <tr><td>תמונות Before/After</td><td>לתיעוד + שיווק</td></tr>
+        </table>
+      </div>
+      <div class="alert alert-info" style="margin-top:12px">
+        <strong>אחריות:</strong> 10 שנים על עבודה | 25 שנים על פאנלים | 10 שנים על אינוורטר | 10 שנים על קונסטרוקציה
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Safety -->
+<div class="slide slide-gold" data-title="בטיחות">
+<img src="visuals/install-09-safety.png" class="slide-img" alt="Safety harness">
+  <span class="section-num">09</span>
+  <h2>⛑️ בטיחות — סביבה טרופית</h2>
+  <div class="two-col">
+    <div>
+      <h3>אתגרים ייחודיים לאי</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--coral)"><h3 class="coral-text">חום קיצוני</h3><p>35-42°C על הגג. הפסקות כל שעה. מים + אלקטרוליטים. עבודה 7:00-11:00 + 14:00-17:00 בלבד.</p></div>
+      <div class="card" style="margin:8px 0;border-color:var(--coral)"><h3 class="coral-text">עונת מונסון (אוק-דצמ)</h3><p>גשמים כבדים. <strong>אין עבודת DC בגשם.</strong> תכנון עבודות לעונה יבשה (ינואר-ספט).</p></div>
+      <div class="card" style="margin:8px 0;border-color:var(--coral)"><h3 class="coral-text">ברקים</h3><p>Koh Phangan = אזור ברקים גבוה. SPD Type I+II חובה. Earthing rod 2.4m minimum.</p></div>
+      <div class="card" style="margin:8px 0;border-color:var(--coral)"><h3 class="coral-text">אוויר מלוח</h3><p>קורוזיה מואצת. בדיקת חיבורים חשמליים כל 6 חודשים. רק SS316 + aluminum.</p></div>
+    </div>
+    <div>
+      <h3>ציוד בטיחות חובה</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>תקן</th></tr>
+          <tr><td>רתמת גוף + חבל</td><td>EN 361 (עבודה בגובה > 2m)</td></tr>
+          <tr><td>כפפות DC 1000V</td><td>IEC 60903 Class 0</td></tr>
+          <tr><td>נעלי בטיחות</td><td>S3 — מבודדות</td></tr>
+          <tr><td>קסדה</td><td>EN 397</td></tr>
+          <tr><td>משקפי מגן</td><td>EN 166</td></tr>
+          <tr><td>הגנת שמש</td><td>SPF 50+ / חולצת UV</td></tr>
+          <tr><td>ערכת עזרה ראשונה</td><td>כולל טיפול חום</td></tr>
+        </table>
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <strong>ביטוח חובה:</strong> CAR (Contractor All Risk) לכל אתר. אחריות צד ג'. פיצוי עובדים (Social Security).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Crew & Timeline -->
+<div class="slide slide-ocean" data-title="צוות ולו״ז">
+  <span class="section-num">10</span>
+  <h2>👷 צוות ולו"ז טיפוסי</h2>
+  <p class="subtitle">מערכת 30kWp — רזורט בינוני</p>
+  <div class="two-col">
+    <div>
+      <h3>הרכב צוות</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>תפקיד</th><th>כמות</th><th>שכר יומי</th></tr>
+          <tr><td>מנהל פרויקט</td><td>1</td><td>฿3,000</td></tr>
+          <tr><td>חשמלאי מוסמך</td><td>1</td><td>฿2,500</td></tr>
+          <tr><td>מתקינים</td><td>2</td><td>฿1,500 × 2</td></tr>
+          <tr style="background:rgba(232,168,32,.1)"><td><strong>סה"כ/יום</strong></td><td><strong>4</strong></td><td><strong>฿8,500</strong></td></tr>
+        </table>
+      </div>
+      <div class="alert alert-info">
+        <strong>שכר שבועי:</strong> ฿42,500 (5 ימים)<br>
+        <strong>עלות עבודה 30kWp:</strong> ฿59,500 (7 ימים)
+      </div>
+    </div>
+    <div>
+      <h3>לו"ז — 30kWp</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>יום</th><th>משימה</th><th>אבן דרך</th></tr>
+          <tr><td>1</td><td>הכנת גג + סימון</td><td></td></tr>
+          <tr><td>2-3</td><td>קונסטרוקציה (rails, hooks)</td><td>שלד מוכן ✅</td></tr>
+          <tr><td>3-4</td><td>הנחת פאנלים + DC cabling</td><td>DC מוכן ✅</td></tr>
+          <tr><td>5</td><td>אינוורטר + AC + SPD</td><td>AC מוכן ✅</td></tr>
+          <tr><td>6</td><td>Commissioning + בדיקות</td><td>מערכת חיה ✅</td></tr>
+          <tr><td>7</td><td>ניקיון + תיעוד + מסירה</td><td><strong class="reef-text">מסירה ✅</strong></td></tr>
+        </table>
+      </div>
+      <p style="font-size:12px;opacity:.5;margin-top:8px">* בדיקת PEA: 7-14 ימים נוספים</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Cost Breakdown -->
+<div class="slide slide-dark" data-title="פירוט עלויות">
+  <span class="section-num">11</span>
+  <h2>💰 פירוט עלויות — 30kWp טיפוסי</h2>
+  <div class="stat-grid">
+    <div><div class="big-num">฿900K</div><div class="stat-label">מחיר ללקוח<br>(฿30K/kWp)</div></div>
+    <div><div class="big-num">฿285K</div><div class="stat-label">עלות ציוד<br>(32%)</div></div>
+    <div><div class="big-num">฿615K</div><div class="stat-label">רווח גולמי<br>(68%)</div></div>
+    <div><div class="big-num">3.5</div><div class="stat-label">שנים<br>ROI ללקוח</div></div>
+  </div>
+  <div class="two-col" style="margin-top:8px">
+    <div>
+      <div class="bar-chart">
+        <h3>פירוט עלויות (฿/kWp)</h3>
+        <div class="bar-row"><div class="bar-label">פאנלים</div><div class="bar-wrap"><div class="bar-fill" style="width:55%;background:var(--gold)">฿5,200</div></div></div>
+        <div class="bar-row"><div class="bar-label">אינוורטר</div><div class="bar-wrap"><div class="bar-fill" style="width:21%;background:#6496FF">฿2,000</div></div></div>
+        <div class="bar-row"><div class="bar-label">קונסטרוקציה</div><div class="bar-wrap"><div class="bar-fill" style="width:16%;background:#2ED89A">฿1,550</div></div></div>
+        <div class="bar-row"><div class="bar-label">BOS + כבלים</div><div class="bar-wrap"><div class="bar-fill" style="width:8%;background:var(--coral)">฿750</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="bar-chart">
+        <h3>פירוט תפעול (฿/kWp)</h3>
+        <div class="bar-row"><div class="bar-label">עבודה</div><div class="bar-wrap"><div class="bar-fill" style="width:48%;background:var(--gold)">฿5,000</div></div></div>
+        <div class="bar-row"><div class="bar-label">לוגיסטיקה</div><div class="bar-wrap"><div class="bar-fill" style="width:29%;background:#6496FF">฿3,000</div></div></div>
+        <div class="bar-row"><div class="bar-label">הנדסה</div><div class="bar-wrap"><div class="bar-fill" style="width:19%;background:#2ED89A">฿2,000</div></div></div>
+        <div class="bar-row"><div class="bar-label">Overhead</div><div class="bar-wrap"><div class="bar-fill" style="width:100%;background:var(--coral)">฿11,000</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end slides -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">→ הקודם</button>
+  <span class="slide-counter" id="counter"></span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">הבא ←</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function show(n){slides.forEach((s,i)=>{s.classList.remove('active','exit');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('exit')});document.getElementById('counter').textContent=`${n+1} / ${total}`;document.getElementById('progress').style.width=`${((n+1)/total)*100}%`;document.getElementById('prevBtn').disabled=n===0;document.getElementById('nextBtn').disabled=n===total-1;document.querySelectorAll('.toc-item').forEach((t,i)=>{t.classList.toggle('active',i===n)})}
+function navigate(d){current=Math.max(0,Math.min(total-1,current+d));show(current)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')navigate(1);if(e.key==='ArrowRight')navigate(-1);if(e.key==='Escape')toggleTOC()});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)navigate(d>0?1:-1)});
+function toggleTOC(){document.getElementById('tocPanel').classList.toggle('open')}
+document.addEventListener('click',e=>{const p=document.getElementById('tocPanel');if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.classList.contains('toc-btn'))p.classList.remove('open')});
+(function(){const l=document.getElementById('tocList');slides.forEach((s,i)=>{const d=document.createElement('div');d.className='toc-item';d.innerHTML=`<span class="toc-num">${String(i+1).padStart(2,'0')}</span>${s.dataset.title}`;d.onclick=()=>{current=i;show(i);toggleTOC()};l.appendChild(d)})})();
+show(0);
+</script>
+
+
+
+
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  // Cover
+  "תהליך הקמה": {en:"Installation Process",th:"กระบวนการติดตั้ง"},
+  "מסקר גג ועד חיבור לרשת — 7 שלבים": {en:"From roof survey to grid connection — 7 steps",th:"จากการสำรวจหลังคาถึงการเชื่อมต่อกริด — 7 ขั้นตอน"},
+  "TM Energy — מרץ 2026": {en:"TM Energy — March 2026",th:"TM Energy — มีนาคม 2026"},
+
+  // TOC + slide titles
+  "תוכן עניינים": {en:"Table of Contents",th:"สารบัญ"},
+  "שער": {en:"Cover",th:"หน้าปก"},
+  "סקירת 7 שלבים": {en:"7-Phase Overview",th:"ภาพรวม 7 ขั้นตอน"},
+  "סקר גג": {en:"Roof Survey",th:"สำรวจหลังคา"},
+  "תכנון והנדסה": {en:"Planning & Engineering",th:"การวางแผนและวิศวกรรม"},
+  "קונסטרוקציה": {en:"Structure",th:"โครงสร้าง"},
+  "חשמל DC": {en:"DC Electrical",th:"ระบบไฟฟ้า DC"},
+  "חשמל AC": {en:"AC Electrical",th:"ระบบไฟฟ้า AC"},
+  "חיבור PEA": {en:"PEA Connection",th:"การเชื่อมต่อ PEA"},
+  "בקרת איכות": {en:"Quality Control",th:"การควบคุมคุณภาพ"},
+  "בטיחות": {en:"Safety",th:"ความปลอดภัย"},
+  "צוות ולו״ז": {en:"Crew & Schedule",th:"ทีมงานและกำหนดการ"},
+  "פירוט עלויות": {en:"Cost Breakdown",th:"รายละเอียดต้นทุน"},
+
+  // Slide 1 — overview
+  "מהפנייה הראשונה ועד חשמל סולארי על הגג": {en:"From first inquiry to solar electricity on the roof",th:"จากการติดต่อครั้งแรกถึงไฟฟ้าพลังงานโซลาร์บนหลังคา"},
+  "תכנון": {en:"Planning",th:"การวางแผน"},
+  "ימים 2-4": {en:"Days 2–4",th:"วันที่ 2–4"},
+  "הזמנת ציוד": {en:"Equipment Order",th:"สั่งซื้ออุปกรณ์"},
+  "ימים 5-14": {en:"Days 5–14",th:"วันที่ 5–14"},
+  "ימים 15-17": {en:"Days 15–17",th:"วันที่ 15–17"},
+  "DC חשמל": {en:"DC Electrical",th:"ระบบไฟฟ้า DC"},
+  "ימים 18-19": {en:"Days 18–19",th:"วันที่ 18–19"},
+  "AC חשמל": {en:"AC Electrical",th:"ระบบไฟฟ้า AC"},
+  "יום 20": {en:"Day 20",th:"วันที่ 20"},
+  "חיבור PEA": {en:"PEA Connection",th:"การเชื่อมต่อ PEA"},
+  "ימים 21-28": {en:"Days 21–28",th:"วันที่ 21–28"},
+  "לו\"ז טיפוסי: מערכת 30kWp — 5-7 ימי עבודה בשטח + 7-14 ימים תיאום PEA. סה\"כ: 3-4 שבועות מחתימה ועד חשמל.": {en:"Typical schedule: 30kWp system — 5–7 working days on site + 7–14 days PEA coordination. Total: 3–4 weeks from signing to electricity.",th:"กำหนดการทั่วไป: ระบบ 30kWp — ทำงานภาคสนาม 5–7 วัน + ประสานงาน PEA 7–14 วัน รวม: 3–4 สัปดาห์จากลงนามถึงมีไฟฟ้า"},
+  "אנשי צוות\nבהתקנה": {en:"Crew members\nin installation",th:"สมาชิกทีม\nในการติดตั้ง"},
+  "ימי עבודה\nבשטח": {en:"Working days\non site",th:"วันทำงาน\nในพื้นที่"},
+  "עלות חומרים\nמסה\"כ": {en:"Materials cost\nof total",th:"ต้นทุนวัสดุ\nของทั้งหมด"},
+  "שנות אחריות\nעל פאנלים": {en:"Warranty years\non panels",th:"ปีรับประกัน\nบนแผงโซลาร์"},
+
+  // Slide 2 — roof survey
+  "שלב 1: סקר גג — לפני הכל": {en:"Phase 1: Roof Survey — Before Everything",th:"ขั้นที่ 1: สำรวจหลังคา — ก่อนทุกอย่าง"},
+  "צילום, מדידות, הערכה מבנית": {en:"Photography, measurements, structural assessment",th:"การถ่ายภาพ การวัด การประเมินโครงสร้าง"},
+  "מה בודקים": {en:"What We Check",th:"สิ่งที่ตรวจสอบ"},
+  "מדידות פיזיות": {en:"Physical measurements",th:"การวัดทางกายภาพ"},
+  "שטח גג, זווית שיפוע (tilt), כיוון (azimuth). אופטימלי בתאילנד: 10-15° שיפוע, דרום.": {en:"Roof area, tilt angle, azimuth direction. Optimal in Thailand: 10–15° tilt, south-facing.",th:"พื้นที่หลังคา มุมเอียง (tilt) ทิศทาง (azimuth) ที่เหมาะสมในไทย: เอียง 10–15° หันไปทางทิศใต้"},
+  "מצב מבני": {en:"Structural condition",th:"สภาพโครงสร้าง"},
+  "סוג גג (רעפים, מתכת, שטוח), גיל, עומס מותר. בתאילנד: בדיקת נזקי מונסון קודמים.": {en:"Roof type (tile, metal, flat), age, allowable load. In Thailand: check for previous monsoon damage.",th:"ประเภทหลังคา (กระเบื้อง โลหะ แบน) อายุ น้ำหนักที่ยอมรับได้ ในไทย: ตรวจสอบความเสียหายจากมรสุมก่อนหน้า"},
+  "הצללות": {en:"Shading",th:"การบัง"},
+  "עצים, מבנים סמוכים, אנטנות. שימוש ב-Solar Pathfinder או SunEye.": {en:"Trees, adjacent structures, antennas. Using Solar Pathfinder or SunEye.",th:"ต้นไม้ อาคารใกล้เคียง เสาอากาศ ใช้ Solar Pathfinder หรือ SunEye"},
+  "לוח חשמל": {en:"Electrical panel",th:"ตู้ไฟฟ้า"},
+  "מיקום Main Panel, גודל Main Breaker, מרחק מהגג. חיבור חד/תלת פאזי.": {en:"Main panel location, main breaker size, distance from roof. Single/three-phase connection.",th:"ตำแหน่งตู้หลัก ขนาด Main Breaker ระยะห่างจากหลังคา การต่อแบบ single/three-phase"},
+  "חשבונות חשמל": {en:"Electricity bills",th:"ใบเรียกเก็บค่าไฟ"},
+  "12 חודשים אחרונים. דפוס צריכה: פיק, בסיס, עונתיות.": {en:"Last 12 months. Consumption pattern: peak, base, seasonality.",th:"12 เดือนล่าสุด รูปแบบการใช้งาน: ช่วงพีค ฐาน ความเป็นฤดูกาล"},
+  "כלים": {en:"Tools",th:"เครื่องมือ"},
+  "כלי": {en:"Tool",th:"เครื่องมือ"},
+  "שימוש": {en:"Use",th:"การใช้งาน"},
+  "עלות": {en:"Cost",th:"ต้นทุน"},
+  "צילום אווירי + מדידות": {en:"Aerial photography + measurements",th:"การถ่ายภาพทางอากาศ + การวัด"},
+  "לייזר מדידה Bosch": {en:"Bosch laser measurer",th:"เลเซอร์วัดระยะ Bosch"},
+  "מרחקים ושטחים": {en:"Distances and areas",th:"ระยะทางและพื้นที่"},
+  "מד שיפוע דיגיטלי": {en:"Digital inclinometer",th:"เครื่องวัดความลาดชันดิจิทัล"},
+  "זווית גג": {en:"Roof angle",th:"มุมหลังคา"},
+  "מצפן / אפליקציה": {en:"Compass / app",th:"เข็มทิศ / แอป"},
+  "כיוון (azimuth)": {en:"Direction (azimuth)",th:"ทิศทาง (azimuth)"},
+  "מצלמה תרמית FLIR": {en:"FLIR thermal camera",th:"กล้องถ่ายภาพความร้อน FLIR"},
+  "בדיקת חשמל קיים": {en:"Existing electrical inspection",th:"ตรวจสอบระบบไฟฟ้าที่มีอยู่"},
+  "ספציפי לאי: אוויר מלוח → בדיקת קורוזיה על חיבורים קיימים. לחות גבוהה → בדיקת עמידות חיווט. קקטוסים וגלשנים על הגגות → ניקוי לפני צילום.": {en:"Island-specific: salt air → check corrosion on existing connections. High humidity → check wiring resistance. Debris on roofs → clean before photography.",th:"เฉพาะเกาะ: อากาศเค็ม → ตรวจสอบการกัดกร่อนบนจุดต่อที่มีอยู่ ความชื้นสูง → ตรวจสอบความต้านทานของสายไฟ เศษซากบนหลังคา → ทำความสะอาดก่อนถ่ายภาพ"},
+  "תוצר": {en:"Output",th:"ผลลัพธ์"},
+  "דו\"ח סקר כולל: תמונות drone, מדידות, הערכה מבנית, המלצת גודל מערכת, סימולציית PVsyst ראשונית. נשלח ללקוח תוך 48 שעות.": {en:"Full survey report: drone photos, measurements, structural assessment, system size recommendation, initial PVsyst simulation. Sent to client within 48 hours.",th:"รายงานสำรวจฉบับสมบูรณ์: ภาพโดรน การวัด การประเมินโครงสร้าง การแนะนำขนาดระบบ การจำลอง PVsyst เบื้องต้น ส่งให้ลูกค้าภายใน 48 ชั่วโมง"},
+
+  // Slide 3 — design
+  "שלב 2: תכנון והנדסה": {en:"Phase 2: Planning & Engineering",th:"ขั้นที่ 2: การวางแผนและวิศวกรรม"},
+  "סימולציה, עיצוב חשמלי, חישובים מבניים": {en:"Simulation, electrical design, structural calculations",th:"การจำลอง การออกแบบไฟฟ้า การคำนวณโครงสร้าง"},
+  "תהליך תכנון": {en:"Design Process",th:"กระบวนการออกแบบ"},
+  "1. סימולציית PVsyst — ייצור שנתי, Performance Ratio, הפסדי הצללה, טמפרטורה (חשוב בתאילנד — ממוצע 35°C).": {en:"1. PVsyst Simulation — annual production, Performance Ratio, shading losses, temperature (important in Thailand — avg 35°C).",th:"1. การจำลอง PVsyst — การผลิตรายปี Performance Ratio การสูญเสียจากการบัง อุณหภูมิ (สำคัญในไทย — เฉลี่ย 35°C)"},
+  "סימולציית PVsyst — ייצור שנתי, Performance Ratio, הפסדי הצללה, טמפרטורה (חשוב בתאילנד — ממוצע 35°C).": {en:"PVsyst simulation — annual production, Performance Ratio, shading losses, temperature (important in Thailand — avg 35°C).",th:"การจำลอง PVsyst — การผลิตรายปี Performance Ratio การสูญเสียจากการบัง อุณหภูมิ (สำคัญในไทย — เฉลี่ย 35°C)"},
+  "2. String Configuration — חישוב כמות פאנלים בסטרינג, Voc בקור (בתאילנד min ~22°C), MPPT matching.": {en:"2. String Configuration — calculating panels per string, Voc in cold (Thailand min ~22°C), MPPT matching.",th:"2. String Configuration — คำนวณจำนวนแผงต่อสตริง Voc ในอุณหภูมิต่ำ (ไทย min ~22°C) MPPT matching"},
+  "String Configuration — חישוב כמות פאנלים בסטרינג, Voc בקור (בתאילנד min ~22°C), MPPT matching.": {en:"String Configuration — calculating panels per string, Voc in cold (Thailand min ~22°C), MPPT matching.",th:"String Configuration — คำนวณจำนวนแผงต่อสตริง Voc ในอุณหภูมิต่ำ (ไทย min ~22°C) MPPT matching"},
+  "3. Inverter Sizing — DC/AC ratio (1.1-1.3 בתאילנד), MPPT ranges, transformer matching.": {en:"3. Inverter Sizing — DC/AC ratio (1.1–1.3 in Thailand), MPPT ranges, transformer matching.",th:"3. Inverter Sizing — อัตราส่วน DC/AC (1.1–1.3 ในไทย) MPPT ranges การจับคู่หม้อแปลง"},
+  "Inverter Sizing — DC/AC ratio (1.1-1.3 בתאילנד), MPPT ranges, transformer matching.": {en:"Inverter Sizing — DC/AC ratio (1.1–1.3 in Thailand), MPPT ranges, transformer matching.",th:"Inverter Sizing — อัตราส่วน DC/AC (1.1–1.3 ในไทย) MPPT ranges การจับคู่หม้อแปลง"},
+  "4. SLD — Single Line Diagram — סכמה חשמלית מלאה: DC isolators, AC breakers, SPD, earthing, meter.": {en:"4. SLD — Single Line Diagram — full electrical schematic: DC isolators, AC breakers, SPD, earthing, meter.",th:"4. SLD — Single Line Diagram — แผนผังไฟฟ้าฉบับสมบูรณ์: DC isolators, AC breakers, SPD, earthing, meter"},
+  "SLD — Single Line Diagram — סכמה חשמלית מלאה: DC isolators, AC breakers, SPD, earthing, meter.": {en:"SLD — Single Line Diagram — full electrical schematic: DC isolators, AC breakers, SPD, earthing, meter.",th:"SLD — Single Line Diagram — แผนผังไฟฟ้าฉบับสมบูรณ์: DC isolators, AC breakers, SPD, earthing, meter"},
+  "5. Layout Drawing — מיקום פאנלים על הגג, מרווחים (wind gaps), מסלולי כבלים.": {en:"5. Layout Drawing — panel positioning on roof, spacing (wind gaps), cable routes.",th:"5. Layout Drawing — ตำแหน่งแผงบนหลังคา ระยะห่าง (wind gaps) เส้นทางสาย"},
+  "Layout Drawing — מיקום פאנלים על הגג, מרווחים (wind gaps), מסלולי כבלים.": {en:"Layout Drawing — panel positioning on roof, spacing (wind gaps), cable routes.",th:"Layout Drawing — ตำแหน่งแผงบนหลังคา ระยะห่าง (wind gaps) เส้นทางสาย"},
+  "6. Structural Calc — עומס רוח (Koh Phangan zone), עומס עצמי, עומס גשם, עיגון.": {en:"6. Structural Calc — wind load (Koh Phangan zone), self-weight, rain load, anchoring.",th:"6. Structural Calc — แรงลม (เขต Koh Phangan) น้ำหนักตัวเอง น้ำหนักฝน การยึด"},
+  "Structural Calc — עומס רוח (Koh Phangan zone), עומס עצמי, עומס גשם, עיגון.": {en:"Structural Calc — wind load (Koh Phangan zone), self-weight, rain load, anchoring.",th:"Structural Calc — แรงลม (เขต Koh Phangan) น้ำหนักตัวเอง น้ำหนักฝน การยึด"},
+  "PV1-F 4mm² (עד 30A) / 6mm² (עד 40A)": {en:"PV1-F 4mm² (up to 30A) / 6mm² (up to 40A)",th:"PV1-F 4mm² (สูงสุด 30A) / 6mm² (สูงสุด 40A)"},
+  "תוכנות": {en:"Software",th:"ซอฟต์แวร์"},
+  "סימולציית ייצור מדויקת. נתוני מזג אוויר TMY Koh Phangan. Output: דו\"ח ייצור שנתי.": {en:"Precise production simulation. TMY weather data Koh Phangan. Output: annual production report.",th:"การจำลองการผลิตที่แม่นยำ ข้อมูลสภาพอากาศ TMY Koh Phangan ผลลัพธ์: รายงานการผลิตรายปี"},
+  "עיצוב מהיר online. פריסת פאנלים על תמונת drone. הצעת מחיר מיידית.": {en:"Fast online design. Panel layout on drone image. Instant quotation.",th:"การออกแบบออนไลน์รวดเร็ว จัดวางแผงบนภาพโดรน ใบเสนอราคาทันที"},
+  "שרטוט SLD, layout drawings, הגשה ל-PEA.": {en:"SLD drawing, layout drawings, submission to PEA.",th:"วาด SLD ภาพวาด layout ยื่นต่อ PEA"},
+  "תקנים": {en:"Standards",th:"มาตรฐาน"},
+  "פאנלים | אינוורטרים": {en:"Panels | Inverters",th:"แผงโซลาร์ | อินเวอร์เตอร์"},
+  "חיווט + הארקה": {en:"Wiring + earthing",th:"การเดินสาย + การต่อสายดิน"},
+  "חיבור לרשת": {en:"Grid connection",th:"การเชื่อมต่อกริด"},
+
+  // Slide 4 — construction
+  "שלב 3: קונסטרוקציה — שלד הרכבה": {en:"Phase 3: Structure — Mounting Frame",th:"ขั้นที่ 3: โครงสร้าง — โครงยึด"},
+  "ימים 1-2 של עבודה בשטח": {en:"Days 1–2 of on-site work",th:"วันที่ 1–2 ของงานในพื้นที่"},
+  "לפי סוג גג": {en:"By Roof Type",th:"ตามประเภทหลังคา"},
+  "גג רעפים (Tile Roof)": {en:"Tile Roof",th:"หลังคากระเบื้อง"},
+  "הוקים ייעודיים (tile hooks) מתחת לרעף. לא קודחים דרך הרעף! הוק → rail → clamp → panel.": {en:"Dedicated tile hooks under the tile. No drilling through the tile! Hook → rail → clamp → panel.",th:"ตะขอกระเบื้องเฉพาะใต้กระเบื้อง ไม่เจาะผ่านกระเบื้อง! Hook → rail → clamp → panel"},
+  "נפוץ ברזורטים ווילות סגנון תאילנדי.": {en:"Common in resorts and Thai-style villas.",th:"พบบ่อยในรีสอร์ทและวิลล่าสไตล์ไทย"},
+  "גג מתכת (Metal Roof)": {en:"Metal Roof",th:"หลังคาโลหะ"},
+  "קלאמפים על ה-standing seam או L-feet + bolts. איטום סביב חורים חובה (butyl tape + sealant).": {en:"Clamps on standing seam or L-feet + bolts. Sealing around holes is mandatory (butyl tape + sealant).",th:"แคลมป์บน standing seam หรือ L-feet + สลักเกลียว การซีลรอบรูเป็นสิ่งจำเป็น (butyl tape + sealant)"},
+  "נפוץ במבני תעשייה ומחסנים.": {en:"Common in industrial buildings and warehouses.",th:"พบบ่อยในอาคารอุตสาหกรรมและคลังสินค้า"},
+  "גג שטוח (Flat Roof)": {en:"Flat Roof",th:"หลังคาแบน"},
+  "שתי אפשרויות: Ballast (משקולות, בלי קדיחה) או Tilt frame (שלד בזווית 10-15°). ב-Koh Phangan: tilt frame עדיף — ניקוז גשם.": {en:"Two options: Ballast (weights, no drilling) or Tilt frame (angled frame at 10–15°). In Koh Phangan: tilt frame preferred — rain drainage.",th:"สองตัวเลือก: Ballast (น้ำหนักถ่วง ไม่เจาะ) หรือ Tilt frame (โครงเอียง 10–15°) ใน Koh Phangan: Tilt frame ดีกว่า — ระบายน้ำฝน"},
+  "חומרים — Marine Grade": {en:"Materials — Marine Grade",th:"วัสดุ — ระดับทางทะเล"},
+  "קריטי באי: אוויר מלוח = קורוזיה מואצת. רק אלומיניום 6005-T5 (rails) + נירוסטה 316 (brgs). ברגים מגולוונים = חלודה תוך שנה!": {en:"Critical on island: salt air = accelerated corrosion. Only aluminum 6005-T5 (rails) + stainless 316 (fasteners). Galvanized bolts = rust within a year!",th:"สำคัญมากบนเกาะ: อากาศเค็ม = การกัดกร่อนเร่งขึ้น ใช้เฉพาะอลูมิเนียม 6005-T5 (rails) + สแตนเลส 316 (fasteners) สลักเกลียวชุบสังกะสี = สนิมภายในหนึ่งปี!"},
+  "Rails (פסים)": {en:"Rails",th:"Rails (รางยึด)"},
+  "Clamps (קלאמפים)": {en:"Clamps",th:"Clamps (แคลมป์)"},
+  "חומר": {en:"Material",th:"วัสดุ"},
+  "עלות/kWp": {en:"Cost/kWp",th:"ต้นทุน/kWp"},
+  "סה\"כ": {en:"Total",th:"รวม"},
+
+  // Slide 5 — DC electrical
+  "שלב 4: חשמל DC": {en:"Phase 4: DC Electrical",th:"ขั้นที่ 4: ระบบไฟฟ้า DC"},
+  "שרשור פאנלים, כבלים, מפסקים": {en:"Panel stringing, cables, isolators",th:"การต่อแผงแบบอนุกรม สายไฟ สวิตช์ตัดวงจร"},
+  "רצף עבודה": {en:"Work Sequence",th:"ลำดับการทำงาน"},
+  "הנחת פאנלים על Rails (clamps מהודקים ל-35 N·m)": {en:"Place panels on rails (clamps torqued to 35 N·m)",th:"วางแผงบน rails (ขันแคลมป์ที่ 35 N·m)"},
+  "חיבור MC4 — שרשור פאנלים בסטרינג": {en:"MC4 connection — string panels in series",th:"ต่อ MC4 — ต่อแผงเป็นสตริงแบบอนุกรม"},
+  "ניתוב כבלי DC בתעלות (UV-resistant conduit)": {en:"Route DC cables in conduit (UV-resistant conduit)",th:"เดินสาย DC ในท่อ (conduit ทนรังสี UV)"},
+  "התקנת DC Isolator ליד האינוורטר": {en:"Install DC isolator near the inverter",th:"ติดตั้ง DC isolator ใกล้อินเวอร์เตอร์"},
+  "הארקת שלד (PE conductor → earthing rod)": {en:"Frame earthing (PE conductor → earthing rod)",th:"ต่อสายดินโครง (PE conductor → earthing rod)"},
+  "בדיקת Voc + Isc כל סטרינג (multimeter)": {en:"Test Voc + Isc per string (multimeter)",th:"ทดสอบ Voc + Isc ทุกสตริง (มัลติมิเตอร์)"},
+  "בדיקת בידוד (insulation resistance > 1MΩ)": {en:"Insulation test (resistance > 1MΩ)",th:"ทดสอบฉนวน (ความต้านทาน > 1MΩ)"},
+  "זמן: 1-2 ימים לצוות של 4 (מערכת 30kWp)": {en:"Time: 1–2 days for a crew of 4 (30kWp system)",th:"เวลา: 1–2 วันสำหรับทีม 4 คน (ระบบ 30kWp)"},
+  "מפרט כבלים": {en:"Cable Specifications",th:"ข้อกำหนดสายไฟ"},
+  "רכיב": {en:"Component",th:"ส่วนประกอบ"},
+  "מפרט": {en:"Spec",th:"ข้อกำหนด"},
+  "כבל DC": {en:"DC cable",th:"สาย DC"},
+  "Surge Protection": {en:"Surge Protection",th:"การป้องกันไฟกระชาก"},
+  "Cable tray": {en:"Cable tray",th:"รางสาย"},
+  "Earthing": {en:"Earthing",th:"การต่อสายดิน"},
+  "אזהרה: כבלי DC תחת מתח גם כשהמערכת \"כבויה\" (כל עוד יש אור). עבודה רק עם כפפות 1000V + כלים מבודדים. אין לעבוד ב-DC בגשם!": {en:"Warning: DC cables are live even when system is \"off\" (as long as there is light). Work only with 1000V gloves + insulated tools. Do not work on DC in rain!",th:"คำเตือน: สาย DC มีไฟแม้เมื่อระบบ \"ปิด\" (ตราบเท่าที่มีแสง) ทำงานกับถุงมือ 1000V + เครื่องมือฉนวนเท่านั้น ห้ามทำงานกับ DC ในฝน!"},
+
+  // Slide 6 — AC electrical
+  "שלב 5: חשמל AC — חיבור לרשת": {en:"Phase 5: AC Electrical — Grid Connection",th:"ขั้นที่ 5: ระบบไฟฟ้า AC — เชื่อมต่อกริด"},
+  "מהאינוורטר ועד הלוח הראשי": {en:"From the inverter to the main panel",th:"จากอินเวอร์เตอร์ถึงตู้หลัก"},
+  "SLD — Single Line Diagram (תרשים חד-קווי)": {en:"SLD — Single Line Diagram",th:"SLD — แผนผังเส้นเดี่ยว"},
+  "התקנת אינוורטר (Huawei SUN2000) — קיר מוצל, מאוורר": {en:"Install inverter (Huawei SUN2000) — shaded wall, ventilated",th:"ติดตั้งอินเวอร์เตอร์ (Huawei SUN2000) — ผนังร่ม มีการระบายอากาศ"},
+  "חיבור סטרינגים DC → MPPT inputs": {en:"Connect DC strings → MPPT inputs",th:"ต่อสตริง DC → MPPT inputs"},
+  "AC Isolator — ליד האינוורטר": {en:"AC Isolator — near the inverter",th:"AC Isolator — ใกล้อินเวอร์เตอร์"},
+  "כבל AC → Main Distribution Board": {en:"AC cable → Main Distribution Board",th:"สาย AC → Main Distribution Board"},
+  "Solar Breaker — dedicated, מתחת ל-Main Breaker": {en:"Solar Breaker — dedicated, below Main Breaker",th:"Solar Breaker — เฉพาะ ด้านล่าง Main Breaker"},
+  "SPD Type I+II (הגנת ברקים — קריטי באי!)": {en:"SPD Type I+II (lightning protection — critical on island!)",th:"SPD Type I+II (การป้องกันฟ้าผ่า — สำคัญมากบนเกาะ!)"},
+  "CT Clamp / Smart Meter — לניטור ייצוא": {en:"CT Clamp / Smart Meter — for export monitoring",th:"CT Clamp / Smart Meter — สำหรับติดตามการส่งออก"},
+  "חיבור תקשורת — WiFi / Ethernet → FusionSolar": {en:"Communication connection — WiFi / Ethernet → FusionSolar",th:"การเชื่อมต่อสื่อสาร — WiFi / Ethernet → FusionSolar"},
+  "חיבור פאזות": {en:"Phase Connection",th:"การต่อเฟส"},
+  "חד-פאזי (< 5kW)": {en:"Single-phase (< 5kW)",th:"เฟสเดียว (< 5kW)"},
+  "וילות קטנות. L + N + PE. Breaker 32A.": {en:"Small villas. L + N + PE. 32A breaker.",th:"วิลล่าขนาดเล็ก L + N + PE เบรกเกอร์ 32A"},
+  "תלת-פאזי (5-100kW)": {en:"Three-phase (5–100kW)",th:"สามเฟส (5–100kW)"},
+  "רזורטים ועסקים. 3L + N + PE. Balance בין פאזות. רוב ההתקנות שלנו.": {en:"Resorts and businesses. 3L + N + PE. Balance between phases. Most of our installations.",th:"รีสอร์ทและธุรกิจ 3L + N + PE สมดุลระหว่างเฟส การติดตั้งส่วนใหญ่ของเรา"},
+  "Huawei SUN2000 יתרונות:": {en:"Huawei SUN2000 advantages:",th:"ข้อดีของ Huawei SUN2000:"},
+  "2-6 MPPT trackers (גמישות בשרשור)": {en:"2–6 MPPT trackers (stringing flexibility)",th:"2–6 MPPT trackers (ความยืดหยุ่นในการต่อสตริง)"},
+  "Built-in WiFi + 4G dongle": {en:"Built-in WiFi + 4G dongle",th:"WiFi ในตัว + 4G dongle"},
+  "FusionSolar monitoring חינם": {en:"FusionSolar monitoring free",th:"FusionSolar monitoring ฟรี"},
+  "IP65 — מתאים לחוץ": {en:"IP65 — suitable for outdoor",th:"IP65 — เหมาะสำหรับภายนอก"},
+  "10 שנות אחריות (15 בהרחבה)": {en:"10-year warranty (15 with extension)",th:"รับประกัน 10 ปี (15 ปีพร้อมส่วนขยาย)"},
+
+  // Slide 7 — PEA
+  "שלב 6: חיבור PEA + Net Metering": {en:"Phase 6: PEA Connection + Net Metering",th:"ขั้นที่ 6: เชื่อมต่อ PEA + Net Metering"},
+  "הרגולטור — Provincial Electricity Authority": {en:"The regulator — Provincial Electricity Authority",th:"ผู้กำกับดูแล — Provincial Electricity Authority"},
+  "תהליך PEA (מפושט מ-11/2025)": {en:"PEA process (simplified from 11/2025)",th:"กระบวนการ PEA (ปรับปรุงจาก 11/2025)"},
+  "הגשת בקשה — טופס + SLD + מפרט טכני": {en:"Submit application — form + SLD + technical spec",th:"ยื่นคำขอ — แบบฟอร์ม + SLD + ข้อกำหนดทางเทคนิค"},
+  "PEA בודק מסמכים (3-5 ימי עבודה)": {en:"PEA reviews documents (3–5 working days)",th:"PEA ตรวจสอบเอกสาร (3–5 วันทำการ)"},
+  "בדיקה בשטח — מפקח PEA מגיע לאתר": {en:"On-site inspection — PEA inspector visits site",th:"ตรวจสอบในพื้นที่ — ผู้ตรวจสอบ PEA มาที่ไซต์"},
+  "אישור → החלפת מונה לדו-כיווני": {en:"Approval → meter replaced with bi-directional",th:"อนุมัติ → เปลี่ยนมิเตอร์เป็นแบบสองทิศทาง"},
+  "Commissioning Test — בדיקת Anti-Islanding": {en:"Commissioning Test — Anti-Islanding check",th:"Commissioning Test — ตรวจสอบ Anti-Islanding"},
+  "חיבור לרשת — LIVE!": {en:"Grid connection — LIVE!",th:"เชื่อมต่อกริด — เปิดใช้งาน!"},
+  "חדש (2025): אין צורך בהיתר בנייה, אין רישיון מפעל. רק תיאום PEA. זמן: 7-14 יום מהגשה עד חיבור.": {en:"New (2025): no building permit required, no factory license. Only PEA coordination. Time: 7–14 days from submission to connection.",th:"ใหม่ (2025): ไม่ต้องมีใบอนุญาตก่อสร้าง ไม่ต้องมีใบอนุญาตโรงงาน ประสานงาน PEA เท่านั้น เวลา: 7–14 วันจากการยื่นถึงการเชื่อมต่อ"},
+  "Net Metering בתאילנד": {en:"Net Metering in Thailand",th:"Net Metering ในไทย"},
+  "איך זה עובד": {en:"How it works",th:"วิธีการทำงาน"},
+  "עודף ייצור → נזרק לרשת → מונה חוזר אחורה. יחס 1:1 — כל kWh שמיוצא = kWh חינם בלילה.": {en:"Excess production → exported to grid → meter runs backwards. 1:1 ratio — every kWh exported = free kWh at night.",th:"การผลิตส่วนเกิน → ส่งออกสู่กริด → มิเตอร์เดินถอยหลัง อัตราส่วน 1:1 — ทุก kWh ที่ส่งออก = kWh ฟรีตอนกลางคืน"},
+  "הגבלות": {en:"Limitations",th:"ข้อจำกัด"},
+  "מערכת ≤ גודל החיבור הקיים. ייצוא לא עולה על ייבוא שנתי. עודף סוף שנה → לא מפוצה.": {en:"System ≤ existing connection size. Export does not exceed annual import. Year-end surplus → not compensated.",th:"ระบบ ≤ ขนาดการเชื่อมต่อที่มีอยู่ การส่งออกไม่เกินการนำเข้ารายปี ส่วนเกินสิ้นปี → ไม่ได้รับการชดเชย"},
+
+  // Slide 8 — QA
+  "שלב 7: בקרת איכות + מסירה": {en:"Phase 7: Quality Control + Handover",th:"ขั้นที่ 7: การควบคุมคุณภาพ + การส่งมอบ"},
+  "בדיקות סיום": {en:"Final Tests",th:"การทดสอบสุดท้าย"},
+  "בדיקת ביצועי כל סטרינג מול מפרט יצרן. זיהוי פאנלים פגומים.": {en:"Testing each string's performance against manufacturer spec. Identifying damaged panels.",th:"ทดสอบประสิทธิภาพของทุกสตริงเทียบกับข้อกำหนดของผู้ผลิต ระบุแผงที่เสียหาย"},
+  "מצלמת FLIR — זיהוי hot spots, חיבורים רופפים, תאים פגומים. חובה לפני מסירה.": {en:"FLIR camera — identify hot spots, loose connections, damaged cells. Mandatory before handover.",th:"กล้อง FLIR — ระบุ hot spots การต่อที่หลวม เซลล์ที่เสียหาย จำเป็นก่อนส่งมอบ"},
+  "השוואת ייצור בפועל מול סימולציה. PR צפוי: 75-82% (תאילנד — טמפרטורה גבוהה).": {en:"Compare actual production vs simulation. Expected PR: 75–82% (Thailand — high temperature).",th:"เปรียบเทียบการผลิตจริงกับการจำลอง PR ที่คาดหวัง: 75–82% (ไทย — อุณหภูมิสูง)"},
+  "רשימת ליקויים → תיקון → אישור לקוח → מסירה.": {en:"Defect list → repair → client approval → handover.",th:"รายการข้อบกพร่อง → ซ่อมแซม → อนุมัติลูกค้า → ส่งมอบ"},
+  "חבילת מסירה": {en:"Handover Package",th:"ชุดเอกสารส่งมอบ"},
+  "מסמך": {en:"Document",th:"เอกสาร"},
+  "תיאור": {en:"Description",th:"คำอธิบาย"},
+  "שרטוטים סופיים כולל שינויים": {en:"Final drawings including changes",th:"แบบวาดสุดท้ายรวมการเปลี่ยนแปลง"},
+  "סכמה חשמלית סופית": {en:"Final electrical schematic",th:"แผนผังไฟฟ้าสุดท้าย"},
+  "מדריך תפעול ותחזוקה": {en:"Operation and maintenance manual",th:"คู่มือการใช้งานและบำรุงรักษา"},
+  "פאנלים (25yr) + אינוורטר (10yr)": {en:"Panels (25yr) + inverter (10yr)",th:"แผงโซลาร์ (25 ปี) + อินเวอร์เตอร์ (10 ปี)"},
+  "אישור חיבור": {en:"Connection approval",th:"การอนุมัติการเชื่อมต่อ"},
+  "דו\"ח בדיקות סיום": {en:"Commissioning test report",th:"รายงานการทดสอบ commissioning"},
+  "אפליקציה + גישה ללקוח": {en:"App + client access",th:"แอป + การเข้าถึงของลูกค้า"},
+  "תמונות Before/After": {en:"Before/After photos",th:"ภาพก่อน/หลัง"},
+  "לתיעוד + שיווק": {en:"for documentation + marketing",th:"สำหรับเอกสาร + การตลาด"},
+  "אחריות: 10 שנים על עבודה | 25 שנים על פאנלים | 10 שנים על אינוורטר | 10 שנים על קונסטרוקציה": {en:"Warranty: 10 years on workmanship | 25 years on panels | 10 years on inverter | 10 years on structure",th:"การรับประกัน: 10 ปีสำหรับงาน | 25 ปีสำหรับแผงโซลาร์ | 10 ปีสำหรับอินเวอร์เตอร์ | 10 ปีสำหรับโครงสร้าง"},
+
+  // Slide 9 — safety
+  "בטיחות — סביבה טרופית": {en:"Safety — Tropical Environment",th:"ความปลอดภัย — สภาพแวดล้อมเขตร้อน"},
+  "אתגרים ייחודיים לאי": {en:"Island-Specific Challenges",th:"ความท้าทายเฉพาะบนเกาะ"},
+  "חום קיצוני": {en:"Extreme heat",th:"ความร้อนสุดขีด"},
+  "35-42°C על הגג. הפסקות כל שעה. מים + אלקטרוליטים. עבודה 7:00-11:00 + 14:00-17:00 בלבד.": {en:"35–42°C on the roof. Breaks every hour. Water + electrolytes. Work hours 7:00–11:00 + 14:00–17:00 only.",th:"35–42°C บนหลังคา พักทุกชั่วโมง น้ำ + อิเล็กโทรไลต์ เวลาทำงาน 7:00–11:00 + 14:00–17:00 เท่านั้น"},
+  "עונת מונסון (אוק-דצמ)": {en:"Monsoon season (Oct–Dec)",th:"ฤดูมรสุม (ต.ค.–ธ.ค.)"},
+  "גשמים כבדים. אין עבודת DC בגשם. תכנון עבודות לעונה יבשה (ינואר-ספט).": {en:"Heavy rains. No DC work in rain. Plan work for dry season (Jan–Sep).",th:"ฝนหนัก ห้ามทำงาน DC ในฝน วางแผนงานสำหรับฤดูแล้ง (ม.ค.–ก.ย.)"},
+  "ברקים": {en:"Lightning",th:"ฟ้าผ่า"},
+  "Koh Phangan = אזור ברקים גבוה. SPD Type I+II חובה. Earthing rod 2.4m minimum.": {en:"Koh Phangan = high lightning zone. SPD Type I+II mandatory. Earthing rod 2.4m minimum.",th:"Koh Phangan = เขตฟ้าผ่าสูง SPD Type I+II จำเป็น Earthing rod ขั้นต่ำ 2.4m"},
+  "אוויר מלוח": {en:"Salt air",th:"อากาศเค็ม"},
+  "קורוזיה מואצת. בדיקת חיבורים חשמליים כל 6 חודשים. רק SS316 + aluminum.": {en:"Accelerated corrosion. Inspect electrical connections every 6 months. Only SS316 + aluminum.",th:"การกัดกร่อนเร่งขึ้น ตรวจสอบจุดต่อไฟฟ้าทุก 6 เดือน ใช้เฉพาะ SS316 + อลูมิเนียม"},
+  "ציוד בטיחות חובה": {en:"Mandatory Safety Equipment",th:"อุปกรณ์ความปลอดภัยที่จำเป็น"},
+  "פריט": {en:"Item",th:"รายการ"},
+  "תקן": {en:"Standard",th:"มาตรฐาน"},
+  "רתמת גוף + חבל": {en:"Body harness + rope",th:"สายรัดตัว + เชือก"},
+  "עבודה בגובה > 2m": {en:"Work at height > 2m",th:"งานที่สูงกว่า 2m"},
+  "כפפות DC 1000V": {en:"DC 1000V gloves",th:"ถุงมือ DC 1000V"},
+  "נעלי בטיחות": {en:"Safety shoes",th:"รองเท้าเซฟตี้"},
+  "מבודדות": {en:"Insulated",th:"มีฉนวน"},
+  "קסדה": {en:"Helmet",th:"หมวกนิรภัย"},
+  "משקפי מגן": {en:"Safety goggles",th:"แว่นครอบตาเซฟตี้"},
+  "הגנת שמש": {en:"Sun protection",th:"การป้องกันแดด"},
+  "SPF 50+ / חולצת UV": {en:"SPF 50+ / UV shirt",th:"SPF 50+ / เสื้อกันรังสี UV"},
+  "ערכת עזרה ראשונה": {en:"First aid kit",th:"ชุดปฐมพยาบาล"},
+  "כולל טיפול חום": {en:"including heat treatment",th:"รวมการรักษาอาการเพลียแดด"},
+  "ביטוח חובה: CAR (Contractor All Risk) לכל אתר. אחריות צד ג'. פיצוי עובדים (Social Security).": {en:"Mandatory insurance: CAR (Contractor All Risk) per site. Third-party liability. Workers' compensation (Social Security).",th:"ประกันที่จำเป็น: CAR (Contractor All Risk) ต่อไซต์ ความรับผิดต่อบุคคลที่สาม ค่าชดเชยแรงงาน (ประกันสังคม)"},
+
+  // Slide 10 — crew & schedule
+  "צוות ולו\"ז טיפוסי": {en:"Typical Crew & Schedule",th:"ทีมงานและกำหนดการทั่วไป"},
+  "מערכת 30kWp — רזורט בינוני": {en:"30kWp system — medium resort",th:"ระบบ 30kWp — รีสอร์ทขนาดกลาง"},
+  "הרכב צוות": {en:"Crew Composition",th:"องค์ประกอบทีม"},
+  "תפקיד": {en:"Role",th:"บทบาท"},
+  "שכר יומי": {en:"Daily wage",th:"ค่าจ้างรายวัน"},
+  "מנהל פרויקט": {en:"Project Manager",th:"ผู้จัดการโครงการ"},
+  "חשמלאי מוסמך": {en:"Licensed electrician",th:"ช่างไฟฟ้าที่มีใบอนุญาต"},
+  "מתקינים": {en:"Installers",th:"ช่างติดตั้ง"},
+  "סה\"כ/יום": {en:"Total/day",th:"รวม/วัน"},
+  "שכר שבועי: ฿42,500 (5 ימים)": {en:"Weekly wages: ฿42,500 (5 days)",th:"ค่าจ้างรายสัปดาห์: ฿42,500 (5 วัน)"},
+  "עלות עבודה 30kWp: ฿59,500 (7 ימים)": {en:"30kWp labor cost: ฿59,500 (7 days)",th:"ต้นทุนแรงงาน 30kWp: ฿59,500 (7 วัน)"},
+  "לו\"ז — 30kWp": {en:"Schedule — 30kWp",th:"กำหนดการ — 30kWp"},
+  "יום": {en:"Day",th:"วัน"},
+  "משימה": {en:"Task",th:"งาน"},
+  "אבן דרך": {en:"Milestone",th:"จุดสำคัญ"},
+  "הכנת גג + סימון": {en:"Roof prep + marking",th:"เตรียมหลังคา + ทำเครื่องหมาย"},
+  "קונסטרוקציה (rails, hooks)": {en:"Structure (rails, hooks)",th:"โครงสร้าง (rails, hooks)"},
+  "שלד מוכן ✅": {en:"Frame ready ✅",th:"โครงพร้อม ✅"},
+  "הנחת פאנלים + DC cabling": {en:"Panel placement + DC cabling",th:"วางแผง + เดินสาย DC"},
+  "DC מוכן ✅": {en:"DC ready ✅",th:"DC พร้อม ✅"},
+  "אינוורטר + AC + SPD": {en:"Inverter + AC + SPD",th:"อินเวอร์เตอร์ + AC + SPD"},
+  "AC מוכן ✅": {en:"AC ready ✅",th:"AC พร้อม ✅"},
+  "Commissioning + בדיקות": {en:"Commissioning + testing",th:"Commissioning + การทดสอบ"},
+  "מערכת חיה ✅": {en:"System live ✅",th:"ระบบใช้งานได้ ✅"},
+  "ניקיון + תיעוד + מסירה": {en:"Cleanup + documentation + handover",th:"ทำความสะอาด + เอกสาร + ส่งมอบ"},
+  "מסירה ✅": {en:"Handover ✅",th:"ส่งมอบ ✅"},
+  "* בדיקת PEA: 7-14 ימים נוספים": {en:"* PEA inspection: 7–14 additional days",th:"* การตรวจสอบ PEA: 7–14 วันเพิ่มเติม"},
+
+  // Slide 11 — cost breakdown
+  "פירוט עלויות — 30kWp טיפוסי": {en:"Cost Breakdown — Typical 30kWp",th:"รายละเอียดต้นทุน — 30kWp ทั่วไป"},
+  "מחיר ללקוח": {en:"Client price",th:"ราคาสำหรับลูกค้า"},
+  "עלות ציוד": {en:"Equipment cost",th:"ต้นทุนอุปกรณ์"},
+  "רווח גולמי": {en:"Gross profit",th:"กำไรขั้นต้น"},
+  "שנים\nROI ללקוח": {en:"years\nclient ROI",th:"ปี\nROI ของลูกค้า"},
+  "פירוט עלויות (฿/kWp)": {en:"Cost breakdown (฿/kWp)",th:"รายละเอียดต้นทุน (฿/kWp)"},
+  "פאנלים": {en:"Panels",th:"แผงโซลาร์"},
+  "אינוורטר": {en:"Inverter",th:"อินเวอร์เตอร์"},
+  "BOS + כבלים": {en:"BOS + cables",th:"BOS + สายไฟ"},
+  "פירוט תפעול (฿/kWp)": {en:"Operations breakdown (฿/kWp)",th:"รายละเอียดการดำเนินงาน (฿/kWp)"},
+  "עבודה": {en:"Labor",th:"แรงงาน"},
+  "לוגיסטיקה": {en:"Logistics",th:"โลจิสติกส์"},
+  "הנדסה": {en:"Engineering",th:"วิศวกรรม"},
+
+  // Fragment keys for <br>-split stat labels (slide 1)
+  "אנשי צוות": {en: "Crew members", th: "สมาชิกทีม"},
+  "בהתקנה": {en: "in installation", th: "ในการติดตั้ง"},
+  "ימי עבודה": {en: "Working days", th: "วันทำงาน"},
+  "בשטח": {en: "on site", th: "ในพื้นที่"},
+  "עלות חומרים": {en: "Materials cost", th: "ต้นทุนวัสดุ"},
+  "מסה\"כ": {en: "of total", th: "ของทั้งหมด"},
+  "שנות אחריות": {en: "Warranty years", th: "ปีรับประกัน"},
+  "על פאנלים": {en: "on panels", th: "บนแผงโซลาร์"},
+
+  // Nav
+  "→ הקודם": {en:"→ Prev",th:"→ ก่อนหน้า"},
+  "הבא ←": {en:"Next ←",th:"ถัดไป ←"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

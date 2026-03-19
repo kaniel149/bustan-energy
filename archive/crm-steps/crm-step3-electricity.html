@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TM Energy — Step 3: Electricity Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root{--sun:#E8A820;--ocean-deep:#062A40;--green:#43A047;--blue:#1E88E5;--red:#E53935;--purple:#7B1FA2;}
+        *{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Heebo',sans-serif;background:#0A0A0A;color:#fff;overflow-x:hidden;}body[data-lang="en"],body[data-lang="th"]{direction:ltr;}
+        .slide{min-height:100vh;padding:4rem 3rem;display:flex;flex-direction:column;justify-content:center;position:relative;border-bottom:1px solid rgba(255,255,255,.05);}.slide-num{position:absolute;top:2rem;left:2rem;font-size:.75rem;color:rgba(255,255,255,.3);letter-spacing:.15em;}.container{max-width:1100px;margin:0 auto;width:100%;}
+        h1{font-family:'Instrument Serif',serif;font-size:clamp(2.5rem,6vw,4.5rem);line-height:1.1;}h2{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,4vw,3rem);line-height:1.2;margin-bottom:2rem;}h3{font-size:1.3rem;font-weight:700;margin-bottom:.8rem;}.accent{color:var(--sun);}.subtitle{font-size:1.15rem;color:rgba(255,255,255,.6);line-height:1.6;max-width:700px;margin-top:1.5rem;}.cover{background:linear-gradient(160deg,var(--ocean-deep),#0A0A0A 60%);}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;}
+        .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem;transition:all .3s;}.card:hover{background:rgba(255,255,255,.07);transform:translateY(-4px);}
+        .stat-big{font-family:'Instrument Serif',serif;font-size:3rem;color:var(--sun);line-height:1;}.stat-label{font-size:.85rem;color:rgba(255,255,255,.5);margin-top:.3rem;}
+        .badge{display:inline-block;padding:.3rem .8rem;border-radius:100px;font-size:.75rem;font-weight:600;}.badge-blue{background:rgba(30,136,229,.15);color:var(--blue);}
+        .step-block{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem;margin-bottom:1.5rem;}
+        .step-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--sun);color:#0A0A0A;font-weight:900;font-size:1rem;flex-shrink:0;}
+        .step-header{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}.step-title{font-size:1.1rem;font-weight:700;}.step-body{font-size:.95rem;color:rgba(255,255,255,.65);line-height:1.7;}
+        .feat-list{list-style:none;padding:0;}.feat-list li{padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.95rem;color:rgba(255,255,255,.75);display:flex;align-items:flex-start;gap:.6rem;}.feat-list li::before{content:'✓';color:var(--sun);font-weight:700;flex-shrink:0;}
+        .formula{background:rgba(232,168,32,.08);border:1px solid rgba(232,168,32,.2);border-radius:12px;padding:1.5rem;font-family:monospace;font-size:1rem;color:var(--sun);text-align:center;margin:1rem 0;}
+        .bar-chart{display:flex;align-items:flex-end;gap:4px;height:120px;padding:0 .5rem;}.bar{flex:1;background:var(--sun);border-radius:3px 3px 0 0;min-width:20px;position:relative;transition:height .3s;}.bar-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:.5rem;color:rgba(255,255,255,.4);white-space:nowrap;}
+        .tm-logo-header{position:fixed;top:1.2rem;right:1.2rem;z-index:200;display:flex;align-items:center;gap:.5rem;}.tm-logo-header img{height:36px;border-radius:50%;}.tm-logo-header span{font-weight:700;font-size:.85rem;color:var(--sun);}
+        .lang-bar{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%);z-index:200;display:flex;gap:.3rem;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);padding:.3rem;border-radius:8px;border:1px solid rgba(255,255,255,.1);}.lang-btn{padding:.3rem .8rem;border:none;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s;}.lang-btn.active{background:var(--sun);color:#0A0A0A;}
+        .tri-text .lang-he,.tri-text .lang-en,.tri-text .lang-th{display:none;}body[data-lang="he"] .tri-text .lang-he{display:inline;}body[data-lang="en"] .tri-text .lang-en{display:inline;}body[data-lang="th"] .tri-text .lang-th{display:inline;}
+        .nav-btn{padding:.5rem 1rem;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);transition:all .2s;text-decoration:none;display:inline-block;}.nav-btn:hover{background:var(--sun);color:#0A0A0A;}
+        table{width:100%;border-collapse:collapse;font-size:.85rem;}th{text-align:center;padding:.5rem;background:rgba(255,255,255,.05);color:var(--sun);font-weight:600;border-bottom:2px solid rgba(255,255,255,.1);}td{padding:.5rem;border-bottom:1px solid rgba(255,255,255,.05);text-align:center;color:rgba(255,255,255,.8);}
+        @media(max-width:768px){.slide{padding:3rem 1.5rem;}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
+    </style>
+</head>
+<body data-lang="he">
+<div class="tm-logo-header"><img src="visuals/tm-energy-logo-v2.png" alt="TM Energy"><span>TM Energy</span></div>
+<div class="lang-bar"><button class="lang-btn active" onclick="setLang('he')">עברית</button><button class="lang-btn" onclick="setLang('en')">English</button><button class="lang-btn" onclick="setLang('th')">ไทย</button></div>
+
+<section class="slide cover">
+    <span class="slide-num">STEP 3 / 12</span>
+    <div class="container">
+        <div class="badge badge-blue" style="margin-bottom:1rem;">Value Chain — Step 3</div>
+        <h1 class="tri-text">
+            <span class="lang-he">ניתוח חשמל<br><span class="accent">Electricity Analysis</span></span>
+            <span class="lang-en">Electricity<br><span class="accent">Analysis</span></span>
+            <span class="lang-th">วิเคราะห์<br><span class="accent">ไฟฟ้า</span></span>
+        </h1>
+        <p class="subtitle tri-text">
+            <span class="lang-he">מזינים 12 חשבונות PEA → מקבלים המלצת kWp, חיסכון צפוי, CO₂, ו-Payback אוטומטי</span>
+            <span class="lang-en">Enter 12 PEA bills → get recommended kWp, expected savings, CO₂ offset, and automatic payback calculation</span>
+            <span class="lang-th">กรอกบิล กฟภ 12 เดือน → ได้ kWp แนะนำ ประหยัดคาด CO₂ และคืนทุนอัตโนมัติ</span>
+        </p>
+    </div>
+</section>
+
+<!-- SLIDE 2: COLLECTING BILLS -->
+<section class="slide">
+    <span class="slide-num">01</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">איסוף חשבונות</span> — מה מבקשים מהלקוח</span>
+            <span class="lang-en"><span class="accent">Collecting Bills</span> — What to Ask</span>
+            <span class="lang-th"><span class="accent">เก็บบิล</span> — ขออะไรจากลูกค้า</span>
+        </h2>
+        <div class="grid-2">
+            <div>
+                <div class="step-block">
+                    <div class="step-header"><div class="step-num">1</div><div class="step-title tri-text"><span class="lang-he">בקשו 12 חשבונות PEA</span><span class="lang-en">Ask for 12 PEA bills</span><span class="lang-th">ขอบิล กฟภ 12 เดือน</span></div></div>
+                    <div class="step-body tri-text">
+                        <span class="lang-he">WhatsApp: "שלח לי תמונות של 12 החשבונות האחרונים שלך מ-PEA"<br>או: מספר מונה PEA → נבדוק באפליקציית PEA Smart Plus</span>
+                        <span class="lang-en">WhatsApp: "Send me photos of your last 12 PEA bills"<br>Or: PEA meter number → check on PEA Smart Plus app</span>
+                        <span class="lang-th">WhatsApp: "ส่งรูปบิลค่าไฟ กฟภ 12 เดือนล่าสุดมาให้หน่อย"<br>หรือ: เลขมิเตอร์ กฟภ → เช็คบนแอป PEA Smart Plus</span>
+                    </div>
+                </div>
+                <div class="step-block">
+                    <div class="step-header"><div class="step-num">2</div><div class="step-title tri-text"><span class="lang-he">מזינים ל-CRM</span><span class="lang-en">Enter in CRM</span><span class="lang-th">กรอกใน CRM</span></div></div>
+                    <div class="step-body tri-text">
+                        <span class="lang-he">נכנסים ל-/electricity → בוחרים ליד → מזינים kWh ועלות לכל חודש<br>ה-CRM מחשב הכל אוטומטית</span>
+                        <span class="lang-en">Go to /electricity → select lead → enter kWh and cost for each month<br>CRM calculates everything automatically</span>
+                        <span class="lang-th">ไปที่ /electricity → เลือกลีด → กรอก kWh และค่าใช้จ่ายแต่ละเดือน<br>CRM คำนวณทุกอย่างอัตโนมัติ</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <table>
+                    <thead><tr><th>Month</th><th>kWh</th><th>Cost (฿)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Jan</td><td>5,800</td><td>34,800</td></tr>
+                        <tr><td>Feb</td><td>5,200</td><td>31,200</td></tr>
+                        <tr><td>Mar</td><td>6,400</td><td>38,400</td></tr>
+                        <tr><td>Apr</td><td>7,100</td><td>42,600</td></tr>
+                        <tr><td>May</td><td>6,800</td><td>40,800</td></tr>
+                        <tr><td>Jun</td><td>6,500</td><td>39,000</td></tr>
+                        <tr><td>Jul</td><td>6,200</td><td>37,200</td></tr>
+                        <tr><td>Aug</td><td>6,000</td><td>36,000</td></tr>
+                        <tr><td>Sep</td><td>5,900</td><td>35,400</td></tr>
+                        <tr><td>Oct</td><td>6,100</td><td>36,600</td></tr>
+                        <tr><td>Nov</td><td>5,500</td><td>33,000</td></tr>
+                        <tr><td>Dec</td><td>5,700</td><td>34,200</td></tr>
+                    </tbody>
+                </table>
+                <div style="text-align:center;margin-top:.5rem;font-size:.75rem;color:rgba(255,255,255,.4);">Example: Medium resort</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 3: AUTO CALCULATIONS -->
+<section class="slide">
+    <span class="slide-num">02</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">חישובים אוטומטיים</span> — מה ה-CRM מחשב</span>
+            <span class="lang-en"><span class="accent">Auto Calculations</span> — What CRM Computes</span>
+            <span class="lang-th"><span class="accent">คำนวณอัตโนมัติ</span> — CRM คำนวณอะไร</span>
+        </h2>
+
+        <div class="formula tri-text">
+            <span class="lang-he">kWp מומלץ = ממוצע חודשי (kWh) ÷ 135</span>
+            <span class="lang-en">Recommended kWp = Monthly Average (kWh) ÷ 135</span>
+            <span class="lang-th">kWp แนะนำ = เฉลี่ยรายเดือน (kWh) ÷ 135</span>
+        </div>
+        <div style="text-align:center;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:2rem;" class="tri-text">
+            <span class="lang-he">135 = 4.5 שעות שמש × 30 ימים</span>
+            <span class="lang-en">135 = 4.5 sun hours × 30 days</span>
+            <span class="lang-th">135 = 4.5 ชั่วโมงแดด × 30 วัน</span>
+        </div>
+
+        <div class="grid-4">
+            <div class="card" style="text-align:center;">
+                <div class="stat-big">6,100</div>
+                <div class="stat-label tri-text"><span class="lang-he">kWh/חודש ממוצע</span><span class="lang-en">avg kWh/month</span><span class="lang-th">kWh/เดือน เฉลี่ย</span></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="stat-big">45.2</div>
+                <div class="stat-label tri-text"><span class="lang-he">kWp מומלץ</span><span class="lang-en">recommended kWp</span><span class="lang-th">kWp แนะนำ</span></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="stat-big" style="font-size:2.5rem;">฿6.0</div>
+                <div class="stat-label tri-text"><span class="lang-he">תעריף ל-kWh</span><span class="lang-en">rate per kWh</span><span class="lang-th">อัตราต่อ kWh</span></div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="stat-big" style="font-size:2.5rem;">73,200</div>
+                <div class="stat-label tri-text"><span class="lang-he">kWh/שנה</span><span class="lang-en">kWh/year</span><span class="lang-th">kWh/ปี</span></div>
+            </div>
+        </div>
+
+        <div class="grid-3" style="margin-top:1.5rem;">
+            <div class="card" style="text-align:center;border-color:rgba(67,160,71,.3);">
+                <div style="font-size:.7rem;color:var(--green);font-weight:700;">SAVINGS</div>
+                <div class="formula" style="margin:0;padding:.5rem;font-size:.7rem;">70% × 73,200 kWh × ฿6.0</div>
+                <div class="stat-big" style="color:var(--green);">฿307K</div>
+                <div class="stat-label tri-text"><span class="lang-he">חיסכון שנתי</span><span class="lang-en">annual savings</span><span class="lang-th">ประหยัดรายปี</span></div>
+            </div>
+            <div class="card" style="text-align:center;border-color:rgba(30,136,229,.3);">
+                <div style="font-size:.7rem;color:var(--blue);font-weight:700;">CO₂ OFFSET</div>
+                <div class="formula" style="margin:0;padding:.5rem;font-size:.7rem;">73,200 kWh × 0.5 kg</div>
+                <div class="stat-big" style="color:var(--blue);">36.6</div>
+                <div class="stat-label tri-text"><span class="lang-he">טון CO₂/שנה</span><span class="lang-en">tons CO₂/year</span><span class="lang-th">ตัน CO₂/ปี</span></div>
+            </div>
+            <div class="card" style="text-align:center;border-color:rgba(232,168,32,.3);">
+                <div style="font-size:.7rem;color:var(--sun);font-weight:700;">EPC PAYBACK</div>
+                <div class="formula" style="margin:0;padding:.5rem;font-size:.7rem;">45.2 kWp × ฿32,500 ÷ ฿307K</div>
+                <div class="stat-big">4.8</div>
+                <div class="stat-label tri-text"><span class="lang-he">שנים</span><span class="lang-en">years</span><span class="lang-th">ปี</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 4: BAR CHART -->
+<section class="slide">
+    <span class="slide-num">03</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">גרף צריכה</span> — 12 חודשים</span>
+            <span class="lang-en"><span class="accent">Consumption Chart</span> — 12 Months</span>
+            <span class="lang-th"><span class="accent">กราฟการใช้ไฟ</span> — 12 เดือน</span>
+        </h2>
+        <div class="card">
+            <div class="bar-chart" style="height:180px;margin-bottom:2rem;">
+                <div class="bar" style="height:76%;"><div class="bar-label">Jan</div></div>
+                <div class="bar" style="height:68%;"><div class="bar-label">Feb</div></div>
+                <div class="bar" style="height:84%;"><div class="bar-label">Mar</div></div>
+                <div class="bar" style="height:93%;"><div class="bar-label">Apr</div></div>
+                <div class="bar" style="height:89%;"><div class="bar-label">May</div></div>
+                <div class="bar" style="height:85%;"><div class="bar-label">Jun</div></div>
+                <div class="bar" style="height:81%;"><div class="bar-label">Jul</div></div>
+                <div class="bar" style="height:79%;"><div class="bar-label">Aug</div></div>
+                <div class="bar" style="height:77%;"><div class="bar-label">Sep</div></div>
+                <div class="bar" style="height:80%;"><div class="bar-label">Oct</div></div>
+                <div class="bar" style="height:72%;"><div class="bar-label">Nov</div></div>
+                <div class="bar" style="height:75%;"><div class="bar-label">Dec</div></div>
+            </div>
+            <div class="grid-2">
+                <div class="tri-text" style="font-size:.9rem;">
+                    <span class="lang-he"><b>תובנות:</b><br>• אפריל-מאי = שיא (מזגנים)<br>• נובמבר-פברואר = שפל (חורף יחסית)<br>• תנודה: 5,200-7,100 kWh (37%)<br>• <b>המלצה:</b> מערכת שמכסה את הממוצע, לא את השיא</span>
+                    <span class="lang-en"><b>Insights:</b><br>• April-May = peak (AC season)<br>• November-February = low (relative winter)<br>• Variance: 5,200-7,100 kWh (37%)<br>• <b>Recommendation:</b> size system for average, not peak</span>
+                    <span class="lang-th"><b>ข้อมูลเชิงลึก:</b><br>• เม.ย.-พ.ค. = สูงสุด (ฤดูแอร์)<br>• พ.ย.-ก.พ. = ต่ำ (หน้าหนาว)<br>• ความแปรปรวน: 5,200-7,100 kWh (37%)<br>• <b>แนะนำ:</b> ออกแบบระบบตามค่าเฉลี่ย ไม่ใช่จุดสูงสุด</span>
+                </div>
+                <div>
+                    <div class="card" style="border-color:rgba(232,168,32,.2);">
+                        <h3 class="tri-text"><span class="lang-he">🎯 PPA vs EPC — מה להציע?</span><span class="lang-en">🎯 PPA vs EPC — What to Offer?</span><span class="lang-th">🎯 PPA vs EPC — เสนออะไร?</span></h3>
+                        <div class="tri-text" style="font-size:.9rem;">
+                            <span class="lang-he">• <b>צריכה > 5,000 kWh/חודש</b> → PPA<br>• <b>צריכה < 5,000 kWh/חודש</b> → EPC<br>• <b>תעריף > ฿5.5/kWh</b> → PPA משתלם מאוד<br>• <b>Payback < 4 שנים</b> → EPC הגיוני</span>
+                            <span class="lang-en">• <b>Consumption > 5,000 kWh/mo</b> → PPA<br>• <b>Consumption < 5,000 kWh/mo</b> → EPC<br>• <b>Rate > ฿5.5/kWh</b> → PPA very profitable<br>• <b>Payback < 4 years</b> → EPC makes sense</span>
+                            <span class="lang-th">• <b>ใช้ไฟ > 5,000 kWh/เดือน</b> → PPA<br>• <b>ใช้ไฟ < 5,000 kWh/เดือน</b> → EPC<br>• <b>อัตรา > ฿5.5/kWh</b> → PPA คุ้มมาก<br>• <b>คืนทุน < 4 ปี</b> → EPC สมเหตุสมผล</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 5: NEXT -->
+<section class="slide" style="background:linear-gradient(160deg,var(--ocean-deep),#0A0A0A 60%);">
+    <span class="slide-num">04</span>
+    <div class="container" style="text-align:center;">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">השלב הבא</span> → עיצוב מערכת</span>
+            <span class="lang-en"><span class="accent">Next Step</span> → System Design</span>
+            <span class="lang-th"><span class="accent">ขั้นตอนถัดไป</span> → ออกแบบระบบ</span>
+        </h2>
+        <p class="subtitle tri-text" style="margin:0 auto 2rem;">
+            <span class="lang-he">עם נתוני הסקר + ניתוח החשמל, ה-CRM ממליץ על מערכת: פאנלים, ממיר, סוללה. בשלב הבא — בוחרים ציוד ובודקים ביצועים.</span>
+            <span class="lang-en">With survey data + electricity analysis, the CRM recommends a system: panels, inverter, battery. Next step — choose equipment and check performance.</span>
+            <span class="lang-th">จากข้อมูลสำรวจ + วิเคราะห์ไฟฟ้า CRM แนะนำระบบ: แผง อินเวอร์เตอร์ แบตเตอรี่ ขั้นตอนต่อไป — เลือกอุปกรณ์และตรวจสอบประสิทธิภาพ</span>
+        </p>
+        <div style="display:flex;gap:.5rem;justify-content:center;">
+            <a href="crm-step2-site-survey.html" class="nav-btn">← Step 2</a>
+            <a href="crm-value-chain.html" class="nav-btn">Overview</a>
+            <a href="crm-step4-design.html" class="nav-btn" style="background:var(--sun);color:#0A0A0A;">Step 4: Design →</a>
+        </div>
+    </div>
+</section>
+
+<script>function setLang(lang){document.body.setAttribute('data-lang',lang);document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');localStorage.setItem('tm-lang',lang);}const saved=localStorage.getItem('tm-lang');if(saved){document.body.setAttribute('data-lang',saved);document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',b.textContent.includes(saved==='he'?'עברית':saved==='en'?'English':'ไทย'));});}</script>
+</body>
+</html>

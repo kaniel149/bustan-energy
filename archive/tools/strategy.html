@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ko Phangan Solar — Premium solar solutions for Koh Phangan. Strategy deck by TM Energy, March 2026.">
+    <title>TM Energy — Ko Phangan Solar — Strategy Deck</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sun: #E8A820;
+            --sun-light: #F5D76E;
+            --ocean: #0D2137;
+            --ocean-deep: #091520;
+            --navy: #0D2137;
+            --palm: #1A7A5A;
+            --sand: #FFF8E7;
+            --white: #FFFFFF;
+            --text: #1A1A1A;
+            --text-light: #5A5A5A;
+            --red: #E53935;
+            --green: #1A7A5A;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Heebo', 'DM Sans', sans-serif; background: var(--navy); color: var(--white); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+        /* SLIDE SYSTEM */
+        .slide {
+            min-height: 100vh;
+            padding: 4rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .slide:nth-child(even) { background: rgba(0,0,0,0.12); }
+        .slide-num {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            font-size: 0.7rem;
+            color: rgba(232,168,32,0.4);
+            letter-spacing: 0.2em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+        /* TYPOGRAPHY */
+        h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2.5rem,6vw,5rem); line-height: 1.1; letter-spacing: -0.03em; direction: ltr; text-align: left; }
+        h2 { font-family: 'Instrument Serif', serif; font-size: clamp(1.8rem,4vw,3rem); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 2rem; }
+        h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.8rem; }
+        .accent { color: var(--sun); }
+        .subtitle { font-size: 1.2rem; color: rgba(255,255,255,0.6); line-height: 1.6; max-width: 700px; margin-top: 1.5rem; }
+        .he { direction: rtl; text-align: right; font-family: 'Heebo', sans-serif; }
+        .en { direction: ltr; text-align: left; }
+
+        /* COVER */
+        .cover { background: linear-gradient(160deg, var(--ocean-deep), var(--navy) 60%); }
+        .cover h1 { margin-bottom: 1rem; }
+        .cover-meta { font-size: 0.9rem; color: rgba(255,255,255,0.4); margin-top: 2rem; }
+
+        /* GRID */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+        /* CARDS */
+        .card {
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .card:hover { background: rgba(255,255,255,0.07); transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .card p { color: rgba(255,255,255,0.6); line-height: 1.6; font-size: 0.95rem; }
+
+        /* STAT */
+        .stat-big { font-family: 'Instrument Serif', serif; font-size: 3.5rem; color: var(--sun); line-height: 1; text-shadow: 0 2px 12px rgba(232,168,32,0.15); }
+        .stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 0.3rem; }
+
+        /* TABLE */
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { text-align: right; padding: 0.8rem 1rem; background: rgba(232,168,32,0.06); color: var(--sun); font-weight: 600; border-bottom: 2px solid rgba(232,168,32,0.2); }
+        td { padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+        tr:hover td { background: rgba(232,168,32,0.04); }
+
+        /* TIMELINE */
+        .timeline { position: relative; padding-right: 3rem; }
+        .timeline::before { content: ''; position: absolute; right: 0.6rem; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1); }
+        .tl-item { position: relative; margin-bottom: 2.5rem; }
+        .tl-item::before { content: ''; position: absolute; right: -2.65rem; top: 0.5rem; width: 12px; height: 12px; border-radius: 50%; background: var(--sun); border: 3px solid var(--navy); }
+        .tl-date { font-size: 0.8rem; color: var(--sun); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+        .tl-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .tl-desc { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+        /* BADGE */
+        .badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
+        .badge-green { background: rgba(26,122,90,0.15); color: var(--green); }
+        .badge-red { background: rgba(229,57,53,0.15); color: var(--red); }
+        .badge-gold { background: rgba(232,168,32,0.15); color: var(--sun); }
+
+        /* COMPETITOR */
+        .vs-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: start; }
+        .vs-divider { display: flex; align-items: center; font-family: 'Instrument Serif', serif; font-size: 2rem; color: var(--sun); padding-top: 3rem; }
+
+        /* NAV */
+        .nav-dots {
+            position: fixed;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            z-index: 100;
+        }
+        .nav-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-dot.active { background: var(--sun); transform: scale(1.4); }
+
+        /* FOOTNOTES */
+        .fn {
+            display: inline-block;
+            font-size: 0.65rem;
+            color: var(--sun);
+            vertical-align: super;
+            margin-right: 2px;
+            cursor: help;
+            opacity: 0.8;
+        }
+        .fn:hover { opacity: 1; }
+        .sources {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.35);
+            line-height: 1.8;
+        }
+        .sources a { color: rgba(232,168,32,0.6); text-decoration: none; }
+        .sources a:hover { color: var(--sun); }
+        .src-num { color: var(--sun); font-weight: 600; margin-left: 0.3rem; }
+
+        /* RESPONSIVE — Tablet */
+        @media (max-width: 1024px) {
+            .slide { padding: 3.5rem 2rem; }
+            .grid-3 { grid-template-columns: 1fr 1fr; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* RESPONSIVE — Mobile */
+        @media (max-width: 768px) {
+            .slide { padding: 2.5rem 1.25rem; min-height: auto; min-height: 100svh; }
+            .slide-num { top: 1rem; left: 1rem; font-size: 0.65rem; }
+            h1 { font-size: clamp(2rem, 8vw, 3rem); }
+            h2 { font-size: clamp(1.5rem, 5vw, 2rem); margin-bottom: 1.5rem; }
+            h3 { font-size: 1.1rem; }
+            .subtitle { font-size: 1rem; }
+            .stat-big { font-size: 2.5rem; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 1.2rem; }
+            .vs-grid { grid-template-columns: 1fr; }
+            .vs-divider { padding-top: 0; justify-content: center; }
+            .nav-dots { display: none; }
+            .card { padding: 1.5rem; border-radius: 12px; }
+            table { font-size: 0.8rem; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            th, td { padding: 0.6rem 0.7rem; white-space: nowrap; }
+            .img-float { float: none; width: 100%; margin: 0 0 12px 0; }
+            .tm-logo-header { top: 10px; right: 12px; }
+            .tm-logo-header img { height: 28px; }
+            .tm-logo-header .brand-text { font-size: 9px; }
+            .sources { font-size: 0.75rem; }
+        }
+
+        /* RESPONSIVE — Small phones */
+        @media (max-width: 400px) {
+            .slide { padding: 2rem 1rem; }
+            .card { padding: 1.2rem; }
+            .stat-big { font-size: 2rem; }
+        }
+
+        /* PRINT */
+        @media print {
+            body { background: #fff; color: #1A1A1A; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .slide { min-height: auto; padding: 2rem 1rem; page-break-inside: avoid; break-inside: avoid; border-bottom: 1px solid #ddd; }
+            .cover { background: #fff !important; }
+            .nav-dots, .tm-logo-header { display: none; }
+            h1, h2 { color: var(--navy); }
+            .accent { color: #C48A10; }
+            .stat-big { color: #C48A10; text-shadow: none; }
+            .card { background: #f7f7f7; border: 1px solid #ddd; backdrop-filter: none; box-shadow: none; }
+            .card p, td, .tl-desc, .subtitle, .he { color: #333; }
+            .badge-green { background: #e8f5e9; color: #1A7A5A; }
+            .badge-gold { background: #fff8e1; color: #C48A10; }
+            .badge-red { background: #fce4ec; color: #c62828; }
+            th { background: #f0f0f0; color: #333; border-bottom-color: #bbb; }
+            a { color: #0D2137; }
+            .slide-img, .slide-img-sm { max-height: 180px; }
+            .grid-2, .grid-3, .grid-4 { gap: 1rem; }
+        }
+
+.slide-img{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:12px 0;border:1px solid rgba(232,168,32,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.slide-img-sm{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;border:1px solid rgba(255,255,255,.1)}
+.img-float{float:left;width:45%;max-height:240px;object-fit:cover;border-radius:12px;margin:0 20px 12px 0;border:1px solid rgba(232,168,32,.15)}
+.img-row{display:flex;gap:12px;margin:12px 0}.img-row img{flex:1;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+
+
+<div class="nav-dots" id="navDots"></div>
+
+<!-- SLIDE 0: COVER -->
+<div class="slide cover" data-title="Cover" style="background:linear-gradient(rgba(13,33,55,.55),rgba(13,33,55,.75)),url(visuals/strategy-01-aerial.png) center/cover">
+    <div class="container">
+        <span class="badge badge-gold" style="margin-bottom:1.5rem;">CONFIDENTIAL — TM Energy</span>
+        <h1>Ko Phangan <span class="accent">Solar</span></h1>
+        <div class="subtitle he">
+            חברת הסולאר הראשונה והפרימיום של קופנגן, תאילנד.
+            <br>תוכנית עסקית ואסטרטגיה — מרץ 2026.
+        </div>
+        <div class="cover-meta">
+            Koh Phangan, Surat Thani, Thailand · TM Energy
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 1: THE OPPORTUNITY -->
+<div class="slide" data-title="ההזדמנות">
+    <div class="slide-num">01 — THE OPPORTUNITY</div>
+<img src="visuals/strategy-03-resort.png" class="slide-img" alt="Thai resort with solar">
+    <div class="container">
+        <h2 class="he">ההזדמנות</h2>
+        <div class="grid-4" style="margin-bottom:3rem;">
+            <div style="text-align:center;">
+                <div class="stat-big">114</div>
+                <div class="stat-label">לידים מזוהים</div>
+            </div>
+            <div style="text-align:center;">
+                <div class="stat-big">0</div>
+                <div class="stat-label">חברות סולאר פרימיום</div>
+            </div>
+            <div style="text-align:center;">
+                <div class="stat-big">70%</div>
+                <div class="stat-label">חיסכון בחשמל</div>
+            </div>
+            <div style="text-align:center;">
+                <div class="stat-big">3-5</div>
+                <div class="stat-label">שנות החזר השקעה</div>
+            </div>
+        </div>
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-icon">🏝</div>
+                <h3 class="he">אי ללא סולאר פרימיום</h3>
+                <p class="he">קופנגן — אי עם 50-100 מלונות, 200+ וילות יוקרה, 20+ coworking. אף חברת סולאר רצינית לא משרתת את השוק הזה.<span class="fn" title="Based on Booking.com, Agoda, TripAdvisor listings + Google Maps survey">[1]</span></p>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h3 class="he">חשמל יקר + הפסקות</h3>
+                <p class="he">האי רץ על כבל תת-ימי יחיד. הפסקות חשמל תכופות.<span class="fn" title="Koh Phangan expat forums + phanganlife.com">[2]</span> תעריף מסחרי 6-8 באט/קוט"ש.<span class="fn" title="PEA Tariff Schedule May 2023 + island premium estimates">[3]</span> מלונות משלמים 50,000-200,000 באט/חודש.<span class="fn" title="Estimate based on room count × avg AC consumption × PEA commercial rate">[4]</span></p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📋</div>
+                <h3 class="he">אפס רגולציה</h3>
+                <p class="he">תאילנד ביטלה את כל ההיתרים לסולאר על גגות (2025).<span class="fn" title="pvknowhow.com, tilleke.com, natlawreview.com — Building Modification Permit exemption Nov 2025">[5]</span> רק הודעה 30 יום. Net metering זמין.<span class="fn" title="chambers.com — Thailand Legislative Reform to Decentralise Solar Energy">[6]</span> הטבות מס זמינות למשקיעים בסולאר.<span class="fn" title="boi.go.th — Board of Investment renewable energy promotion">[7]</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 2: MARKET SIZE -->
+<div class="slide" data-title="גודל שוק">
+    <div class="slide-num">02 — MARKET SIZE</div>
+<img src="visuals/strategy-02-map.png" class="slide-img" alt="Koh Phangan map">
+    <div class="container">
+        <h2 class="he">גודל השוק</h2>
+        <div class="grid-2">
+            <div>
+                <table>
+                    <tr><th>סגמנט</th><th>כמות</th><th>גודל ממוצע</th></tr>
+                    <tr><td>מלונות ו-Resorts</td><td><strong>55</strong></td><td>20-50 kW</td></tr>
+                    <tr><td>חברות וילות</td><td><strong>9</strong></td><td>5-15 kW × מספר וילות</td></tr>
+                    <tr><td>יזמי נדל"ן</td><td><strong>5</strong></td><td>50-200 kW</td></tr>
+                    <tr><td>Coworking</td><td><strong>7</strong></td><td>10-20 kW</td></tr>
+                    <tr><td>מסעדות וביץ' בארים</td><td><strong>18</strong></td><td>5-15 kW</td></tr>
+                    <tr><td>Wellness / יוגה</td><td><strong>8</strong></td><td>10-30 kW</td></tr>
+                    <tr><td>נוסף (בי"ח, חנויות)</td><td><strong>12</strong></td><td>10-50 kW</td></tr>
+                    <tr><td colspan="3" style="color:var(--sun);font-weight:700;">סה"כ: 114 לידים מזוהים</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="card" style="background:rgba(232,168,32,0.08);border-color:rgba(232,168,32,0.2);">
+                    <h3 class="he accent">TAM שנתי</h3>
+                    <div style="margin:1.5rem 0;">
+                        <div class="he" style="margin-bottom:1rem;">
+                            <span class="badge badge-green">שמרני</span>
+                            <div class="stat-big" style="font-size:2.5rem;">฿10M</div>
+                            <div class="stat-label">50 התקנות × 200K ממוצע</div>
+                        </div>
+                        <div class="he">
+                            <span class="badge badge-gold">אגרסיבי</span>
+                            <div class="stat-big" style="font-size:2.5rem;">฿100M</div>
+                            <div class="stat-label">200 התקנות × 500K ממוצע</div>
+                        </div>
+                    </div>
+                    <p class="he" style="font-size:0.85rem;color:rgba(255,255,255,0.5);">+ הכנסה חוזרת מ-O&M: ฿2-5K/חודש למערכת</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: COMPETITION -->
+<div class="slide" data-title="תחרות">
+    <div class="slide-num">03 — COMPETITIVE LANDSCAPE</div>
+<img src="visuals/strategy-04-rates.png" class="slide-img-sm" alt="Rising electricity rates">
+    <div class="container">
+        <h2 class="he">מפת תחרות</h2>
+        <table>
+            <tr><th>מתחרה</th><th>מיקוד</th><th>תמחור</th><th>חוזקות</th><th>חולשות</th></tr>
+            <tr>
+                <td><strong>Green Global Tech</strong></td>
+                <td>Residential קטן</td>
+                <td>105K-550K THB</td>
+                <td>נוכחות מקומית, Longi+Huawei</td>
+                <td class="he" style="color:var(--red);">עיצוב גרוע, שגיאות כתיב, אין אתר, אין branding</td>
+            </tr>
+            <tr>
+                <td><strong>Phangan.Solar</strong></td>
+                <td>All segments</td>
+                <td>40K-2M THB</td>
+                <td>יבוא ישיר, תמחור שקוף</td>
+                <td>עסק קטן, רק קופנגן</td>
+            </tr>
+            <tr>
+                <td><strong>Canvas Solar</strong></td>
+                <td>Hybrid/Off-grid</td>
+                <td>Custom</td>
+                <td>מומחיות off-grid, כמה איים</td>
+                <td>אין תמחור גלוי, צוות קטן</td>
+            </tr>
+            <tr>
+                <td><strong>Phangan Electrical</strong></td>
+                <td>חשמל + סולאר</td>
+                <td>Custom</td>
+                <td>Alpha ESS dealer, בסיס לקוחות</td>
+                <td>סולאר לא ליבה, נוכחות אונליין חלשה</td>
+            </tr>
+            <tr>
+                <td><strong style="color:var(--sun);">Ko Phangan Solar</strong></td>
+                <td><strong>Premium / Commercial</strong></td>
+                <td>250K+ THB</td>
+                <td style="color:var(--palm);">Brand, CRM, ESCO/PPA, monitoring, marketing</td>
+                <td>חדשים, אין track record מקומי</td>
+            </tr>
+        </table>
+        <div class="he" style="margin-top:2rem;padding:1.5rem;background:rgba(26,122,90,0.08);border-radius:12px;border:1px solid rgba(26,122,90,0.2);">
+            <strong>הזדמנות:</strong> אף מתחרה לא מציע ESCO/PPA, מערכת monitoring, branding ללקוחות, או שיווק דיגיטלי רציני. השוק פתוח לשחקן פרימיום.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: BUSINESS MODEL -->
+<div class="slide" data-title="מודל עסקי">
+    <div class="slide-num">04 — BUSINESS MODEL</div>
+    <div class="container">
+        <h2 class="he">מודל עסקי</h2>
+        <div class="grid-3">
+            <div class="card">
+                <span class="badge badge-gold">מקור 1</span>
+                <h3 class="he" style="margin-top:1rem;">EPC — התקנה</h3>
+                <p class="he">מכירה + התקנה + הפעלה. תמחור: ฿30,000/kWp. מרווח: 60%.</p>
+                <div style="margin-top:1rem;">
+                    <div class="he" style="font-size:0.85rem;color:rgba(255,255,255,0.5);">
+                        וילה 10kW = ฿300K<br>
+                        Resort 50kW = ฿1.5M<br>
+                        Commercial 100kW = ฿3M
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="border-color:var(--sun);">
+                <span class="badge badge-green">מקור 2 — ליבה</span>
+                <h3 class="he" style="margin-top:1rem;">ESCO / PPA</h3>
+                <p class="he">אנחנו מממנים + מתקינים + מתחזקים. הלקוח משלם לפי צריכה — בלי upfront. חוזה 15-25 שנה.</p>
+                <div style="margin-top:1rem;">
+                    <div class="he" style="font-size:0.85rem;color:rgba(255,255,255,0.5);">
+                        הלקוח חוסך 20-30% מיום 1<br>
+                        אנחנו מקבלים 70-80% מהחשבון<br>
+                        Recurring revenue לטווח ארוך
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <span class="badge badge-gold">מקור 3</span>
+                <h3 class="he" style="margin-top:1rem;">O&M — תחזוקה</h3>
+                <p class="he">ניטור 24/7, ניקוי, תיקונים. ฿2-5K/חודש למערכת. Recurring מכל התקנה.</p>
+                <div style="margin-top:1rem;">
+                    <div class="he" style="font-size:0.85rem;color:rgba(255,255,255,0.5);">
+                        50 מערכות × ฿3K = ฿150K/חודש<br>
+                        100 מערכות × ฿3K = ฿300K/חודש<br>
+                        = ฿1.8-3.6M/שנה
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: FINANCING -->
+<div class="slide" data-title="מימון">
+    <div class="slide-num">05 — FINANCING & LEGAL</div>
+    <div class="container">
+        <h2 class="he">מימון ומבנה משפטי</h2>
+        <div class="grid-2">
+            <div>
+                <h3 class="he accent">מימון ללקוחות</h3>
+                <div class="card" style="margin-bottom:1rem;">
+                    <p class="he"><strong>ESCO Model</strong> — אפס תשלום מראש, תשלום לפי חיסכון. חוזה 20-25 שנה. מועדף למלונות/resorts.<span class="fn" title="chambers.com + conventuslaw.com — ESCO framework in Thailand, ENCON Fund">[14]</span></p>
+                </div>
+                <div class="card" style="margin-bottom:1rem;">
+                    <p class="he"><strong>SME D Bank</strong> — הלוואה ירוקה ב-3% קבוע ל-3 שנים, עד ฿30M. מועדף לעסקים.<span class="fn" title="smebank.co.th — SME Green Productivity Loan, valid until Dec 2026">[15]</span></p>
+                </div>
+                <div class="card" style="margin-bottom:1rem;">
+                    <p class="he"><strong>הטבות מס</strong> — ניכוי 50% CIT על ציוד סולאר + ฿200K ניכוי לבתים פרטיים.<span class="fn" title="Thai Revenue Department — CIT deduction for 5-star energy equipment; Household solar tax deduction valid through Dec 2027">[16]</span></p>
+                </div>
+                <div class="card">
+                    <p class="he"><strong>FiT</strong> — ฿6.01-6.85/kWh עבור מערכות עד 1MW. בונוס לדרום תאילנד (קופנגן!).<span class="fn" title="Energy Regulatory Commission Thailand — Feed-in Tariff rates for solar rooftop">[17]</span></p>
+                </div>
+            </div>
+            <div>
+                <h3 class="he accent">מודל עסקי</h3>
+                <div class="card" style="background:rgba(232,168,32,0.06);">
+                    <p class="he" style="line-height:1.8;">
+                        <strong>מסלולי הכנסה:</strong><br>
+                        🔧 EPC — התקנה + מכירה (מרווח 60%)<br>
+                        ⚡ PPA — בעלות + מכירת חשמל (IRR ~45%)<br>
+                        🔄 O&M — תחזוקה שוטפת (MRR)<br>
+                        🏦 מימון דרך בנקים מקומיים<br>
+                        💰 ESCO model ללקוחות
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: SUPPLY CHAIN -->
+<div class="slide" data-title="שרשרת אספקה">
+    <div class="slide-num">06 — SUPPLY CHAIN</div>
+    <div class="container">
+        <h2 class="he">שרשרת אספקה</h2>
+        <div class="grid-2">
+            <div>
+                <table>
+                    <tr><th>רכיב</th><th>ספק</th><th>עלות</th></tr>
+                    <tr><td>פאנלים</td><td>Longi / JA Solar / Trina</td><td>10-20K THB/kW <span class="fn" title="BayWa r.e. Thailand shop, Solaris.co.th, ENF Solar directory">[8]</span></td></tr>
+                    <tr><td>ממירים</td><td>Huawei / Sungrow / GoodWe</td><td>30-60K THB (5kW) <span class="fn" title="Thai distributor pricing: Pi Enterprises (Sungrow), Solar-Thailand (GoodWe)">[9]</span></td></tr>
+                    <tr><td>סוללות</td><td>Huawei LUNA / BYD</td><td>120-169K THB (5kWh) <span class="fn" title="Huawei LUNA distributor pricing in Thailand">[10]</span></td></tr>
+                    <tr><td>מרכבים</td><td>CMM / RRacks (מקומי)</td><td>5-10K THB/kW <span class="fn" title="CMM Thai manufacturer + QES Energy estimates">[11]</span></td></tr>
+                </table>
+                <div class="he" style="margin-top:1.5rem;font-size:0.9rem;color:rgba(255,255,255,0.5);">
+                    <strong>מכסים:</strong> פאנלים 0%, ממירים 0-5% (0% עם FTA), סוללות 0-10%, + 7% VAT <span class="fn" title="Thai Customs tariff + China-ASEAN FTA Form E provisions">[13]</span>
+                </div>
+            </div>
+            <div>
+                <div class="card">
+                    <h3 class="he">לוגיסטיקה לאי</h3>
+                    <p class="he" style="line-height:1.8;">
+                        📦 הזמנה מ-BayWa / Solaris (בנגקוק/קראבי)<br>
+                        🚛 משאית ל-Don Sak (סוראט תאני)<br>
+                        ⛴ מעבורת Raja Ferry לקופנגן (~2.5 שעות)<br>
+                        🏗 מחסן באי + צוות מקומי<br><br>
+                        <strong>עלות מותקנת באי: ฿30,000/kWp</strong><span class="fn" title="Benchmark: Green Global Tech 105K/3kW=35K/kWp + Phangan.Solar pricing tiers + island logistics premium estimate">[12]</span><br>
+                        <span style="font-size:0.85rem;color:rgba(255,255,255,0.5);">(כולל premium לוגיסטיקת אי)</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: MARKETING STRATEGY -->
+<div class="slide" data-title="שיווק">
+    <div class="slide-num">07 — MARKETING STRATEGY</div>
+    <div class="container">
+        <h2 class="he">אסטרטגיית שיווק</h2>
+        <div class="he subtitle" style="margin-bottom:2rem;">Hook #1: אי חוסמי הפסקות חשמל. הפסקות תכופות = כאב אמיתי. הפתרון: סולאר + סוללה.</div>
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-icon">📱</div>
+                <h3 class="he">Facebook Groups</h3>
+                <p class="he">10+ קבוצות פעילות באי. לא מכירה ישירה — תוכן על הפסקות חשמל, מדריכי חיסכון, סיפורי לקוחות. 1-2 פוסטים/שבוע.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📸</div>
+                <h3 class="he">Instagram + Reels</h3>
+                <p class="he">Before/after, time-lapse התקנות, ROI calculators, אווירת האי. סולאר = יוקרה, לא חיסכון.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔍</div>
+                <h3 class="he">Google SEO</h3>
+                <p class="he">תחרות אפסית על "solar Koh Phangan". בלוג + landing page = page 1 תוך חודש. Google Ads על מילות מפתח מקומיות.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤝</div>
+                <h3 class="he">שותפויות</h3>
+                <p class="he">Property managers, סוכני נדל"ן, קבלני בנייה, עסקי eco. עמלת הפניה ฿10,000 להמרה.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h3 class="he">Lighthouse Project</h3>
+                <p class="he">התקנה ראשונה ב-resort ידוע = social proof לכל האי. תמחור מיוחד כנגד case study + PR.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">💬</div>
+                <h3 class="he">LINE / WhatsApp</h3>
+                <p class="he">LINE הוא המסנג'ר #1 בתאילנד. WhatsApp לexpats. שני הערוצים פתוחים. Templates מוכנים.</p>
+            </div>
+        </div>
+        <div style="margin-top:2rem;padding:1.5rem;background:rgba(232,168,32,0.08);border-radius:12px;text-align:center;">
+            <span class="he" style="font-size:1.1rem;">תקציב שיווק 90 יום: <strong class="accent">฿157,000-311,000 (~$4,500-8,900)</strong></span>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: GO-TO-MARKET TIMELINE -->
+<div class="slide" data-title="לוח זמנים">
+    <div class="slide-num">08 — GO-TO-MARKET</div>
+    <div class="container">
+        <h2 class="he">לוח זמנים — 90 יום</h2>
+        <div class="grid-3">
+            <div class="card" style="border-top:3px solid var(--sun);">
+                <h3 class="en accent">Days 1-30: Foundation</h3>
+                <ul class="he" style="list-style:none;line-height:2;font-size:0.9rem;color:rgba(255,255,255,0.7);">
+                    <li>→ הקמת מבנה עסקי + רישיונות</li>
+                    <li>→ Landing page + SEO live</li>
+                    <li>→ חשבונות Social (FB, IG, LINE)</li>
+                    <li>→ הסכמי ספקים (BayWa / Solaris)</li>
+                    <li>→ Lighthouse project — חוזה ראשון</li>
+                    <li>→ CRM instance (Solar OS)</li>
+                    <li>→ WhatsApp Business + LINE OA</li>
+                    <li>→ 10 site surveys ראשונים</li>
+                </ul>
+            </div>
+            <div class="card" style="border-top:3px solid var(--palm);">
+                <h3 class="en" style="color:var(--palm);">Days 31-60: Traction</h3>
+                <ul class="he" style="list-style:none;line-height:2;font-size:0.9rem;color:rgba(255,255,255,0.7);">
+                    <li>→ Lighthouse install + case study</li>
+                    <li>→ FB/IG ad campaigns live</li>
+                    <li>→ Facebook group outreach (value-first)</li>
+                    <li>→ Thursday networking events</li>
+                    <li>→ Cold outreach ל-Top 20 prospects</li>
+                    <li>→ Blog content (SEO)</li>
+                    <li>→ Referral program launch</li>
+                    <li>→ 3-5 proposals sent</li>
+                </ul>
+            </div>
+            <div class="card" style="border-top:3px solid #2196F3;">
+                <h3 class="en" style="color:#2196F3;">Days 61-90: Scale</h3>
+                <ul class="he" style="list-style:none;line-height:2;font-size:0.9rem;color:rgba(255,255,255,0.7);">
+                    <li>→ 2-3 installations completed</li>
+                    <li>→ ESCO contracts signed</li>
+                    <li>→ Google Ads live</li>
+                    <li>→ Partnership agreements signed</li>
+                    <li>→ Koh Samui expansion planning</li>
+                    <li>→ Monitoring dashboard live</li>
+                    <li>→ Pipeline: ฿5-10M</li>
+                    <li>→ Brand recognized on island</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: PRICING -->
+<div class="slide" data-title="תמחור">
+    <div class="slide-num">09 — PRICING PACKAGES</div>
+    <div class="container">
+        <h2 class="he">חבילות תמחור</h2>
+        <div class="grid-3">
+            <div class="card">
+                <span class="badge badge-gold">VILLA</span>
+                <h3 class="en" style="margin-top:1rem;">Island Home</h3>
+                <div style="font-family:'Instrument Serif',serif;font-size:2rem;color:var(--sun);margin:1rem 0;">฿250,000+</div>
+                <ul class="he" style="list-style:none;line-height:1.8;font-size:0.9rem;color:rgba(255,255,255,0.6);">
+                    <li>5-10 kW</li>
+                    <li>Longi/JA Solar Tier-1</li>
+                    <li>Huawei Hybrid Inverter</li>
+                    <li>סוללה אופציונלית</li>
+                    <li>Net Metering</li>
+                    <li>אחריות 5 שנים</li>
+                </ul>
+            </div>
+            <div class="card" style="border-color:var(--sun);background:rgba(232,168,32,0.05);">
+                <span class="badge badge-green">MOST POPULAR</span>
+                <h3 class="en" style="margin-top:1rem;">Resort Power</h3>
+                <div style="font-family:'Instrument Serif',serif;font-size:2rem;color:var(--sun);margin:1rem 0;">Custom Quote</div>
+                <ul class="he" style="list-style:none;line-height:1.8;font-size:0.9rem;color:rgba(255,255,255,0.6);">
+                    <li>20-50 kW</li>
+                    <li>Premium panels + microinverters</li>
+                    <li>Battery backup</li>
+                    <li>Smart Monitoring Dashboard</li>
+                    <li>ESCO / PPA זמין</li>
+                    <li>חוזה תחזוקה מלא</li>
+                </ul>
+            </div>
+            <div class="card">
+                <span class="badge badge-gold">ENTERPRISE</span>
+                <h3 class="en" style="margin-top:1rem;">Island Scale</h3>
+                <div style="font-family:'Instrument Serif',serif;font-size:2rem;color:var(--sun);margin:1rem 0;">Custom Quote</div>
+                <ul class="he" style="list-style:none;line-height:1.8;font-size:0.9rem;color:rgba(255,255,255,0.6);">
+                    <li>50-500 kW</li>
+                    <li>Engineering + Procurement</li>
+                    <li>סוללה + EMS</li>
+                    <li>Revenue-grade Monitoring</li>
+                    <li>BOI Investment Incentives</li>
+                    <li>Project Manager ייעודי</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: WHAT'S READY -->
+<div class="slide" data-title="מה מוכן">
+    <div class="slide-num">10 — DELIVERABLES</div>
+    <div class="container">
+        <h2 class="he">מה מוכן עכשיו</h2>
+        <div class="grid-2">
+            <div>
+                <h3 class="he accent" style="margin-bottom:1.5rem;">מסמכים (7 קבצים, ~80KB)</h3>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>RESEARCH.md</strong> — מחקר שוק, תעריפים, רגולציה
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>SUPPLIERS.md</strong> — ספקים, מפיצים, לוגיסטיקה, מכסים
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>FINANCING.md</strong> — הלוואות, ESCO, מימון
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>MARKETING_PLAN.md</strong> — תוכנית 30/60/90, ערוצים, תקציב
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>PROSPECT_MAP.md</strong> — 114 לידים ממופים
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>COMPETITORS.md</strong> — 4 מתחרים + ניתוח פערים
+                </div>
+                <div class="card" style="padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>AD_COPY.md</strong> — 5 FB, 5 IG, 3 Google, emails, WhatsApp
+                </div>
+            </div>
+            <div>
+                <h3 class="he accent" style="margin-bottom:1.5rem;">נכסים דיגיטליים</h3>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>Landing Page</strong> — Hero, Calculator, Packages, Contact
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>4 Ad Creatives</strong> — IG, FB, Story, Hero image
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-green">✓</span> <strong>Strategy Deck</strong> — המצגת הזו
+                </div>
+                <div class="card" style="margin-bottom:0.8rem;padding:1rem 1.5rem;">
+                    <span class="badge badge-gold">בתהליך</span> <strong>Solar OS CRM</strong> — brand instance
+                </div>
+                <div class="card" style="padding:1rem 1.5rem;">
+                    <span class="badge badge-gold">בתהליך</span> <strong>Vercel Deploy</strong> — domain + hosting
+                </div>
+                <h3 class="he accent" style="margin:2rem 0 1rem;">צעדים הבאים</h3>
+                <div class="he" style="line-height:2;font-size:0.95rem;color:rgba(255,255,255,0.7);">
+                    1. בחירת domain (kophangansolar.com?)<br>
+                    2. Deploy ל-Vercel<br>
+                    3. הקמת חשבונות Social<br>
+                    4. BOI application<br>
+                    5. הסכם עם ספק ראשון<br>
+                    6. Lighthouse project — מי הלקוח הראשון?
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: SOURCES -->
+<div class="slide" data-title="מקורות">
+    <div class="slide-num">11 — SOURCES & METHODOLOGY</div>
+    <div class="container">
+        <h2 class="he">מקורות ושיטת מחקר</h2>
+        <div class="grid-2">
+            <div>
+                <h3 class="he accent">מקורות רשמיים</h3>
+                <div class="sources" style="font-size:0.85rem;line-height:2.2;">
+                    <span class="src-num">[3]</span> <a href="https://www.pea.co.th/sites/default/files/documents/tariff/EN_Electricity_Tariffs_May_2023.pdf" target="_blank">PEA Electricity Tariffs May 2023</a> — תעריפי חשמל רשמיים<br>
+                    <span class="src-num">[5]</span> <a href="https://www.pvknowhow.com/news/thailand-solar-rooftop-rules-ultimate-ease-arrives-in-2025/" target="_blank">PV KnowHow — Thailand Solar Rules 2025</a><br>
+                    <span class="src-num">[5]</span> <a href="https://www.tilleke.com/insights/thailand-eases-rules-for-solar-rooftop-installations/" target="_blank">Tilleke & Gibbins — Solar Rooftop Exemptions</a><br>
+                    <span class="src-num">[5]</span> <a href="https://natlawreview.com/article/ci-solar-rooftop-installations-are-now-exempted-building-modification-permit-aor1" target="_blank">National Law Review — Building Permit Exemption</a><br>
+                    <span class="src-num">[6]</span> <a href="https://chambers.com/articles/thailand-s-legislative-reform-to-decentralise-solar-energy" target="_blank">Chambers — Thailand Solar Legislative Reform</a><br>
+                    <span class="src-num">[7]</span> <a href="https://www.boi.go.th" target="_blank">BOI Thailand — Board of Investment</a> — renewable energy promotion<br>
+                    <span class="src-num">[13]</span> <a href="https://waypoints.acclime.com/news-updates/thailand-solar-rooftop-regulations-policy-shift/" target="_blank">Acclime — Thailand Solar Regulations Policy Shift</a><br>
+                    <span class="src-num">[14]</span> <a href="https://conventuslaw.com/report/thailand-removes-factory-license-requirement-for-solar-rooftop-installations/" target="_blank">Conventus Law — Factory License Removal</a><br>
+                    <span class="src-num">[15]</span> <a href="https://www.smebank.co.th" target="_blank">SME D Bank</a> — Green Productivity Loan 3%<br>
+                    <span class="src-num">[17]</span> Energy Regulatory Commission Thailand — FiT solar rooftop rates<br>
+                </div>
+            </div>
+            <div>
+                <h3 class="he accent">מקורות שוק</h3>
+                <div class="sources" style="font-size:0.85rem;line-height:2.2;">
+                    <span class="src-num">[1]</span> Booking.com, Agoda, TripAdvisor — hotel/resort listings Koh Phangan<br>
+                    <span class="src-num">[2]</span> <a href="https://phanganlife.com" target="_blank">PhanganLife.com</a> — expat community + FB groups<br>
+                    <span class="src-num">[4]</span> הערכת צריכה: חדרים × AC load × PEA commercial rate<br>
+                    <span class="src-num">[8]</span> <a href="https://solarshop.baywa-re.co.th" target="_blank">BayWa r.e. Thailand</a> + <a href="https://solaris.co.th" target="_blank">Solaris.co.th</a> + <a href="https://enfsolar.com/directory/seller/Thailand" target="_blank">ENF Solar (33 distributors)</a><br>
+                    <span class="src-num">[9]</span> Pi Enterprises (Sungrow), Solar-Thailand (GoodWe) — distributor pricing<br>
+                    <span class="src-num">[10]</span> Huawei LUNA Thai distributor pricing<br>
+                    <span class="src-num">[11]</span> CMM Thai manufacturer + QES Energy<br>
+                    <span class="src-num">[12]</span> Green Global Tech flyer (צולם באי): 105K/3kW = 35K/kWp + <a href="http://www.phangan.solar" target="_blank">phangan.solar</a> pricing tiers<br>
+                    <span class="src-num">[16]</span> Thai Revenue Dept — CIT deduction + household deduction (valid 2027)<br>
+                </div>
+                <div style="margin-top:2rem;padding:1.2rem;background:rgba(229,57,53,0.08);border-radius:12px;border:1px solid rgba(229,57,53,0.15);">
+                    <h3 class="he" style="color:var(--red);font-size:1rem;">הערות זהירות</h3>
+                    <p class="he" style="font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.7;">
+                        • TAM (10-100M) = הערכה גסה, לא מחקר שוק מעמיק<br>
+                        • חשבונות חשמל מלונות = הערכה לפי חדרים, לא נתונים אמיתיים<br>
+                        • מחירי ספקים מ-2024-2025, עשויים להשתנות<br>
+                        • 70% חיסכון = תרחיש אופטימי עם סוללה. ריאלי: 40-60%<br>
+                        • מחקר מתחרים דרך אתרים בלבד, לא mystery shopping
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 12: VISION -->
+<div class="slide cover" data-title="חזון">
+    <div class="container" style="text-align:center;">
+        <h1 style="text-align:center;">Own the <span class="accent">sunshine.</span></h1>
+        <div class="subtitle he" style="margin:1.5rem auto 0;text-align:center;">
+            מהאי הראשון — לכל דרום תאילנד.
+            <br>Ko Phangan Solar — הסולאר של קופנגן.
+        </div>
+        <div style="margin-top:3rem;">
+            <div class="grid-3" style="max-width:600px;margin:0 auto;">
+                <div>
+                    <div class="stat-big">Y1</div>
+                    <div class="stat-label">Koh Phangan</div>
+                </div>
+                <div>
+                    <div class="stat-big">Y2</div>
+                    <div class="stat-label">+ Koh Samui</div>
+                </div>
+                <div>
+                    <div class="stat-big">Y3</div>
+                    <div class="stat-label">Gulf Islands</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Build nav dots
+const slides = document.querySelectorAll('.slide');
+const nav = document.getElementById('navDots');
+slides.forEach((s, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.title = s.dataset.title || '';
+    dot.onclick = () => s.scrollIntoView({ behavior: 'smooth' });
+    nav.appendChild(dot);
+});
+
+// Update active dot on scroll
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            const idx = [...slides].indexOf(e.target);
+            document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+    });
+}, { threshold: 0.5 });
+slides.forEach(s => observer.observe(s));
+</script>
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "חברת הסולאר הראשונה והפרימיום של קופנגן, תאילנד.": {en: "The first and premium solar company of Koh Phangan, Thailand.", th: "บริษัทโซลาร์แห่งแรกและระดับพรีเมียมของเกาะพะงัน ประเทศไทย"},
+  "תוכנית עסקית ואסטרטגיה — מרץ 2026.": {en: "Business plan and strategy — March 2026.", th: "แผนธุรกิจและกลยุทธ์ — มีนาคม 2026"},
+  "ההזדמנות": {en: "The Opportunity", th: "โอกาสทางธุรกิจ"},
+  "לידים מזוהים": {en: "Identified Leads", th: "ลูกค้าเป้าหมายที่ระบุแล้ว"},
+  "חברות סולאר פרימיום": {en: "Premium Solar Companies", th: "บริษัทโซลาร์ระดับพรีเมียม"},
+  "חיסכון בחשמל": {en: "Electricity Savings", th: "การประหยัดไฟฟ้า"},
+  "שנות החזר השקעה": {en: "Years to ROI", th: "ปีคืนทุน"},
+  "אי ללא סולאר פרימיום": {en: "Island Without Premium Solar", th: "เกาะที่ยังไม่มีบริษัทโซลาร์ระดับพรีเมียม"},
+  "קופנגן — אי עם 50-100 מלונות, 200+ וילות יוקרה, 20+ coworking. אף חברת סולאר רצינית לא משרתת את השוק הזה.": {en: "Koh Phangan — an island with 50-100 hotels, 200+ luxury villas, 20+ coworking spaces. No serious solar company serves this market.", th: "เกาะพะงัน — เกาะที่มีโรงแรม 50-100 แห่ง วิลล่าหรูกว่า 200 แห่ง และโคเวิร์กกิ้งกว่า 20 แห่ง ยังไม่มีบริษัทโซลาร์ที่จริงจังให้บริการในตลาดนี้"},
+  "חשמל יקר + הפסקות": {en: "Expensive Electricity + Outages", th: "ไฟฟ้าแพง + ไฟดับบ่อย"},
+  "האי רץ על כבל תת-ימי יחיד. הפסקות חשמל תכופות.": {en: "The island runs on a single undersea cable. Frequent power outages.", th: "เกาะนี้ใช้สายเคเบิลใต้น้ำเส้นเดียว ส่งผลให้ไฟฟ้าดับบ่อยครั้ง"},
+  "תעריף מסחרי 6-8 באט/קוט\"ש.": {en: "Commercial rate 6-8 THB/kWh.", th: "อัตราค่าไฟฟ้าเชิงพาณิชย์ 6-8 บาท/หน่วย"},
+  "מלונות משלמים 50,000-200,000 באט/חודש.": {en: "Hotels pay 50,000-200,000 THB/month.", th: "โรงแรมจ่ายค่าไฟ 50,000-200,000 บาทต่อเดือน"},
+  "אפס רגולציה": {en: "Zero Regulation", th: "กฎระเบียบเป็นศูนย์"},
+  "תאילנד ביטלה את כל ההיתרים לסולאר על גגות (2025).": {en: "Thailand eliminated all solar rooftop permits (2025).", th: "ประเทศไทยยกเลิกใบอนุญาตติดตั้งโซลาร์บนหลังคาทั้งหมด (2025)"},
+  "רק הודעה 30 יום. Net metering זמין.": {en: "Only 30-day notification required. Net metering available.", th: "ต้องการเพียงการแจ้ง 30 วัน การวัดสุทธิพร้อมใช้งาน"},
+  "הטבות מס זמינות למשקיעים בסולאר.": {en: "Tax incentives available for solar investors.", th: "มีสิทธิประโยชน์ทางภาษีสำหรับนักลงทุนโซลาร์"},
+  "גודל השוק": {en: "Market Size", th: "ขนาดตลาด"},
+  "סגמנט": {en: "Segment", th: "กลุ่มลูกค้า"},
+  "כמות": {en: "Count", th: "จำนวน"},
+  "גודל ממוצע": {en: "Average Size", th: "ขนาดเฉลี่ย"},
+  "מלונות ו-Resorts": {en: "Hotels & Resorts", th: "โรงแรมและรีสอร์ต"},
+  "חברות וילות": {en: "Villa Companies", th: "บริษัทวิลล่า"},
+  "יזמי נדל\"ן": {en: "Real Estate Developers", th: "นักพัฒนาอสังหาริมทรัพย์"},
+  "מסעדות וביץ' בארים": {en: "Restaurants & Beach Bars", th: "ร้านอาหารและบีชบาร์"},
+  "Wellness / יוגה": {en: "Wellness / Yoga", th: "สถานดูแลสุขภาพ / โยคะ"},
+  "נוסף (בי\"ח, חנויות)": {en: "Other (Hospital, Shops)", th: "อื่นๆ (โรงพยาบาล, ร้านค้า)"},
+  "סה\"כ: 114 לידים מזוהים": {en: "Total: 114 Identified Leads", th: "รวม: 114 ลูกค้าเป้าหมายที่ระบุแล้ว"},
+  "TAM שנתי": {en: "Annual TAM", th: "TAM รายปี"},
+  "שמרני": {en: "Conservative", th: "แบบอนุรักษ์นิยม"},
+  "50 התקנות × 200K ממוצע": {en: "50 installations × 200K average", th: "50 การติดตั้ง × เฉลี่ย 200K"},
+  "אגרסיבי": {en: "Aggressive", th: "แบบรุกรุน"},
+  "200 התקנות × 500K ממוצע": {en: "200 installations × 500K average", th: "200 การติดตั้ง × เฉลี่ย 500K"},
+  "+ הכנסה חוזרת מ-O&M: ฿2-5K/חודש למערכת": {en: "+ Recurring revenue from O&M: ฿2-5K/month per system", th: "+ รายได้ประจำจาก O&M: ฿2-5K/เดือนต่อระบบ"},
+  "מפת תחרות": {en: "Competitive Landscape", th: "แผนที่การแข่งขัน"},
+  "מתחרה": {en: "Competitor", th: "คู่แข่ง"},
+  "מיקוד": {en: "Focus", th: "จุดเน้น"},
+  "תמחור": {en: "Pricing", th: "การกำหนดราคา"},
+  "חוזקות": {en: "Strengths", th: "จุดแข็ง"},
+  "חולשות": {en: "Weaknesses", th: "จุดอ่อน"},
+  "נוכחות מקומית, Longi+Huawei": {en: "Local presence, Longi+Huawei", th: "มีสถานะท้องถิ่น, Longi+Huawei"},
+  "עיצוב גרוע, שגיאות כתיב, אין אתר, אין branding": {en: "Poor design, spelling errors, no website, no branding", th: "ดีไซน์แย่ สะกดผิด ไม่มีเว็บไซต์ ไม่มี branding"},
+  "יבוא ישיר, תמחור שקוף": {en: "Direct import, transparent pricing", th: "นำเข้าตรง ราคาโปร่งใส"},
+  "עסק קטן, רק קופנגן": {en: "Small business, Koh Phangan only", th: "ธุรกิจเล็ก ให้บริการเฉพาะเกาะพะงัน"},
+  "מומחיות off-grid, כמה איים": {en: "Off-grid expertise, several islands", th: "ความเชี่ยวชาญ off-grid หลายเกาะ"},
+  "אין תמחור גלוי, צוות קטן": {en: "No transparent pricing, small team", th: "ไม่มีราคาโปร่งใส ทีมงานเล็ก"},
+  "חשמל + סולאר": {en: "Electrical + Solar", th: "ไฟฟ้า + โซลาร์"},
+  "Alpha ESS dealer, בסיס לקוחות": {en: "Alpha ESS dealer, customer base", th: "ตัวแทน Alpha ESS มีฐานลูกค้า"},
+  "סולאר לא ליבה, נוכחות אונליין חלשה": {en: "Solar not core business, weak online presence", th: "โซลาร์ไม่ใช่ธุรกิจหลัก สถานะออนไลน์อ่อนแอ"},
+  "חדשים, אין track record מקומי": {en: "New, no local track record", th: "ใหม่ ไม่มีประวัติผลงานในพื้นที่"},
+  "הזדמנות:": {en: "Opportunity:", th: "โอกาส:"},
+  "אף מתחרה לא מציע ESCO/PPA, מערכת monitoring, branding ללקוחות, או שיווק דיגיטלי רציני. השוק פתוח לשחקן פרימיום.": {en: "No competitor offers ESCO/PPA, monitoring system, customer branding, or serious digital marketing. The market is open for a premium player.", th: "ไม่มีคู่แข่งรายใดเสนอ ESCO/PPA ระบบ monitoring การสร้าง branding ให้ลูกค้า หรือการตลาดดิจิทัลที่จริงจัง ตลาดเปิดกว้างสำหรับผู้เล่นระดับพรีเมียม"},
+  "חבילות תמחור": {en: "Pricing Packages", th: "แพ็คเกจราคา"},
+  "מודל עסקי": {en: "Business Model", th: "รูปแบบธุรกิจ"},
+  "מקור 1": {en: "Revenue 1", th: "แหล่งรายได้ 1"},
+  "EPC — התקנה": {en: "EPC — Installation", th: "EPC — การติดตั้ง"},
+  "מכירה + התקנה + הפעלה. תמחור: ฿30,000/kWp. מרווח: 60%.": {en: "Sale + Installation + Commissioning. Pricing: ฿30,000/kWp. Margin: 60%.", th: "ขาย + ติดตั้ง + เปิดใช้งาน ราคา: ฿30,000/kWp อัตรากำไร: 60%"},
+  "מקור 2 — ליבה": {en: "Revenue 2 — Core", th: "แหล่งรายได้ 2 — หลัก"},
+  "אנחנו מממנים + מתקינים + מתחזקים. הלקוח משלם לפי צריכה — בלי upfront. חוזה 15-25 שנה.": {en: "We finance + install + maintain. The client pays per consumption — no upfront cost. 15-25 year contract.", th: "เราจัดหาเงิน + ติดตั้ง + บำรุงรักษา ลูกค้าจ่ายตามการใช้งาน — ไม่มีต้นทุนล่วงหน้า สัญญา 15-25 ปี"},
+  "הלקוח חוסך 20-30% מיום 1": {en: "Client saves 20-30% from day 1", th: "ลูกค้าประหยัด 20-30% ตั้งแต่วันแรก"},
+  "אנחנו מקבלים 70-80% מהחשבון": {en: "We receive 70-80% of the bill", th: "เราได้รับ 70-80% ของค่าไฟ"},
+  "Recurring revenue לטווח ארוך": {en: "Long-term recurring revenue", th: "รายได้ประจำระยะยาว"},
+  "מקור 3": {en: "Revenue 3", th: "แหล่งรายได้ 3"},
+  "O&M — תחזוקה": {en: "O&M — Maintenance", th: "O&M — การบำรุงรักษา"},
+  "ניטור 24/7, ניקוי, תיקונים. ฿2-5K/חודש למערכת. Recurring מכל התקנה.": {en: "24/7 monitoring, cleaning, repairs. ฿2-5K/month per system. Recurring from every installation.", th: "ติดตาม 24/7 ทำความสะอาด ซ่อมแซม ฿2-5K/เดือนต่อระบบ รายได้ประจำจากทุกการติดตั้ง"},
+  "50 מערכות × ฿3K = ฿150K/חודש": {en: "50 systems × ฿3K = ฿150K/month", th: "50 ระบบ × ฿3K = ฿150K/เดือน"},
+  "100 מערכות × ฿3K = ฿300K/חודש": {en: "100 systems × ฿3K = ฿300K/month", th: "100 ระบบ × ฿3K = ฿300K/เดือน"},
+  "מימון ומבנה משפטי": {en: "Financing & Legal Structure", th: "การจัดหาเงินทุนและโครงสร้างทางกฎหมาย"},
+  "מימון ללקוחות": {en: "Client Financing", th: "การจัดหาเงินทุนสำหรับลูกค้า"},
+  "אפס תשלום מראש, תשלום לפי חיסכון. חוזה 20-25 שנה. מועדף למלונות/resorts.": {en: "Zero upfront payment, pay per savings. 20-25 year contract. Preferred for hotels/resorts.", th: "ไม่มีเงินจ่ายล่วงหน้า จ่ายตามการประหยัด สัญญา 20-25 ปี เหมาะสำหรับโรงแรม/รีสอร์ต"},
+  "הלוואה ירוקה ב-3% קבוע ל-3 שנים, עד ฿30M. מועדף לעסקים.": {en: "Green loan at fixed 3% for 3 years, up to ฿30M. Preferred for businesses.", th: "สินเชื่อสีเขียวอัตราดอกเบี้ยคงที่ 3% เป็นเวลา 3 ปี วงเงินถึง ฿30M เหมาะสำหรับธุรกิจ"},
+  "הטבות מס": {en: "Tax Incentives", th: "สิทธิประโยชน์ทางภาษี"},
+  "ניכוי 50% CIT על ציוד סולאר + ฿200K ניכוי לבתים פרטיים.": {en: "50% CIT deduction on solar equipment + ฿200K deduction for private homes.", th: "หักลดหย่อน CIT 50% สำหรับอุปกรณ์โซลาร์ + หักลดหย่อน ฿200K สำหรับที่อยู่อาศัย"},
+  "฿6.01-6.85/kWh עבור מערכות עד 1MW. בונוס לדרום תאילנד (קופנגן!).": {en: "฿6.01-6.85/kWh for systems up to 1MW. Bonus for southern Thailand (Koh Phangan!).", th: "฿6.01-6.85/หน่วย สำหรับระบบขนาดไม่เกิน 1MW โบนัสพิเศษสำหรับภาคใต้ของไทย (เกาะพะงัน!)"},
+  "מסלולי הכנסה:": {en: "Revenue streams:", th: "ช่องทางรายได้:"},
+  "EPC — התקנה + מכירה (מרווח 60%)": {en: "EPC — Installation + Sale (60% margin)", th: "EPC — ติดตั้ง + ขาย (อัตรากำไร 60%)"},
+  "PPA — בעלות + מכירת חשמל (IRR ~45%)": {en: "PPA — Ownership + Electricity Sales (IRR ~45%)", th: "PPA — เป็นเจ้าของ + ขายไฟฟ้า (IRR ~45%)"},
+  "O&M — תחזוקה שוטפת (MRR)": {en: "O&M — Ongoing Maintenance (MRR)", th: "O&M — บำรุงรักษาต่อเนื่อง (MRR)"},
+  "מימון דרך בנקים מקומיים": {en: "Financing through local banks", th: "จัดหาเงินทุนผ่านธนาคารท้องถิ่น"},
+  "ESCO model ללקוחות": {en: "ESCO model for clients", th: "โมเดล ESCO สำหรับลูกค้า"},
+  "שרשרת אספקה": {en: "Supply Chain", th: "ห่วงโซ่อุปทาน"},
+  "רכיב": {en: "Component", th: "ส่วนประกอบ"},
+  "ספק": {en: "Supplier", th: "ซัพพลายเออร์"},
+  "עלות": {en: "Cost", th: "ต้นทุน"},
+  "פאנלים": {en: "Panels", th: "แผงโซลาร์"},
+  "ממירים": {en: "Inverters", th: "อินเวอร์เตอร์"},
+  "סוללות": {en: "Batteries", th: "แบตเตอรี่"},
+  "מרכבים": {en: "Mounting Structures", th: "โครงยึดแผง"},
+  "מכסים:": {en: "Tariffs:", th: "ภาษีนำเข้า:"},
+  "פאנלים 0%, ממירים 0-5% (0% עם FTA), סוללות 0-10%, + 7% VAT": {en: "Panels 0%, Inverters 0-5% (0% with FTA), Batteries 0-10%, + 7% VAT", th: "แผงโซลาร์ 0%, อินเวอร์เตอร์ 0-5% (0% กับ FTA), แบตเตอรี่ 0-10%, + VAT 7%"},
+  "לוגיסטיקה לאי": {en: "Island Logistics", th: "โลจิสติกส์ไปยังเกาะ"},
+  "הזמנה מ-BayWa / Solaris (בנגקוק/קראבי)": {en: "Order from BayWa / Solaris (Bangkok/Krabi)", th: "สั่งซื้อจาก BayWa / Solaris (กรุงเทพ/กระบี่)"},
+  "משאית ל-Don Sak (סוראט תאני)": {en: "Truck to Don Sak (Surat Thani)", th: "รถบรรทุกไปยัง Don Sak (สุราษฎร์ธานี)"},
+  "מעבורת Raja Ferry לקופנגן (~2.5 שעות)": {en: "Raja Ferry to Koh Phangan (~2.5 hours)", th: "เรือเฟอร์รี่ Raja ไปเกาะพะงัน (~2.5 ชั่วโมง)"},
+  "מחסן באי + צוות מקומי": {en: "Warehouse on island + local team", th: "คลังสินค้าบนเกาะ + ทีมงานท้องถิ่น"},
+  "עלות מותקנת באי: ฿30,000/kWp": {en: "Installed cost on island: ฿30,000/kWp", th: "ต้นทุนติดตั้งบนเกาะ: ฿30,000/kWp"},
+  "(כולל premium לוגיסטיקת אי)": {en: "(including island logistics premium)", th: "(รวมค่า premium โลจิสติกส์เกาะ)"},
+  "אסטרטגיית שיווק": {en: "Marketing Strategy", th: "กลยุทธ์การตลาด"},
+  "Hook #1: אי חוסמי הפסקות חשמל. הפסקות תכופות = כאב אמיתי. הפתרון: סולאר + סוללה.": {en: "Hook #1: The island that blocks power outages. Frequent outages = real pain. The solution: solar + battery.", th: "Hook #1: เกาะที่แก้ปัญหาไฟดับ ไฟดับบ่อย = ปัญหาจริง ทางออก: โซลาร์ + แบตเตอรี่"},
+  "10+ קבוצות פעילות באי. לא מכירה ישירה — תוכן על הפסקות חשמל, מדריכי חיסכון, סיפורי לקוחות. 1-2 פוסטים/שבוע.": {en: "10+ active groups on the island. No direct selling — content about power outages, savings guides, customer stories. 1-2 posts/week.", th: "กลุ่มที่ใช้งานบนเกาะมากกว่า 10 กลุ่ม ไม่ขายตรง — แชร์เนื้อหาเรื่องไฟดับ คู่มือการประหยัด เรื่องราวลูกค้า 1-2 โพสต์/สัปดาห์"},
+  "Before/after, time-lapse התקנות, ROI calculators, אווירת האי. סולאר = יוקרה, לא חיסכון.": {en: "Before/after, installation time-lapses, ROI calculators, island atmosphere. Solar = luxury, not savings.", th: "Before/after ไทม์แลปส์การติดตั้ง เครื่องคำนวณ ROI บรรยากาศเกาะ โซลาร์ = ความหรูหรา ไม่ใช่แค่การประหยัด"},
+  "תחרות אפסית על \"solar Koh Phangan\". בלוג + landing page = page 1 תוך חודש. Google Ads על מילות מפתח מקומיות.": {en: "Zero competition for \"solar Koh Phangan\". Blog + landing page = page 1 within a month. Google Ads on local keywords.", th: "แทบไม่มีการแข่งขันสำหรับ \"solar Koh Phangan\" บล็อก + หน้า landing = หน้าแรกของ Google ภายในเดือนเดียว Google Ads ด้วยคีย์เวิร์ดท้องถิ่น"},
+  "שותפויות": {en: "Partnerships", th: "การเป็นพันธมิตร"},
+  "Property managers, סוכני נדל\"ן, קבלני בנייה, עסקי eco. עמלת הפניה ฿10,000 להמרה.": {en: "Property managers, real estate agents, construction contractors, eco businesses. Referral commission ฿10,000 per conversion.", th: "ผู้จัดการทรัพย์สิน ตัวแทนอสังหาริมทรัพย์ ผู้รับเหมาก่อสร้าง ธุรกิจ eco ค่าคอมมิชชั่นการแนะนำ ฿10,000 ต่อการปิดการขาย"},
+  "התקנה ראשונה ב-resort ידוע = social proof לכל האי. תמחור מיוחד כנגד case study + PR.": {en: "First installation at a known resort = social proof for the whole island. Special pricing in exchange for case study + PR.", th: "การติดตั้งแรกที่รีสอร์ตชื่อดัง = social proof ทั่วทั้งเกาะ ราคาพิเศษแลกกับ case study + PR"},
+  "LINE הוא המסנג'ר #1 בתאילנד. WhatsApp לexpats. שני הערוצים פתוחים. Templates מוכנים.": {en: "LINE is the #1 messenger in Thailand. WhatsApp for expats. Both channels open. Templates ready.", th: "LINE คือแอปส่งข้อความอันดับ 1 ในไทย WhatsApp สำหรับชาวต่างชาติ เปิดทั้งสองช่องทาง มีเทมเพลตพร้อมใช้"},
+  "תקציב שיווק 90 יום:": {en: "90-day marketing budget:", th: "งบประมาณการตลาด 90 วัน:"},
+  "לוח זמנים — 90 יום": {en: "Timeline — 90 Days", th: "ไทม์ไลน์ — 90 วัน"},
+  "הקמת מבנה עסקי + רישיונות": {en: "Set up business structure + licenses", th: "จัดตั้งโครงสร้างธุรกิจ + ใบอนุญาต"},
+  "חשבונות Social (FB, IG, LINE)": {en: "Social accounts (FB, IG, LINE)", th: "บัญชีโซเชียล (FB, IG, LINE)"},
+  "הסכמי ספקים (BayWa / Solaris)": {en: "Supplier agreements (BayWa / Solaris)", th: "ข้อตกลงซัพพลายเออร์ (BayWa / Solaris)"},
+  "Lighthouse project — חוזה ראשון": {en: "Lighthouse project — first contract", th: "Lighthouse project — สัญญาแรก"},
+  "10 site surveys ראשונים": {en: "First 10 site surveys", th: "สำรวจพื้นที่ 10 แห่งแรก"},
+  "Cold outreach ל-Top 20 prospects": {en: "Cold outreach to Top 20 prospects", th: "ติดต่อโดยตรงกับ 20 ลูกค้าเป้าหมายชั้นนำ"},
+  "הפניות לקוחות": {en: "Customer Referrals", th: "การแนะนำจากลูกค้า"},
+  "סוללה אופציונלית": {en: "Optional Battery", th: "แบตเตอรี่เสริม (ตัวเลือก)"},
+  "אחריות 5 שנים": {en: "5-Year Warranty", th: "รับประกัน 5 ปี"},
+  "ESCO / PPA זמין": {en: "ESCO / PPA Available", th: "มี ESCO / PPA"},
+  "חוזה תחזוקה מלא": {en: "Full Maintenance Contract", th: "สัญญาบำรุงรักษาเต็มรูปแบบ"},
+  "סוללה + EMS": {en: "Battery + EMS", th: "แบตเตอรี่ + EMS"},
+  "Project Manager ייעודי": {en: "Dedicated Project Manager", th: "ผู้จัดการโครงการเฉพาะ"},
+  "מה מוכן עכשיו": {en: "What's Ready Now", th: "สิ่งที่พร้อมแล้วตอนนี้"},
+  "מסמכים (7 קבצים, ~80KB)": {en: "Documents (7 files, ~80KB)", th: "เอกสาร (7 ไฟล์, ~80KB)"},
+  "מחקר שוק, תעריפים, רגולציה": {en: "Market research, rates, regulation", th: "การวิจัยตลาด อัตราค่าไฟ กฎระเบียบ"},
+  "ספקים, מפיצים, לוגיסטיקה, מכסים": {en: "Suppliers, distributors, logistics, tariffs", th: "ซัพพลายเออร์ ผู้จัดจำหน่าย โลจิสติกส์ ภาษีนำเข้า"},
+  "הלוואות, ESCO, מימון": {en: "Loans, ESCO, financing", th: "สินเชื่อ ESCO การจัดหาเงินทุน"},
+  "תוכנית 30/60/90, ערוצים, תקציב": {en: "30/60/90 plan, channels, budget", th: "แผน 30/60/90 ช่องทาง งบประมาณ"},
+  "114 לידים ממופים": {en: "114 mapped leads", th: "ลูกค้าเป้าหมาย 114 รายที่ทำแผนที่แล้ว"},
+  "4 מתחרים + ניתוח פערים": {en: "4 competitors + gap analysis", th: "คู่แข่ง 4 ราย + การวิเคราะห์ช่องว่าง"},
+  "המצגת הזו": {en: "This presentation", th: "การนำเสนอนี้"},
+  "בתהליך": {en: "In Progress", th: "อยู่ระหว่างดำเนินการ"},
+  "נכסים דיגיטליים": {en: "Digital Assets", th: "สินทรัพย์ดิจิทัล"},
+  "צעדים הבאים": {en: "Next Steps", th: "ขั้นตอนถัดไป"},
+  "בחירת domain (kophangansolar.com?)": {en: "Choose domain (kophangansolar.com?)", th: "เลือกโดเมน (kophangansolar.com?)"},
+  "Deploy ל-Vercel": {en: "Deploy to Vercel", th: "Deploy ไปยัง Vercel"},
+  "הקמת חשבונות Social": {en: "Set up Social accounts", th: "จัดตั้งบัญชีโซเชียล"},
+  "הסכם עם ספק ראשון": {en: "Agreement with first supplier", th: "ข้อตกลงกับซัพพลายเออร์รายแรก"},
+  "Lighthouse project — מי הלקוח הראשון?": {en: "Lighthouse project — who is the first client?", th: "Lighthouse project — ลูกค้าแรกคือใคร?"},
+  "מקורות ושיטת מחקר": {en: "Sources & Research Methodology", th: "แหล่งข้อมูลและวิธีการวิจัย"},
+  "מקורות רשמיים": {en: "Official Sources", th: "แหล่งข้อมูลทางการ"},
+  "תעריפי חשמל רשמיים": {en: "Official electricity tariffs", th: "อัตราค่าไฟฟ้าทางการ"},
+  "מקורות שוק": {en: "Market Sources", th: "แหล่งข้อมูลตลาด"},
+  "הערכת צריכה: חדרים × AC load × PEA commercial rate": {en: "Consumption estimate: rooms × AC load × PEA commercial rate", th: "ประมาณการการใช้ไฟ: ห้อง × โหลด AC × อัตราเชิงพาณิชย์ PEA"},
+  "Green Global Tech flyer (צולם באי): 105K/3kW = 35K/kWp": {en: "Green Global Tech flyer (photographed on island): 105K/3kW = 35K/kWp", th: "ใบปลิว Green Global Tech (ถ่ายบนเกาะ): 105K/3kW = 35K/kWp"},
+  "Thai Revenue Dept — CIT deduction + household deduction (valid 2027)": {en: "Thai Revenue Dept — CIT deduction + household deduction (valid 2027)", th: "กรมสรรพากรไทย — การหักลดหย่อน CIT + การหักลดหย่อนที่อยู่อาศัย (ใช้ได้ถึง 2027)"},
+  "הערות זהירות": {en: "Caution Notes", th: "หมายเหตุข้อควรระวัง"},
+  "TAM (10-100M) = הערכה גסה, לא מחקר שוק מעמיק": {en: "TAM (10-100M) = rough estimate, not deep market research", th: "TAM (10-100M) = การประมาณคร่าวๆ ไม่ใช่การวิจัยตลาดเชิงลึก"},
+  "חשבונות חשמל מלונות = הערכה לפי חדרים, לא נתונים אמיתיים": {en: "Hotel electricity bills = estimate by room count, not real data", th: "ค่าไฟโรงแรม = ประมาณตามจำนวนห้อง ไม่ใช่ข้อมูลจริง"},
+  "מחירי ספקים מ-2024-2025, עשויים להשתנות": {en: "Supplier prices from 2024-2025, may change", th: "ราคาซัพพลายเออร์จากปี 2024-2025 อาจมีการเปลี่ยนแปลง"},
+  "70% חיסכון = תרחיש אופטימי עם סוללה. ריאלי: 40-60%": {en: "70% savings = optimistic scenario with battery. Realistic: 40-60%", th: "ประหยัด 70% = สถานการณ์ดีที่สุดพร้อมแบตเตอรี่ ที่สมจริง: 40-60%"},
+  "מחקר מתחרים דרך אתרים בלבד, לא mystery shopping": {en: "Competitor research via websites only, not mystery shopping", th: "การวิจัยคู่แข่งผ่านเว็บไซต์เท่านั้น ไม่ใช่ mystery shopping"},
+  "מהאי הראשון — לכל דרום תאילנד.": {en: "From the first island — to all of southern Thailand.", th: "จากเกาะแรก — สู่ภาคใต้ทั้งหมดของไทย"},
+  "Ko Phangan Solar — הסולאר של קופנגן.": {en: "Ko Phangan Solar — the solar of Koh Phangan.", th: "Ko Phangan Solar — โซลาร์ของเกาะพะงัน"},
+  "מספר וילות": {en: "number of villas", th: "จำนวนวิลล่า"},
+  "וילא 10kW = ฿300K": {en: "Villa 10kW = ฿300K", th: "วิลล่า 10kW = ฿300K"},
+  "קטן": {en: "Small", th: "เล็ก"},
+  "מקומי": {en: "Local", th: "ท้องถิ่น"},
+};
+</script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

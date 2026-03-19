@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Roof Scanner Pro — Tests</title>
+<style>
+  body { font-family: monospace; background: #0D2137; color: #fff; padding: 20px; }
+  h1 { color: #E8A820; font-size: 18px; }
+  .suite { margin: 16px 0; }
+  .suite-name { color: #6496FF; font-size: 14px; margin-bottom: 8px; }
+  .pass { color: #2ED89A; }
+  .fail { color: #E85D3A; }
+  .test { padding: 2px 0; font-size: 12px; }
+  .summary { margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 14px; }
+  .summary.all-pass { background: rgba(46,216,154,.15); border: 1px solid #2ED89A; }
+  .summary.has-fail { background: rgba(232,93,58,.15); border: 1px solid #E85D3A; }
+</style>
+</head>
+<body>
+<h1>☀️ Roof Scanner Pro — Test Suite</h1>
+<div id="results"></div>
+<div id="summary"></div>
+
+<script>
+// Minimal test framework
+let passed = 0, failed = 0, suites = [];
+let currentSuite = null;
+
+function describe(name, fn) {
+  currentSuite = { name, tests: [] };
+  suites.push(currentSuite);
+  fn();
+}
+
+function it(name, fn) {
+  try {
+    fn();
+    currentSuite.tests.push({ name, pass: true });
+    passed++;
+  } catch (e) {
+    currentSuite.tests.push({ name, pass: false, error: e.message });
+    failed++;
+  }
+}
+
+function expect(val) {
+  return {
+    toBe(expected) {
+      if (val !== expected) throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(val)}`);
+    },
+    toEqual(expected) {
+      if (JSON.stringify(val) !== JSON.stringify(expected))
+        throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(val)}`);
+    },
+    toContain(str) {
+      if (typeof val === 'string' && !val.includes(str)) throw new Error(`Expected to contain "${str}"`);
+      if (Array.isArray(val) && !val.includes(str)) throw new Error(`Expected array to contain ${JSON.stringify(str)}`);
+    },
+    toBeGreaterThan(n) {
+      if (val <= n) throw new Error(`Expected ${val} > ${n}`);
+    },
+    toBeLessThan(n) {
+      if (val >= n) throw new Error(`Expected ${val} < ${n}`);
+    },
+    toBeTruthy() {
+      if (!val) throw new Error(`Expected truthy, got ${JSON.stringify(val)}`);
+    },
+    toBeFalsy() {
+      if (val) throw new Error(`Expected falsy, got ${JSON.stringify(val)}`);
+    },
+    toMatch(regex) {
+      if (!regex.test(val)) throw new Error(`Expected "${val}" to match ${regex}`);
+    },
+    toHaveLength(n) {
+      if (val.length !== n) throw new Error(`Expected length ${n}, got ${val.length}`);
+    }
+  };
+}
+
+// ===== TESTS =====
+
+describe('escCsv — CSV escaping', () => {
+  // Inline the function for testing
+  function escCsv(val) {
+    if (val == null) return '';
+    const s = String(val);
+    if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  it('returns empty string for null', () => {
+    expect(escCsv(null)).toBe('');
+  });
+
+  it('returns empty string for undefined', () => {
+    expect(escCsv(undefined)).toBe('');
+  });
+
+  it('passes through simple strings', () => {
+    expect(escCsv('hello')).toBe('hello');
+  });
+
+  it('wraps strings with commas in quotes', () => {
+    expect(escCsv('hello, world')).toBe('"hello, world"');
+  });
+
+  it('escapes double quotes', () => {
+    expect(escCsv('say "hi"')).toBe('"say ""hi"""');
+  });
+
+  it('wraps strings with newlines', () => {
+    expect(escCsv('line1\nline2')).toBe('"line1\nline2"');
+  });
+
+  it('handles numbers', () => {
+    expect(escCsv(42)).toBe('42');
+  });
+});
+
+describe('escHtml — HTML escaping', () => {
+  function escHtml(s) {
+    if (!s) return '';
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  it('returns empty string for null', () => {
+    expect(escHtml(null)).toBe('');
+  });
+
+  it('returns empty string for empty string', () => {
+    expect(escHtml('')).toBe('');
+  });
+
+  it('escapes ampersands', () => {
+    expect(escHtml('A & B')).toBe('A &amp; B');
+  });
+
+  it('escapes angle brackets', () => {
+    expect(escHtml('<script>')).toBe('&lt;script&gt;');
+  });
+
+  it('escapes quotes', () => {
+    expect(escHtml('"hello"')).toBe('&quot;hello&quot;');
+  });
+
+  it('handles mixed special chars', () => {
+    expect(escHtml('<b>"A & B"</b>')).toBe('&lt;b&gt;&quot;A &amp; B&quot;&lt;/b&gt;');
+  });
+});
+
+describe('sortFiltered — Sorting logic', () => {
+  const testData = [
+    { n: 'Charlie', a: 300, kw: 50, s: 80, sav: 5000 },
+    { n: 'Alpha', a: 500, kw: 30, s: 90, sav: 3000 },
+    { n: 'Bravo', a: 100, kw: 80, s: 70, sav: 8000 },
+  ];
+
+  function sortFiltered(f, sortBy) {
+    const copy = [...f];
+    switch (sortBy) {
+      case 'area': return copy.sort((a, b) => b.a - a.a);
+      case 'kwp': return copy.sort((a, b) => b.kw - a.kw);
+      case 'name': return copy.sort((a, b) => (a.n || '').localeCompare(b.n || ''));
+      case 'savings': return copy.sort((a, b) => b.sav - a.sav);
+      case 'score':
+      default: return copy.sort((a, b) => b.s - a.s);
+    }
+  }
+
+  it('sorts by score descending (default)', () => {
+    const r = sortFiltered(testData, 'score');
+    expect(r[0].n).toBe('Alpha');
+    expect(r[2].n).toBe('Bravo');
+  });
+
+  it('sorts by area descending', () => {
+    const r = sortFiltered(testData, 'area');
+    expect(r[0].a).toBe(500);
+    expect(r[2].a).toBe(100);
+  });
+
+  it('sorts by kWp descending', () => {
+    const r = sortFiltered(testData, 'kwp');
+    expect(r[0].kw).toBe(80);
+  });
+
+  it('sorts by name alphabetically', () => {
+    const r = sortFiltered(testData, 'name');
+    expect(r[0].n).toBe('Alpha');
+    expect(r[1].n).toBe('Bravo');
+    expect(r[2].n).toBe('Charlie');
+  });
+
+  it('sorts by savings descending', () => {
+    const r = sortFiltered(testData, 'savings');
+    expect(r[0].sav).toBe(8000);
+  });
+
+  it('does not mutate original array', () => {
+    const original = [...testData];
+    sortFiltered(testData, 'area');
+    expect(testData[0].n).toBe(original[0].n);
+  });
+});
+
+describe('Filter logic', () => {
+  const testBuildings = [
+    { i: 1, pr: 'A', c: 'hospitality', a: 600, ph: '123', em: 'a@b.com', pip: 1, n: 'Resort Alpha', nth: '', kw: 50 },
+    { i: 2, pr: 'B', c: 'retail', a: 200, ph: '', em: '', pip: 0, n: 'Shop Beta', nth: '', kw: 20 },
+    { i: 3, pr: 'A', c: 'food_beverage', a: 150, ph: '456', em: '', pip: 0, n: 'Cafe Gamma', nth: '', kw: 15 },
+    { i: 4, pr: 'C', c: 'hospitality', a: 800, ph: '', em: 'x@y.com', pip: 1, n: 'Hotel Delta', nth: '', kw: 90 },
+    { i: 5, pr: 'D', c: 'residential', a: 50, ph: '', em: '', pip: 0, n: '', nth: '', kw: 5 },
+  ];
+
+  function applyFilters(data, { pri = 'all', cat = null, sz = null, sp = null, pip = false, q = '' } = {}) {
+    let f = data;
+    if (pri !== 'all') f = f.filter(b => b.pr === pri);
+    if (cat) f = f.filter(b => b.c === cat);
+    if (sz) f = f.filter(b => b.a >= parseInt(sz));
+    if (sp === 'phone') f = f.filter(b => b.ph);
+    if (sp === 'email') f = f.filter(b => b.em);
+    if (sp === 'pipeline' || pip) f = f.filter(b => b.pip);
+    if (q) f = f.filter(b => (b.n || '').toLowerCase().includes(q) || (b.c || '').includes(q));
+    return f;
+  }
+
+  it('returns all when no filters', () => {
+    expect(applyFilters(testBuildings).length).toBe(5);
+  });
+
+  it('filters by priority A', () => {
+    const r = applyFilters(testBuildings, { pri: 'A' });
+    expect(r.length).toBe(2);
+    expect(r.every(b => b.pr === 'A')).toBeTruthy();
+  });
+
+  it('filters by category', () => {
+    const r = applyFilters(testBuildings, { cat: 'hospitality' });
+    expect(r.length).toBe(2);
+  });
+
+  it('filters by minimum size', () => {
+    const r = applyFilters(testBuildings, { sz: '500' });
+    expect(r.length).toBe(2);
+  });
+
+  it('filters by phone contact', () => {
+    const r = applyFilters(testBuildings, { sp: 'phone' });
+    expect(r.length).toBe(2);
+  });
+
+  it('filters by email contact', () => {
+    const r = applyFilters(testBuildings, { sp: 'email' });
+    expect(r.length).toBe(2);
+  });
+
+  it('filters pipeline only', () => {
+    const r = applyFilters(testBuildings, { pip: true });
+    expect(r.length).toBe(2);
+  });
+
+  it('search by name', () => {
+    const r = applyFilters(testBuildings, { q: 'resort' });
+    expect(r.length).toBe(1);
+    expect(r[0].n).toBe('Resort Alpha');
+  });
+
+  it('multi-filter: priority A + hospitality', () => {
+    const r = applyFilters(testBuildings, { pri: 'A', cat: 'hospitality' });
+    expect(r.length).toBe(1);
+    expect(r[0].n).toBe('Resort Alpha');
+  });
+
+  it('multi-filter: priority A + 500m2+', () => {
+    const r = applyFilters(testBuildings, { pri: 'A', sz: '500' });
+    expect(r.length).toBe(1);
+    expect(r[0].n).toBe('Resort Alpha');
+  });
+
+  it('multi-filter: hospitality + phone', () => {
+    const r = applyFilters(testBuildings, { cat: 'hospitality', sp: 'phone' });
+    expect(r.length).toBe(1);
+    expect(r[0].n).toBe('Resort Alpha');
+  });
+});
+
+describe('URL State parsing', () => {
+  it('parses building ID from hash', () => {
+    const hash = 'b=12345&pri=A';
+    const params = new URLSearchParams(hash);
+    expect(params.get('b')).toBe('12345');
+    expect(params.get('pri')).toBe('A');
+  });
+
+  it('parses category filter', () => {
+    const hash = 'cat=hospitality&sz=500';
+    const params = new URLSearchParams(hash);
+    expect(params.get('cat')).toBe('hospitality');
+    expect(params.get('sz')).toBe('500');
+  });
+
+  it('handles empty hash', () => {
+    const hash = '';
+    const params = new URLSearchParams(hash);
+    expect(params.get('b')).toBeFalsy();
+  });
+});
+
+describe('localStorage helpers', () => {
+  it('notes: saves and retrieves', () => {
+    const notes = {};
+    notes[123] = 'Test note';
+    localStorage.setItem('scanner_notes_test', JSON.stringify(notes));
+    const retrieved = JSON.parse(localStorage.getItem('scanner_notes_test'));
+    expect(retrieved[123]).toBe('Test note');
+    localStorage.removeItem('scanner_notes_test');
+  });
+
+  it('pipeline: saves and retrieves set as array', () => {
+    const set = new Set([1, 2, 3]);
+    localStorage.setItem('scanner_pipeline_test', JSON.stringify([...set]));
+    const retrieved = new Set(JSON.parse(localStorage.getItem('scanner_pipeline_test')));
+    expect(retrieved.has(1)).toBeTruthy();
+    expect(retrieved.has(2)).toBeTruthy();
+    expect(retrieved.has(3)).toBeTruthy();
+    expect(retrieved.size).toBe(3);
+    localStorage.removeItem('scanner_pipeline_test');
+  });
+
+  it('handles corrupt JSON gracefully', () => {
+    localStorage.setItem('scanner_notes_test', 'not json');
+    let result = '';
+    try { result = JSON.parse(localStorage.getItem('scanner_notes_test'))[999] || ''; } catch { result = ''; }
+    expect(result).toBe('');
+    localStorage.removeItem('scanner_notes_test');
+  });
+});
+
+describe('Financial calculations', () => {
+  const COST_PER_KWP_K = 11.8;
+
+  it('EPC cost calculation matches formula', () => {
+    const kw = 100;
+    const cost = kw * COST_PER_KWP_K;
+    expect(cost).toBe(1180);
+  });
+
+  it('PPA 25-year profit calculation', () => {
+    const ppar = 100000; // annual revenue
+    const ppai = 500000; // investment
+    const profit25 = ppar * 25 - ppai;
+    expect(profit25).toBe(2000000);
+  });
+
+  it('Monthly savings from annual', () => {
+    const kwh = 120000;
+    const rate = 4.5;
+    const annual = kwh * rate;
+    const monthly = annual / 12;
+    expect(monthly).toBe(45000);
+  });
+});
+
+describe('Debounce function', () => {
+  it('delays execution', (done) => {
+    let count = 0;
+    function debounce(fn, ms) {
+      let timer;
+      return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+    }
+    const debouncedFn = debounce(() => count++, 50);
+    debouncedFn();
+    debouncedFn();
+    debouncedFn();
+    // count should still be 0 immediately
+    expect(count).toBe(0);
+  });
+});
+
+// ===== RENDER RESULTS =====
+const el = document.getElementById('results');
+suites.forEach(suite => {
+  let html = `<div class="suite"><div class="suite-name">${suite.name}</div>`;
+  suite.tests.forEach(t => {
+    html += `<div class="test ${t.pass ? 'pass' : 'fail'}">${t.pass ? '✓' : '✗'} ${t.name}${t.error ? ` — ${t.error}` : ''}</div>`;
+  });
+  html += '</div>';
+  el.innerHTML += html;
+});
+
+const sum = document.getElementById('summary');
+sum.className = `summary ${failed ? 'has-fail' : 'all-pass'}`;
+sum.textContent = `${passed} passed, ${failed} failed (${passed + failed} total)`;
+</script>
+</body>
+</html>

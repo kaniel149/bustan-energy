@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:1080px;height:1080px;overflow:hidden;font-family:"Inter",sans-serif;position:relative;background:url("bg27.png") center/cover;}
+.overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(13,33,55,.9),rgba(10,25,41,.88));}
+.logo{position:absolute;top:40px;left:40px;display:flex;align-items:center;gap:12px;z-index:2;}
+.logo-circle{width:44px;height:44px;border-radius:50%;background:#1A1A1A;border:2px solid #E8A820;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#E8A820;}
+.logo-text{font-weight:700;font-size:16px;color:#E8A820;letter-spacing:2px;}
+.badge{position:absolute;top:44px;right:40px;background:rgba(67,160,71,.15);border:1px solid rgba(67,160,71,.3);color:#43A047;padding:8px 20px;border-radius:100px;font-size:13px;font-weight:700;letter-spacing:1px;}
+.headline{position:absolute;top:120px;left:60px;right:60px;font-family:'Playfair Display',serif;font-size:52px;font-weight:900;line-height:1.15;color:#fff;text-align:center;}
+.headline span{color:#E8A820;}
+.equipment{position:absolute;top:280px;left:40px;right:40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+.eq-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px;text-align:center;position:relative;}
+.eq-card.featured{border-color:rgba(232,168,32,.3);background:rgba(232,168,32,.05);}
+.eq-icon{font-size:56px;margin-bottom:16px;}
+.eq-brand{font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
+.eq-name{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;}
+.eq-detail{font-size:14px;color:rgba(255,255,255,.5);line-height:1.5;}
+.eq-tag{position:absolute;top:-8px;right:16px;background:#E8A820;color:#0D2137;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;}
+.warranty{position:absolute;bottom:200px;left:60px;right:60px;}
+.warranty-bar{display:flex;gap:16px;}
+.warranty-item{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px;text-align:center;}
+.warranty-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:#E8A820;}
+.warranty-label{font-size:12px;color:rgba(255,255,255,.4);margin-top:4px;text-transform:uppercase;letter-spacing:1px;}
+.cta{position:absolute;bottom:60px;left:60px;right:60px;display:flex;align-items:center;justify-content:space-between;}
+.cta-btn{background:#E8A820;color:#0D2137;font-weight:800;font-size:18px;padding:16px 36px;border-radius:12px;}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.4);text-align:right;}
+</style></head>
+<body>
+<div class="overlay"></div>
+<div class="logo"><div class="logo-circle">TM</div><div class="logo-text">TM ENERGY</div></div>
+<div class="badge">TIER-1 ONLY</div>
+<div class="headline">Only the Best <span>Equipment</span><br>on Your Roof</div>
+<div class="equipment">
+<div class="eq-card featured"><div class="eq-tag">PANELS</div><div class="eq-icon">☀️</div><div class="eq-brand">LONGi Solar</div><div class="eq-name">Hi-MO X6</div><div class="eq-detail">580W · Tier-1<br>25yr warranty<br>N-type TOPCon</div></div>
+<div class="eq-card featured"><div class="eq-tag">INVERTER</div><div class="eq-icon">⚡</div><div class="eq-brand">Huawei</div><div class="eq-name">SUN2000</div><div class="eq-detail">5-50kW range<br>10yr warranty<br>Smart monitoring</div></div>
+<div class="eq-card"><div class="eq-tag">BATTERY</div><div class="eq-icon">🔋</div><div class="eq-brand">Huawei</div><div class="eq-name">LUNA2000</div><div class="eq-detail">5-15 kWh<br>10yr warranty<br>Backup power</div></div>
+</div>
+<div class="warranty"><div class="warranty-bar">
+<div class="warranty-item"><div class="warranty-num">25yr</div><div class="warranty-label">Panel Warranty</div></div>
+<div class="warranty-item"><div class="warranty-num">10yr</div><div class="warranty-label">Inverter</div></div>
+<div class="warranty-item"><div class="warranty-num">10yr</div><div class="warranty-label">Workmanship</div></div>
+<div class="warranty-item"><div class="warranty-num">24/7</div><div class="warranty-label">Monitoring</div></div>
+</div></div>
+<div class="cta">
+<div class="cta-btn">GET YOUR QUOTE →</div>
+<div class="cta-sub">All equipment shipped direct<br>from authorized distributors</div>
+</div>
+</body></html>

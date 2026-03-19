@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KP Solar Atlas — Koh Phangan Drone Survey Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:#0A1929; color:#fff; overflow-x:hidden; }
+
+/* Header */
+.header { background:linear-gradient(135deg,#0D2137 0%,#1a3a5c 100%); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #E8A820; z-index:1001; position:relative; }
+.logo { display:flex; align-items:center; gap:12px; }
+.logo-mark { width:36px; height:36px; background:#E8A820; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#0D2137; }
+.logo-text { font-size:18px; font-weight:700; }
+.logo-text span { color:#E8A820; }
+.header-stats { display:flex; gap:20px; }
+.hstat { text-align:center; }
+.hstat-val { font-size:20px; font-weight:800; color:#E8A820; }
+.hstat-label { font-size:10px; opacity:0.7; text-transform:uppercase; letter-spacing:1px; }
+
+/* Language toggle */
+.lang-toggle { display:flex; gap:4px; }
+.lang-btn { padding:4px 10px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:#fff; cursor:pointer; font-size:11px; font-weight:600; transition:all 0.2s; }
+.lang-btn.active { background:#E8A820; color:#0D2137; border-color:#E8A820; }
+.lang-btn:hover { border-color:#E8A820; }
+
+/* Controls */
+.controls { background:#0D2137; padding:10px 24px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; border-bottom:1px solid rgba(255,255,255,0.1); position:relative; z-index:1001; }
+.control-group { display:flex; align-items:center; gap:6px; }
+.control-group label { font-size:11px; opacity:0.7; text-transform:uppercase; letter-spacing:1px; }
+select { background:#1a3a5c; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:6px 12px; border-radius:6px; font-size:13px; font-family:'Inter',sans-serif; }
+select:focus { border-color:#E8A820; outline:none; }
+.search-box { background:#1a3a5c; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:6px 12px; border-radius:6px; font-size:13px; font-family:'Inter',sans-serif; width:180px; }
+.search-box:focus { border-color:#E8A820; outline:none; }
+.search-box::placeholder { color:rgba(255,255,255,0.4); }
+.search-count { font-size:11px; color:#E8A820; font-weight:600; min-width:20px; }
+.toggle-btn { padding:6px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:#fff; cursor:pointer; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; transition:all 0.2s; }
+.toggle-btn.active { background:rgba(232,168,32,0.2); border-color:#E8A820; color:#E8A820; }
+.toggle-btn:hover { border-color:#E8A820; }
+.legend { display:flex; gap:10px; margin-left:auto; }
+.leg-item { display:flex; align-items:center; gap:4px; font-size:11px; }
+.leg-dot { width:10px; height:10px; border-radius:50%; }
+
+/* Hamburger for mobile */
+.hamburger { display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer; padding:4px 8px; }
+
+/* Map */
+#map { height:calc(100vh - 115px); width:100%; }
+
+/* Popup v2 */
+.roof-popup { min-width:320px; font-family:'Inter',sans-serif; }
+.roof-popup .popup-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; padding-bottom:8px; border-bottom:2px solid #E8A820; }
+.roof-popup .popup-roof-img { width:60px; height:45px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; font-weight:600; flex-shrink:0; }
+.roof-popup h3 { font-size:15px; color:#0D2137; margin:0; line-height:1.3; }
+.roof-popup .popup-zone-tag { font-size:10px; color:#666; margin-top:2px; }
+.roof-popup .bill-compare { display:flex; gap:8px; margin:10px 0; }
+.roof-popup .bill-box { flex:1; padding:8px; border-radius:6px; text-align:center; }
+.roof-popup .bill-box.before { background:#ffeaea; }
+.roof-popup .bill-box.after { background:#e6f9f0; }
+.roof-popup .bill-label { font-size:10px; text-transform:uppercase; font-weight:600; letter-spacing:0.5px; }
+.roof-popup .bill-box.before .bill-label { color:#c53030; }
+.roof-popup .bill-box.after .bill-label { color:#1A7A5A; }
+.roof-popup .bill-amount { font-size:18px; font-weight:800; margin-top:2px; }
+.roof-popup .bill-box.before .bill-amount { color:#c53030; }
+.roof-popup .bill-box.after .bill-amount { color:#1A7A5A; }
+.roof-popup .bill-arrow { display:flex; align-items:center; color:#1A7A5A; font-size:18px; font-weight:800; }
+.roof-popup .specs { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; margin:8px 0; }
+.roof-popup .spec-label { font-size:10px; color:#666; text-transform:uppercase; }
+.roof-popup .spec-val { font-size:13px; font-weight:600; color:#0D2137; }
+.roof-popup .co2-bar { background:#e6f9f0; border-radius:6px; padding:6px 10px; display:flex; align-items:center; gap:8px; margin:8px 0; }
+.roof-popup .co2-icon { font-size:18px; }
+.roof-popup .co2-text { font-size:12px; color:#1A7A5A; font-weight:600; }
+.roof-popup .co2-sub { font-size:10px; color:#666; }
+.roof-popup .options { margin-top:8px; }
+.roof-popup .opt { background:#f0f7ff; padding:8px; border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
+.roof-popup .opt-name { font-weight:600; color:#0D2137; font-size:12px; }
+.roof-popup .opt-price { color:#1A7A5A; font-weight:700; font-size:13px; }
+.roof-popup .opt-detail { font-size:10px; color:#666; }
+.roof-popup .cta { display:block; text-align:center; background:linear-gradient(135deg,#1A7A5A,#22956e); color:#fff; padding:10px; border-radius:6px; text-decoration:none; font-weight:700; margin-top:10px; font-size:13px; transition:all 0.2s; }
+.roof-popup .cta:hover { background:linear-gradient(135deg,#15634a,#1A7A5A); transform:translateY(-1px); }
+.roof-popup .powered { text-align:center; margin-top:6px; font-size:9px; color:#999; }
+
+/* Zone labels */
+.zone-label { background:rgba(13,33,55,0.85); color:#E8A820; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; border:1px solid #E8A820; white-space:nowrap; }
+
+/* Info panel */
+.info-panel { position:absolute; bottom:20px; left:20px; background:rgba(13,33,55,0.95); padding:16px; border-radius:10px; border:1px solid rgba(232,168,32,0.3); z-index:1000; max-width:300px; backdrop-filter:blur(10px); }
+.info-panel h4 { color:#E8A820; margin-bottom:8px; font-size:14px; }
+.info-panel p { font-size:12px; line-height:1.6; opacity:0.8; }
+.phase-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; }
+.phase-planning { background:rgba(232,168,32,0.2); color:#E8A820; }
+
+/* Scan zone overlay styles */
+.scan-grid { stroke-dasharray:8,6; animation:scanDash 20s linear infinite; }
+@keyframes scanDash { to { stroke-dashoffset:-100; } }
+
+/* Mobile bottom sheet */
+.bottom-sheet { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(13,33,55,0.98); border-top:2px solid #E8A820; border-radius:16px 16px 0 0; padding:16px; z-index:2000; max-height:40vh; overflow-y:auto; backdrop-filter:blur(10px); transform:translateY(100%); transition:transform 0.3s ease; }
+.bottom-sheet.open { transform:translateY(0); }
+.bottom-sheet .handle { width:40px; height:4px; background:rgba(255,255,255,0.3); border-radius:2px; margin:0 auto 12px; }
+
+/* Mobile responsive */
+@media (max-width:768px) {
+  .header { padding:10px 16px; flex-wrap:wrap; gap:8px; }
+  .header-stats { gap:12px; flex-wrap:wrap; }
+  .hstat-val { font-size:16px; }
+  .hstat-label { font-size:9px; }
+  .controls { padding:8px 16px; gap:8px; }
+  .controls.collapsed > *:not(.hamburger):not(.search-wrap) { display:none; }
+  .controls.collapsed .legend { display:none; }
+  .hamburger { display:block; }
+  .search-box { width:120px; }
+  .legend { display:none !important; }
+  .info-panel { display:none; }
+  #map { height:calc(100vh - 105px); }
+  .logo-text { font-size:15px; }
+  .lang-toggle { gap:2px; }
+  .lang-btn { padding:3px 8px; font-size:10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">TM</div>
+    <div class="logo-text"><span>KP Solar</span> Atlas</div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat">
+      <div class="hstat-val" id="total-roofs">0</div>
+      <div class="hstat-label" data-i18n="roofs_scanned">Roofs Mapped</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val" id="total-mwp">0</div>
+      <div class="hstat-label" data-i18n="mwp_potential">MWp Potential</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val" id="total-savings">0</div>
+      <div class="hstat-label" data-i18n="annual_savings">฿M Annual Savings</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val" id="total-co2">0</div>
+      <div class="hstat-label" data-i18n="co2_reduction">Tons CO₂/yr</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val"><span class="phase-badge phase-planning" data-i18n="planning">Planning</span></div>
+      <div class="hstat-label" data-i18n="status">Status</div>
+    </div>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="he">עב</button>
+    <button class="lang-btn" data-lang="th">ไทย</button>
+  </div>
+</div>
+
+<div class="controls" id="controls-bar">
+  <button class="hamburger" id="hamburger-btn">☰</button>
+  <div class="control-group search-wrap">
+    <label data-i18n="search">Search</label>
+    <input type="text" class="search-box" id="search-input" placeholder="Search roofs..." data-i18n-placeholder="search_placeholder">
+    <span class="search-count" id="search-count"></span>
+  </div>
+  <div class="control-group">
+    <label data-i18n="zone">Zone</label>
+    <select id="zone-filter">
+      <option value="all" data-i18n="all_zones">All Zones</option>
+      <option value="Z1">Z1 — Thong Sala</option>
+      <option value="Z2">Z2 — Ban Tai</option>
+      <option value="Z3">Z3 — Haad Rin</option>
+      <option value="Z4">Z4 — Sri Thanu</option>
+      <option value="Z5">Z5 — Chaloklum</option>
+      <option value="Z6">Z6 — Wok Tum</option>
+      <option value="Z7">Z7 — Thong Nai Pan</option>
+      <option value="Z8">Z8 — Mae Haad</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label data-i18n="potential">Potential</label>
+    <select id="potential-filter">
+      <option value="all" data-i18n="all">All</option>
+      <option value="high">High (>10 kWp)</option>
+      <option value="medium">Medium (5-10 kWp)</option>
+      <option value="low">Low (<5 kWp)</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label data-i18n="roof_type">Roof Type</label>
+    <select id="roof-filter">
+      <option value="all" data-i18n="all_types">All Types</option>
+      <option value="metal" data-i18n="metal">Metal</option>
+      <option value="concrete" data-i18n="concrete">Concrete</option>
+      <option value="tile" data-i18n="tile_type">Tile</option>
+    </select>
+  </div>
+  <button class="toggle-btn" id="heatmap-toggle" data-i18n="heatmap">🔥 Heatmap</button>
+  <button class="toggle-btn" id="scan-toggle" data-i18n="scan_zones">📡 Scan Zones</button>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#1A7A5A"></div> <span data-i18n="high">High</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#E8A820"></div> <span data-i18n="medium">Medium</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#E85D3A"></div> <span data-i18n="low">Low</span></div>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<div class="info-panel" id="info-panel">
+  <h4>🛸 KP Solar Atlas</h4>
+  <p data-i18n="info_desc">Drone survey of Koh Phangan — mapping every rooftop for solar potential.</p>
+  <p style="margin-top:8px;">
+    <span class="phase-badge phase-planning" data-i18n="phase_planning">Phase: Planning</span><br>
+    <span style="font-size:11px; opacity:0.6;" data-i18n="info_target">Target: 2,500+ roofs across 22 km²</span>
+  </p>
+  <p style="margin-top:8px; font-size:11px;" data-i18n="info_click">
+    Click any marker for solar analysis and instant proposal.
+  </p>
+</div>
+
+<!-- Mobile bottom sheet -->
+<div class="bottom-sheet" id="bottom-sheet">
+  <div class="handle"></div>
+  <div id="bottom-sheet-content"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script>
+// ===== i18n =====
+var i18n = {
+  en: {
+    roofs_scanned:'Roofs Mapped', mwp_potential:'MWp Potential', annual_savings:'฿M Annual Savings',
+    co2_reduction:'Tons CO₂/yr', status:'Status', planning:'Planning', search:'Search',
+    search_placeholder:'Search roofs...', zone:'Zone', all_zones:'All Zones', potential:'Potential',
+    all:'All', roof_type:'Roof Type', all_types:'All Types', metal:'Metal', concrete:'Concrete',
+    tile_type:'Tile', heatmap:'🔥 Heatmap', scan_zones:'📡 Scan Zones', high:'High', medium:'Medium',
+    low:'Low', info_desc:'Drone survey of Koh Phangan — mapping every rooftop for solar potential.',
+    phase_planning:'Phase: Planning', info_target:'Target: 2,500+ roofs across 22 km²',
+    info_click:'Click any marker for solar analysis and instant proposal.',
+    monthly_before:'Monthly Before', monthly_after:'Monthly After', system_size:'System Size',
+    panels:'Panels', annual_output:'Annual Output', payback:'Payback', co2_saved:'CO₂ Saved/Year',
+    trees_equiv:'Equivalent to planting', trees:'trees', option_epc:'Option A: EPC (Buy)',
+    option_ppa:'Option B: PPA (฿0 Upfront)', save_day1:'Save 25% from day 1',
+    cta_whatsapp:'📱 Get Free Proposal via WhatsApp', powered_by:'Powered by TM Energy Thailand',
+    not_scanned:'Not yet scanned', scanned:'Scanned'
+  },
+  he: {
+    roofs_scanned:'גגות מופו', mwp_potential:'פוטנציאל MWp', annual_savings:'חיסכון שנתי ฿M',
+    co2_reduction:'טון CO₂/שנה', status:'סטטוס', planning:'תכנון', search:'חיפוש',
+    search_placeholder:'חיפוש גגות...', zone:'אזור', all_zones:'כל האזורים', potential:'פוטנציאל',
+    all:'הכל', roof_type:'סוג גג', all_types:'כל הסוגים', metal:'מתכת', concrete:'בטון',
+    tile_type:'רעפים', heatmap:'🔥 מפת חום', scan_zones:'📡 אזורי סריקה', high:'גבוה', medium:'בינוני',
+    low:'נמוך', info_desc:'סקר רחפן של קופנגן — מיפוי כל גג לפוטנציאל סולארי.',
+    phase_planning:'שלב: תכנון', info_target:'יעד: 2,500+ גגות על פני 22 קמ"ר',
+    info_click:'לחץ על סמן לניתוח סולארי והצעת מחיר מיידית.',
+    monthly_before:'חשבון חודשי לפני', monthly_after:'חשבון חודשי אחרי', system_size:'גודל מערכת',
+    panels:'פאנלים', annual_output:'תפוקה שנתית', payback:'החזר השקעה', co2_saved:'חיסכון CO₂/שנה',
+    trees_equiv:'שווה ערך לנטיעת', trees:'עצים', option_epc:'אופציה א׳: רכישה (EPC)',
+    option_ppa:'אופציה ב׳: PPA (ללא עלות)', save_day1:'חיסכון 25% מהיום הראשון',
+    cta_whatsapp:'📱 קבל הצעה חינם בוואטסאפ', powered_by:'בהפעלת TM Energy Thailand',
+    not_scanned:'טרם נסרק', scanned:'נסרק'
+  },
+  th: {
+    roofs_scanned:'หลังคาที่สำรวจ', mwp_potential:'ศักยภาพ MWp', annual_savings:'ประหยัด ฿M/ปี',
+    co2_reduction:'ตัน CO₂/ปี', status:'สถานะ', planning:'วางแผน', search:'ค้นหา',
+    search_placeholder:'ค้นหาหลังคา...', zone:'โซน', all_zones:'ทุกโซน', potential:'ศักยภาพ',
+    all:'ทั้งหมด', roof_type:'ชนิดหลังคา', all_types:'ทุกชนิด', metal:'โลหะ', concrete:'คอนกรีต',
+    tile_type:'กระเบื้อง', heatmap:'🔥 แผนที่ความร้อน', scan_zones:'📡 โซนสแกน', high:'สูง', medium:'ปานกลาง',
+    low:'ต่ำ', info_desc:'สำรวจเกาะพะงันด้วยโดรน — ทำแผนที่หลังคาทุกแห่งเพื่อพลังงานแสงอาทิตย์',
+    phase_planning:'เฟส: วางแผน', info_target:'เป้าหมาย: 2,500+ หลังคาใน 22 ตร.กม.',
+    info_click:'คลิกที่เครื่องหมายเพื่อวิเคราะห์และรับข้อเสนอทันที',
+    monthly_before:'ค่าไฟก่อน', monthly_after:'ค่าไฟหลัง', system_size:'ขนาดระบบ',
+    panels:'แผง', annual_output:'ผลผลิตต่อปี', payback:'คืนทุน', co2_saved:'CO₂ ลด/ปี',
+    trees_equiv:'เทียบเท่าการปลูก', trees:'ต้น', option_epc:'ตัวเลือก A: ซื้อ (EPC)',
+    option_ppa:'ตัวเลือก B: PPA (ไม่มีค่าใช้จ่ายล่วงหน้า)', save_day1:'ประหยัด 25% ตั้งแต่วันแรก',
+    cta_whatsapp:'📱 รับข้อเสนอฟรีทาง WhatsApp', powered_by:'โดย TM Energy Thailand',
+    not_scanned:'ยังไม่ได้สแกน', scanned:'สแกนแล้ว'
+  }
+};
+var currentLang = 'en';
+function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || (i18n.en[key]) || key; }
+function applyLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+  document.querySelectorAll('[data-i18n]').forEach(function(el) { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) { el.placeholder = t(el.dataset.i18nPlaceholder || el.dataset['i18nPlaceholder']); });
+  // Update search placeholder
+  var si = document.getElementById('search-input');
+  if (si) si.placeholder = t('search_placeholder');
+}
+document.querySelectorAll('.lang-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() { applyLang(this.dataset.lang); });
+});
+
+// ===== Map =====
+var map = L.map('map', { center:[9.7578,100.0291], zoom:13, maxZoom:22, minZoom:11, zoomControl:true });
+L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', { maxZoom:22, attribution:'© Google Satellite' }).addTo(map);
+
+// ===== Zone Data =====
+var zones = [
+  { id:'Z1', name:'Thong Sala', color:'#E8A820', center:[9.7205,99.9784], coords:[[9.712,99.968],[9.712,99.988],[9.728,99.988],[9.728,99.968]], roofs:800, priority:'high' },
+  { id:'Z2', name:'Ban Tai', color:'#E8A820', center:[9.7120,100.010], coords:[[9.704,99.995],[9.704,100.030],[9.720,100.030],[9.720,99.995]], roofs:500, priority:'high' },
+  { id:'Z3', name:'Haad Rin', color:'#E8A820', center:[9.6785,100.065], coords:[[9.672,100.055],[9.672,100.078],[9.688,100.078],[9.688,100.055]], roofs:300, priority:'medium' },
+  { id:'Z4', name:'Sri Thanu', color:'#1A7A5A', center:[9.7450,99.960], coords:[[9.735,99.948],[9.735,99.970],[9.755,99.970],[9.755,99.948]], roofs:200, priority:'medium' },
+  { id:'Z5', name:'Chaloklum', color:'#1A7A5A', center:[9.7920,100.025], coords:[[9.783,100.012],[9.783,100.040],[9.800,100.040],[9.800,100.012]], roofs:250, priority:'medium' },
+  { id:'Z6', name:'Wok Tum / Hin Kong', color:'#1A7A5A', center:[9.7350,99.985], coords:[[9.726,99.975],[9.726,99.995],[9.744,99.995],[9.744,99.975]], roofs:150, priority:'medium' },
+  { id:'Z7', name:'Thong Nai Pan', color:'#E85D3A', center:[9.7550,100.072], coords:[[9.740,100.060],[9.740,100.088],[9.770,100.088],[9.770,100.060]], roofs:200, priority:'low' },
+  { id:'Z8', name:'Mae Haad / Koh Ma', color:'#E85D3A', center:[9.7850,99.970], coords:[[9.778,99.960],[9.778,99.982],[9.792,99.982],[9.792,99.960]], roofs:100, priority:'low' },
+];
+
+// Draw zone boundaries
+var zonePolygons = [];
+zones.forEach(function(z) {
+  var p = L.polygon(z.coords, { color:z.color, weight:2, fillOpacity:0.08, dashArray:'6,4' })
+    .addTo(map).bindTooltip(z.id+' — '+z.name+' ('+z.roofs+' roofs)', { permanent:false, className:'zone-label' });
+  zonePolygons.push({ zone:z, polygon:p });
+});
+
+// ===== 80+ Roof Data =====
+var sampleRoofs = [
+  // === Z1 Thong Sala (main town — largest commercial area) ===
+  { lat:9.7215, lng:99.9780, name:'Pantip Market Building', zone:'Z1', type:'metal', area:420, potential:'high', owner:'Commercial' },
+  { lat:9.7190, lng:99.9810, name:'Thong Sala Central Market', zone:'Z1', type:'concrete', area:550, potential:'high', owner:'Commercial' },
+  { lat:9.7230, lng:99.9760, name:'Big Warehouse Complex', zone:'Z1', type:'metal', area:950, potential:'high', owner:'Industrial' },
+  { lat:9.7175, lng:99.9795, name:'Bangkok Hospital KP', zone:'Z1', type:'concrete', area:780, potential:'high', owner:'Medical' },
+  { lat:9.7200, lng:99.9770, name:'Phangan Utakit School', zone:'Z1', type:'concrete', area:680, potential:'high', owner:'Government' },
+  { lat:9.7195, lng:99.9830, name:'Tesco Lotus Express', zone:'Z1', type:'metal', area:520, potential:'high', owner:'Commercial' },
+  { lat:9.7210, lng:99.9815, name:'7-Eleven Thong Sala Main', zone:'Z1', type:'concrete', area:180, potential:'medium', owner:'Commercial' },
+  { lat:9.7220, lng:99.9790, name:'Walking Street Shops Block A', zone:'Z1', type:'metal', area:350, potential:'high', owner:'Commercial' },
+  { lat:9.7225, lng:99.9800, name:'Walking Street Shops Block B', zone:'Z1', type:'metal', area:300, potential:'medium', owner:'Commercial' },
+  { lat:9.7185, lng:99.9760, name:'Government District Office', zone:'Z1', type:'concrete', area:620, potential:'high', owner:'Government' },
+  { lat:9.7205, lng:99.9745, name:'Phangan Noppharat School', zone:'Z1', type:'concrete', area:900, potential:'high', owner:'Government' },
+  { lat:9.7170, lng:99.9780, name:'Phangan Police Station', zone:'Z1', type:'concrete', area:280, potential:'medium', owner:'Government' },
+  { lat:9.7240, lng:99.9775, name:'Fresh Market Warehouse', zone:'Z1', type:'metal', area:400, potential:'high', owner:'Commercial' },
+  { lat:9.7182, lng:99.9820, name:'Fisherman\'s Pier Building', zone:'Z1', type:'metal', area:320, potential:'medium', owner:'Port Authority' },
+  { lat:9.7198, lng:99.9755, name:'KP Auto Repair Center', zone:'Z1', type:'metal', area:450, potential:'high', owner:'Commercial' },
+  { lat:9.7162, lng:99.9800, name:'Seatran Pier Terminal', zone:'Z1', type:'metal', area:600, potential:'high', owner:'Transport' },
+  { lat:9.7235, lng:99.9810, name:'Thong Sala Post Office', zone:'Z1', type:'concrete', area:220, potential:'medium', owner:'Government' },
+  { lat:9.7208, lng:99.9838, name:'Big C Mini Thong Sala', zone:'Z1', type:'metal', area:480, potential:'high', owner:'Commercial' },
+  { lat:9.7188, lng:99.9842, name:'Makro Food Service', zone:'Z1', type:'metal', area:1100, potential:'high', owner:'Commercial' },
+  { lat:9.7250, lng:99.9765, name:'Ice Factory & Cold Storage', zone:'Z1', type:'metal', area:650, potential:'high', owner:'Industrial' },
+
+  // === Z2 Ban Tai (resort coast) ===
+  { lat:9.711, lng:100.015, name:'Santhiya Resort & Spa', zone:'Z2', type:'tile', area:1800, potential:'high', owner:'Resort' },
+  { lat:9.708, lng:100.022, name:'Anantara Rasananda Villa', zone:'Z2', type:'tile', area:1200, potential:'high', owner:'Resort' },
+  { lat:9.712, lng:100.018, name:'Beamtech Factory', zone:'Z2', type:'metal', area:1500, potential:'high', owner:'Industrial' },
+  { lat:9.7095, lng:100.008, name:'Secret Beach Resort', zone:'Z2', type:'tile', area:600, potential:'high', owner:'Resort' },
+  { lat:9.7065, lng:100.012, name:'Coco Garden Resort', zone:'Z2', type:'tile', area:480, potential:'medium', owner:'Resort' },
+  { lat:9.7102, lng:100.025, name:'Ban Tai Beach Resort', zone:'Z2', type:'metal', area:520, potential:'high', owner:'Resort' },
+  { lat:9.7140, lng:100.005, name:'Phangan Villa Homes', zone:'Z2', type:'concrete', area:350, potential:'medium', owner:'Residential' },
+  { lat:9.7070, lng:100.018, name:'Milky Bay Resort', zone:'Z2', type:'tile', area:750, potential:'high', owner:'Resort' },
+  { lat:9.7085, lng:100.0035, name:'Lime N Soda Resort', zone:'Z2', type:'tile', area:400, potential:'medium', owner:'Resort' },
+  { lat:9.7130, lng:100.022, name:'Palita Lodge', zone:'Z2', type:'tile', area:550, potential:'high', owner:'Resort' },
+  { lat:9.7120, lng:100.028, name:'Loyal Resort', zone:'Z2', type:'metal', area:380, potential:'medium', owner:'Resort' },
+  { lat:9.7060, lng:100.006, name:'Beach Club Ban Tai', zone:'Z2', type:'metal', area:300, potential:'medium', owner:'Entertainment' },
+  { lat:9.7145, lng:100.012, name:'KP Rice Mill', zone:'Z2', type:'metal', area:800, potential:'high', owner:'Industrial' },
+  { lat:9.7050, lng:100.015, name:'Hacienda Resort', zone:'Z2', type:'tile', area:450, potential:'medium', owner:'Resort' },
+
+  // === Z3 Haad Rin (party & tourism hub) ===
+  { lat:9.6790, lng:100.064, name:'Tommy Resort', zone:'Z3', type:'metal', area:650, potential:'high', owner:'Resort' },
+  { lat:9.6800, lng:100.068, name:'Phangan Bayshore Resort', zone:'Z3', type:'metal', area:700, potential:'high', owner:'Resort' },
+  { lat:9.6775, lng:100.062, name:'Cocohut Beach Resort', zone:'Z3', type:'tile', area:520, potential:'high', owner:'Resort' },
+  { lat:9.6810, lng:100.072, name:'Sunrise Resort', zone:'Z3', type:'tile', area:480, potential:'medium', owner:'Resort' },
+  { lat:9.6795, lng:100.070, name:'Full Moon Party Venue', zone:'Z3', type:'metal', area:400, potential:'high', owner:'Entertainment' },
+  { lat:9.6785, lng:100.066, name:'Same Same Lodge', zone:'Z3', type:'metal', area:250, potential:'medium', owner:'Hostel' },
+  { lat:9.6770, lng:100.058, name:'Leela Beach Bungalows', zone:'Z3', type:'tile', area:350, potential:'medium', owner:'Resort' },
+  { lat:9.6805, lng:100.061, name:'Haad Rin Nai Market', zone:'Z3', type:'metal', area:320, potential:'medium', owner:'Commercial' },
+  { lat:9.6820, lng:100.069, name:'Cactus Bungalows', zone:'Z3', type:'metal', area:280, potential:'medium', owner:'Resort' },
+  { lat:9.6760, lng:100.060, name:'Sea Breeze Guesthouse', zone:'Z3', type:'tile', area:200, potential:'low', owner:'Guesthouse' },
+
+  // === Z4 Sri Thanu (yoga/wellness hub) ===
+  { lat:9.7440, lng:99.958, name:'Orion Healing Center', zone:'Z4', type:'tile', area:680, potential:'high', owner:'Wellness' },
+  { lat:9.7460, lng:99.963, name:'Agama Yoga School', zone:'Z4', type:'metal', area:520, potential:'high', owner:'Wellness' },
+  { lat:9.7420, lng:99.955, name:'The Yogarden', zone:'Z4', type:'tile', area:400, potential:'medium', owner:'Wellness' },
+  { lat:9.7475, lng:99.960, name:'Sri Thanu Market', zone:'Z4', type:'metal', area:300, potential:'medium', owner:'Commercial' },
+  { lat:9.7450, lng:99.966, name:'Pyramid Yoga Center', zone:'Z4', type:'concrete', area:380, potential:'medium', owner:'Wellness' },
+  { lat:9.7435, lng:99.952, name:'Mandala Community', zone:'Z4', type:'tile', area:450, potential:'high', owner:'Community' },
+  { lat:9.7490, lng:99.957, name:'Blue Lotus Café', zone:'Z4', type:'tile', area:220, potential:'medium', owner:'Restaurant' },
+  { lat:9.7410, lng:99.960, name:'Earth House Villa', zone:'Z4', type:'concrete', area:350, potential:'medium', owner:'Resort' },
+
+  // === Z5 Chaloklum (fishing village & north coast) ===
+  { lat:9.7910, lng:100.022, name:'Malibu Beach Bungalows', zone:'Z5', type:'metal', area:550, potential:'high', owner:'Resort' },
+  { lat:9.7930, lng:100.030, name:'Fantasia Resort', zone:'Z5', type:'tile', area:420, potential:'medium', owner:'Resort' },
+  { lat:9.7920, lng:100.018, name:'Chaloklum Diving School', zone:'Z5', type:'metal', area:280, potential:'medium', owner:'Business' },
+  { lat:9.7940, lng:100.025, name:'Chaloklum Bay Seafood Market', zone:'Z5', type:'metal', area:380, potential:'high', owner:'Commercial' },
+  { lat:9.7900, lng:100.028, name:'Pha Ngan Utopia Resort', zone:'Z5', type:'tile', area:600, potential:'high', owner:'Resort' },
+  { lat:9.7935, lng:100.020, name:'Mandarin Resort', zone:'Z5', type:'tile', area:350, potential:'medium', owner:'Resort' },
+  { lat:9.7895, lng:100.015, name:'Chaloklum Fish Processing', zone:'Z5', type:'metal', area:500, potential:'high', owner:'Industrial' },
+  { lat:9.7950, lng:100.032, name:'Haad Khom Bungalows', zone:'Z5', type:'metal', area:300, potential:'medium', owner:'Resort' },
+
+  // === Z6 Wok Tum / Hin Kong ===
+  { lat:9.7340, lng:99.982, name:'Kobra Muay Thai Camp', zone:'Z6', type:'metal', area:400, potential:'high', owner:'Sports' },
+  { lat:9.7355, lng:99.988, name:'Jungle Experience Venue', zone:'Z6', type:'metal', area:650, potential:'high', owner:'Entertainment' },
+  { lat:9.7320, lng:99.985, name:'Diamond Muay Thai', zone:'Z6', type:'metal', area:350, potential:'medium', owner:'Sports' },
+  { lat:9.7365, lng:99.980, name:'Hin Kong Beach Resort', zone:'Z6', type:'tile', area:480, potential:'high', owner:'Resort' },
+  { lat:9.7330, lng:99.990, name:'Wok Tum Mini Market', zone:'Z6', type:'metal', area:250, potential:'medium', owner:'Commercial' },
+  { lat:9.7375, lng:99.992, name:'Eco-Farm Phangan', zone:'Z6', type:'metal', area:580, potential:'high', owner:'Agriculture' },
+  { lat:9.7310, lng:99.978, name:'Jungle Gym Phangan', zone:'Z6', type:'metal', area:320, potential:'medium', owner:'Sports' },
+  { lat:9.7385, lng:99.986, name:'Wok Tum Health Center', zone:'Z6', type:'concrete', area:280, potential:'medium', owner:'Medical' },
+
+  // === Z7 Thong Nai Pan (boutique resort area) ===
+  { lat:9.758, lng:100.074, name:'Panviman Resort KP', zone:'Z7', type:'tile', area:1600, potential:'high', owner:'Resort' },
+  { lat:9.752, lng:100.070, name:'Buri Rasa Village', zone:'Z7', type:'tile', area:900, potential:'high', owner:'Resort' },
+  { lat:9.755, lng:100.078, name:'Longtail Beach Resort', zone:'Z7', type:'tile', area:700, potential:'high', owner:'Resort' },
+  { lat:9.750, lng:100.065, name:'Santhiya Thong Nai Pan', zone:'Z7', type:'tile', area:1400, potential:'high', owner:'Resort' },
+  { lat:9.748, lng:100.072, name:'Dreamland Resort', zone:'Z7', type:'tile', area:500, potential:'medium', owner:'Resort' },
+  { lat:9.760, lng:100.080, name:'Nice Beach Resort', zone:'Z7', type:'metal', area:350, potential:'medium', owner:'Resort' },
+  { lat:9.745, lng:100.068, name:'Thong Nai Pan Noi Villa', zone:'Z7', type:'tile', area:420, potential:'medium', owner:'Resort' },
+  { lat:9.762, lng:100.076, name:'Star Hut Bungalows', zone:'Z7', type:'metal', area:280, potential:'medium', owner:'Resort' },
+
+  // === Z8 Mae Haad / Koh Ma (west coast diving area) ===
+  { lat:9.7845, lng:99.968, name:'Haad Mae Haad Resort', zone:'Z8', type:'tile', area:550, potential:'high', owner:'Resort' },
+  { lat:9.7855, lng:99.972, name:'Island Dive Center', zone:'Z8', type:'metal', area:280, potential:'medium', owner:'Business' },
+  { lat:9.7835, lng:99.965, name:'Koh Ma Beach Resort', zone:'Z8', type:'tile', area:420, potential:'high', owner:'Resort' },
+  { lat:9.7865, lng:99.975, name:'Cookies Salad Resort', zone:'Z8', type:'tile', area:380, potential:'medium', owner:'Resort' },
+  { lat:9.7825, lng:99.970, name:'Chaloklum Hill Villas', zone:'Z8', type:'concrete', area:350, potential:'medium', owner:'Residential' },
+  { lat:9.7875, lng:99.968, name:'Seaflower Bungalows', zone:'Z8', type:'metal', area:250, potential:'medium', owner:'Resort' },
+  { lat:9.7840, lng:99.962, name:'Mae Haad Bay Resort', zone:'Z8', type:'tile', area:480, potential:'high', owner:'Resort' },
+  { lat:9.7880, lng:99.978, name:'Bottle Beach Viewpoint Lodge', zone:'Z8', type:'metal', area:200, potential:'low', owner:'Guesthouse' },
+];
+
+// ===== Solar Calculator =====
+function calcSolar(area) {
+  var usable = area * 0.7;
+  var kwp = usable / 5.5;
+  var annual_kwh = kwp * 1350;
+  var rate = 5.5; // THB per kWh
+  var annual_savings = annual_kwh * rate;
+  var epc_cost = kwp * 32500;
+  var panels = Math.ceil(kwp / 0.58);
+  var payback = epc_cost / annual_savings;
+  var co2_tons = (annual_kwh * 0.5) / 1000; // ~0.5 kg CO2/kWh Thailand grid
+  var monthly_bill_before = (annual_kwh / 12) * rate;
+  var monthly_bill_after = monthly_bill_before * 0.25; // 75% offset typical
+  return {
+    usable: Math.round(usable), kwp: Math.round(kwp * 10) / 10,
+    annual_kwh: Math.round(annual_kwh), annual_savings: Math.round(annual_savings),
+    monthly_savings: Math.round(annual_savings / 12), epc_cost: Math.round(epc_cost),
+    ppa_savings: Math.round(annual_kwh * (5.5 - 4.5)), panels: panels,
+    payback: Math.round(payback * 10) / 10, co2_tons: Math.round(co2_tons * 10) / 10,
+    trees: Math.round(co2_tons * 16.5), // ~16.5 trees per ton CO2/yr
+    bill_before: Math.round(monthly_bill_before), bill_after: Math.round(monthly_bill_after)
+  };
+}
+
+function getColor(p) { return p === 'high' ? '#1A7A5A' : p === 'medium' ? '#E8A820' : '#E85D3A'; }
+function getRoofColor(type) { return type === 'metal' ? '#6B8EC2' : type === 'concrete' ? '#A0A0A0' : '#C47A3A'; }
+
+// ===== Build Markers =====
+var markers = [];
+var heatData = [];
+var totalKwp = 0, totalValue = 0, totalSavings = 0, totalCO2 = 0;
+
+sampleRoofs.forEach(function(r) {
+  var s = calcSolar(r.area);
+  totalKwp += s.kwp;
+  totalValue += s.epc_cost;
+  totalSavings += s.annual_savings;
+  totalCO2 += s.co2_tons;
+  heatData.push([r.lat, r.lng, s.kwp]);
+
+  var marker = L.circleMarker([r.lat, r.lng], {
+    radius: Math.max(5, Math.min(14, s.kwp / 4)),
+    fillColor: getColor(r.potential),
+    color: '#fff', weight: 2, fillOpacity: 0.85
+  }).addTo(map);
+
+  var wa_link = 'https://wa.me/66623480119?text=' + encodeURIComponent('Hi TM Energy, I saw "' + r.name + '" on the KP Solar Atlas. I\'d like a free solar proposal!');
+  var roofBg = getRoofColor(r.type);
+
+  marker.bindPopup(function() {
+    return '<div class="roof-popup">' +
+      '<div class="popup-header">' +
+        '<div class="popup-roof-img" style="background:linear-gradient(135deg,' + roofBg + ',' + roofBg + 'aa);border:2px solid ' + roofBg + ';">' +
+          '<svg width="40" height="28" viewBox="0 0 40 28"><polygon points="5,24 20,4 35,24" fill="none" stroke="#fff" stroke-width="2"/><rect x="8" y="14" width="24" height="12" fill="none" stroke="#fff" stroke-width="1.5" rx="1"/></svg>' +
+        '</div>' +
+        '<div><h3>' + r.name + '</h3><div class="popup-zone-tag">' + r.zone + ' — ' + r.type + ' roof — ' + r.area + ' m²</div></div>' +
+      '</div>' +
+      '<div class="bill-compare">' +
+        '<div class="bill-box before"><div class="bill-label">' + t('monthly_before') + '</div><div class="bill-amount">฿' + s.bill_before.toLocaleString() + '</div></div>' +
+        '<div class="bill-arrow">→</div>' +
+        '<div class="bill-box after"><div class="bill-label">' + t('monthly_after') + '</div><div class="bill-amount">฿' + s.bill_after.toLocaleString() + '</div></div>' +
+      '</div>' +
+      '<div class="specs">' +
+        '<div><div class="spec-label">' + t('system_size') + '</div><div class="spec-val">' + s.kwp + ' kWp</div></div>' +
+        '<div><div class="spec-label">' + t('panels') + '</div><div class="spec-val">' + s.panels + '</div></div>' +
+        '<div><div class="spec-label">' + t('annual_output') + '</div><div class="spec-val">' + s.annual_kwh.toLocaleString() + ' kWh</div></div>' +
+        '<div><div class="spec-label">' + t('payback') + '</div><div class="spec-val">' + s.payback + ' yrs</div></div>' +
+      '</div>' +
+      '<div class="co2-bar">' +
+        '<div class="co2-icon">🌱</div>' +
+        '<div><div class="co2-text">' + s.co2_tons + ' ' + t('co2_saved') + '</div>' +
+        '<div class="co2-sub">' + t('trees_equiv') + ' ' + s.trees + ' ' + t('trees') + '</div></div>' +
+      '</div>' +
+      '<div class="options">' +
+        '<div class="opt"><div><div class="opt-name">' + t('option_epc') + '</div><div class="opt-detail">' + t('payback') + ' ' + s.payback + ' yrs</div></div><div class="opt-price">฿' + s.epc_cost.toLocaleString() + '</div></div>' +
+        '<div class="opt"><div><div class="opt-name">' + t('option_ppa') + '</div><div class="opt-detail">' + t('save_day1') + '</div></div><div class="opt-price">฿4.50/kWh</div></div>' +
+      '</div>' +
+      '<a class="cta" href="' + wa_link + '" target="_blank">' + t('cta_whatsapp') + '</a>' +
+      '<div class="powered">' + t('powered_by') + '</div>' +
+    '</div>';
+  }, { maxWidth:360, className:'leaflet-popup-styled' });
+
+  markers.push({ marker:marker, data:r, solar:s });
+});
+
+// ===== Animated Stats =====
+function animateCount(el, target, prefix, suffix, decimals, duration) {
+  prefix = prefix || ''; suffix = suffix || ''; decimals = decimals || 0; duration = duration || 1200;
+  var start = 0, startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    var p = Math.min((ts - startTime) / duration, 1);
+    var ease = 1 - Math.pow(1 - p, 3); // ease out cubic
+    var val = start + (target - start) * ease;
+    el.textContent = prefix + (decimals > 0 ? val.toFixed(decimals) : Math.round(val).toLocaleString()) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// Delay slightly for visual effect
+setTimeout(function() {
+  animateCount(document.getElementById('total-roofs'), sampleRoofs.length, '', '', 0, 1000);
+  animateCount(document.getElementById('total-mwp'), totalKwp / 1000, '', '', 1, 1400);
+  animateCount(document.getElementById('total-savings'), totalSavings / 1000000, '', '', 1, 1600);
+  animateCount(document.getElementById('total-co2'), totalCO2, '', '', 0, 1800);
+}, 300);
+
+// ===== Heatmap Layer =====
+var heatLayer = L.heatLayer(heatData, { radius:25, blur:20, maxZoom:17, max:80,
+  gradient: { 0.2:'#2196F3', 0.4:'#1A7A5A', 0.6:'#E8A820', 0.8:'#FF5722', 1.0:'#D50000' }
+});
+var heatmapOn = false;
+document.getElementById('heatmap-toggle').addEventListener('click', function() {
+  heatmapOn = !heatmapOn;
+  this.classList.toggle('active', heatmapOn);
+  if (heatmapOn) { heatLayer.addTo(map); } else { map.removeLayer(heatLayer); }
+});
+
+// ===== Scan Zones Toggle =====
+var scanLayerGroup = L.layerGroup();
+var scanOn = false;
+// Build scan grid overlays per zone
+zones.forEach(function(z) {
+  var c = z.coords;
+  // Dashed animated border for "not yet scanned"
+  var rect = L.polygon(c, {
+    color: z.color, weight:3, fillOpacity:0.04, fillColor:z.color,
+    dashArray:'10,8', className:'scan-grid'
+  });
+  // Grid lines inside zone
+  var latMin = Math.min(c[0][0],c[2][0]), latMax = Math.max(c[0][0],c[2][0]);
+  var lngMin = Math.min(c[0][1],c[1][1]), lngMax = Math.max(c[0][1],c[1][1]);
+  var lines = [];
+  for (var lat = latMin; lat <= latMax; lat += 0.002) {
+    lines.push(L.polyline([[lat, lngMin],[lat, lngMax]], { color:z.color, weight:0.5, opacity:0.3, dashArray:'4,4' }));
+  }
+  for (var lng = lngMin; lng <= lngMax; lng += 0.003) {
+    lines.push(L.polyline([[latMin, lng],[latMax, lng]], { color:z.color, weight:0.5, opacity:0.3, dashArray:'4,4' }));
+  }
+  scanLayerGroup.addLayer(rect);
+  lines.forEach(function(l) { scanLayerGroup.addLayer(l); });
+  // "Not scanned" label
+  var label = L.marker(z.center, {
+    icon: L.divIcon({ className:'zone-label', html:'📡 ' + z.id + ' — ' + t('not_scanned'), iconSize:[120,20] })
+  });
+  scanLayerGroup.addLayer(label);
+});
+
+document.getElementById('scan-toggle').addEventListener('click', function() {
+  scanOn = !scanOn;
+  this.classList.toggle('active', scanOn);
+  if (scanOn) { scanLayerGroup.addTo(map); } else { map.removeLayer(scanLayerGroup); }
+});
+
+// ===== Filters =====
+function applyFilters() {
+  var zone = document.getElementById('zone-filter').value;
+  var pot = document.getElementById('potential-filter').value;
+  var roof = document.getElementById('roof-filter').value;
+  var search = document.getElementById('search-input').value.toLowerCase();
+  var count = 0;
+
+  markers.forEach(function(m) {
+    var show = true;
+    if (zone !== 'all' && m.data.zone !== zone) show = false;
+    if (pot !== 'all' && m.data.potential !== pot) show = false;
+    if (roof !== 'all' && m.data.type !== roof) show = false;
+    if (search && m.data.name.toLowerCase().indexOf(search) === -1) show = false;
+    m.marker.setStyle({ opacity: show ? 1 : 0.07, fillOpacity: show ? 0.85 : 0.07 });
+    if (show) count++;
+  });
+
+  var sc = document.getElementById('search-count');
+  if (search) {
+    sc.textContent = count + '/' + markers.length;
+  } else {
+    sc.textContent = '';
+  }
+}
+
+document.getElementById('zone-filter').addEventListener('change', function() {
+  applyFilters();
+  if (this.value !== 'all') {
+    var z = zones.find(function(zn) { return zn.id === this.value; }.bind(this));
+    if (z) map.setView(z.center, 15);
+  } else { map.setView([9.7578,100.0291], 13); }
+});
+document.getElementById('potential-filter').addEventListener('change', applyFilters);
+document.getElementById('roof-filter').addEventListener('change', applyFilters);
+document.getElementById('search-input').addEventListener('input', applyFilters);
+
+// ===== Mobile Hamburger =====
+var controlsBar = document.getElementById('controls-bar');
+if (window.innerWidth <= 768) controlsBar.classList.add('collapsed');
+document.getElementById('hamburger-btn').addEventListener('click', function() {
+  controlsBar.classList.toggle('collapsed');
+});
+
+// ===== Island Outline =====
+L.polygon([
+  [9.672,99.948],[9.680,99.960],[9.685,99.975],[9.700,99.960],
+  [9.720,99.955],[9.740,99.948],[9.760,99.952],[9.775,99.958],
+  [9.790,99.965],[9.800,99.980],[9.805,100.000],[9.800,100.020],
+  [9.795,100.035],[9.785,100.050],[9.770,100.060],[9.755,100.070],
+  [9.740,100.080],[9.725,100.085],[9.710,100.078],[9.695,100.070],
+  [9.680,100.075],[9.672,100.065],[9.668,100.050],[9.670,100.035],
+  [9.672,100.020],[9.670,100.000],[9.668,99.980],[9.670,99.960]
+], { color:'#E8A820', weight:3, fillOpacity:0, dashArray:'10,6' }).addTo(map);
+
+// National Park
+L.polygon([
+  [9.730,99.990],[9.740,100.010],[9.755,100.030],[9.770,100.045],
+  [9.785,100.040],[9.790,100.020],[9.785,100.000],[9.775,99.985],
+  [9.760,99.975],[9.745,99.978]
+], { color:'#ff6b6b', weight:1, fillOpacity:0.05, fillColor:'#ff6b6b', dashArray:'4,4'
+}).addTo(map).bindTooltip('Than Sadet National Park<br>(66% of island — DNP permit required)', {
+  permanent:false, className:'zone-label', direction:'center'
+});
+</script>
+</body>
+</html>

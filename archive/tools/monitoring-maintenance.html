@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Ko Phangan Solar — ניטור ותחזוקה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);overflow:hidden;height:100vh}
+.slide-container{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:40px 60px;opacity:0;transform:translateX(100px);transition:all .6s cubic-bezier(.23,1,.32,1);pointer-events:none;overflow-y:auto;padding-bottom:80px}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit{opacity:0;transform:translateX(-100px)}
+.slide-cover{background:linear-gradient(135deg,var(--ocean),var(--night));justify-content:center;align-items:center;text-align:center}
+.slide-dark{background:var(--night)}.slide-ocean{background:linear-gradient(180deg,var(--ocean),var(--night))}
+.slide-reef{background:linear-gradient(135deg,#0D3B2E,var(--night))}.slide-gold{background:linear-gradient(135deg,#3D2E0A,var(--night))}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px 30px;background:rgba(13,33,55,.95);backdrop-filter:blur(10px);border-top:1px solid rgba(232,168,32,.2);z-index:100}
+.nav-btn{background:none;border:2px solid var(--gold);color:var(--gold);padding:8px 24px;border-radius:6px;cursor:pointer;font-family:'Heebo';font-size:14px;font-weight:500;transition:all .3s}
+.nav-btn:hover{background:var(--gold);color:var(--night)}.nav-btn:disabled{opacity:.3;cursor:default}
+.slide-counter{font-family:'Space Grotesk';color:rgba(255,255,255,.5);font-size:14px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--gold);transition:width .4s;z-index:101}
+.toc-btn{position:fixed;top:20px;left:20px;background:rgba(232,168,32,.15);border:1px solid rgba(232,168,32,.3);color:var(--gold);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:102}
+.toc-btn:hover{background:var(--gold);color:var(--night)}
+.toc-panel{position:fixed;top:0;left:-350px;width:350px;height:100vh;background:rgba(13,33,55,.98);backdrop-filter:blur(20px);border-right:1px solid rgba(232,168,32,.2);z-index:103;transition:left .4s;padding:60px 30px 30px;overflow-y:auto}
+.toc-panel.open{left:0}
+.toc-item{padding:10px 16px;margin:4px 0;border-radius:8px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.7);transition:all .2s;display:flex;align-items:center;gap:10px}
+.toc-item:hover{background:rgba(232,168,32,.1);color:var(--white)}.toc-item.active{background:rgba(232,168,32,.2);color:var(--gold)}
+.toc-num{font-family:'Space Grotesk';font-weight:700;font-size:12px;color:var(--gold);min-width:24px}
+h1{font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.1;margin-bottom:16px}
+h2{font-size:clamp(24px,3.5vw,40px);font-weight:700;line-height:1.2;margin-bottom:12px}
+h3{font-size:clamp(16px,2vw,22px);font-weight:700;margin-bottom:8px}
+.subtitle{font-size:clamp(16px,2vw,22px);font-weight:300;opacity:.8;margin-bottom:24px}
+.gold{color:var(--gold)}.reef-text{color:#2ED89A}.coral-text{color:var(--coral)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;transition:all .3s}
+.card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.card-icon{font-size:28px;margin-bottom:10px}.card h3{font-size:16px;margin-bottom:6px}.card p{font-size:13px;opacity:.7;line-height:1.5}
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:rgba(232,168,32,.15);padding:10px 14px;text-align:right;font-weight:600;white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
+tr:hover td{background:rgba(255,255,255,.03)}
+.alert{padding:16px 20px;border-radius:10px;margin:12px 0;font-size:14px;line-height:1.6}
+.alert-warn{background:rgba(232,93,58,.15);border-right:3px solid var(--coral)}
+.alert-info{background:rgba(232,168,32,.1);border-right:3px solid var(--gold)}
+.alert-success{background:rgba(46,216,154,.1);border-right:3px solid #2ED89A}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}.slide{padding:24px 20px}}
+.slide::-webkit-scrollbar{width:4px}.slide::-webkit-scrollbar-thumb{background:rgba(232,168,32,.3);border-radius:2px}
+.section-num{font-family:'Space Grotesk';font-size:64px;font-weight:700;color:var(--gold);opacity:.15;position:absolute;top:20px;left:40px}
+.big-num{font-family:'Space Grotesk';font-size:clamp(36px,6vw,72px);font-weight:700;color:var(--gold)}
+.stat-label{font-size:14px;opacity:.6;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;margin:20px 0;text-align:center}
+
+.slide-img{width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin:12px 0;border:1px solid rgba(232,168,32,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.slide-img-sm{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin:8px 0;border:1px solid rgba(255,255,255,.1)}
+.img-float{float:left;width:45%;max-height:240px;object-fit:cover;border-radius:12px;margin:0 20px 12px 0;border:1px solid rgba(232,168,32,.15)}
+.img-row{display:flex;gap:12px;margin:12px 0}.img-row img{flex:1;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+
+
+<div class="progress-bar" id="progress"></div>
+<button class="toc-btn" onclick="toggleTOC()">☰</button>
+<div class="toc-panel" id="tocPanel"><h3 style="color:var(--gold);margin-bottom:20px;">תוכן עניינים</h3><div id="tocList"></div></div>
+<div class="slide-container" id="slides">
+
+<!-- SLIDE 0: Cover -->
+<div class="slide slide-cover active" data-title="שער">
+  <div style="margin-bottom:30px">
+    <div style="font-size:56px;margin-bottom:16px">📊🔧</div>
+    <h1>ניטור ותחזוקה<br><span class="gold">Ko Phangan Solar</span></h1>
+    <p class="subtitle">O&M — הכנסה חוזרת + שמירה על ביצועים</p>
+  </div>
+  <p style="opacity:.4;font-size:13px">TM Energy — מרץ 2026</p>
+</div>
+
+<!-- SLIDE 1: Why Monitoring -->
+<div class="slide slide-ocean" data-title="למה ניטור">
+  <span class="section-num">01</span>
+  <h2>📡 למה ניטור חשוב</h2>
+  <p class="subtitle">הגנה על ההשקעה + שביעות רצון לקוחות</p>
+  <div class="stat-grid">
+    <div><div class="big-num">5-15%</div><div class="stat-label">הפסד ייצור ללא ניטור<br>(תקלות לא מזוהות)</div></div>
+    <div><div class="big-num">24/7</div><div class="stat-label">ניטור בזמן אמת<br>כל המערכות</div></div>
+    <div><div class="big-num">฿720K</div><div class="stat-label">הכנסה שנתית פוטנציאלית<br>מ-O&M בלבד</div></div>
+  </div>
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">💰</div><h3>הגנת הכנסות</h3><p>PPA = אנחנו מפסידים כסף על כל שעת downtime. ניטור = כסף.</p></div>
+    <div class="card"><div class="card-icon">😊</div><h3>שביעות רצון</h3><p>לקוח שרואה חיסכון בזמן אמת = לקוח שמפנה חברים. דו"חות חודשיים = אמון.</p></div>
+    <div class="card"><div class="card-icon">🔄</div><h3>הכנסה חוזרת</h3><p>MRR מ-O&M גדל עם כל התקנה. 20 לקוחות × ฿3K = ฿60K/חודש פסיבי.</p></div>
+    <div class="card"><div class="card-icon">⚠️</div><h3>מניעת נזק</h3><p>Hot spots, arc faults, earth faults — זיהוי מוקדם מונע שריפה. באי = מערכת חילוץ רחוקה.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Platform -->
+<div class="slide slide-dark" data-title="פלטפורמת ניטור">
+  <span class="section-num">02</span>
+  <h2>💻 פלטפורמת ניטור</h2>
+  <div class="two-col">
+    <div>
+      <h3>Huawei FusionSolar</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>יכולות</h3>
+        <ul style="font-size:13px;line-height:2;list-style:none;padding:0">
+          <li>▸ ניטור בזמן אמת — ייצור, צריכה, ייצוא</li>
+          <li>▸ אפליקציה ללקוח (iOS + Android)</li>
+          <li>▸ Smart Dongle WiFi/4G — חיבור אוטומטי</li>
+          <li>▸ String-level monitoring (זיהוי פאנל בעייתי)</li>
+          <li>▸ Alerts: email + push + SMS</li>
+          <li>▸ Fleet management — כל המערכות במקום אחד</li>
+          <li>▸ API לחיבור ל-CRM שלנו</li>
+          <li>▸ <strong>חינם!</strong> (כלול עם אינוורטר Huawei)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3>Ko Phangan Solar CRM</h3>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3>שכבה שלנו</h3>
+        <ul style="font-size:13px;line-height:2;list-style:none;padding:0">
+          <li>▸ דשבורד ריכוזי — כל הלקוחות</li>
+          <li>▸ התראות → Ticket אוטומטי ב-CRM</li>
+          <li>▸ היסטוריית תחזוקה לכל מערכת</li>
+          <li>▸ דו"חות אוטומטיים ללקוח (PDF)</li>
+          <li>▸ חשבוניות O&M אוטומטיות</li>
+          <li>▸ תיעוד צילומי (before/after)</li>
+          <li>▸ KPIs: uptime, PR, response time</li>
+        </ul>
+      </div>
+      <div class="alert alert-info">
+        <strong>CRM:</strong> <a href="https://kophangan-solar-crm.vercel.app">kophangan-solar-crm.vercel.app</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Alert System -->
+<div class="slide slide-ocean" data-title="מערכת התראות">
+  <span class="section-num">03</span>
+  <h2>🚨 מערכת התראות</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>סוג התראה</th><th>חומרה</th><th>זמן תגובה</th><th>פעולה</th></tr>
+      <tr><td>🔴 Inverter Fault</td><td>קריטי</td><td>4 שעות</td><td>בדיקה בשטח, החלפה אם צריך</td></tr>
+      <tr><td>🔴 Communication Loss</td><td>קריטי</td><td>4 שעות</td><td>בדיקת dongle, WiFi, 4G</td></tr>
+      <tr><td>🟠 Performance Drop > 20%</td><td>גבוה</td><td>24 שעות</td><td>אבחון: הצללה? לכלוך? תקלה?</td></tr>
+      <tr><td>🟠 String Imbalance > 10%</td><td>גבוה</td><td>24 שעות</td><td>בדיקת פאנל/כבל ספציפי</td></tr>
+      <tr><td>🟡 Grid Outage Detected</td><td>בינוני</td><td>תיעוד</td><td>לוג לדו"ח חודשי. לא בשליטתנו.</td></tr>
+      <tr><td>🟡 Panel Degradation > 2%/yr</td><td>בינוני</td><td>שבוע</td><td>IV test, בדיקה פיזית, RMA</td></tr>
+      <tr><td>🟢 Scheduled Cleaning Due</td><td>נמוך</td><td>שבוע</td><td>תיאום ביקור ניקוי</td></tr>
+      <tr><td>🟢 Firmware Update Available</td><td>נמוך</td><td>שבועיים</td><td>עדכון OTA / ביקור</td></tr>
+    </table>
+  </div>
+  <div class="alert alert-warn" style="margin-top:12px">
+    <strong>ספציפי לאי:</strong> Communication Loss שכיח יותר (WiFi לא יציב, הפסקות חשמל). 4G dongle = גיבוי חובה.
+  </div>
+</div>
+
+<!-- SLIDE 4: O&M Packages -->
+<div class="slide slide-reef" data-title="חבילות O&M">
+  <span class="section-num">04</span>
+  <h2>📦 חבילות תחזוקה</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>Basic</h3>
+      <p style="font-size:28px;font-weight:700;color:var(--gold);margin:8px 0">฿1,500<span style="font-size:14px;opacity:.6">/חודש</span></p>
+      <ul style="font-size:13px;line-height:2;list-style:none;padding:0">
+        <li>✅ ניטור מרחוק 24/7</li>
+        <li>✅ דו"ח חודשי (PDF)</li>
+        <li>✅ ביקור שנתי אחד</li>
+        <li>✅ תגובה: 48 שעות</li>
+        <li>❌ ניקוי פאנלים</li>
+        <li>❌ חלקי חילוף</li>
+        <li>❌ ביטוח ציוד</li>
+      </ul>
+      <p style="margin-top:12px;font-size:12px;opacity:.6">מתאים: וילות קטנות (5-10kWp)</p>
+    </div>
+    <div class="card" style="border-color:var(--gold)">
+      <h3>Standard <span style="font-size:11px;background:var(--gold);color:var(--night);padding:2px 8px;border-radius:10px;margin-right:8px">מומלץ</span></h3>
+      <p style="font-size:28px;font-weight:700;color:var(--gold);margin:8px 0">฿3,000<span style="font-size:14px;opacity:.6">/חודש</span></p>
+      <ul style="font-size:13px;line-height:2;list-style:none;padding:0">
+        <li>✅ כל מה ב-Basic</li>
+        <li>✅ ניקוי רבעוני (4x/שנה)</li>
+        <li>✅ בדיקה חשמלית חצי-שנתית</li>
+        <li>✅ תגובה: 24 שעות</li>
+        <li>✅ thermal imaging שנתי</li>
+        <li>❌ חלקי חילוף (בתשלום)</li>
+        <li>❌ ביטוח ציוד</li>
+      </ul>
+      <p style="margin-top:12px;font-size:12px;opacity:.6">מתאים: רזורטים, עסקים (20-50kWp)</p>
+    </div>
+    <div class="card" style="border-color:rgba(46,216,154,.3)">
+      <h3>Premium</h3>
+      <p style="font-size:28px;font-weight:700;color:#2ED89A;margin:8px 0">฿5,000<span style="font-size:14px;opacity:.6">/חודש</span></p>
+      <ul style="font-size:13px;line-height:2;list-style:none;padding:0">
+        <li>✅ כל מה ב-Standard</li>
+        <li>✅ SLA: 4 שעות</li>
+        <li>✅ חלקי חילוף כלולים</li>
+        <li>✅ אינוורטר loan בתקלה</li>
+        <li>✅ ביטוח ציוד מלא</li>
+        <li>✅ דו"ח שבועי</li>
+        <li>✅ ייעוץ התייעלות</li>
+      </ul>
+      <p style="margin-top:12px;font-size:12px;opacity:.6">מתאים: PPA, מערכות גדולות (50kWp+)</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Preventive Schedule -->
+<div class="slide slide-dark" data-title="לוח תחזוקה">
+  <span class="section-num">05</span>
+  <h2>📅 לוח תחזוקה מונעת</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>תדירות</th><th>פעולה</th><th>פירוט</th><th>זמן</th></tr>
+      <tr><td><strong>רבעוני</strong></td><td>ניקוי פאנלים</td><td>מים מופחתי מינרלים (DI water) + מגב רך. <strong>קריטי בטרופי</strong> — אבק, עלים, ציפורים.</td><td>2-4 שעות</td></tr>
+      <tr><td><strong>חצי-שנתי</strong></td><td>בדיקה חשמלית</td><td>MC4 חיבורים, DC isolators, AC breakers, earthing resistance (&lt;5Ω).</td><td>3-4 שעות</td></tr>
+      <tr><td><strong>שנתי</strong></td><td>Thermal imaging</td><td>מצלמת FLIR — זיהוי hot spots, חיבורים רופפים, תאים פגומים.</td><td>2 שעות</td></tr>
+      <tr><td><strong>שנתי</strong></td><td>IV Curve test</td><td>בדיקת ביצועי סטרינגים מול מפרט יצרן. זיהוי degradation.</td><td>4 שעות</td></tr>
+      <tr><td><strong>שנתי</strong></td><td>בדיקת קונסטרוקציה</td><td>ברגים, קלאמפים, קורוזיה (salt air!). הידוק + החלפה.</td><td>2 שעות</td></tr>
+      <tr><td><strong>לפי צורך</strong></td><td>Firmware update</td><td>אינוורטר, dongle. OTA אם אפשר, ביקור אם לא.</td><td>30 דקות</td></tr>
+      <tr><td><strong>אחרי סערה</strong></td><td>בדיקת נזקים</td><td>בדיקה ויזואלית + חשמלית אחרי מונסון / סערת ברקים.</td><td>2-3 שעות</td></tr>
+    </table>
+  </div>
+  <div class="alert alert-warn" style="margin-top:12px">
+    <strong>עונתיות:</strong> ניקוי אינטנסיבי בעונה יבשה (ינו-מרץ, יוני-אוג). אחרי מונסון (ינואר) = בדיקה מקיפה חובה.
+  </div>
+</div>
+
+<!-- SLIDE 6: Corrective -->
+<div class="slide slide-ocean" data-title="תחזוקה מתקנת">
+<img src="visuals/monitor-06-thermal.png" class="slide-img-sm" alt="Thermal inspection">
+  <span class="section-num">06</span>
+  <h2>🔧 תחזוקה מתקנת — תקלות נפוצות באי</h2>
+  <div class="card-grid">
+    <div class="card" style="border-color:var(--coral)">
+      <div class="card-icon">🌊</div>
+      <h3>קורוזיה (Salt Air)</h3>
+      <p>בעיה #1 באי. MC4 מתחמצנים, ברגים חולידים, rails מאבדים ציפוי. <strong>פתרון:</strong> SS316 + anti-oxidant paste + בדיקה חצי-שנתית.</p>
+    </div>
+    <div class="card" style="border-color:var(--coral)">
+      <div class="card-icon">🦎</div>
+      <h3>מזיקים (Geckos, Ants)</h3>
+      <p>גקונים נכנסים לאינוורטר (חם!). נמלים בנות קולוניות בתוך junction boxes. <strong>פתרון:</strong> mesh screens + insect repellent paste.</p>
+    </div>
+    <div class="card" style="border-color:var(--coral)">
+      <div class="card-icon">⚡</div>
+      <h3>נזקי ברקים</h3>
+      <p>Koh Phangan = אזור ברקים. SPD נשרפים, אינוורטרים פוגעים. <strong>פתרון:</strong> SPD Type I+II, בדיקה אחרי כל סערה, מלאי חלפים.</p>
+    </div>
+    <div class="card" style="border-color:var(--coral)">
+      <div class="card-icon">🌴</div>
+      <h3>עלים ופסולת</h3>
+      <p>עצי דקל, עלים, פירות על פאנלים. מצמצמים ייצור 10-20%. <strong>פתרון:</strong> ניקוי רבעוני + גיזום עצים.</p>
+    </div>
+    <div class="card" style="border-color:var(--coral)">
+      <div class="card-icon">🌧️</div>
+      <h3>נזקי מונסון</h3>
+      <p>רוחות חזקות, גשמים כבדים, הצפות. <strong>פתרון:</strong> עיגון חזק (wind zone 2), drainage, waterproof junction boxes.</p>
+    </div>
+    <div class="card" style="border-color:var(--coral)">
+      <div class="card-icon">🌡️</div>
+      <h3>חום יתר</h3>
+      <p>35°C+ = ירידת ביצועים 10-15%. אינוורטר derating. <strong>פתרון:</strong> אוורור, הצללת אינוורטר, oversizing 10%.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Performance Reports -->
+<div class="slide slide-dark" data-title="דו״חות ביצועים">
+  <span class="section-num">07</span>
+  <h2>📈 דו"חות ביצועים חודשיים</h2>
+  <div class="two-col">
+    <div>
+      <h3>מה כולל הדו"ח</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><span class="gold">1.</span> <strong>ייצור kWh</strong> — יומי, שבועי, חודשי, מצטבר</p>
+        <p><span class="gold">2.</span> <strong>חיסכון כספי</strong> — ฿ חסכו vs תעריף PEA</p>
+        <p><span class="gold">3.</span> <strong>CO2 נמנע</strong> — טונות (שיווקי)</p>
+        <p><span class="gold">4.</span> <strong>Performance Ratio</strong> — בפועל vs תיאורטי</p>
+        <p><span class="gold">5.</span> <strong>Uptime</strong> — % זמינות המערכת</p>
+        <p><span class="gold">6.</span> <strong>תקלות</strong> — רשימה + סטטוס טיפול</p>
+        <p><span class="gold">7.</span> <strong>תחזוקה שבוצעה</strong> — ניקוי, בדיקות</p>
+        <p><span class="gold">8.</span> <strong>המלצות</strong> — שדרוגים, שיפורים</p>
+      </div>
+    </div>
+    <div>
+      <h3>ערך עסקי</h3>
+      <div class="card" style="margin:8px 0;border-color:var(--gold)">
+        <h3>ללקוח EPC</h3>
+        <p>דו"ח = הוכחה שההשקעה משתלמת. "ראה, חסכת ฿25K החודש." → שביעות רצון → הפניות.</p>
+      </div>
+      <div class="card" style="margin:8px 0;border-color:rgba(46,216,154,.3)">
+        <h3>ללקוח PPA</h3>
+        <p>דו"ח = שקיפות. "הנה כמה ייצרנו, הנה החיוב." → אמון → חידוש חוזה.</p>
+      </div>
+      <div class="card" style="margin:8px 0">
+        <h3>לנו</h3>
+        <p>דו"ח = marketing. "הנה תוצאות אמיתיות." → case study → לידים חדשים.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Spare Parts -->
+<div class="slide slide-gold" data-title="חלקי חילוף">
+  <span class="section-num">08</span>
+  <h2>📦 ניהול חלקי חילוף — מלאי באי</h2>
+  <div class="two-col">
+    <div>
+      <h3>מלאי מינימלי</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>כמות</th><th>עלות</th><th>הערה</th></tr>
+          <tr><td>פאנלים (580W)</td><td>4</td><td>฿12K</td><td>2 × RMA loan</td></tr>
+          <tr><td>אינוורטר 10kW</td><td>1</td><td>฿30K</td><td>Loan unit</td></tr>
+          <tr><td>Smart Dongle 4G</td><td>2</td><td>฿4K</td><td>תקשורת backup</td></tr>
+          <tr><td>MC4 זוגות</td><td>20</td><td>฿2K</td><td></td></tr>
+          <tr><td>SPD Type II DC</td><td>4</td><td>฿4K</td><td>אחרי ברקים</td></tr>
+          <tr><td>SPD Type I+II AC</td><td>2</td><td>฿3K</td><td></td></tr>
+          <tr><td>DC Isolator 32A</td><td>2</td><td>฿2K</td><td></td></tr>
+          <tr><td>Cable 4mm² PV1-F</td><td>100m</td><td>฿3K</td><td></td></tr>
+          <tr><td>Fuses + holders</td><td>10</td><td>฿1K</td><td></td></tr>
+          <tr style="background:rgba(232,168,32,.1)"><td><strong>סה"כ מלאי</strong></td><td></td><td><strong>฿61K</strong></td><td></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>שרשרת אספקה</h3>
+      <div style="font-size:13px;line-height:2.2">
+        <p><strong>מחסן באי:</strong> שטח אחסון 20m² (יבש, מוצל)</p>
+        <p><strong>ספק Bangkok:</strong> BayWa / Bangkok Solar — הזמנה → 2-3 ימים</p>
+        <p><strong>משלוח לאי:</strong> Raja Ferry 2.5 שעות + pickup</p>
+        <p><strong>סה"כ אספקה:</strong> 3-5 ימי עבודה</p>
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <strong>Reorder Point:</strong> כשנשאר פחות מ-50% מהמלאי המינימלי → הזמנה אוטומטית. <strong>לפני מונסון (ספט):</strong> Double stock — ferry לא יציב.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Revenue from O&M -->
+<div class="slide slide-ocean" data-title="הכנסה מ-O&M">
+  <span class="section-num">09</span>
+  <h2>💰 הכנסה חוזרת מ-O&M</h2>
+  <div class="stat-grid">
+    <div><div class="big-num">฿60K</div><div class="stat-label">MRR פוטנציאלי<br>20 לקוחות Standard</div></div>
+    <div><div class="big-num">฿720K</div><div class="stat-label">ARR<br>הכנסה שנתית חוזרת</div></div>
+    <div><div class="big-num">85%</div><div class="stat-label">Gross Margin<br>על O&M</div></div>
+  </div>
+  <div class="table-wrap" style="margin-top:16px">
+    <table>
+      <tr><th>תרחיש</th><th>לקוחות</th><th>חבילה ממוצעת</th><th>MRR</th><th>ARR</th></tr>
+      <tr><td>שנה 1 — סוף</td><td>10</td><td>฿2,500</td><td><strong class="gold">฿25K</strong></td><td>฿300K</td></tr>
+      <tr><td>שנה 2 — סוף</td><td>25</td><td>฿3,000</td><td><strong class="gold">฿75K</strong></td><td>฿900K</td></tr>
+      <tr><td>שנה 3 — סוף</td><td>50</td><td>฿3,000</td><td><strong class="gold">฿150K</strong></td><td>฿1.8M</td></tr>
+    </table>
+  </div>
+  <div class="alert alert-success" style="margin-top:12px">
+    <strong>למה זה קריטי:</strong> O&M = הכנסה חוזרת שלא תלויה במכירות חדשות. PPA + O&M = 2 מנועי MRR. אחרי 50 לקוחות = ฿150K/חודש פסיבי.
+  </div>
+</div>
+
+<!-- SLIDE 10: Tools -->
+<div class="slide slide-dark" data-title="כלים וציוד">
+  <span class="section-num">10</span>
+  <h2>🔧 כלים וציוד O&M</h2>
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">🔥</div><h3>FLIR C5 Thermal Camera</h3><p>Hot spot detection. ฿15K. חובה לבדיקות שנתיות.</p></div>
+    <div class="card"><div class="card-icon">📊</div><h3>IV Curve Tracer</h3><p>Seaward PV200. ฿45K. בדיקת ביצועי פאנלים vs מפרט.</p></div>
+    <div class="card"><div class="card-icon">⚡</div><h3>Multimeter (Fluke 87V)</h3><p>Voc, Isc, continuity, insulation. ฿12K. כלי יומיומי.</p></div>
+    <div class="card"><div class="card-icon">💧</div><h3>DI Water System</h3><p>מערכת ניקוי מים מופחתי מינרלים. ฿8K. לא משאיר כתמים.</p></div>
+    <div class="card"><div class="card-icon">🔭</div><h3>DJI Mini 4 Pro</h3><p>צילום, סקר, בדיקה ויזואלית מרחוק. ฿35K.</p></div>
+    <div class="card"><div class="card-icon">🧰</div><h3>ערכת כלים שטח</h3><p>MC4 crimper, torque wrench, cable stripper, safety gear. ฿15K.</p></div>
+  </div>
+  <div class="alert alert-info" style="margin-top:16px">
+    <strong>השקעה כוללת בציוד O&M:</strong> ~฿130K. משתלמת אחרי 3 לקוחות Standard (4.3 חודשים).
+  </div>
+</div>
+
+</div><!-- end slides -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">→ הקודם</button>
+  <span class="slide-counter" id="counter"></span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">הבא ←</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function show(n){slides.forEach((s,i)=>{s.classList.remove('active','exit');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('exit')});document.getElementById('counter').textContent=`${n+1} / ${total}`;document.getElementById('progress').style.width=`${((n+1)/total)*100}%`;document.getElementById('prevBtn').disabled=n===0;document.getElementById('nextBtn').disabled=n===total-1;document.querySelectorAll('.toc-item').forEach((t,i)=>{t.classList.toggle('active',i===n)})}
+function navigate(d){current=Math.max(0,Math.min(total-1,current+d));show(current)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')navigate(1);if(e.key==='ArrowRight')navigate(-1);if(e.key==='Escape')toggleTOC()});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)navigate(d>0?1:-1)});
+function toggleTOC(){document.getElementById('tocPanel').classList.toggle('open')}
+document.addEventListener('click',e=>{const p=document.getElementById('tocPanel');if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.classList.contains('toc-btn'))p.classList.remove('open')});
+(function(){const l=document.getElementById('tocList');slides.forEach((s,i)=>{const d=document.createElement('div');d.className='toc-item';d.innerHTML=`<span class="toc-num">${String(i+1).padStart(2,'0')}</span>${s.dataset.title}`;d.onclick=()=>{current=i;show(i);toggleTOC()};l.appendChild(d)})})();
+show(0);
+</script>
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "ניטור ותחזוקה": {en: "Monitoring & Maintenance", th: "การตรวจสอบและบำรุงรักษา"},
+  "O&M — הכנסה חוזרת + שמירה על ביצועים": {en: "O&M — Recurring Revenue + Performance Protection", th: "O&M — รายได้ประจำ + รักษาประสิทธิภาพ"},
+  "TM Energy — מרץ 2026": {en: "TM Energy — March 2026", th: "TM Energy — มีนาคม 2026"},
+  "שער": {en: "Cover", th: "หน้าปก"},
+  "למה ניטור": {en: "Why Monitoring", th: "ทำไมต้องตรวจสอบ"},
+  "📡 למה ניטור חשוב": {en: "📡 Why Monitoring Matters", th: "📡 ทำไมการตรวจสอบจึงสำคัญ"},
+  "הגנה על ההשקעה + שביעות רצון לקוחות": {en: "Protecting the Investment + Customer Satisfaction", th: "ปกป้องการลงทุน + ความพึงพอใจของลูกค้า"},
+  "הפסד ייצור ללא ניטור\n(תקלות לא מזוהות)": {en: "Production loss without monitoring\n(undetected faults)", th: "สูญเสียการผลิตหากไม่มีการตรวจสอบ\n(ข้อบกพร่องที่ไม่ถูกตรวจพบ)"},
+  "הפסד ייצור ללא ניטור": {en: "Production loss without monitoring", th: "สูญเสียการผลิตหากไม่มีการตรวจสอบ"},
+  "(תקלות לא מזוהות)": {en: "(undetected faults)", th: "(ข้อบกพร่องที่ไม่ถูกตรวจพบ)"},
+  "ניטור בזמן אמת\nכל המערכות": {en: "Real-time monitoring\nall systems", th: "การตรวจสอบแบบเรียลไทม์\nทุกระบบ"},
+  "ניטור בזמן אמת": {en: "Real-time monitoring", th: "การตรวจสอบแบบเรียลไทม์"},
+  "כל המערכות": {en: "All systems", th: "ทุกระบบ"},
+  "הכנסה שנתית פוטנציאלית\nמ-O&M בלבד": {en: "Potential annual revenue\nfrom O&M alone", th: "รายได้ประจำปีที่มีศักยภาพ\nจาก O&M เพียงอย่างเดียว"},
+  "הכנסה שנתית פוטנציאלית": {en: "Potential annual revenue", th: "รายได้ประจำปีที่มีศักยภาพ"},
+  "מ-O&M בלבד": {en: "from O&M alone", th: "จาก O&M เพียงอย่างเดียว"},
+  "הגנת הכנסות": {en: "Revenue Protection", th: "การปกป้องรายได้"},
+  "PPA = אנחנו מפסידים כסף על כל שעת downtime. ניטור = כסף.": {en: "PPA = we lose money every hour of downtime. Monitoring = money.", th: "PPA = เราขาดทุนทุกชั่วโมงที่ระบบหยุดทำงาน การตรวจสอบ = เงิน"},
+  "שביעות רצון": {en: "Satisfaction", th: "ความพึงพอใจ"},
+  "לקוח שרואה חיסכון בזמן אמת = לקוח שמפנה חברים. דו\"חות חודשיים = אמון.": {en: "A customer who sees real-time savings = a customer who refers friends. Monthly reports = trust.", th: "ลูกค้าที่เห็นการประหยัดแบบเรียลไทม์ = ลูกค้าที่แนะนำเพื่อน รายงานรายเดือน = ความน่าเชื่อถือ"},
+  "הכנסה חוזרת": {en: "Recurring Revenue", th: "รายได้ประจำ"},
+  "MRR מ-O&M גדל עם כל התקנה. 20 לקוחות × ฿3K = ฿60K/חודש פסיבי.": {en: "MRR from O&M grows with every installation. 20 clients × ฿3K = ฿60K/month passive.", th: "MRR จาก O&M เพิ่มขึ้นตามทุกการติดตั้ง 20 ลูกค้า × ฿3K = ฿60K/เดือนรายได้ passive"},
+  "מניעת נזק": {en: "Damage Prevention", th: "การป้องกันความเสียหาย"},
+  "Hot spots, arc faults, earth faults — זיהוי מוקדם מונע שריפה. באי = מערכת חילוץ רחוקה.": {en: "Hot spots, arc faults, earth faults — early detection prevents fire. On the island = remote rescue services.", th: "Hot spots, arc faults, earth faults — การตรวจพบตั้งแต่เนิ่นๆ ป้องกันไฟไหม้ บนเกาะ = ระบบกู้ภัยอยู่ห่างไกล"},
+  "פלטפורמת ניטור": {en: "Monitoring Platform", th: "แพลตฟอร์มตรวจสอบ"},
+  "💻 פלטפורמת ניטור": {en: "💻 Monitoring Platform", th: "💻 แพลตฟอร์มตรวจสอบ"},
+  "יכולות": {en: "Capabilities", th: "ความสามารถ"},
+  "ניטור בזמן אמת — ייצור, צריכה, ייצוא": {en: "Real-time monitoring — production, consumption, export", th: "ตรวจสอบแบบเรียลไทม์ — การผลิต การใช้งาน การส่งออก"},
+  "אפליקציה ללקוח (iOS + Android)": {en: "Client app (iOS + Android)", th: "แอปสำหรับลูกค้า (iOS + Android)"},
+  "Smart Dongle WiFi/4G — חיבור אוטומטי": {en: "Smart Dongle WiFi/4G — automatic connection", th: "Smart Dongle WiFi/4G — เชื่อมต่ออัตโนมัติ"},
+  "String-level monitoring (זיהוי פאנל בעייתי)": {en: "String-level monitoring (detecting faulty panel)", th: "ตรวจสอบระดับสตริง (ตรวจจับแผงที่มีปัญหา)"},
+  "Fleet management — כל המערכות במקום אחד": {en: "Fleet management — all systems in one place", th: "Fleet management — ทุกระบบในที่เดียว"},
+  "API לחיבור ל-CRM שלנו": {en: "API integration with our CRM", th: "API เชื่อมต่อกับ CRM ของเรา"},
+  "חינם!": {en: "Free!", th: "ฟรี!"},
+  "(כלול עם אינוורטר Huawei)": {en: "(included with Huawei inverter)", th: "(รวมกับอินเวอร์เตอร์ Huawei)"},
+  "שכבה שלנו": {en: "Our Layer", th: "เลเยอร์ของเรา"},
+  "דשבורד ריכוזי — כל הלקוחות": {en: "Centralized dashboard — all clients", th: "แดชบอร์ดรวมศูนย์ — ลูกค้าทั้งหมด"},
+  "התראות → Ticket אוטומטי ב-CRM": {en: "Alerts → Automatic ticket in CRM", th: "การแจ้งเตือน → สร้าง Ticket อัตโนมัติใน CRM"},
+  "היסטוריית תחזוקה לכל מערכת": {en: "Maintenance history per system", th: "ประวัติการบำรุงรักษาสำหรับแต่ละระบบ"},
+  "דו\"חות אוטומטיים ללקוח (PDF)": {en: "Automated client reports (PDF)", th: "รายงานอัตโนมัติสำหรับลูกค้า (PDF)"},
+  "חשבוניות O&M אוטומטיות": {en: "Automated O&M invoices", th: "ใบแจ้งหนี้ O&M อัตโนมัติ"},
+  "תיעוד צילומי (before/after)": {en: "Photo documentation (before/after)", th: "บันทึกภาพถ่าย (ก่อน/หลัง)"},
+  "מערכת התראות": {en: "Alert System", th: "ระบบแจ้งเตือน"},
+  "🚨 מערכת התראות": {en: "🚨 Alert System", th: "🚨 ระบบแจ้งเตือน"},
+  "סוג התראה": {en: "Alert Type", th: "ประเภทการแจ้งเตือน"},
+  "חומרה": {en: "Severity", th: "ระดับความรุนแรง"},
+  "זמן תגובה": {en: "Response Time", th: "เวลาตอบสนอง"},
+  "פעולה": {en: "Action", th: "การดำเนินการ"},
+  "קריטי": {en: "Critical", th: "วิกฤต"},
+  "4 שעות": {en: "4 hours", th: "4 ชั่วโมง"},
+  "בדיקה בשטח, החלפה אם צריך": {en: "Field inspection, replacement if needed", th: "ตรวจสอบภาคสนาม เปลี่ยนหากจำเป็น"},
+  "בדיקת dongle, WiFi, 4G": {en: "Check dongle, WiFi, 4G", th: "ตรวจสอบ dongle, WiFi, 4G"},
+  "גבוה": {en: "High", th: "สูง"},
+  "24 שעות": {en: "24 hours", th: "24 ชั่วโมง"},
+  "אבחון: הצללה? לכלוך? תקלה?": {en: "Diagnose: shading? dirt? fault?", th: "วินิจฉัย: ร่มเงา? ฝุ่น? ข้อบกพร่อง?"},
+  "בדיקת פאנל/כבל ספציפי": {en: "Inspect specific panel/cable", th: "ตรวจสอบแผง/สายเคเบิลที่ระบุ"},
+  "בינוני": {en: "Medium", th: "ปานกลาง"},
+  "תיעוד": {en: "Log", th: "บันทึก"},
+  "לוג לדו\"ח חודשי. לא בשליטתנו.": {en: "Log to monthly report. Not in our control.", th: "บันทึกในรายงานรายเดือน ไม่อยู่ในการควบคุมของเรา"},
+  "שבוע": {en: "1 week", th: "1 สัปดาห์"},
+  "IV test, בדיקה פיזית, RMA": {en: "IV test, physical inspection, RMA", th: "IV test, ตรวจสอบทางกายภาพ, RMA"},
+  "נמוך": {en: "Low", th: "ต่ำ"},
+  "תיאום ביקור ניקוי": {en: "Schedule cleaning visit", th: "นัดหมายการทำความสะอาด"},
+  "שבועיים": {en: "2 weeks", th: "2 สัปดาห์"},
+  "עדכון OTA / ביקור": {en: "OTA update / site visit", th: "อัปเดต OTA / เยี่ยมชมสถานที่"},
+  "ספציפי לאי:": {en: "Island-specific:", th: "เฉพาะสำหรับเกาะ:"},
+  "ספציפי לאי": {en: "Island-specific", th: "เฉพาะสำหรับเกาะ"},
+  "Communication Loss שכיח יותר (WiFi לא יציב, הפסקות חשמל). 4G dongle = גיבוי חובה.": {en: "Communication Loss is more frequent (unstable WiFi, power outages). 4G dongle = mandatory backup.", th: "Communication Loss พบบ่อยกว่า (WiFi ไม่เสถียร, ไฟดับ) 4G dongle = สำรองข้อมูลที่จำเป็น"},
+  "חבילות O&M": {en: "O&M Packages", th: "แพ็กเกจ O&M"},
+  "📦 חבילות תחזוקה": {en: "📦 Maintenance Packages", th: "📦 แพ็กเกจบำรุงรักษา"},
+  "/חודש": {en: "/month", th: "/เดือน"},
+  "ניטור מרחוק 24/7": {en: "Remote monitoring 24/7", th: "ตรวจสอบระยะไกล 24/7"},
+  "דו\"ח חודשי (PDF)": {en: "Monthly report (PDF)", th: "รายงานรายเดือน (PDF)"},
+  "ביקור שנתי אחד": {en: "One annual visit", th: "การเยี่ยมชมประจำปีหนึ่งครั้ง"},
+  "תגובה: 48 שעות": {en: "Response: 48 hours", th: "การตอบสนอง: 48 ชั่วโมง"},
+  "ניקוי פאנלים": {en: "Panel cleaning", th: "ทำความสะอาดแผง"},
+  "חלקי חילוף": {en: "Spare parts", th: "อะไหล่"},
+  "ביטוח ציוד": {en: "Equipment insurance", th: "ประกันอุปกรณ์"},
+  "מתאים: וילות קטנות (5-10kWp)": {en: "Suitable: small villas (5-10kWp)", th: "เหมาะสำหรับ: วิลล่าขนาดเล็ก (5-10kWp)"},
+  "מומלץ": {en: "Recommended", th: "แนะนำ"},
+  "כל מה ב-Basic": {en: "Everything in Basic", th: "ทุกอย่างใน Basic"},
+  "ניקוי רבעוני (4x/שנה)": {en: "Quarterly cleaning (4x/year)", th: "ทำความสะอาดรายไตรมาส (4 ครั้ง/ปี)"},
+  "בדיקה חשמלית חצי-שנתית": {en: "Semi-annual electrical inspection", th: "ตรวจสอบระบบไฟฟ้าทุกครึ่งปี"},
+  "תגובה: 24 שעות": {en: "Response: 24 hours", th: "การตอบสนอง: 24 ชั่วโมง"},
+  "thermal imaging שנתי": {en: "Annual thermal imaging", th: "การถ่ายภาพความร้อนประจำปี"},
+  "חלקי חילוף (בתשלום)": {en: "Spare parts (paid)", th: "อะไหล่ (มีค่าใช้จ่าย)"},
+  "מתאים: רזורטים, עסקים (20-50kWp)": {en: "Suitable: resorts, businesses (20-50kWp)", th: "เหมาะสำหรับ: รีสอร์ท, ธุรกิจ (20-50kWp)"},
+  "כל מה ב-Standard": {en: "Everything in Standard", th: "ทุกอย่างใน Standard"},
+  "SLA: 4 שעות": {en: "SLA: 4 hours", th: "SLA: 4 ชั่วโมง"},
+  "חלקי חילוף כלולים": {en: "Spare parts included", th: "รวมอะไหล่"},
+  "אינוורטר loan בתקלה": {en: "Loaner inverter during fault", th: "ยืมอินเวอร์เตอร์เมื่อเกิดข้อบกพร่อง"},
+  "ביטוח ציוד מלא": {en: "Full equipment insurance", th: "ประกันอุปกรณ์เต็มรูปแบบ"},
+  "דו\"ח שבועי": {en: "Weekly report", th: "รายงานรายสัปดาห์"},
+  "ייעוץ התייעלות": {en: "Efficiency consulting", th: "คำปรึกษาด้านประสิทธิภาพ"},
+  "מתאים: PPA, מערכות גדולות (50kWp+)": {en: "Suitable: PPA, large systems (50kWp+)", th: "เหมาะสำหรับ: PPA, ระบบขนาดใหญ่ (50kWp+)"},
+  "לוח תחזוקה": {en: "Maintenance Schedule", th: "ตารางบำรุงรักษา"},
+  "📅 לוח תחזוקה מונעת": {en: "📅 Preventive Maintenance Schedule", th: "📅 ตารางบำรุงรักษาเชิงป้องกัน"},
+  "תדירות": {en: "Frequency", th: "ความถี่"},
+  "פירוט": {en: "Details", th: "รายละเอียด"},
+  "זמן": {en: "Time", th: "เวลา"},
+  "רבעוני": {en: "Quarterly", th: "รายไตรมาส"},
+  "מים מופחתי מינרלים (DI water) + מגב רך. קריטי בטרופי — אבק, עלים, ציפורים.": {en: "Deionized water (DI water) + soft squeegee. Critical in tropics — dust, leaves, birds.", th: "น้ำ deionized (DI water) + ยางปาดนุ่ม สำคัญมากในเขตร้อน — ฝุ่น ใบไม้ นก"},
+  "קריטי בטרופי": {en: "Critical in tropics", th: "สำคัญมากในเขตร้อน"},
+  "2-4 שעות": {en: "2-4 hours", th: "2-4 ชั่วโมง"},
+  "חצי-שנתי": {en: "Semi-annual", th: "ทุกครึ่งปี"},
+  "בדיקה חשמלית": {en: "Electrical inspection", th: "ตรวจสอบระบบไฟฟ้า"},
+  "MC4 חיבורים, DC isolators, AC breakers, earthing resistance (<5Ω).": {en: "MC4 connectors, DC isolators, AC breakers, earthing resistance (<5Ω).", th: "ข้อต่อ MC4, DC isolators, AC breakers, ความต้านทานการต่อดิน (<5Ω)"},
+  "3-4 שעות": {en: "3-4 hours", th: "3-4 ชั่วโมง"},
+  "שנתי": {en: "Annual", th: "ประจำปี"},
+  "מצלמת FLIR — זיהוי hot spots, חיבורים רופפים, תאים פגומים.": {en: "FLIR camera — detect hot spots, loose connections, damaged cells.", th: "กล้อง FLIR — ตรวจจับ hot spots, ข้อต่อหลวม, เซลล์เสียหาย"},
+  "2 שעות": {en: "2 hours", th: "2 ชั่วโมง"},
+  "בדיקת ביצועי סטרינגים מול מפרט יצרן. זיהוי degradation.": {en: "Testing string performance vs. manufacturer specs. Detecting degradation.", th: "ทดสอบประสิทธิภาพสตริงเทียบกับสเปคของผู้ผลิต ตรวจจับการเสื่อมสภาพ"},
+  "4 שעות": {en: "4 hours", th: "4 ชั่วโมง"},
+  "בדיקת קונסטרוקציה": {en: "Structure inspection", th: "ตรวจสอบโครงสร้าง"},
+  "ברגים, קלאמפים, קורוזיה (salt air!). הידוק + החלפה.": {en: "Bolts, clamps, corrosion (salt air!). Tightening + replacement.", th: "สลักเกลียว, แคลมป์, การกัดกร่อน (อากาศเค็ม!) ขันให้แน่น + เปลี่ยน"},
+  "לפי צורך": {en: "As needed", th: "ตามความจำเป็น"},
+  "אינוורטר, dongle. OTA אם אפשר, ביקור אם לא.": {en: "Inverter, dongle. OTA if possible, site visit if not.", th: "อินเวอร์เตอร์, dongle อัปเดต OTA หากทำได้ เยี่ยมชมสถานที่หากไม่ได้"},
+  "30 דקות": {en: "30 minutes", th: "30 นาที"},
+  "אחרי סערה": {en: "After storm", th: "หลังพายุ"},
+  "בדיקת נזקים": {en: "Damage inspection", th: "ตรวจสอบความเสียหาย"},
+  "בדיקה ויזואלית + חשמלית אחרי מונסון / סערת ברקים.": {en: "Visual + electrical inspection after monsoon / lightning storm.", th: "ตรวจสอบด้วยสายตา + ระบบไฟฟ้าหลังมรสุม / พายุฝนฟ้าคะนอง"},
+  "2-3 שעות": {en: "2-3 hours", th: "2-3 ชั่วโมง"},
+  "עונתיות:": {en: "Seasonality:", th: "ตามฤดูกาล:"},
+  "עונתיות": {en: "Seasonality", th: "ตามฤดูกาล"},
+  "ניקוי אינטנסיבי בעונה יבשה (ינו-מרץ, יוני-אוג). אחרי מונסון (ינואר) = בדיקה מקיפה חובה.": {en: "Intensive cleaning in dry season (Jan-Mar, Jun-Aug). After monsoon (January) = full inspection mandatory.", th: "ทำความสะอาดเข้มข้นในฤดูแล้ง (ม.ค.-มี.ค., มิ.ย.-ส.ค.) หลังมรสุม (มกราคม) = ต้องตรวจสอบอย่างละเอียด"},
+  "תחזוקה מתקנת": {en: "Corrective Maintenance", th: "การบำรุงรักษาเชิงแก้ไข"},
+  "🔧 תחזוקה מתקנת — תקלות נפוצות באי": {en: "🔧 Corrective Maintenance — Common Island Faults", th: "🔧 การบำรุงรักษาเชิงแก้ไข — ข้อบกพร่องทั่วไปบนเกาะ"},
+  "קורוזיה (Salt Air)": {en: "Corrosion (Salt Air)", th: "การกัดกร่อน (อากาศเค็ม)"},
+  "בעיה #1 באי. MC4 מתחמצנים, ברגים חולידים, rails מאבדים ציפוי. פתרון: SS316 + anti-oxidant paste + בדיקה חצי-שנתית.": {en: "Problem #1 on the island. MC4 connectors oxidize, bolts rust, rails lose coating. Solution: SS316 + anti-oxidant paste + semi-annual inspection.", th: "ปัญหา #1 บนเกาะ ข้อต่อ MC4 ออกซิไดซ์ สลักเกลียวเป็นสนิม ราง rails สูญเสียสี แนวทางแก้ไข: SS316 + anti-oxidant paste + ตรวจสอบทุกครึ่งปี"},
+  "פתרון:": {en: "Solution:", th: "แนวทางแก้ไข:"},
+  "מזיקים (Geckos, Ants)": {en: "Pests (Geckos, Ants)", th: "สัตว์รบกวน (ตุ๊กแก, มด)"},
+  "גקונים נכנסים לאינוורטר (חם!). נמלים בנות קולוניות בתוך junction boxes. פתרון: mesh screens + insect repellent paste.": {en: "Geckos enter the inverter (warm!). Ants build colonies inside junction boxes. Solution: mesh screens + insect repellent paste.", th: "ตุ๊กแกเข้าไปในอินเวอร์เตอร์ (อุ่น!) มดสร้างอาณาจักรในกล่อง junction boxes แนวทางแก้ไข: ตาข่ายกันแมลง + ยาไล่แมลง"},
+  "נזקי ברקים": {en: "Lightning Damage", th: "ความเสียหายจากฟ้าผ่า"},
+  "Koh Phangan = אזור ברקים. SPD נשרפים, אינוורטרים פוגעים. פתרון: SPD Type I+II, בדיקה אחרי כל סערה, מלאי חלפים.": {en: "Koh Phangan = lightning zone. SPDs burn out, inverters get hit. Solution: SPD Type I+II, inspection after every storm, spare parts stock.", th: "เกาะพะงัน = พื้นที่ฟ้าผ่า SPD เสียหาย อินเวอร์เตอร์ถูกกระทบ แนวทางแก้ไข: SPD Type I+II, ตรวจสอบหลังพายุทุกครั้ง, สต็อกอะไหล่"},
+  "עלים ופסולת": {en: "Leaves & Debris", th: "ใบไม้และเศษขยะ"},
+  "עצי דקל, עלים, פירות על פאנלים. מצמצמים ייצור 10-20%. פתרון: ניקוי רבעוני + גיזום עצים.": {en: "Palm trees, leaves, fruits on panels. Reduce production 10-20%. Solution: quarterly cleaning + tree trimming.", th: "ต้นปาล์ม ใบไม้ ผลไม้บนแผง ลดการผลิต 10-20% แนวทางแก้ไข: ทำความสะอาดรายไตรมาส + ตัดแต่งต้นไม้"},
+  "נזקי מונסון": {en: "Monsoon Damage", th: "ความเสียหายจากมรสุม"},
+  "רוחות חזקות, גשמים כבדים, הצפות. פתרון: עיגון חזק (wind zone 2), drainage, waterproof junction boxes.": {en: "Strong winds, heavy rain, flooding. Solution: strong anchoring (wind zone 2), drainage, waterproof junction boxes.", th: "ลมแรง ฝนตกหนัก น้ำท่วม แนวทางแก้ไข: การยึดที่แข็งแกร่ง (wind zone 2), ระบบระบายน้ำ, กล่อง junction boxes กันน้ำ"},
+  "חום יתר": {en: "Overheating", th: "ความร้อนสูงเกินไป"},
+  "35°C+ = ירידת ביצועים 10-15%. אינוורטר derating. פתרון: אוורור, הצללת אינוורטר, oversizing 10%.": {en: "35°C+ = 10-15% performance drop. Inverter derating. Solution: ventilation, inverter shading, 10% oversizing.", th: "35°C+ = ประสิทธิภาพลดลง 10-15% อินเวอร์เตอร์ derating แนวทางแก้ไข: การระบายอากาศ, บังแดดอินเวอร์เตอร์, เผื่อขนาด 10%"},
+  "דו״חות ביצועים": {en: "Performance Reports", th: "รายงานประสิทธิภาพ"},
+  "📈 דו\"חות ביצועים חודשיים": {en: "📈 Monthly Performance Reports", th: "📈 รายงานประสิทธิภาพรายเดือน"},
+  "מה כולל הדו\"ח": {en: "What the Report Includes", th: "สิ่งที่รายงานประกอบด้วย"},
+  "ייצור kWh": {en: "kWh Production", th: "การผลิต kWh"},
+  "יומי, שבועי, חודשי, מצטבר": {en: "daily, weekly, monthly, cumulative", th: "รายวัน รายสัปดาห์ รายเดือน สะสม"},
+  "חיסכון כספי": {en: "Financial Savings", th: "การประหยัดเงิน"},
+  "฿ חסכו vs תעריף PEA": {en: "฿ saved vs PEA tariff", th: "฿ ที่ประหยัดได้เทียบกับค่าไฟ PEA"},
+  "CO2 נמנע": {en: "CO2 Avoided", th: "CO2 ที่หลีกเลี่ยงได้"},
+  "טונות (שיווקי)": {en: "tonnes (marketing)", th: "ตัน (สำหรับการตลาด)"},
+  "בפועל vs תיאורטי": {en: "actual vs theoretical", th: "จริง vs ทางทฤษฎี"},
+  "Uptime": {en: "Uptime", th: "เวลาทำงาน (Uptime)"},
+  "% זמינות המערכת": {en: "% system availability", th: "% ความพร้อมใช้งานของระบบ"},
+  "תקלות": {en: "Faults", th: "ข้อบกพร่อง"},
+  "רשימה + סטטוס טיפול": {en: "list + handling status", th: "รายการ + สถานะการจัดการ"},
+  "תחזוקה שבוצעה": {en: "Maintenance Performed", th: "การบำรุงรักษาที่ดำเนินการ"},
+  "ניקוי, בדיקות": {en: "cleaning, inspections", th: "การทำความสะอาด, การตรวจสอบ"},
+  "המלצות": {en: "Recommendations", th: "คำแนะนำ"},
+  "שדרוגים, שיפורים": {en: "upgrades, improvements", th: "การอัปเกรด, การปรับปรุง"},
+  "ערך עסקי": {en: "Business Value", th: "คุณค่าทางธุรกิจ"},
+  "ללקוח EPC": {en: "For EPC Client", th: "สำหรับลูกค้า EPC"},
+  "דו\"ח = הוכחה שההשקעה משתלמת. \"ראה, חסכת ฿25K החודש.\" → שביעות רצון → הפניות.": {en: "Report = proof that the investment pays off. \"Look, you saved ฿25K this month.\" → satisfaction → referrals.", th: "รายงาน = หลักฐานว่าการลงทุนคุ้มค่า \"ดูสิ คุณประหยัดได้ ฿25K เดือนนี้\" → ความพึงพอใจ → การแนะนำบอกต่อ"},
+  "ללקוח PPA": {en: "For PPA Client", th: "สำหรับลูกค้า PPA"},
+  "דו\"ח = שקיפות. \"הנה כמה ייצרנו, הנה החיוב.\" → אמון → חידוש חוזה.": {en: "Report = transparency. \"Here's how much we produced, here's the bill.\" → trust → contract renewal.", th: "รายงาน = ความโปร่งใส \"นี่คือปริมาณที่ผลิต นี่คือใบแจ้งหนี้\" → ความน่าเชื่อถือ → ต่ออายุสัญญา"},
+  "לנו": {en: "For Us", th: "สำหรับเรา"},
+  "דו\"ח = marketing. \"הנה תוצאות אמיתיות.\" → case study → לידים חדשים.": {en: "Report = marketing. \"Here are real results.\" → case study → new leads.", th: "รายงาน = การตลาด \"นี่คือผลลัพธ์จริง\" → case study → ลีดใหม่"},
+  "חלקי חילוף": {en: "Spare Parts", th: "อะไหล่"},
+  "📦 ניהול חלקי חילוף — מלאי באי": {en: "📦 Spare Parts Management — Island Stock", th: "📦 การจัดการอะไหล่ — สต็อกบนเกาะ"},
+  "מלאי מינימלי": {en: "Minimum Stock", th: "สต็อกขั้นต่ำ"},
+  "פריט": {en: "Item", th: "รายการ"},
+  "כמות": {en: "Qty", th: "จำนวน"},
+  "עלות": {en: "Cost", th: "ราคา"},
+  "הערה": {en: "Note", th: "หมายเหตุ"},
+  "פאנלים (580W)": {en: "Panels (580W)", th: "แผง (580W)"},
+  "אינוורטר 10kW": {en: "Inverter 10kW", th: "อินเวอร์เตอร์ 10kW"},
+  "תקשורת backup": {en: "Communication backup", th: "สำรองการสื่อสาร"},
+  "MC4 זוגות": {en: "MC4 pairs", th: "คู่ MC4"},
+  "אחרי ברקים": {en: "After lightning", th: "หลังฟ้าผ่า"},
+  "סה\"כ מלאי": {en: "Total stock", th: "สต็อกรวม"},
+  "שרשרת אספקה": {en: "Supply Chain", th: "ห่วงโซ่อุปทาน"},
+  "מחסן באי:": {en: "Island warehouse:", th: "คลังสินค้าบนเกาะ:"},
+  "שטח אחסון 20m² (יבש, מוצל)": {en: "Storage area 20m² (dry, shaded)", th: "พื้นที่จัดเก็บ 20m² (แห้ง, ร่มเงา)"},
+  "ספק Bangkok:": {en: "Bangkok supplier:", th: "ซัพพลายเออร์กรุงเทพ:"},
+  "BayWa / Bangkok Solar — הזמנה → 2-3 ימים": {en: "BayWa / Bangkok Solar — order → 2-3 days", th: "BayWa / Bangkok Solar — สั่ง → 2-3 วัน"},
+  "משלוח לאי:": {en: "Island delivery:", th: "จัดส่งไปยังเกาะ:"},
+  "Raja Ferry 2.5 שעות + pickup": {en: "Raja Ferry 2.5 hours + pickup", th: "เรือเฟอร์รี่ Raja 2.5 ชั่วโมง + รับสินค้า"},
+  "סה\"כ אספקה:": {en: "Total supply:", th: "อุปทานรวม:"},
+  "3-5 ימי עבודה": {en: "3-5 business days", th: "3-5 วันทำการ"},
+  "Reorder Point:": {en: "Reorder Point:", th: "จุดสั่งซื้อใหม่:"},
+  "כשנשאר פחות מ-50% מהמלאי המינימלי → הזמנה אוטומטית.": {en: "When below 50% of minimum stock → automatic order.", th: "เมื่อเหลือต่ำกว่า 50% ของสต็อกขั้นต่ำ → สั่งซื้ออัตโนมัติ"},
+  "לפני מונסון (ספט):": {en: "Before monsoon (Sept):", th: "ก่อนมรสุม (กันยายน):"},
+  "Double stock — ferry לא יציב.": {en: "Double stock — ferry is unreliable.", th: "สต็อกสองเท่า — เรือเฟอร์รี่ไม่เสถียร"},
+  "הכנסה מ-O&M": {en: "Revenue from O&M", th: "รายได้จาก O&M"},
+  "💰 הכנסה חוזרת מ-O&M": {en: "💰 Recurring Revenue from O&M", th: "💰 รายได้ประจำจาก O&M"},
+  "MRR פוטנציאלי\n20 לקוחות Standard": {en: "Potential MRR\n20 Standard clients", th: "MRR ที่มีศักยภาพ\n20 ลูกค้า Standard"},
+  "MRR פוטנציאלי": {en: "Potential MRR", th: "MRR ที่มีศักยภาพ"},
+  "20 לקוחות Standard": {en: "20 Standard clients", th: "20 ลูกค้า Standard"},
+  "ARR\nהכנסה שנתית חוזרת": {en: "ARR\nAnnual Recurring Revenue", th: "ARR\nรายได้ประจำปี"},
+  "ARR": {en: "ARR", th: "ARR"},
+  "הכנסה שנתית חוזרת": {en: "Annual Recurring Revenue", th: "รายได้ประจำปี"},
+  "Gross Margin\nעל O&M": {en: "Gross Margin\non O&M", th: "Gross Margin\nสำหรับ O&M"},
+  "Gross Margin": {en: "Gross Margin", th: "Gross Margin"},
+  "על O&M": {en: "on O&M", th: "สำหรับ O&M"},
+  "תרחיש": {en: "Scenario", th: "สถานการณ์"},
+  "לקוחות": {en: "Clients", th: "ลูกค้า"},
+  "חבילה ממוצעת": {en: "Avg. Package", th: "แพ็กเกจเฉลี่ย"},
+  "שנה 1 — סוף": {en: "Year 1 — End", th: "ปีที่ 1 — สิ้นปี"},
+  "שנה 2 — סוף": {en: "Year 2 — End", th: "ปีที่ 2 — สิ้นปี"},
+  "שנה 3 — סוף": {en: "Year 3 — End", th: "ปีที่ 3 — สิ้นปี"},
+  "למה זה קריטי:": {en: "Why this is critical:", th: "ทำไมสิ่งนี้จึงสำคัญ:"},
+  "O&M = הכנסה חוזרת שלא תלויה במכירות חדשות. PPA + O&M = 2 מנועי MRR. אחרי 50 לקוחות = ฿150K/חודש פסיבי.": {en: "O&M = recurring revenue not dependent on new sales. PPA + O&M = 2 MRR engines. After 50 clients = ฿150K/month passive.", th: "O&M = รายได้ประจำที่ไม่ขึ้นอยู่กับการขายใหม่ PPA + O&M = 2 เครื่องยนต์ MRR หลังจาก 50 ลูกค้า = ฿150K/เดือนรายได้ passive"},
+  "כלים וציוד": {en: "Tools & Equipment", th: "เครื่องมือและอุปกรณ์"},
+  "🔧 כלים וציוד O&M": {en: "🔧 O&M Tools & Equipment", th: "🔧 เครื่องมือและอุปกรณ์ O&M"},
+  "חובה לבדיקות שנתיות.": {en: "Mandatory for annual inspections.", th: "จำเป็นสำหรับการตรวจสอบประจำปี"},
+  "בדיקת ביצועי פאנלים vs מפרט.": {en: "Testing panel performance vs. specs.", th: "ทดสอบประสิทธิภาพแผงเทียบกับสเปค"},
+  "כלי יומיומי.": {en: "Daily tool.", th: "เครื่องมือประจำวัน"},
+  "מערכת ניקוי מים מופחתי מינרלים. ฿8K. לא משאיר כתמים.": {en: "Deionized water cleaning system. ฿8K. Leaves no spots.", th: "ระบบทำความสะอาดน้ำ deionized ฿8K ไม่ทิ้งรอยคราบ"},
+  "צילום, סקר, בדיקה ויזואלית מרחוק. ฿35K.": {en: "Photography, survey, remote visual inspection. ฿35K.", th: "ถ่ายภาพ, สำรวจ, ตรวจสอบด้วยสายตาจากระยะไกล ฿35K"},
+  "ערכת כלים שטח": {en: "Field Tool Kit", th: "ชุดเครื่องมือภาคสนาม"},
+  "MC4 crimper, torque wrench, cable stripper, safety gear. ฿15K.": {en: "MC4 crimper, torque wrench, cable stripper, safety gear. ฿15K.", th: "MC4 crimper, ประแจแรงบิด, เครื่องปอกสาย, อุปกรณ์ความปลอดภัย ฿15K"},
+  "השקעה כוללת בציוד O&M:": {en: "Total O&M equipment investment:", th: "การลงทุนรวมในอุปกรณ์ O&M:"},
+  "~฿130K. משתלמת אחרי 3 לקוחות Standard (4.3 חודשים).": {en: "~฿130K. Breaks even after 3 Standard clients (4.3 months).", th: "~฿130K คุ้มทุนหลังจาก 3 ลูกค้า Standard (4.3 เดือน)"},
+  "תוכן עניינים": {en: "Table of Contents", th: "สารบัญ"},
+  "→ הקודם": {en: "→ Previous", th: "→ ก่อนหน้า"},
+  "הבא ←": {en: "Next ←", th: "ถัดไป ←"},
+};
+</script>
+<script src="tm-translations.js"></script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

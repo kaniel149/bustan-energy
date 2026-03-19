@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TM Energy — Print-Ready Templates</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;color:#e0e0e0;font-family:'Space Grotesk',sans-serif;padding:20px}
+h1{text-align:center;color:#E8A820;margin:20px 0;font-size:28px}
+p.subtitle{text-align:center;color:#888;margin-bottom:40px;font-size:14px}
+.template{background:white;margin:30px auto;position:relative;overflow:hidden;page-break-inside:avoid}
+.template-label{background:#E8A820;color:#0D2137;padding:8px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.print-btn{display:block;margin:10px auto;padding:8px 24px;background:#E8A820;color:#0D2137;border:none;border-radius:6px;font-family:inherit;font-weight:700;cursor:pointer;font-size:13px}
+
+/* ===== BUSINESS CARD ===== */
+.bcard{width:90mm;height:55mm;padding:12mm 8mm;color:white}
+.bcard.front{background:#0D2137}
+.bcard.back{background:white;color:#0D2137;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bcard .logo-circle{width:40px;height:40px;background:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;margin-bottom:8px;position:relative}
+.bcard .logo-circle::after{content:'☀';position:absolute;top:-2px;right:-2px;font-size:10px;color:#E8A820}
+.bcard .name{font-size:16px;font-weight:700;color:#E8A820;margin-top:10px}
+.bcard .title{font-size:9px;margin-top:2px;opacity:.7}
+.bcard .title-th{font-family:'Noto Sans Thai';font-size:8px;opacity:.5;margin-top:1px}
+.bcard .contact{font-size:7px;margin-top:12px;line-height:1.8;opacity:.6}
+.bcard.back .brand{font-size:28px;font-weight:700;color:#0D2137;letter-spacing:3px}
+.bcard.back .tagline{font-size:9px;color:#E8A820;margin-top:6px;font-weight:600}
+.bcard.back .tagline-th{font-family:'Noto Sans Thai';font-size:9px;color:#0D2137;margin-top:2px;opacity:.5}
+.bcard.back .location{font-family:'Noto Sans Thai';font-size:7px;color:#888;margin-top:8px}
+.bcard.back .web{font-size:8px;color:#0D2137;margin-top:4px;font-weight:600}
+
+/* ===== VEHICLE MAGNET ===== */
+.vehicle-magnet{width:600px;height:300px;background:#0D2137;display:flex;align-items:center;padding:30px 40px;gap:30px;color:white}
+.vehicle-magnet .left{flex:1}
+.vehicle-magnet .logo-big{font-size:48px;font-weight:700}
+.vehicle-magnet .logo-big span{color:#E8A820}
+.vehicle-magnet .sub{font-size:12px;margin-top:4px;opacity:.6}
+.vehicle-magnet .sub-th{font-family:'Noto Sans Thai';font-size:11px;margin-top:2px;opacity:.4}
+.vehicle-magnet .right{text-align:right}
+.vehicle-magnet .phone{font-size:20px;font-weight:700;color:#E8A820}
+.vehicle-magnet .web{font-size:11px;margin-top:4px;opacity:.6}
+.vehicle-magnet .service{font-family:'Noto Sans Thai';font-size:11px;margin-top:6px;opacity:.5}
+
+/* ===== TSHIRT BACK ===== */
+.tshirt-back{width:400px;height:500px;background:#0D2137;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;text-align:center;gap:8px}
+.tshirt-back .brand{font-size:36px;font-weight:700;letter-spacing:4px}
+.tshirt-back .sub{font-size:14px;opacity:.6;letter-spacing:2px}
+.tshirt-back .sub-th{font-family:'Noto Sans Thai';font-size:13px;color:#E8A820;margin-top:4px}
+.tshirt-back .logo-bottom{width:50px;height:50px;background:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;margin-top:20px;position:relative}
+.tshirt-back .logo-bottom::after{content:'☀';position:absolute;top:-3px;right:-3px;font-size:12px;color:#E8A820}
+
+/* ===== HARD HAT STICKER ===== */
+.hardhat-sticker{width:200px;height:80px;background:#0D2137;border-radius:8px;display:flex;align-items:center;padding:10px 16px;gap:10px;color:white}
+.hardhat-sticker .tm{font-size:24px;font-weight:700}
+.hardhat-sticker .text{font-size:10px;line-height:1.5}
+.hardhat-sticker .text .th{font-family:'Noto Sans Thai';font-size:9px;opacity:.6}
+
+/* ===== VEST BACK ===== */
+.vest-back{width:400px;height:200px;background:#0D2137;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;text-align:center;border:3px solid #E8A820}
+.vest-back .brand{font-size:28px;font-weight:700;letter-spacing:3px}
+.vest-back .team{font-size:11px;margin-top:6px;opacity:.7;letter-spacing:1px}
+.vest-back .team-th{font-family:'Noto Sans Thai';font-size:12px;color:#E8A820;margin-top:4px}
+
+/* ===== EQUIPMENT STICKERS ===== */
+.sticker-set{display:flex;gap:16px;flex-wrap:wrap;padding:20px;background:#f5f5f5}
+.sticker{border-radius:8px;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:12px}
+.sticker.oval{width:240px;height:100px;background:#0D2137;color:white;border-radius:50px}
+.sticker.oval .main{font-size:11px;font-weight:700;letter-spacing:1px}
+.sticker.oval .phone{font-size:10px;color:#E8A820;margin-top:4px}
+.sticker.oval .th{font-family:'Noto Sans Thai';font-size:9px;opacity:.5;margin-top:2px}
+.sticker.warning{width:200px;height:80px;background:#E85D3A;color:white;border-radius:4px}
+.sticker.warning .main{font-size:10px;font-weight:700}
+.sticker.warning .th{font-family:'Noto Sans Thai';font-size:9px;margin-top:4px}
+.sticker.circle{width:80px;height:80px;background:#0D2137;color:white;border-radius:50%;font-weight:700;font-size:20px}
+.sticker.qr{width:120px;height:120px;background:white;color:#0D2137;border:2px solid #0D2137;border-radius:8px}
+.sticker.qr .label{font-size:8px;font-weight:600;margin-top:6px}
+.sticker.qr .th{font-family:'Noto Sans Thai';font-size:8px;color:#888}
+
+/* ===== SITE BANNER ===== */
+.site-banner{width:800px;height:200px;background:#0D2137;display:flex;align-items:center;padding:20px 30px;color:white;border:4px solid #E8A820;gap:24px}
+.site-banner .left{flex-shrink:0}
+.site-banner .left .tm{font-size:40px;font-weight:700}
+.site-banner .left .energy{font-size:14px;color:#E8A820;letter-spacing:2px}
+.site-banner .center{flex:1;text-align:center}
+.site-banner .center .en{font-size:18px;font-weight:700;color:#E8A820;letter-spacing:1px}
+.site-banner .center .th{font-family:'Noto Sans Thai';font-size:14px;margin-top:6px}
+.site-banner .right{text-align:right;font-size:10px;opacity:.7;line-height:1.8}
+.site-banner .right .phone{font-size:14px;font-weight:700;color:#E8A820}
+
+/* ===== LANYARD ===== */
+.badge{width:86mm;height:54mm;background:white;border:2px solid #0D2137;border-radius:4px;padding:8mm;color:#0D2137;position:relative}
+.badge .header{background:#0D2137;color:white;padding:4px 8px;font-size:10px;font-weight:700;letter-spacing:1px;position:absolute;top:0;left:0;right:0;text-align:center}
+.badge .photo{width:22mm;height:28mm;background:#eee;border:1px solid #ddd;margin-top:14mm;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa;float:left;margin-right:8mm}
+.badge .info{margin-top:16mm}
+.badge .info .name{font-size:14px;font-weight:700}
+.badge .info .role{font-size:9px;color:#888;margin-top:2px}
+.badge .info .role-th{font-family:'Noto Sans Thai';font-size:9px;color:#E8A820;margin-top:1px}
+.badge .info .id{font-size:8px;color:#aaa;margin-top:6px}
+.badge .footer{position:absolute;bottom:3mm;left:8mm;right:8mm;font-size:7px;color:#aaa;text-align:center;font-family:'Noto Sans Thai'}
+
+@media print{
+  body{background:white;padding:0}
+  .template-label,.print-btn,h1,p.subtitle{display:none}
+  .template{margin:10px auto;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<h1>TM Energy — Print-Ready Templates</h1>
+<p class="subtitle">תבניות מוכנות להדפסה עם כיתוב מדויק EN + TH. לחץ Print ושלח לבית דפוס.</p>
+
+<!-- BUSINESS CARD FRONT -->
+<div class="template-label">BUSINESS CARD — FRONT (90×55mm)</div>
+<div class="template bcard front">
+  <div class="logo-circle">TM</div>
+  <div class="name">KANIEL TORDJMAN</div>
+  <div class="title">CEO & Co-Founder</div>
+  <div class="title-th">ผู้ร่วมก่อตั้งและประธานบริหาร</div>
+  <div class="contact">
+    +66 62 348 0119<br>
+    k@kanielt.com<br>
+    tm-energy.co.th
+  </div>
+</div>
+<button class="print-btn" onclick="window.print()">🖨 Print</button>
+
+<!-- BUSINESS CARD BACK -->
+<div class="template-label">BUSINESS CARD — BACK</div>
+<div class="template bcard back">
+  <div class="brand">TM ENERGY</div>
+  <div class="tagline">OWN YOUR ENERGY</div>
+  <div class="tagline-th">เป็นเจ้าของพลังงาน</div>
+  <div class="location">เกาะพะงัน สุราษฎร์ธานี · Koh Phangan, Thailand</div>
+  <div class="web">tm-energy.co.th</div>
+</div>
+
+<!-- VEHICLE MAGNET -->
+<div class="template-label">VEHICLE DOOR MAGNET (60×30cm)</div>
+<div class="template vehicle-magnet">
+  <div class="left">
+    <div class="logo-big">TM <span>ENERGY</span></div>
+    <div class="sub">SOLAR POWER SOLUTIONS</div>
+    <div class="sub-th">โซลูชันพลังงานแสงอาทิตย์</div>
+  </div>
+  <div class="right">
+    <div class="phone">062-348-0119</div>
+    <div class="web">tm-energy.co.th</div>
+    <div class="service">ติดตั้งโซลาร์เซลล์ เกาะพะงัน</div>
+  </div>
+</div>
+
+<!-- T-SHIRT BACK -->
+<div class="template-label">T-SHIRT BACK PRINT</div>
+<div class="template tshirt-back">
+  <div class="brand">TM ENERGY</div>
+  <div class="sub">SOLAR POWER SOLUTIONS</div>
+  <div class="sub-th">ทีเอ็ม เอเนอร์จี · พลังงานแสงอาทิตย์</div>
+  <div class="logo-bottom">TM</div>
+</div>
+
+<!-- HARD HAT STICKER -->
+<div class="template-label">HARD HAT STICKER (side)</div>
+<div class="template hardhat-sticker">
+  <div class="tm">TM</div>
+  <div class="text">
+    ENERGY<br>
+    <span class="th">ทีเอ็ม เอเนอร์จี</span>
+  </div>
+</div>
+
+<!-- SAFETY VEST BACK -->
+<div class="template-label">SAFETY VEST — BACK PRINT</div>
+<div class="template vest-back">
+  <div class="brand">TM ENERGY</div>
+  <div class="team">SOLAR INSTALLATION TEAM</div>
+  <div class="team-th">ทีมติดตั้งระบบโซลาร์</div>
+</div>
+
+<!-- EQUIPMENT STICKERS -->
+<div class="template-label">EQUIPMENT STICKERS SET</div>
+<div class="template sticker-set">
+  <div class="sticker oval">
+    <div class="main">INSTALLED BY TM ENERGY</div>
+    <div class="th">ติดตั้งโดย TM Energy</div>
+    <div class="phone">062-348-0119</div>
+  </div>
+  <div class="sticker circle">TM</div>
+  <div class="sticker warning">
+    <div class="main">⚠ SOLAR SYSTEM<br>DO NOT COVER</div>
+    <div class="th">ระบบโซลาร์ — ห้ามปิดทับ</div>
+  </div>
+  <div class="sticker qr">
+    <div style="width:60px;height:60px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:8px;color:#aaa">QR CODE</div>
+    <div class="label">TM ENERGY SERVICE</div>
+    <div class="th">บริการซ่อมบำรุง</div>
+  </div>
+</div>
+
+<!-- SITE BANNER -->
+<div class="template-label">CONSTRUCTION SITE BANNER (3000×1000mm)</div>
+<div class="template site-banner">
+  <div class="left">
+    <div class="tm">TM</div>
+    <div class="energy">ENERGY</div>
+  </div>
+  <div class="center">
+    <div class="en">SOLAR INSTALLATION IN PROGRESS</div>
+    <div class="th">กำลังติดตั้งระบบโซลาร์เซลล์</div>
+  </div>
+  <div class="right">
+    <div class="phone">062-348-0119</div>
+    tm-energy.co.th<br>
+    <span style="font-family:'Noto Sans Thai'">เกาะพะงัน สุราษฎร์ธานี</span>
+  </div>
+</div>
+
+<!-- EMPLOYEE BADGE -->
+<div class="template-label">EMPLOYEE ID BADGE (86×54mm)</div>
+<div class="template badge">
+  <div class="header">TM ENERGY</div>
+  <div class="photo">PHOTO</div>
+  <div class="info">
+    <div class="name">[Employee Name]</div>
+    <div class="role">Solar Installation Technician</div>
+    <div class="role-th">ช่างติดตั้งระบบโซลาร์</div>
+    <div class="id">ID: TME-001 · เกาะพะงัน</div>
+  </div>
+  <div class="footer">TM Energy · เกาะพะงัน สุราษฎร์ธานี · 062-348-0119</div>
+</div>
+
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "תבניות מוכנות להדפסה עם כיתוב מדויק EN + TH. לחץ Print ושלח לבית דפוס.": {en: "Print-ready templates with exact EN + TH text. Click Print and send to the print shop.", th: "แม่แบบพร้อมพิมพ์พร้อมข้อความที่แม่นยำ EN + TH คลิก Print และส่งไปยังโรงพิมพ์"},
+};
+</script>
+<script src="../tm-lang.js"></script>
+</body>
+</html>

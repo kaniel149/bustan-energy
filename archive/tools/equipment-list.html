@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Ko Phangan Solar — רשימת ציוד וכלי עבודה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--night);color:var(--white);overflow:hidden;height:100vh}
+.slide-container{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:36px 50px;opacity:0;transform:translateX(100px);transition:all .6s cubic-bezier(.23,1,.32,1);pointer-events:none;overflow-y:auto;padding-bottom:70px}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}.slide.exit{opacity:0;transform:translateX(-100px)}
+.slide-cover{background:linear-gradient(135deg,var(--ocean),var(--night));justify-content:center;align-items:center;text-align:center}
+.slide-dark{background:var(--night)}.slide-ocean{background:linear-gradient(180deg,var(--ocean),var(--night))}
+.slide-reef{background:linear-gradient(135deg,#0D3B2E,var(--night))}.slide-gold{background:linear-gradient(135deg,#3D2E0A,var(--night))}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:10px 30px;background:rgba(13,33,55,.95);backdrop-filter:blur(10px);border-top:1px solid rgba(232,168,32,.2);z-index:100}
+.nav-btn{background:none;border:2px solid var(--gold);color:var(--gold);padding:7px 22px;border-radius:6px;cursor:pointer;font-family:'Heebo';font-size:13px;font-weight:500;transition:all .3s}
+.nav-btn:hover{background:var(--gold);color:var(--night)}.nav-btn:disabled{opacity:.3;cursor:default}
+.slide-counter{font-family:'Space Grotesk';color:rgba(255,255,255,.5);font-size:13px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--gold);transition:width .4s;z-index:101}
+.toc-btn{position:fixed;top:16px;left:16px;background:rgba(232,168,32,.15);border:1px solid rgba(232,168,32,.3);color:var(--gold);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:102}
+.toc-btn:hover{background:var(--gold);color:var(--night)}
+.toc-panel{position:fixed;top:0;left:-340px;width:340px;height:100vh;background:rgba(13,33,55,.98);backdrop-filter:blur(20px);border-right:1px solid rgba(232,168,32,.2);z-index:103;transition:left .4s;padding:50px 24px 24px;overflow-y:auto}
+.toc-panel.open{left:0}
+.toc-item{padding:8px 14px;margin:3px 0;border-radius:8px;cursor:pointer;font-size:13px;color:rgba(255,255,255,.7);transition:all .2s;display:flex;align-items:center;gap:8px}
+.toc-item:hover{background:rgba(232,168,32,.1);color:var(--white)}.toc-item.active{background:rgba(232,168,32,.2);color:var(--gold)}
+.toc-num{font-family:'Space Grotesk';font-weight:700;font-size:11px;color:var(--gold);min-width:22px}
+h1{font-size:clamp(28px,4.5vw,48px);font-weight:900;line-height:1.1;margin-bottom:12px}
+h2{font-size:clamp(18px,2.5vw,28px);font-weight:700;margin-bottom:16px}
+h3{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px;margin-top:12px}
+.gold{color:var(--gold)}.reef-text{color:#2ED89A}.coral-text{color:var(--coral)}.blue-text{color:#6496FF}
+.section-num{font-family:'Space Grotesk';font-size:60px;font-weight:700;color:rgba(232,168,32,.08);position:absolute;top:10px;right:30px}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid rgba(255,255,255,.08);margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:rgba(232,168,32,.12);color:var(--gold);padding:8px 12px;text-align:right;font-weight:600;white-space:nowrap}
+td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
+tr:hover{background:rgba(255,255,255,.02)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:12px}
+.big-num{font-family:'Space Grotesk';font-size:clamp(20px,2.8vw,32px);font-weight:700;color:var(--gold)}
+.stat-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}
+.alert{padding:12px 16px;border-radius:8px;font-size:12px;line-height:1.6}
+.alert-info{background:rgba(100,150,255,.08);border:1px solid rgba(100,150,255,.2)}
+.alert-success{background:rgba(46,216,154,.08);border:1px solid rgba(46,216,154,.2)}
+.alert-warn{background:rgba(232,168,32,.08);border:1px solid rgba(232,168,32,.2)}
+.lazada-link{display:inline-block;background:rgba(232,93,58,.12);border:1px solid rgba(232,93,58,.25);color:var(--coral);padding:3px 10px;border-radius:4px;font-size:11px;text-decoration:none;transition:all .2s;margin-top:4px}
+.lazada-link:hover{background:var(--coral);color:var(--white)}
+.qty-badge{display:inline-block;background:rgba(232,168,32,.15);color:var(--gold);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.priority-high{border-right:3px solid var(--coral)}
+.priority-med{border-right:3px solid var(--gold)}
+.priority-low{border-right:3px solid #2ED89A}
+@media(max-width:768px){.two-col,.three-col{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+
+/* TM Energy Branding */
+.tm-logo-header{position:fixed;top:16px;right:20px;z-index:200;display:flex;align-items:center;gap:10px}
+.tm-logo-header img{height:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.tm-logo-header .brand-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:1px}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+<div class="tm-logo-header">
+  <span class="brand-text">TM ENERGY</span>
+  <img src="visuals/tm-energy-logo.png" alt="TM Energy">
+</div>
+
+
+
+
+<div class="progress-bar" id="progress"></div>
+<button class="toc-btn" onclick="toggleTOC()">☰</button>
+<div class="toc-panel" id="tocPanel"><div id="tocList"></div></div>
+<div class="slide-container">
+
+<!-- SLIDE 1: Cover -->
+<div class="slide slide-cover" data-title="שער">
+  <h1>🛠️ רשימת ציוד וכלי עבודה</h1>
+  <p style="font-size:18px;color:rgba(255,255,255,.7);max-width:600px">Ko Phangan Solar Division — Shopping List</p>
+  <div style="margin-top:24px;font-size:14px;color:var(--gold)">
+    <strong>הון ראשוני נדרש: ~฿942K (~$26K)</strong><br>
+    <span style="color:rgba(255,255,255,.5)">כלי עבודה + מדידה + פריפריה IT בלבד | רכבים על TM | BYOL</span>
+  </div>
+  <div class="stat-grid" style="max-width:700px;margin-top:24px">
+    <div><div class="big-num">3</div><div class="stat-label">צוותי התקנה</div></div>
+    <div><div class="big-num">TM</div><div class="stat-label">רכבים על בסיס קיים</div></div>
+    <div><div class="big-num">BYOL</div><div class="stat-label">כל אחד עם המחשב שלו</div></div>
+    <div><div class="big-num">Lazada</div><div class="stat-label">ספק ראשי</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Summary Budget -->
+<div class="slide slide-dark" data-title="סיכום תקציב">
+  <span class="section-num">01</span>
+  <h2>💰 סיכום תקציב — לפי קטגוריה</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>קטגוריה</th><th>תקציב</th><th>% מסה"כ</th><th>הערה</th></tr>
+      <tr class="priority-low"><td><strong>רכבים</strong></td><td style="opacity:.5">על TM</td><td>—</td><td style="color:#2ED89A">מתחילים עם רכבי TM, נוסיף לפי צורך</td></tr>
+      <tr class="priority-high"><td><strong>כלי עבודה חשמליים</strong></td><td><strong>฿390K</strong></td><td>41.4%</td><td style="color:var(--coral)">קריטי</td></tr>
+      <tr class="priority-low"><td><strong>ציוד בטיחות (בסיסי)</strong></td><td><strong>฿30K</strong></td><td>3.2%</td><td style="color:#2ED89A">לפי מה שצריך באי, לא over-engineer</td></tr>
+      <tr class="priority-med"><td><strong>מכשירי מדידה + QA</strong></td><td><strong>฿180K</strong></td><td>19.1%</td><td style="color:var(--gold)">גבוה</td></tr>
+      <tr class="priority-med"><td><strong>רחפנים + תוכנה</strong></td><td><strong>฿102K</strong></td><td>10.8%</td><td style="color:var(--gold)">גבוה</td></tr>
+      <tr class="priority-low"><td><strong>מחסן + לוגיסטיקה</strong></td><td><strong>฿180K</strong></td><td>19.1%</td><td style="color:#2ED89A">בינוני</td></tr>
+      <tr class="priority-low"><td><strong>פריפריה IT (BYOL)</strong></td><td><strong>฿60K</strong></td><td>6.4%</td><td style="color:#2ED89A">מסכים, זרועות, docking, עכבר, מקלדת</td></tr>
+      <tr style="background:rgba(232,168,32,.12)"><td><strong class="gold">סה"כ</strong></td><td><strong class="gold">~฿942K</strong></td><td><strong>100%</strong></td><td><strong>~$26K</strong></td></tr>
+    </table>
+  </div>
+  <div class="alert alert-warn">
+    <strong>שים לב:</strong> מלאי (פאנלים, אינוורטרים, קונסטרוקציה) <strong>לא</strong> נכלל כאן — ממומן מהזמנות ראשונות של TM + מימון בנקאי ללקוחות.
+  </div>
+</div>
+
+<!-- SLIDE 3: Vehicles -->
+<div class="slide slide-ocean" data-title="רכבים">
+  <span class="section-num">02</span>
+  <h2>🚛 רכבים — על בסיס צי TM Energy</h2>
+  <div class="two-col">
+    <div>
+      <div class="alert alert-success" style="font-size:14px">
+        <strong>גישה: מתחילים עם מה שיש ל-TM</strong><br>
+        הדיוויזן הסולארי משתמש ברכבי TM Energy הקיימים. אם ובכמה שהפעילות גדלה ויש צורך — נוסיף רכבים.
+      </div>
+      <h3 style="margin-top:12px">מה צריך מרכב לעבודת סולארית</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>דרישה</th><th>למה</th></tr>
+          <tr><td>מגש אחורי / Pickup</td><td>העמסת פאנלים, rails, ציוד</td></tr>
+          <tr><td>4WD (עדיף)</td><td>דרכי עפר בקופנגן</td></tr>
+          <tr><td>ארגז כלים (Toolbox)</td><td>אחסון כלים מאורגן ברכב</td></tr>
+          <tr><td>מגנטים/סטיקרים לוגו</td><td>מיתוג + מקצועיות</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="alert alert-warn">
+        <strong>אם/כשנצטרך רכב נוסף:</strong><br>
+        • <strong>Toyota Hilux Revo</strong> משומש ~฿250K<br>
+        • <strong>Facebook Marketplace</strong> — Koh Phangan / Surat Thani<br>
+        • <strong>Kaidee.com</strong> — אתר יד שנייה תאילנדי<br>
+        • <strong>Toyota Used Car</strong> — סוכנות רשמית Surat Thani
+      </div>
+      <div class="alert alert-info" style="margin-top:8px">
+        <strong>אביזרים לרכב (אם צריך):</strong><br>
+        • ארגז כלים אלומיניום: ~฿15K<br>
+        • GPS Tracker: ~฿2K<br>
+        • Dashcam: ~฿3K<br>
+        <a href="https://www.lazada.co.th/tag/car-accessories-toyota-hilux/" target="_blank" class="lazada-link">Lazada — Hilux Accessories</a>
+      </div>
+      <div style="margin-top:12px;text-align:center">
+        <div class="big-num" style="color:#2ED89A">฿0</div>
+        <div class="stat-label">עלות רכבים בהון ראשוני</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Power Tools -->
+<div class="slide slide-dark" data-title="כלי עבודה חשמליים">
+  <span class="section-num">03</span>
+  <h2>⚡ כלי עבודה חשמליים — 3 סטים לצוותים</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>פריט</th><th>כמות</th><th>מחיר/יח׳</th><th>סה"כ</th><th>לינק Lazada</th></tr>
+      <tr><td><strong>Makita 18V Impact Driver + Drill Combo Kit</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">DTD172 + DDF487, 2 סוללות, מטען</span></td><td>3</td><td>฿12K</td><td>฿36K</td><td><a href="https://www.lazada.co.th/tag/makita-cordless-impact-drill/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Bosch Angle Grinder GWS 900-100S (4")</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">900W, חיתוך rails + conduit</span></td><td>3</td><td>฿2.5K</td><td>฿7.5K</td><td><a href="https://www.lazada.co.th/tag/bosch-angle-grinder/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>MC4 Crimping Tool Kit (מקצועי)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">crimper + stripper + spanner wrench</span></td><td>6</td><td>฿1.5K</td><td>฿9K</td><td><a href="https://www.lazada.co.th/products/mc4-tool-mc4-crimping-tool-mc4-connector-i597120586.html" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Cable Cutter (גדול, עד 240mm²)</strong></td><td>3</td><td>฿2K</td><td>฿6K</td><td><a href="https://www.lazada.co.th/tag/steel-cable-cutter/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Wire Stripper אוטומטי</strong></td><td>6</td><td>฿800</td><td>฿4.8K</td><td><a href="https://www.lazada.co.th/tag/wire-stripper/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Hilti / Bosch Rotary Hammer (SDS+)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">לקידוח בטון גגות</span></td><td>3</td><td>฿8K</td><td>฿24K</td><td><a href="https://www.lazada.co.th/shop-hand-tools-&-accessories/hilti/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Torque Wrench Set</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">להידוק clamps לפי מפרט</span></td><td>3</td><td>฿3K</td><td>฿9K</td><td><a href="https://www.lazada.co.th/tag/angle-grinder-set/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Socket Set + Allen Key Set</strong></td><td>3</td><td>฿2K</td><td>฿6K</td><td></td></tr>
+      <tr><td><strong>Rivnut Gun (M6/M8)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">לחיבורי קונסטרוקציה</span></td><td>3</td><td>฿3K</td><td>฿9K</td><td></td></tr>
+      <tr><td><strong>Silicon Gun + Sealant Kit</strong></td><td>6</td><td>฿500</td><td>฿3K</td><td></td></tr>
+      <tr><td><strong>Extension Cord Industrial (30m)</strong></td><td>6</td><td>฿1.5K</td><td>฿9K</td><td></td></tr>
+      <tr><td><strong>Cable Tie Gun + אזיקונים (bulk)</strong></td><td>3</td><td>฿1K</td><td>฿3K</td><td></td></tr>
+      <tr><td><strong>Roof Anchor Points (נקודות עיגון)</strong></td><td>20</td><td>฿800</td><td>฿16K</td><td></td></tr>
+      <tr><td><strong>סולם מתקפל אלומיניום (6m)</strong></td><td>3</td><td>฿5K</td><td>฿15K</td><td></td></tr>
+      <tr><td><strong>ארגז כלים מקצועי (נייד)</strong></td><td>6</td><td>฿2.5K</td><td>฿15K</td><td></td></tr>
+      <tr><td><strong>סט מפתחות ברגים + שקעים</strong></td><td>3</td><td>฿3K</td><td>฿9K</td><td></td></tr>
+      <tr><td><strong>כלים שונים (פלסים, סרטי מידה, סכינים)</strong></td><td>—</td><td>—</td><td>฿8K</td><td></td></tr>
+      <tr style="background:rgba(232,168,32,.08)"><td colspan="3"><strong>סה"כ כלי עבודה</strong></td><td colspan="2"><strong class="gold">~฿390K</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 5: Safety Equipment -->
+<div class="slide slide-reef" data-title="ציוד בטיחות">
+  <span class="section-num">04</span>
+  <h2>🦺 ציוד בטיחות — בסיסי, לפי מה שצריך באי</h2>
+  <div class="two-col">
+    <div>
+      <div class="alert alert-info" style="margin-bottom:12px">
+        <strong>גישה:</strong> לא over-engineering — קונים מה שבאמת צריך לפי המציאות בקופנגן. נוסיף תוך כדי עבודה לפי הצורך.
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>כמות</th><th>מחיר</th><th>לינק</th></tr>
+          <tr><td><strong>כפפות עבודה (חשמל)</strong></td><td>10 זוגות</td><td>฿2K</td><td></td></tr>
+          <tr><td><strong>משקפי בטיחות UV</strong></td><td>6</td><td>฿1.8K</td><td></td></tr>
+          <tr><td><strong>קסדות בטיחות</strong></td><td>6</td><td>฿3K</td><td><a href="https://www.lazada.co.th/tag/construction-safety-helmet/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+          <tr><td><strong>ערכת עזרה ראשונה</strong></td><td>2</td><td>฿3K</td><td></td></tr>
+          <tr><td><strong>מטף כיבוי אש (ABC)</strong></td><td>3</td><td>฿3K</td><td></td></tr>
+          <tr><td><strong>Safety Harness (לגגות גבוהים)</strong></td><td>3</td><td>฿6K</td><td><a href="https://www.lazada.co.th/tag/safety-harness/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+          <tr><td><strong>אפוד זוהר (Hi-Vis)</strong></td><td>6</td><td>฿1.2K</td><td></td></tr>
+          <tr><td><strong>Lockout/Tagout Kit</strong></td><td>2</td><td>฿4K</td><td></td></tr>
+          <tr><td><strong>מכשיר קשר (Walkie-Talkie)</strong></td><td>4</td><td>฿4K</td><td></td></tr>
+          <tr><td><strong>קרם הגנה + מים</strong></td><td>—</td><td>฿2K</td><td></td></tr>
+          <tr style="background:rgba(232,168,32,.08)"><td colspan="2"><strong>סה"כ בטיחות</strong></td><td colspan="2"><strong class="gold">~฿30K</strong></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="alert alert-warn">
+        <strong>מה לא קונים עכשיו:</strong><br>
+        • נעלי בטיחות — כל עובד מביא שלו<br>
+        • רשתות גג — רוב הגגות באי נמוכים<br>
+        • חבלי בטיחות heavy-duty — לפי הצורך<br>
+        • שלטי אזהרה — מדפיסים מקומית
+      </div>
+      <div class="alert alert-success" style="margin-top:8px">
+        <strong>הגישה:</strong> באי — העבודה שונה מפרויקט תעשייתי. הגגות בדרך כלל נמוכים, האקלים חם, הצוות קטן. קונים בסיס, משלימים תוך כדי.
+      </div>
+      <div style="margin-top:12px;text-align:center">
+        <div class="big-num" style="color:#2ED89A">฿30K</div>
+        <div class="stat-label">במקום ฿120K — חיסכון של 75%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Testing & Measurement -->
+<div class="slide slide-dark" data-title="מכשירי מדידה">
+  <span class="section-num">05</span>
+  <h2>🔬 מכשירי מדידה + QA — ציוד בדיקות</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>פריט</th><th>כמות</th><th>מחיר/יח׳</th><th>סה"כ</th><th>שימוש</th><th>לינק Lazada</th></tr>
+      <tr><td><strong>FLIR TG165-X Thermal Camera</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">80×60 IR, -25°C to 380°C</span></td><td>1</td><td>฿35K</td><td>฿35K</td><td>זיהוי hot spots בפאנלים</td><td><a href="https://www.lazada.co.th/products/flir-tg165-x-thermal-imaging-camera-with-bullseye-laser-commercial-grade-infrared-camera-for-building-inspection-hvac-and-electrical-i5179567217.html" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Fluke 1587 FC Insulation Multimeter</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">2-in-1: מגר + מולטימטר</span></td><td>2</td><td>฿18K</td><td>฿36K</td><td>בדיקת בידוד + מתח DC/AC</td><td><a href="https://www.lazada.co.th/products/fluke-1587-fc2-in-1-insulation-multimeter-i2475185822.html" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Fluke 101 Digital Multimeter</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">AC/DC 600V, compact</span></td><td>4</td><td>฿2.5K</td><td>฿10K</td><td>מדידה יומית בשטח</td><td><a href="https://www.lazada.co.th/products/fluke-101-kit-esp-digital-multimeter-acdc-voltage-600v-and-ac-600mv-i5896922885.html" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Solar IV Curve Tracer</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">PV200/PV210 או מקביל</span></td><td>1</td><td>฿25K</td><td>฿25K</td><td>אישור ביצועי string</td><td></td></tr>
+      <tr><td><strong>Earth Ground Resistance Tester</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">DY4100 או Fluke 1625-2</span></td><td>2</td><td>฿4K</td><td>฿8K</td><td>בדיקת הארקה</td><td><a href="https://www.lazada.co.th/tag/earth-ground-tester/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Clamp Meter (AC/DC 1000A)</strong></td><td>3</td><td>฿3K</td><td>฿9K</td><td>מדידת זרם ללא ניתוק</td><td><a href="https://www.lazada.co.th/tag/fluke-multimeter/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Irradiance Meter (Solar)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">TES-1333R או מקביל</span></td><td>2</td><td>฿5K</td><td>฿10K</td><td>מדידת קרינה לבדיקת ביצועים</td><td><a href="https://www.lazada.co.th/tag/solar-panel-multimeter/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+      <tr><td><strong>Laser Distance Meter (100m)</strong></td><td>3</td><td>฿2.5K</td><td>฿7.5K</td><td>מדידות גג מהירות</td><td></td></tr>
+      <tr><td><strong>Inclinometer / Tilt Meter</strong></td><td>3</td><td>฿1K</td><td>฿3K</td><td>זווית גג + פאנלים</td><td></td></tr>
+      <tr><td><strong>Compass + Roof Pitch Tool</strong></td><td>3</td><td>฿500</td><td>฿1.5K</td><td>כיוון + שיפוע</td><td></td></tr>
+      <tr><td><strong>Label Printer (P-Touch)</strong></td><td>2</td><td>฿3K</td><td>฿6K</td><td>תיוג כבלים + לוחות</td><td></td></tr>
+      <tr style="background:rgba(232,168,32,.08)"><td colspan="3"><strong>סה"כ מכשירי מדידה</strong></td><td colspan="3"><strong class="gold">~฿180K</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 7: Drones + Software -->
+<div class="slide slide-gold" data-title="רחפנים + תוכנה">
+  <span class="section-num">06</span>
+  <h2>🚁 רחפנים + תוכנה — סקר ותכנון</h2>
+  <div class="two-col">
+    <div>
+      <h3>רחפנים</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>כמות</th><th>מחיר</th><th>לינק</th></tr>
+          <tr><td><strong>DJI Mini 4 Pro (RC 2)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">4K/60fps, 249g, obstacle sensing<br>סקרי גג + צילום case studies</span></td><td>2</td><td>฿35K × 2 = ฿70K</td><td><a href="https://www.lazada.co.th/products/dji-mini-4-pro-drone-i5083121168.html" target="_blank" class="lazada-link">Lazada — DJI Mini 4 Pro</a></td></tr>
+          <tr><td>סוללות נוספות (DJI Mini 4)</td><td>4</td><td>฿8K</td><td><a href="https://www.lazada.co.th/tag/dji-mini-4/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+          <tr><td>ND Filter Set</td><td>2</td><td>฿2K</td><td></td></tr>
+          <tr><td>Landing Pad מתקפל</td><td>2</td><td>฿1K</td><td></td></tr>
+          <tr style="background:rgba(232,168,32,.08)"><td colspan="2"><strong>סה"כ רחפנים</strong></td><td colspan="2"><strong>฿81K</strong></td></tr>
+        </table>
+      </div>
+      <div class="alert alert-info" style="margin-top:8px">
+        <strong>למה Mini 4 Pro?</strong><br>
+        • מתחת ל-250g = <strong>לא צריך רישיון CAAT</strong> בתאילנד<br>
+        • 4K + obstacle avoidance = בטיחות גגות<br>
+        • תמונות ortho לתכנון מערכת<br>
+        • שימוש כפול: סקרי גג + שיווק
+      </div>
+    </div>
+    <div>
+      <h3>רישיונות תוכנה</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>תוכנה</th><th>כמות</th><th>מחיר שנתי</th><th>הערה</th></tr>
+          <tr><td><strong>PVsyst 8 (Premium)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">סימולציית ייצור + shading</span></td><td>2 רישיונות</td><td>฿32K<br><span style="font-size:10px">(CHF 450 × 2)</span></td><td><a href="https://www.lazada.co.th/tag/pvsyst/" target="_blank" class="lazada-link">Lazada</a></td></tr>
+          <tr><td><strong>AutoCAD LT</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">שרטוטי SLD + layout</span></td><td>1</td><td>฿15K/שנה</td><td>או SketchUp Pro</td></tr>
+          <tr><td><strong>DJI FlightHub 2</strong></td><td>1</td><td>฿5K/שנה</td><td>ניהול טיסות</td></tr>
+          <tr><td><strong>Google Workspace Business</strong></td><td>5 users</td><td>฿12K/שנה</td><td>דוא"ל + Drive + Sheets</td></tr>
+          <tr style="background:rgba(232,168,32,.08)"><td colspan="2"><strong>סה"כ תוכנה (שנתי)</strong></td><td colspan="2"><strong>~฿64K/שנה</strong></td></tr>
+        </table>
+      </div>
+      <div class="alert alert-warn" style="margin-top:8px">
+        <strong>הערה:</strong> PVsyst רישיון רשמי מ-pvsyst.com (CHF 450/שנה). גרסאות ב-Lazada הן לא רשמיות — <strong>לקנות ישירות מהיצרן.</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Warehouse & Logistics -->
+<div class="slide slide-dark" data-title="מחסן — צ׳קליסט">
+  <span class="section-num">07</span>
+  <h2>🏭 מחסן — צ׳קליסט ציוד (יש / חסר)</h2>
+  <div class="two-col">
+    <div>
+      <div class="alert alert-info" style="margin-bottom:10px">
+        <strong>לא רשימת קניות — רשימת בדיקה.</strong><br>
+        לעבור על המחסן של TM ולסמן מה יש ומה חסר.
+      </div>
+      <h3>תשתית מחסן</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th style="width:40px">V</th><th>פריט</th><th>כמות נדרשת</th><th>הערה</th></tr>
+          <tr><td>☐</td><td><strong>מדפים תעשייתיים (Pallet Rack)</strong></td><td>5 שורות × 3</td><td>500kg/מדף</td></tr>
+          <tr><td>☐</td><td><strong>מלגזה ידנית (Pallet Jack)</strong></td><td>1</td><td>2.5 טון</td></tr>
+          <tr><td>☐</td><td><strong>עגלת משטחים (Trolley)</strong></td><td>2</td><td></td></tr>
+          <tr><td>☐</td><td><strong>משטחי עץ (Pallets)</strong></td><td>~30</td><td></td></tr>
+          <tr><td>☐</td><td><strong>תאורה LED מספקת</strong></td><td>—</td><td>כל אזור מואר</td></tr>
+          <tr><td>☐</td><td><strong>מאוורר תעשייתי / אוורור</strong></td><td>—</td><td>אקלים חם</td></tr>
+          <tr><td>☐</td><td><strong>סימון רצפה + שלטי אזורים</strong></td><td>—</td><td>A-F zones</td></tr>
+        </table>
+      </div>
+      <h3>אבטחה + בטיחות</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th style="width:40px">V</th><th>פריט</th><th>כמות</th><th>הערה</th></tr>
+          <tr><td>☐</td><td><strong>מצלמות אבטחה</strong></td><td>4 ערוצים</td><td>כניסה + אזור פריקה</td></tr>
+          <tr><td>☐</td><td><strong>כספת (מסמכים + מפתחות)</strong></td><td>1</td><td></td></tr>
+          <tr><td>☐</td><td><strong>מטף כיבוי אש</strong></td><td>2</td><td>ABC</td></tr>
+          <tr><td>☐</td><td><strong>מנעול + אזעקה</strong></td><td>—</td><td></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>ציוד לוגיסטי</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th style="width:40px">V</th><th>פריט</th><th>כמות</th><th>הערה</th></tr>
+          <tr><td>☐</td><td><strong>סרטי קשירה (Ratchet Straps)</strong></td><td>20</td><td>להעמסת פאנלים</td></tr>
+          <tr><td>☐</td><td><strong>כיסויי ברזנט (Tarpaulin)</strong></td><td>10</td><td>הגנה מגשם</td></tr>
+          <tr><td>☐</td><td><strong>ארון כלים מחסן (גדול)</strong></td><td>2</td><td>נעילה</td></tr>
+          <tr><td>☐</td><td><strong>ציוד ניקיון</strong></td><td>—</td><td>מטאטא, דלי, סמרטוטים</td></tr>
+        </table>
+      </div>
+      <h3 style="margin-top:12px">Layout מחסן מומלץ</h3>
+      <div class="card">
+        <div style="font-size:12px;line-height:2">
+          <div>🟨 <strong>אזור A:</strong> פאנלים (מדפים אנכיים)</div>
+          <div>🟦 <strong>אזור B:</strong> אינוורטרים + BOS</div>
+          <div>🟩 <strong>אזור C:</strong> קונסטרוקציה (rails, clamps)</div>
+          <div>🟧 <strong>אזור D:</strong> כבלים + חומרי מתכלה</div>
+          <div>⬜ <strong>אזור E:</strong> כלי עבודה + ציוד בטיחות</div>
+          <div>🟥 <strong>אזור F:</strong> פריקה + העמסה</div>
+        </div>
+      </div>
+      <div class="alert alert-warn" style="margin-top:8px">
+        <strong>המחסן עצמו על TM Energy</strong><br>
+        שכירות על חשבון TM. מה שחסר בפנים — קונים לפי הצ׳קליסט.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: IT & Office -->
+<div class="slide slide-ocean" data-title="IT + משרד">
+  <span class="section-num">08</span>
+  <h2>💻 פריפריה IT — BYOL + תחנות עבודה</h2>
+  <div class="two-col">
+    <div>
+      <div class="alert alert-success" style="margin-bottom:10px">
+        <strong>BYOL — Bring Your Own Laptop</strong><br>
+        כל אחד מגיע עם המחשב שלו. החברה מספקת פריפריה למשרד.
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>פריט</th><th>כמות</th><th>מחיר/יח׳</th><th>סה"כ</th></tr>
+          <tr><td><strong>מסך 27" IPS (Dell/LG)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">QHD 2560×1440, USB-C</span></td><td>4</td><td>฿5K</td><td>฿20K</td></tr>
+          <tr><td><strong>זרוע למסך (Monitor Arm)</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">gas spring, clamp mount</span></td><td>4</td><td>฿1.5K</td><td>฿6K</td></tr>
+          <tr><td><strong>USB-C Docking Station</strong><br><span style="font-size:10px;color:rgba(255,255,255,.5)">HDMI + USB×3 + Ethernet + PD 100W</span></td><td>4</td><td>฿2.5K</td><td>฿10K</td></tr>
+          <tr><td><strong>Logitech MX Master 3S (עכבר)</strong></td><td>4</td><td>฿2.5K</td><td>฿10K</td></tr>
+          <tr><td><strong>Logitech MX Keys Mini (מקלדת)</strong></td><td>4</td><td>฿2K</td><td>฿8K</td></tr>
+          <tr><td><strong>Router WiFi 6 + UPS</strong></td><td>1</td><td>—</td><td>฿3K</td></tr>
+          <tr><td><strong>מדפסת A3 צבעונית</strong></td><td>1</td><td>—</td><td>฿3K</td></tr>
+          <tr style="background:rgba(232,168,32,.08)"><td colspan="3"><strong>סה"כ פריפריה IT</strong></td><td><strong class="gold">~฿60K</strong></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="alert alert-info">
+        <strong>המשרד על TM Energy</strong><br>
+        שכירות, ריהוט, חשמל — על חשבון TM.<br>
+        פריפריה IT — על הדיוויזן הסולארי.
+      </div>
+      <div class="alert alert-warn" style="margin-top:12px">
+        <strong>למה BYOL?</strong><br>
+        • חוסך ฿95K+ על מחשבים<br>
+        • כל אחד עובד על מה שהוא רגיל אליו<br>
+        • Mac / Windows — לא משנה<br>
+        • PVsyst + AutoCAD רצים על כל מחשב חדש
+      </div>
+      <div class="alert alert-info" style="margin-top:8px">
+        <strong>תוכנות חינמיות:</strong><br>
+        • <strong>Helioscope</strong> — תכנון מערכת (free tier)<br>
+        • <strong>Google Earth Pro</strong> — סקר גגות<br>
+        • <strong>Canva Pro</strong> — הצעות מחיר + שיווק<br>
+        • <strong>LINE Official</strong> — תקשורת עם לקוחות
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Purchase Timeline -->
+<div class="slide slide-dark" data-title="לו״ז רכישות">
+  <span class="section-num">09</span>
+  <h2>📅 לו"ז רכישות — לפי חודש הקמה</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>חודש</th><th>רכישות</th><th>תקציב</th><th>אבן דרך</th></tr>
+      <tr style="background:rgba(232,93,58,.08)"><td><strong>חודש 1</strong><br><span class="qty-badge">דחוף</span></td><td>
+        • פריפריה IT: מסכים, זרועות, docking, Logitech<br>
+        • תוכנה: PVsyst × 2, Google Workspace<br>
+        • כלי עבודה: סט ראשון (drill, crimper, multimeter)<br>
+        • ציוד בטיחות בסיסי
+      </td><td>฿250K</td><td>מתחילים סקרי גגות + תכנון ראשון</td></tr>
+      <tr><td><strong>חודש 2</strong></td><td>
+        • כלי עבודה: סט #2 + #3<br>
+        • DJI Mini 4 Pro × 2<br>
+        • מכשירי מדידה (FLIR, Fluke)
+      </td><td>฿450K</td><td>3 צוותים מצוידים + מוכנים לשטח</td></tr>
+      <tr style="background:rgba(232,168,32,.08)"><td><strong>חודש 3</strong></td><td>
+        • ציוד מחסן (מדפים, pallet jack)<br>
+        • ציוד QA (IV curve, earth tester)<br>
+        • השלמות לפי צורך
+      </td><td>฿242K</td><td>מחסן מאובזר + בדיקות QA</td></tr>
+      <tr><td><strong>חודש 4+</strong></td><td>
+        • חומרי מתכלה (חודשי)<br>
+        • רכב נוסף אם צריך<br>
+        • ציוד בטיחות נוסף לפי הצורך
+      </td><td>לפי צורך</td><td>תפעול שוטף</td></tr>
+      <tr style="background:rgba(232,168,32,.12)"><td colspan="2"><strong class="gold">סה"כ הון ראשוני</strong></td><td><strong class="gold">~฿942K</strong></td><td><strong>~$26K</strong></td></tr>
+    </table>
+  </div>
+  <div class="stat-grid" style="margin-top:12px">
+    <div><div class="big-num">~฿942K</div><div class="stat-label">הון ראשוני כולל</div></div>
+    <div><div class="big-num">~$26K</div><div class="stat-label">בדולרים</div></div>
+    <div><div class="big-num">3 חודשים</div><div class="stat-label">עד מוכנות מלאה</div></div>
+    <div><div class="big-num">฿0</div><div class="stat-label">רכבים + מלאי + מחשבים</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Lazada Quick Links -->
+<div class="slide slide-cover" data-title="לינקים מהירים">
+  <span class="section-num">10</span>
+  <h2>🔗 Lazada Quick Links — קטגוריות ראשיות</h2>
+  <div class="three-col" style="max-width:900px;margin:0 auto">
+    <div class="card">
+      <h3>כלי עבודה</h3>
+      <div style="font-size:12px;line-height:2.2">
+        <a href="https://www.lazada.co.th/tag/makita-cordless-impact-drill/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Makita Cordless Drills</a>
+        <a href="https://www.lazada.co.th/tag/bosch-angle-grinder/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Bosch Angle Grinders</a>
+        <a href="https://www.lazada.co.th/tag/mc4-crimping-tool/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">MC4 Crimping Tools</a>
+        <a href="https://www.lazada.co.th/tag/wire-stripper/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Wire Strippers</a>
+        <a href="https://www.lazada.co.th/tag/steel-cable-cutter/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Cable Cutters</a>
+        <a href="https://www.lazada.co.th/shop-hand-tools-&-accessories/hilti/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Hilti Tools</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>מכשירי מדידה</h3>
+      <div style="font-size:12px;line-height:2.2">
+        <a href="https://www.lazada.co.th/flir/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">FLIR Thermal Cameras</a>
+        <a href="https://www.lazada.co.th/shop/fluke/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Fluke Official Store</a>
+        <a href="https://www.lazada.co.th/tag/earth-ground-tester/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Earth Ground Testers</a>
+        <a href="https://www.lazada.co.th/tag/solar-panel-multimeter/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Solar Multimeters</a>
+        <a href="https://www.lazada.co.th/tag/fluke-multimeter/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Fluke Multimeters</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>בטיחות + רחפנים</h3>
+      <div style="font-size:12px;line-height:2.2">
+        <a href="https://www.lazada.co.th/tag/safety-harness/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Safety Harnesses</a>
+        <a href="https://www.lazada.co.th/tag/construction-safety-helmet/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Safety Helmets</a>
+        <a href="https://www.lazada.co.th/tag/fall-arrest-harness/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Fall Arrest Systems</a>
+        <a href="https://www.lazada.co.th/tag/dji-mini-4-pro/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">DJI Mini 4 Pro</a>
+        <a href="https://www.lazada.co.th/tag/solar-panel-mounting/" target="_blank" class="lazada-link" style="display:block;margin:4px 0">Solar Mounting Hardware</a>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-warn" style="max-width:700px;margin:20px auto;text-align:center">
+    <strong>טיפ:</strong> הזמנות מעל ฿5,000 — בדוק מחירים גם ב-<strong>Shopee</strong> ו-<strong>Thai Watsadu</strong> (HomePro). לציוד מקצועי — <strong>Misumi</strong> ו-<strong>RS Components Thailand</strong>.
+  </div>
+</div>
+
+</div><!-- end slides -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">→ הקודם</button>
+  <span class="slide-counter" id="counter"></span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">הבא ←</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function show(n){slides.forEach((s,i)=>{s.classList.remove('active','exit');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('exit')});document.getElementById('counter').textContent=`${n+1} / ${total}`;document.getElementById('progress').style.width=`${((n+1)/total)*100}%`;document.getElementById('prevBtn').disabled=n===0;document.getElementById('nextBtn').disabled=n===total-1;document.querySelectorAll('.toc-item').forEach((t,i)=>{t.classList.toggle('active',i===n)})}
+function navigate(d){current=Math.max(0,Math.min(total-1,current+d));show(current)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')navigate(1);if(e.key==='ArrowRight')navigate(-1);if(e.key==='Escape')toggleTOC()});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)navigate(d>0?1:-1)});
+function toggleTOC(){document.getElementById('tocPanel').classList.toggle('open')}
+document.addEventListener('click',e=>{const p=document.getElementById('tocPanel');if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.classList.contains('toc-btn'))p.classList.remove('open')});
+(function(){const l=document.getElementById('tocList');slides.forEach((s,i)=>{const d=document.createElement('div');d.className='toc-item';d.innerHTML=`<span class="toc-num">${String(i+1).padStart(2,'0')}</span>${s.dataset.title}`;d.onclick=()=>{current=i;show(i);toggleTOC()};l.appendChild(d)})})();
+show(0);
+</script>
+
+<script>
+window.PAGE_TRANSLATIONS = {
+  "רשימת ציוד וכלי עבודה": {en: "Equipment & Tools List", th: "รายการอุปกรณ์และเครื่องมือ"},
+  "הון ראשוני נדרש: ~฿942K (~$26K)": {en: "Initial Capital Required: ~฿942K (~$26K)", th: "เงินทุนเริ่มต้นที่ต้องการ: ~฿942K (~$26K)"},
+  "כלי עבודה + מדידה + פריפריה IT בלבד | רכבים על TM | BYOL": {en: "Tools + Measurement + IT peripherals only | Vehicles on TM | BYOL", th: "เครื่องมือ + เครื่องวัด + อุปกรณ์ IT เท่านั้น | ยานพาหนะโดย TM | BYOL"},
+  "צוותי התקנה": {en: "Installation Teams", th: "ทีมติดตั้ง"},
+  "רכבים על בסיס קיים": {en: "Vehicles on existing fleet", th: "ยานพาหนะจากกองยานที่มีอยู่"},
+  "כל אחד עם המחשב שלו": {en: "Everyone brings their own laptop", th: "ทุกคนนำแล็ปท็อปของตนเอง"},
+  "ספק ראשי": {en: "Primary Supplier", th: "ผู้จัดหาหลัก"},
+  "שער": {en: "Cover", th: "หน้าปก"},
+  "סיכום תקציב": {en: "Budget Summary", th: "สรุปงบประมาณ"},
+  "סיכום תקציב — לפי קטגוריה": {en: "Budget Summary — By Category", th: "สรุปงบประมาณ — ตามหมวดหมู่"},
+  "קטגוריה": {en: "Category", th: "หมวดหมู่"},
+  "תקציב": {en: "Budget", th: "งบประมาณ"},
+  "הערה": {en: "Note", th: "หมายเหตุ"},
+  "רכבים": {en: "Vehicles", th: "ยานพาหนะ"},
+  "מתחילים עם רכבי TM, נוסיף לפי צורך": {en: "Starting with TM vehicles, will add as needed", th: "เริ่มต้นด้วยรถของ TM จะเพิ่มตามความต้องการ"},
+  "כלי עבודה חשמליים": {en: "Power Tools", th: "เครื่องมือไฟฟ้า"},
+  "קריטי": {en: "Critical", th: "สำคัญมาก"},
+  "ציוד בטיחות (בסיסי)": {en: "Safety Equipment (Basic)", th: "อุปกรณ์ความปลอดภัย (พื้นฐาน)"},
+  "לפי מה שצריך באי, לא over-engineer": {en: "Per island needs, no over-engineering", th: "ตามความต้องการของเกาะ ไม่ over-engineer"},
+  "מכשירי מדידה + QA": {en: "Measuring Instruments + QA", th: "เครื่องมือวัด + QA"},
+  "גבוה": {en: "High", th: "สูง"},
+  "רחפנים + תוכנה": {en: "Drones + Software", th: "โดรน + ซอฟต์แวร์"},
+  "מחסן + לוגיסטיקה": {en: "Warehouse + Logistics", th: "คลังสินค้า + โลจิสติกส์"},
+  "בינוני": {en: "Medium", th: "ปานกลาง"},
+  "פריפריה IT (BYOL)": {en: "IT Peripherals (BYOL)", th: "อุปกรณ์ต่อพ่วง IT (BYOL)"},
+  "מסכים, זרועות, docking, עכבר, מקלדת": {en: "Monitors, arms, docking, mouse, keyboard", th: "จอมอนิเตอร์, แขน, docking, เมาส์, คีย์บอร์ด"},
+  'סה"כ': {en: "Total", th: "รวม"},
+  "שים לב:": {en: "Note:", th: "หมายเหตุ:"},
+  "מלאי (פאנלים, אינוורטרים, קונסטרוקציה)": {en: "Inventory (panels, inverters, racking)", th: "สินค้าคงคลัง (แผง, อินเวอร์เตอร์, โครงสร้าง)"},
+  "נכלל כאן — ממומן מהזמנות ראשונות של TM + מימון בנקאי ללקוחות": {en: "not included here — funded from TM's first orders + bank financing for clients", th: "ไม่รวมที่นี่ — ได้รับทุนจากคำสั่งซื้อแรกของ TM + สินเชื่อธนาคารสำหรับลูกค้า"},
+  "רכבים — על בסיס צי TM Energy": {en: "Vehicles — TM Energy Fleet", th: "ยานพาหนะ — กองยาน TM Energy"},
+  "גישה: מתחילים עם מה שיש ל-TM": {en: "Approach: Starting with what TM has", th: "แนวทาง: เริ่มต้นด้วยสิ่งที่ TM มีอยู่"},
+  "הדיוויזן הסולארי משתמש ברכבי TM Energy הקיימים. אם ובכמה שהפעילות גדלה ויש צורך — נוסיף רכבים.": {en: "The solar division uses existing TM Energy vehicles. If and as activity grows and there is a need — we will add vehicles.", th: "แผนกพลังงานแสงอาทิตย์ใช้รถยนต์ TM Energy ที่มีอยู่ หากกิจกรรมเติบโตและมีความต้องการ — จะเพิ่มยานพาหนะ"},
+  "מה צריך מרכב לעבודת סולארית": {en: "Vehicle Requirements for Solar Work", th: "ข้อกำหนดรถยนต์สำหรับงานโซลาร์"},
+  "דרישה": {en: "Requirement", th: "ข้อกำหนด"},
+  "למה": {en: "Why", th: "ทำไม"},
+  "מגש אחורי / Pickup": {en: "Flatbed / Pickup", th: "พื้นท้าย / รถกระบะ"},
+  "העמסת פאנלים, rails, ציוד": {en: "Loading panels, rails, equipment", th: "บรรทุกแผง, ราง, อุปกรณ์"},
+  "4WD (עדיף)": {en: "4WD (preferred)", th: "4WD (แนะนำ)"},
+  "דרכי עפר בקופנגן": {en: "Dirt roads in Koh Phangan", th: "ถนนดินในเกาะพะงัน"},
+  "ארגז כלים (Toolbox)": {en: "Toolbox", th: "กล่องเครื่องมือ"},
+  "אחסון כלים מאורגן ברכב": {en: "Organized tool storage in vehicle", th: "จัดเก็บเครื่องมืออย่างเป็นระเบียบในรถ"},
+  "מגנטים/סטיקרים לוגו": {en: "Logo magnets/stickers", th: "แม่เหล็ก/สติ๊กเกอร์โลโก้"},
+  "מיתוג + מקצועיות": {en: "Branding + professionalism", th: "การสร้างแบรนด์ + ความเป็นมืออาชีพ"},
+  "אם/כשנצטרך רכב נוסף:": {en: "If/when we need an additional vehicle:", th: "หาก/เมื่อต้องการยานพาหนะเพิ่มเติม:"},
+  "משומש ~฿250K": {en: "Used ~฿250K", th: "มือสอง ~฿250K"},
+  "אתר יד שנייה תאילנדי": {en: "Thai second-hand website", th: "เว็บไซต์มือสองของไทย"},
+  "סוכנות רשמית Surat Thani": {en: "Official dealership Surat Thani", th: "ตัวแทนจำหน่ายอย่างเป็นทางการ สุราษฎร์ธานี"},
+  "אביזרים לרכב (אם צריך):": {en: "Vehicle accessories (if needed):", th: "อุปกรณ์เสริมรถ (ถ้าจำเป็น):"},
+  "ארגז כלים אלומיניום: ~฿15K": {en: "Aluminum toolbox: ~฿15K", th: "กล่องเครื่องมืออลูมิเนียม: ~฿15K"},
+  "עלות רכבים בהון ראשוני": {en: "Vehicle cost in initial capital", th: "ค่าใช้จ่ายยานพาหนะในเงินทุนเริ่มต้น"},
+  "כלי עבודה חשמליים — 3 סטים לצוותים": {en: "Power Tools — 3 Sets for Teams", th: "เครื่องมือไฟฟ้า — 3 ชุดสำหรับทีม"},
+  "פריט": {en: "Item", th: "รายการ"},
+  "כמות": {en: "Qty", th: "จำนวน"},
+  'מחיר/יח׳': {en: "Price/Unit", th: "ราคา/หน่วย"},
+  'סה"כ': {en: "Total", th: "รวม"},
+  "לינק Lazada": {en: "Lazada Link", th: "ลิงก์ Lazada"},
+  "חיתוך rails + conduit": {en: "Cutting rails + conduit", th: "ตัดราง + conduit"},
+  "גדול, עד 240mm²": {en: "Large, up to 240mm²", th: "ขนาดใหญ่ สูงสุด 240mm²"},
+  "אוטומטי": {en: "Automatic", th: "อัตโนมัติ"},
+  "לקידוח בטון גגות": {en: "For drilling roof concrete", th: "สำหรับเจาะคอนกรีตหลังคา"},
+  "להידוק clamps לפי מפרט": {en: "For tightening clamps per spec", th: "สำหรับขันแคลมป์ตามมาตรฐาน"},
+  "לחיבורי קונסטרוקציה": {en: "For structural connections", th: "สำหรับการเชื่อมต่อโครงสร้าง"},
+  "נקודות עיגון": {en: "Anchor points", th: "จุดยึด"},
+  "סולם מתקפל אלומיניום (6m)": {en: "Folding aluminum ladder (6m)", th: "บันไดอลูมิเนียมพับได้ (6 เมตร)"},
+  "ארגז כלים מקצועי (נייד)": {en: "Professional toolbox (portable)", th: "กล่องเครื่องมือมืออาชีพ (พกพา)"},
+  "סט מפתחות ברגים + שקעים": {en: "Wrench set + sockets", th: "ชุดประแจ + ลูกบล็อก"},
+  "כלים שונים (פלסים, סרטי מידה, סכינים)": {en: "Misc tools (levels, tape measures, knives)", th: "เครื่องมือเบ็ดเตล็ด (ระดับน้ำ, ตลับเมตร, มีด)"},
+  'סה"כ כלי עבודה': {en: "Total Power Tools", th: "รวมเครื่องมือไฟฟ้า"},
+  "ציוד בטיחות": {en: "Safety Equipment", th: "อุปกรณ์ความปลอดภัย"},
+  "ציוד בטיחות — בסיסי, לפי מה שצריך באי": {en: "Safety Equipment — Basic, Island Needs", th: "อุปกรณ์ความปลอดภัย — พื้นฐาน ตามความต้องการบนเกาะ"},
+  "גישה:": {en: "Approach:", th: "แนวทาง:"},
+  "לא over-engineering — קונים מה שבאמת צריך לפי המציאות בקופנגן. נוסיף תוך כדי עבודה לפי הצורך.": {en: "No over-engineering — we buy what is truly needed based on Koh Phangan reality. We will add as we work.", th: "ไม่ over-engineering — ซื้อสิ่งที่จำเป็นจริงๆ ตามความเป็นจริงของเกาะพะงัน จะเพิ่มเติมระหว่างทำงาน"},
+  "מחיר": {en: "Price", th: "ราคา"},
+  "לינק": {en: "Link", th: "ลิงก์"},
+  "כפפות עבודה (חשמל)": {en: "Work gloves (electrical)", th: "ถุงมือทำงาน (ไฟฟ้า)"},
+  "זוגות": {en: "pairs", th: "คู่"},
+  "משקפי בטיחות UV": {en: "UV safety goggles", th: "แว่นตานิรภัย UV"},
+  "קסדות בטיחות": {en: "Safety helmets", th: "หมวกนิรภัย"},
+  "ערכת עזרה ראשונה": {en: "First aid kit", th: "ชุดปฐมพยาบาล"},
+  "מטף כיבוי אש (ABC)": {en: "Fire extinguisher (ABC)", th: "ถังดับเพลิง (ABC)"},
+  "לגגות גבוהים": {en: "For high rooftops", th: "สำหรับหลังคาสูง"},
+  "אפוד זוהר (Hi-Vis)": {en: "Hi-Vis vest", th: "เสื้อสะท้อนแสง (Hi-Vis)"},
+  "מכשיר קשר (Walkie-Talkie)": {en: "Walkie-talkie", th: "วิทยุสื่อสาร (Walkie-Talkie)"},
+  "קרם הגנה + מים": {en: "Sunscreen + water", th: "ครีมกันแดด + น้ำ"},
+  'סה"כ בטיחות': {en: "Total Safety", th: "รวมความปลอดภัย"},
+  "מה לא קונים עכשיו:": {en: "What we are NOT buying now:", th: "สิ่งที่ไม่ซื้อตอนนี้:"},
+  "נעלי בטיחות — כל עובד מביא שלו": {en: "Safety shoes — each worker brings their own", th: "รองเท้านิรภัย — พนักงานแต่ละคนนำของตนเอง"},
+  "רשתות גג — רוב הגגות באי נמוכים": {en: "Roof nets — most island roofs are low", th: "ตาข่ายหลังคา — หลังคาส่วนใหญ่บนเกาะต่ำ"},
+  "חבלי בטיחות heavy-duty — לפי הצורך": {en: "Heavy-duty safety ropes — as needed", th: "เชือกนิรภัยหนักพิเศษ — ตามความต้องการ"},
+  "שלטי אזהרה — מדפיסים מקומית": {en: "Warning signs — printed locally", th: "ป้ายเตือน — พิมพ์ในพื้นที่"},
+  "הגישה:": {en: "The approach:", th: "แนวทาง:"},
+  "באי — העבודה שונה מפרויקט תעשייתי. הגגות בדרך כלל נמוכים, האקלים חם, הצוות קטן. קונים בסיס, משלימים תוך כדי.": {en: "On the island — the work is different from an industrial project. Roofs are usually low, the climate is hot, the team is small. Buy the basics, complete along the way.", th: "บนเกาะ — งานแตกต่างจากโครงการอุตสาหกรรม หลังคามักต่ำ อากาศร้อน ทีมเล็ก ซื้อพื้นฐาน เสริมระหว่างทาง"},
+  "במקום ฿120K — חיסכון של 75%": {en: "Instead of ฿120K — 75% savings", th: "แทนที่ ฿120K — ประหยัด 75%"},
+  "מכשירי מדידה": {en: "Measurement Instruments", th: "เครื่องมือวัด"},
+  "מכשירי מדידה + QA — ציוד בדיקות": {en: "Measurement + QA — Testing Equipment", th: "เครื่องมือวัด + QA — อุปกรณ์ทดสอบ"},
+  "שימוש": {en: "Usage", th: "การใช้งาน"},
+  "מגר + מולטימטר": {en: "Megger + multimeter", th: "เมกเกอร์ + มัลติมิเตอร์"},
+  "זיהוי hot spots בפאנלים": {en: "Hot spot detection in panels", th: "ตรวจจับจุดร้อนในแผง"},
+  "בדיקת בידוד + מתח DC/AC": {en: "Insulation + DC/AC voltage testing", th: "ทดสอบฉนวน + แรงดัน DC/AC"},
+  "מדידה יומית בשטח": {en: "Daily field measurement", th: "การวัดภาคสนามรายวัน"},
+  "PV200/PV210 או מקביל": {en: "PV200/PV210 or equivalent", th: "PV200/PV210 หรือเทียบเท่า"},
+  "אישור ביצועי string": {en: "String performance verification", th: "การตรวจสอบประสิทธิภาพสตริง"},
+  "DY4100 או Fluke 1625-2": {en: "DY4100 or Fluke 1625-2", th: "DY4100 หรือ Fluke 1625-2"},
+  "בדיקת הארקה": {en: "Grounding test", th: "ทดสอบการต่อลงดิน"},
+  "מדידת זרם ללא ניתוק": {en: "Current measurement without disconnection", th: "วัดกระแสโดยไม่ต้องตัดการเชื่อมต่อ"},
+  "TES-1333R או מקביל": {en: "TES-1333R or equivalent", th: "TES-1333R หรือเทียบเท่า"},
+  "מדידת קרינה לבדיקת ביצועים": {en: "Irradiance measurement for performance testing", th: "วัดการแผ่รังสีเพื่อทดสอบประสิทธิภาพ"},
+  "מדידות גג מהירות": {en: "Quick roof measurements", th: "วัดหลังคาอย่างรวดเร็ว"},
+  "זווית גג + פאנלים": {en: "Roof angle + panels", th: "มุมหลังคา + แผง"},
+  "כיוון + שיפוע": {en: "Direction + slope", th: "ทิศทาง + ความลาดชัน"},
+  "תיוג כבלים + לוחות": {en: "Cable + panel labeling", th: "การติดฉลากสาย + แผง"},
+  'סה"כ מכשירי מדידה': {en: "Total Measuring Instruments", th: "รวมเครื่องมือวัด"},
+  "רחפנים + תוכנה — סקר ותכנון": {en: "Drones + Software — Survey & Planning", th: "โดรน + ซอฟต์แวร์ — สำรวจและวางแผน"},
+  "רחפנים": {en: "Drones", th: "โดรน"},
+  "מחיר שנתי": {en: "Annual Price", th: "ราคาต่อปี"},
+  "סקרי גג + צילום case studies": {en: "Roof surveys + case study photography", th: "การสำรวจหลังคา + ถ่ายภาพกรณีศึกษา"},
+  "סוללות נוספות (DJI Mini 4)": {en: "Extra batteries (DJI Mini 4)", th: "แบตเตอรี่เพิ่มเติม (DJI Mini 4)"},
+  "Landing Pad מתקפל": {en: "Folding landing pad", th: "แผ่นลงจอดพับได้"},
+  'סה"כ רחפנים': {en: "Total Drones", th: "รวมโดรน"},
+  "למה Mini 4 Pro?": {en: "Why Mini 4 Pro?", th: "ทำไม Mini 4 Pro?"},
+  "מתחת ל-250g =": {en: "Under 250g =", th: "ต่ำกว่า 250g ="},
+  "לא צריך רישיון CAAT": {en: "No CAAT license required", th: "ไม่ต้องมีใบอนุญาต CAAT"},
+  "בתאילנד": {en: "in Thailand", th: "ในประเทศไทย"},
+  "4K + obstacle avoidance = בטיחות גגות": {en: "4K + obstacle avoidance = roof safety", th: "4K + การหลีกเลี่ยงสิ่งกีดขวาง = ความปลอดภัยหลังคา"},
+  "תמונות ortho לתכנון מערכת": {en: "Ortho images for system planning", th: "ภาพ ortho สำหรับการวางแผนระบบ"},
+  "שימוש כפול: סקרי גג + שיווק": {en: "Dual use: roof surveys + marketing", th: "การใช้งานคู่: สำรวจหลังคา + การตลาด"},
+  "רישיונות תוכנה": {en: "Software Licenses", th: "ใบอนุญาตซอฟต์แวร์"},
+  "תוכנה": {en: "Software", th: "ซอฟต์แวร์"},
+  "סימולציית ייצור + shading": {en: "Production simulation + shading", th: "การจำลองการผลิต + การบังเงา"},
+  "רישיונות": {en: "licenses", th: "ใบอนุญาต"},
+  "שרטוטי SLD + layout": {en: "SLD drawings + layout", th: "แบบ SLD + ผัง"},
+  "או SketchUp Pro": {en: "or SketchUp Pro", th: "หรือ SketchUp Pro"},
+  "ניהול טיסות": {en: "Flight management", th: "การจัดการเที่ยวบิน"},
+  'דוא"ל + Drive + Sheets': {en: "Email + Drive + Sheets", th: "อีเมล + Drive + Sheets"},
+  'סה"כ תוכנה (שנתי)': {en: "Total Software (Annual)", th: "รวมซอฟต์แวร์ (ต่อปี)"},
+  "הערה:": {en: "Note:", th: "หมายเหตุ:"},
+  "PVsyst רישיון רשמי מ-pvsyst.com (CHF 450/שנה). גרסאות ב-Lazada הן לא רשמיות —": {en: "PVsyst official license from pvsyst.com (CHF 450/year). Lazada versions are unofficial —", th: "ใบอนุญาต PVsyst อย่างเป็นทางการจาก pvsyst.com (CHF 450/ปี) เวอร์ชันใน Lazada ไม่เป็นทางการ —"},
+  "לקנות ישירות מהיצרן.": {en: "buy directly from the manufacturer.", th: "ซื้อโดยตรงจากผู้ผลิต"},
+  "מחסן — צ׳קליסט": {en: "Warehouse — Checklist", th: "คลังสินค้า — รายการตรวจสอบ"},
+  "מחסן — צ׳קליסט ציוד (יש / חסר)": {en: "Warehouse — Equipment Checklist (Have / Need)", th: "คลังสินค้า — เช็คลิสต์อุปกรณ์ (มี / ขาด)"},
+  "לא רשימת קניות — רשימת בדיקה.": {en: "Not a shopping list — a checklist.", th: "ไม่ใช่รายการซื้อ — เป็นรายการตรวจสอบ"},
+  "לעבור על המחסן של TM ולסמן מה יש ומה חסר.": {en: "Go through TM's warehouse and mark what exists and what is missing.", th: "ตรวจสอบคลังสินค้าของ TM และทำเครื่องหมายสิ่งที่มีและสิ่งที่ขาด"},
+  "תשתית מחסן": {en: "Warehouse Infrastructure", th: "โครงสร้างพื้นฐานคลังสินค้า"},
+  "כמות נדרשת": {en: "Required Qty", th: "จำนวนที่ต้องการ"},
+  "מדפים תעשייתיים (Pallet Rack)": {en: "Industrial shelving (Pallet Rack)", th: "ชั้นวางอุตสาหกรรม (Pallet Rack)"},
+  "שורות × 3": {en: "rows × 3", th: "แถว × 3"},
+  "500kg/מדף": {en: "500kg/shelf", th: "500kg/ชั้น"},
+  "מלגזה ידנית (Pallet Jack)": {en: "Manual pallet jack", th: "รถพาเลทมือโยก"},
+  "2.5 טון": {en: "2.5 tons", th: "2.5 ตัน"},
+  "עגלת משטחים (Trolley)": {en: "Platform trolley", th: "รถเข็นแพลตฟอร์ม"},
+  "משטחי עץ (Pallets)": {en: "Wooden pallets", th: "พาเลทไม้"},
+  "תאורה LED מספקת": {en: "Adequate LED lighting", th: "ไฟ LED ที่เพียงพอ"},
+  "כל אזור מואר": {en: "Every zone illuminated", th: "ทุกโซนมีแสงสว่าง"},
+  "מאוורר תעשייתי / אוורור": {en: "Industrial fan / ventilation", th: "พัดลมอุตสาหกรรม / การระบายอากาศ"},
+  "אקלים חם": {en: "Hot climate", th: "สภาพอากาศร้อน"},
+  "סימון רצפה + שלטי אזורים": {en: "Floor marking + zone signs", th: "เครื่องหมายพื้น + ป้ายโซน"},
+  "A-F zones": {en: "A-F zones", th: "โซน A-F"},
+  "אבטחה + בטיחות": {en: "Security + Safety", th: "ความปลอดภัย + การรักษาความปลอดภัย"},
+  "מצלמות אבטחה": {en: "Security cameras", th: "กล้องรักษาความปลอดภัย"},
+  "4 ערוצים": {en: "4 channels", th: "4 ช่อง"},
+  "כניסה + אזור פריקה": {en: "Entry + unloading area", th: "ทางเข้า + พื้นที่ขนถ่าย"},
+  "כספת (מסמכים + מפתחות)": {en: "Safe (documents + keys)", th: "ตู้เซฟ (เอกสาร + กุญแจ)"},
+  "מטף כיבוי אש": {en: "Fire extinguisher", th: "ถังดับเพลิง"},
+  "מנעול + אזעקה": {en: "Lock + alarm", th: "กุญแจ + สัญญาณเตือน"},
+  "ציוד לוגיסטי": {en: "Logistics Equipment", th: "อุปกรณ์โลจิสติกส์"},
+  "סרטי קשירה (Ratchet Straps)": {en: "Ratchet straps", th: "สายรัดแบบ Ratchet"},
+  "להעמסת פאנלים": {en: "For loading panels", th: "สำหรับบรรทุกแผง"},
+  "כיסויי ברזנט (Tarpaulin)": {en: "Tarpaulin covers", th: "ผ้าใบคลุม"},
+  "הגנה מגשם": {en: "Rain protection", th: "ป้องกันฝน"},
+  "ארון כלים מחסן (גדול)": {en: "Warehouse tool cabinet (large)", th: "ตู้เครื่องมือคลังสินค้า (ขนาดใหญ่)"},
+  "נעילה": {en: "Lockable", th: "ล็อคได้"},
+  "ציוד ניקיון": {en: "Cleaning equipment", th: "อุปกรณ์ทำความสะอาด"},
+  "מטאטא, דלי, סמרטוטים": {en: "Broom, bucket, mops", th: "ไม้กวาด, ถัง, ไม้ถูพื้น"},
+  "Layout מחסן מומלץ": {en: "Recommended Warehouse Layout", th: "ผังคลังสินค้าที่แนะนำ"},
+  "אזור A:": {en: "Zone A:", th: "โซน A:"},
+  "פאנלים (מדפים אנכיים)": {en: "Panels (vertical shelving)", th: "แผง (ชั้นวางแนวตั้ง)"},
+  "אזור B:": {en: "Zone B:", th: "โซน B:"},
+  "אינוורטרים + BOS": {en: "Inverters + BOS", th: "อินเวอร์เตอร์ + BOS"},
+  "אזור C:": {en: "Zone C:", th: "โซน C:"},
+  "קונסטרוקציה (rails, clamps)": {en: "Racking (rails, clamps)", th: "โครงสร้าง (ราง, แคลมป์)"},
+  "אזור D:": {en: "Zone D:", th: "โซน D:"},
+  "כבלים + חומרי מתכלה": {en: "Cables + consumables", th: "สายไฟ + วัสดุสิ้นเปลือง"},
+  "אזור E:": {en: "Zone E:", th: "โซน E:"},
+  "כלי עבודה + ציוד בטיחות": {en: "Tools + safety equipment", th: "เครื่องมือ + อุปกรณ์ความปลอดภัย"},
+  "אזור F:": {en: "Zone F:", th: "โซน F:"},
+  "פריקה + העמסה": {en: "Unloading + loading", th: "ขนถ่าย + บรรทุก"},
+  "המחסן עצמו על TM Energy": {en: "The warehouse itself is on TM Energy", th: "คลังสินค้าเองอยู่ภายใต้ TM Energy"},
+  "שכירות על חשבון TM. מה שחסר בפנים — קונים לפי הצ׳קליסט.": {en: "Rent on TM's account. What is missing inside — we buy per the checklist.", th: "ค่าเช่าในบัญชีของ TM สิ่งที่ขาดภายใน — ซื้อตามรายการตรวจสอบ"},
+  "IT + משרד": {en: "IT + Office", th: "IT + สำนักงาน"},
+  "פריפריה IT — BYOL + תחנות עבודה": {en: "IT Peripherals — BYOL + Workstations", th: "อุปกรณ์ IT — BYOL + เวิร์กสเตชัน"},
+  "BYOL — Bring Your Own Laptop": {en: "BYOL — Bring Your Own Laptop", th: "BYOL — นำแล็ปท็อปของคุณเอง"},
+  "כל אחד מגיע עם המחשב שלו. החברה מספקת פריפריה למשרד.": {en: "Everyone brings their own computer. The company provides peripherals for the office.", th: "ทุกคนนำคอมพิวเตอร์ของตนเอง บริษัทจัดหาอุปกรณ์ต่อพ่วงสำหรับสำนักงาน"},
+  "זרוע למסך (Monitor Arm)": {en: "Monitor arm", th: "แขนจับจอมอนิเตอร์"},
+  "עכבר": {en: "Mouse", th: "เมาส์"},
+  "מקלדת": {en: "Keyboard", th: "คีย์บอร์ด"},
+  "מדפסת A3 צבעונית": {en: "A3 color printer", th: "เครื่องพิมพ์สีขนาด A3"},
+  'סה"כ פריפריה IT': {en: "Total IT Peripherals", th: "รวมอุปกรณ์ต่อพ่วง IT"},
+  "המשרד על TM Energy": {en: "The office is on TM Energy", th: "สำนักงานอยู่ภายใต้ TM Energy"},
+  "שכירות, ריהוט, חשמל — על חשבון TM.": {en: "Rent, furniture, electricity — on TM's account.", th: "ค่าเช่า, เฟอร์นิเจอร์, ไฟฟ้า — ในบัญชีของ TM"},
+  "פריפריה IT — על הדיוויזן הסולארי.": {en: "IT peripherals — on the solar division.", th: "อุปกรณ์ต่อพ่วง IT — ในแผนกพลังงานแสงอาทิตย์"},
+  "למה BYOL?": {en: "Why BYOL?", th: "ทำไม BYOL?"},
+  "חוסך ฿95K+ על מחשבים": {en: "Saves ฿95K+ on computers", th: "ประหยัด ฿95K+ สำหรับคอมพิวเตอร์"},
+  "כל אחד עובד על מה שהוא רגיל אליו": {en: "Everyone works on what they're used to", th: "ทุกคนทำงานบนสิ่งที่คุ้นเคย"},
+  "Mac / Windows — לא משנה": {en: "Mac / Windows — doesn't matter", th: "Mac / Windows — ไม่สำคัญ"},
+  "PVsyst + AutoCAD רצים על כל מחשב חדש": {en: "PVsyst + AutoCAD run on any modern computer", th: "PVsyst + AutoCAD ทำงานบนคอมพิวเตอร์ใหม่ทุกเครื่อง"},
+  "תוכנות חינמיות:": {en: "Free software:", th: "ซอฟต์แวร์ฟรี:"},
+  "תכנון מערכת (free tier)": {en: "System planning (free tier)", th: "การวางแผนระบบ (ระดับฟรี)"},
+  "סקר גגות": {en: "Roof survey", th: "การสำรวจหลังคา"},
+  "הצעות מחיר + שיווק": {en: "Proposals + marketing", th: "ใบเสนอราคา + การตลาด"},
+  "תקשורת עם לקוחות": {en: "Customer communication", th: "การสื่อสารกับลูกค้า"},
+  'לו"ז רכישות': {en: "Purchase Timeline", th: "ไทม์ไลน์การจัดซื้อ"},
+  'לו"ז רכישות — לפי חודש הקמה': {en: "Purchase Timeline — By Setup Month", th: "ไทม์ไลน์การจัดซื้อ — ตามเดือนจัดตั้ง"},
+  "חודש": {en: "Month", th: "เดือน"},
+  "רכישות": {en: "Purchases", th: "การจัดซื้อ"},
+  "אבן דרך": {en: "Milestone", th: "เป้าหมาย"},
+  "חודש 1": {en: "Month 1", th: "เดือนที่ 1"},
+  "דחוף": {en: "Urgent", th: "เร่งด่วน"},
+  "פריפריה IT: מסכים, זרועות, docking, Logitech": {en: "IT peripherals: monitors, arms, docking, Logitech", th: "อุปกรณ์ต่อพ่วง IT: จอ, แขน, docking, Logitech"},
+  "תוכנה: PVsyst × 2, Google Workspace": {en: "Software: PVsyst × 2, Google Workspace", th: "ซอฟต์แวร์: PVsyst × 2, Google Workspace"},
+  "כלי עבודה: סט ראשון (drill, crimper, multimeter)": {en: "Tools: first set (drill, crimper, multimeter)", th: "เครื่องมือ: ชุดแรก (สว่าน, crimper, มัลติมิเตอร์)"},
+  "ציוד בטיחות בסיסי": {en: "Basic safety equipment", th: "อุปกรณ์ความปลอดภัยพื้นฐาน"},
+  "מתחילים סקרי גגות + תכנון ראשון": {en: "Starting roof surveys + first planning", th: "เริ่มสำรวจหลังคา + การวางแผนแรก"},
+  "חודש 2": {en: "Month 2", th: "เดือนที่ 2"},
+  "כלי עבודה: סט #2 + #3": {en: "Tools: set #2 + #3", th: "เครื่องมือ: ชุด #2 + #3"},
+  "מכשירי מדידה (FLIR, Fluke)": {en: "Measuring instruments (FLIR, Fluke)", th: "เครื่องมือวัด (FLIR, Fluke)"},
+  "3 צוותים מצוידים + מוכנים לשטח": {en: "3 teams equipped + ready for the field", th: "3 ทีมพร้อมอุปกรณ์ + พร้อมสำหรับงานภาคสนาม"},
+  "חודש 3": {en: "Month 3", th: "เดือนที่ 3"},
+  "ציוד מחסן (מדפים, pallet jack)": {en: "Warehouse equipment (shelving, pallet jack)", th: "อุปกรณ์คลังสินค้า (ชั้นวาง, pallet jack)"},
+  "ציוד QA (IV curve, earth tester)": {en: "QA equipment (IV curve, earth tester)", th: "อุปกรณ์ QA (IV curve, earth tester)"},
+  "השלמות לפי צורך": {en: "Completions as needed", th: "เสริมส่วนที่ขาดตามความต้องการ"},
+  "מחסן מאובזר + בדיקות QA": {en: "Equipped warehouse + QA tests", th: "คลังสินค้าพร้อมอุปกรณ์ + การทดสอบ QA"},
+  "חודש 4+": {en: "Month 4+", th: "เดือนที่ 4+"},
+  "חומרי מתכלה (חודשי)": {en: "Consumables (monthly)", th: "วัสดุสิ้นเปลือง (รายเดือน)"},
+  "רכב נוסף אם צריך": {en: "Additional vehicle if needed", th: "ยานพาหนะเพิ่มเติมหากจำเป็น"},
+  "ציוד בטיחות נוסף לפי הצורך": {en: "Additional safety equipment as needed", th: "อุปกรณ์ความปลอดภัยเพิ่มเติมตามความต้องการ"},
+  "לפי צורך": {en: "As needed", th: "ตามความต้องการ"},
+  "תפעול שוטף": {en: "Ongoing operations", th: "การดำเนินงานต่อเนื่อง"},
+  'סה"כ הון ראשוני': {en: "Total Initial Capital", th: "รวมเงินทุนเริ่มต้น"},
+  "הון ראשוני כולל": {en: "Total initial capital", th: "เงินทุนเริ่มต้นรวม"},
+  "בדולרים": {en: "In dollars", th: "ในดอลลาร์"},
+  "3 חודשים": {en: "3 months", th: "3 เดือน"},
+  "עד מוכנות מלאה": {en: "Until full readiness", th: "จนกว่าจะพร้อมอย่างสมบูรณ์"},
+  "רכבים + מלאי + מחשבים": {en: "Vehicles + inventory + computers", th: "ยานพาหนะ + สินค้าคงคลัง + คอมพิวเตอร์"},
+  "לינקים מהירים": {en: "Quick Links", th: "ลิงก์ด่วน"},
+  "Lazada Quick Links — קטגוריות ראשיות": {en: "Lazada Quick Links — Main Categories", th: "Lazada Quick Links — หมวดหมู่หลัก"},
+  "כלי עבודה": {en: "Tools", th: "เครื่องมือ"},
+  "מכשירי מדידה": {en: "Measurement Instruments", th: "เครื่องมือวัด"},
+  "בטיחות + רחפנים": {en: "Safety + Drones", th: "ความปลอดภัย + โดรน"},
+  "טיפ:": {en: "Tip:", th: "เคล็ดลับ:"},
+  "הזמנות מעל ฿5,000 — בדוק מחירים גם ב-": {en: "Orders over ฿5,000 — also check prices at ", th: "คำสั่งซื้อมากกว่า ฿5,000 — ตรวจสอบราคาที่ "},
+  "ו-": {en: "and", th: "และ"},
+  "(HomePro). לציוד מקצועי —": {en: "(HomePro). For professional equipment —", th: "(HomePro) สำหรับอุปกรณ์มืออาชีพ —"},
+  "ו-RS Components Thailand": {en: "and RS Components Thailand", th: "และ RS Components Thailand"},
+  "הקודם": {en: "Previous", th: "ก่อนหน้า"},
+  "הבא": {en: "Next", th: "ถัดไป"},
+  '% מסה"כ': {en: "% of Total", th: "% ของรวม"},
+  "מחסן — צ׳קליסט": {en: "Warehouse — Checklist", th: "คลังสินค้า — เช็คลิสต์"},
+  "מקצועי": {en: "professional", th: "มืออาชีพ"},
+  "סוללות": {en: "batteries", th: "แบตเตอรี่"},
+  "מטען": {en: "charger", th: "เครื่องชาร์จ"},
+  "אזיקונים": {en: "cable ties", th: "เคเบิลไทร์"},
+  "מסך": {en: "monitor", th: "จอมอนิเตอร์"},
+  "שורות": {en: "rows", th: "แถว"},
+  "לא רשמיות": {en: "unofficial", th: "ไม่เป็นทางการ"},
+  "גרסאות": {en: "versions", th: "เวอร์ชัน"},
+  "אנכיים": {en: "vertical", th: "แนวตั้ง"},
+  "מוכן": {en: "ready", th: "พร้อม"},
+  "צבעונית": {en: "color", th: "สี"},
+  "תחנות עבודה": {en: "workstations", th: "เวิร์กสเตชัน"},
+  "מאובזר": {en: "equipped", th: "พร้อมอุปกรณ์"},
+};
+</script>
+<script src="tm-translations.js"></script>
+<script src="tm-lang.js"></script>
+</body>
+</html>

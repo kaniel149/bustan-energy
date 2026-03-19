@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TM Energy — Step 2: Site Survey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --sun:#E8A820; --ocean-deep:#062A40; --green:#43A047; --blue:#1E88E5; --red:#E53935; --purple:#7B1FA2; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Heebo','DM Sans',sans-serif;background:#0A0A0A;color:#fff;overflow-x:hidden;}
+        body[data-lang="en"],body[data-lang="th"]{direction:ltr;}
+        .slide{min-height:100vh;padding:4rem 3rem;display:flex;flex-direction:column;justify-content:center;position:relative;border-bottom:1px solid rgba(255,255,255,.05);}
+        .slide-num{position:absolute;top:2rem;left:2rem;font-size:.75rem;color:rgba(255,255,255,.3);letter-spacing:.15em;}
+        .container{max-width:1100px;margin:0 auto;width:100%;}
+        h1{font-family:'Instrument Serif',serif;font-size:clamp(2.5rem,6vw,4.5rem);line-height:1.1;}
+        h2{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,4vw,3rem);line-height:1.2;margin-bottom:2rem;}
+        h3{font-size:1.3rem;font-weight:700;margin-bottom:.8rem;}
+        .accent{color:var(--sun);}
+        .subtitle{font-size:1.15rem;color:rgba(255,255,255,.6);line-height:1.6;max-width:700px;margin-top:1.5rem;}
+        .cover{background:linear-gradient(160deg,var(--ocean-deep),#0A0A0A 60%);}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;}
+        .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;}
+        .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem;transition:all .3s;}
+        .card:hover{background:rgba(255,255,255,.07);transform:translateY(-4px);}
+        .stat-big{font-family:'Instrument Serif',serif;font-size:3rem;color:var(--sun);line-height:1;}
+        .stat-label{font-size:.85rem;color:rgba(255,255,255,.5);margin-top:.3rem;}
+        .badge{display:inline-block;padding:.3rem .8rem;border-radius:100px;font-size:.75rem;font-weight:600;}
+        .badge-green{background:rgba(67,160,71,.15);color:var(--green);}
+        .badge-gold{background:rgba(232,168,32,.15);color:var(--sun);}
+        .badge-blue{background:rgba(30,136,229,.15);color:var(--blue);}
+        .step-block{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem;margin-bottom:1.5rem;}
+        .step-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--sun);color:#0A0A0A;font-weight:900;font-size:1rem;flex-shrink:0;}
+        .step-header{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+        .step-title{font-size:1.1rem;font-weight:700;}
+        .step-body{font-size:.95rem;color:rgba(255,255,255,.65);line-height:1.7;padding-right:3rem;}
+        .feat-list{list-style:none;padding:0;}
+        .feat-list li{padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.95rem;color:rgba(255,255,255,.75);display:flex;align-items:flex-start;gap:.6rem;}
+        .feat-list li::before{content:'✓';color:var(--sun);font-weight:700;flex-shrink:0;}
+        .mockup{background:#111827;border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;}
+        .mockup-bar{background:rgba(255,255,255,.05);padding:.5rem 1rem;display:flex;align-items:center;gap:.4rem;}
+        .mockup-dot{width:8px;height:8px;border-radius:50%;}
+        .mockup-dot.r{background:#EF4444;}.mockup-dot.y{background:#F59E0B;}.mockup-dot.g{background:#10B981;}
+        .mockup-body{padding:1.5rem;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;}
+        .field{background:rgba(255,255,255,.05);padding:.5rem;border-radius:6px;}
+        .field-label{font-size:.6rem;color:rgba(255,255,255,.4);}
+        .field-value{font-size:.8rem;color:var(--sun);font-weight:700;}
+        .tm-logo-header{position:fixed;top:1.2rem;right:1.2rem;z-index:200;display:flex;align-items:center;gap:.5rem;}
+        .tm-logo-header img{height:36px;border-radius:50%;}
+        .tm-logo-header span{font-weight:700;font-size:.85rem;color:var(--sun);}
+        .lang-bar{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%);z-index:200;display:flex;gap:.3rem;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);padding:.3rem;border-radius:8px;border:1px solid rgba(255,255,255,.1);}
+        .lang-btn{padding:.3rem .8rem;border:none;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.5);transition:all .2s;}
+        .lang-btn.active{background:var(--sun);color:#0A0A0A;}
+        .tri-text .lang-he,.tri-text .lang-en,.tri-text .lang-th{display:none;}
+        body[data-lang="he"] .tri-text .lang-he{display:inline;}
+        body[data-lang="en"] .tri-text .lang-en{display:inline;}
+        body[data-lang="th"] .tri-text .lang-th{display:inline;}
+        .nav-btn{padding:.5rem 1rem;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);transition:all .2s;text-decoration:none;display:inline-block;}
+        .nav-btn:hover{background:var(--sun);color:#0A0A0A;}
+        .checklist{list-style:none;padding:0;}
+        .checklist li{padding:.5rem 0;font-size:.9rem;display:flex;align-items:center;gap:.5rem;color:rgba(255,255,255,.7);}
+        .tool-tag{display:inline-block;background:rgba(232,168,32,.1);color:var(--sun);padding:.2rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;margin-right:.3rem;}
+        @media(max-width:768px){.slide{padding:3rem 1.5rem;}.grid-2,.grid-3{grid-template-columns:1fr;}.step-body{padding-right:0;}}
+    </style>
+</head>
+<body data-lang="he">
+<div class="tm-logo-header"><img src="visuals/tm-energy-logo-v2.png" alt="TM Energy"><span>TM Energy</span></div>
+<div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('he')">עברית</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+    <button class="lang-btn" onclick="setLang('th')">ไทย</button>
+</div>
+
+<!-- COVER -->
+<section class="slide cover">
+    <span class="slide-num">STEP 2 / 12</span>
+    <div class="container">
+        <div class="badge badge-blue" style="margin-bottom:1rem;">Value Chain — Step 2</div>
+        <h1 class="tri-text">
+            <span class="lang-he">סקר אתר<br><span class="accent">Site Survey</span></span>
+            <span class="lang-en">Site Survey<br><span class="accent">Field Assessment</span></span>
+            <span class="lang-th">สำรวจไซต์<br><span class="accent">ประเมินภาคสนาม</span></span>
+        </h1>
+        <p class="subtitle tri-text">
+            <span class="lang-he">איך עושים סקר אתר מקצועי, מה מודדים, ומה מזינים ל-CRM — צעד אחר צעד</span>
+            <span class="lang-en">How to conduct a professional site survey, what to measure, and what to enter in the CRM — step by step</span>
+            <span class="lang-th">วิธีทำสำรวจไซต์อย่างมืออาชีพ วัดอะไร และกรอกอะไรใน CRM — ทีละขั้นตอน</span>
+        </p>
+    </div>
+</section>
+
+<!-- SLIDE 2: WHAT TO BRING -->
+<section class="slide">
+    <span class="slide-num">01</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">ציוד לסקר</span> — מה לוקחים לשטח</span>
+            <span class="lang-en"><span class="accent">Survey Kit</span> — What to Bring</span>
+            <span class="lang-th"><span class="accent">ชุดสำรวจ</span> — อะไรต้องเอาไป</span>
+        </h2>
+        <div class="grid-3">
+            <div class="card" style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">📱</div>
+                <h3 class="tri-text"><span class="lang-he">טלפון + CRM</span><span class="lang-en">Phone + CRM</span><span class="lang-th">โทรศัพท์ + CRM</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">פתוח על /site-survey<br>GPS אוטומטי, תמונות ישירות</span>
+                    <span class="lang-en">Open on /site-survey<br>Auto GPS, direct photos</span>
+                    <span class="lang-th">เปิด /site-survey<br>GPS อัตโนมัติ ถ่ายรูปตรง</span>
+                </p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">📏</div>
+                <h3 class="tri-text"><span class="lang-he">מטר לייזר</span><span class="lang-en">Laser Meter</span><span class="lang-th">เครื่องวัดเลเซอร์</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">Bosch GLM 50 C<br>Bluetooth → מדידות ישירות</span>
+                    <span class="lang-en">Bosch GLM 50 C<br>Bluetooth → direct measurements</span>
+                    <span class="lang-th">Bosch GLM 50 C<br>Bluetooth → วัดตรง</span>
+                </p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">🧭</div>
+                <h3 class="tri-text"><span class="lang-he">מד שיפוע + מצפן</span><span class="lang-en">Inclinometer + Compass</span><span class="lang-th">เครื่องวัดมุม + เข็มทิศ</span></h3>
+                <p class="tri-text">
+                    <span class="lang-he">או אפליקציה: Clinometer App<br>למדידת זווית גג וכיוון</span>
+                    <span class="lang-en">Or app: Clinometer App<br>For roof angle and direction</span>
+                    <span class="lang-th">หรือแอป: Clinometer App<br>วัดมุมหลังคาและทิศทาง</span>
+                </p>
+            </div>
+        </div>
+        <div class="card" style="margin-top:1.5rem;border-color:rgba(232,168,32,.2);">
+            <h3 class="tri-text"><span class="lang-he">🔑 טיפ: 3 דברים שתמיד שוכחים</span><span class="lang-en">🔑 Tip: 3 things always forgotten</span><span class="lang-th">🔑 เคล็ดลับ: 3 สิ่งที่มักลืม</span></h3>
+            <div class="grid-3">
+                <div class="tri-text"><span class="lang-he">1. <b>תמונת מונה חשמל</b> — מספר מונה PEA</span><span class="lang-en">1. <b>Electric meter photo</b> — PEA meter number</span><span class="lang-th">1. <b>ถ่ายมิเตอร์ไฟฟ้า</b> — เลขมิเตอร์ กฟภ</span></div>
+                <div class="tri-text"><span class="lang-he">2. <b>תמונת לוח חשמל</b> — פאזות ומפסקים</span><span class="lang-en">2. <b>Electrical panel photo</b> — phases and breakers</span><span class="lang-th">2. <b>ถ่ายตู้ไฟ</b> — เฟสและเบรกเกอร์</span></div>
+                <div class="tri-text"><span class="lang-he">3. <b>נגישות גג</b> — סולם? מנוף? בטיחות?</span><span class="lang-en">3. <b>Roof access</b> — ladder? crane? safety?</span><span class="lang-th">3. <b>ทางขึ้นหลังคา</b> — บันได? เครน? ความปลอดภัย?</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 3: THE 5 SECTIONS -->
+<section class="slide">
+    <span class="slide-num">02</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">5 חלקים</span> בסקר אתר</span>
+            <span class="lang-en"><span class="accent">5 Sections</span> of a Site Survey</span>
+            <span class="lang-th"><span class="accent">5 ส่วน</span>ของการสำรวจไซต์</span>
+        </h2>
+
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">1</div><div class="step-title tri-text"><span class="lang-he">🏠 גג — Roof Assessment</span><span class="lang-en">🏠 Roof Assessment</span><span class="lang-th">🏠 ประเมินหลังคา</span></div></div>
+            <div class="step-body">
+                <div class="grid-2">
+                    <div>
+                        <ul class="feat-list">
+                            <li class="tri-text"><span class="lang-he"><b>סוג:</b> Metal Sheet / Concrete / Tile / Asbestos</span><span class="lang-en"><b>Type:</b> Metal Sheet / Concrete / Tile / Asbestos</span><span class="lang-th"><b>ประเภท:</b> แผ่นโลหะ / คอนกรีต / กระเบื้อง / แอสเบสตอส</span></li>
+                            <li class="tri-text"><span class="lang-he"><b>מצב:</b> New / Good / Fair / Poor</span><span class="lang-en"><b>Condition:</b> New / Good / Fair / Poor</span><span class="lang-th"><b>สภาพ:</b> ใหม่ / ดี / พอใช้ / แย่</span></li>
+                            <li class="tri-text"><span class="lang-he"><b>שטח:</b> אורך × רוחב = m²</span><span class="lang-en"><b>Area:</b> length × width = m²</span><span class="lang-th"><b>พื้นที่:</b> ยาว × กว้าง = m²</span></li>
+                            <li class="tri-text"><span class="lang-he"><b>שטח שמיש:</b> אוטומטי — 70% מהגג</span><span class="lang-en"><b>Usable area:</b> auto — 70% of roof</span><span class="lang-th"><b>พื้นที่ใช้ได้:</b> อัตโนมัติ — 70% ของหลังคา</span></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="mockup">
+                            <div class="mockup-body" style="font-size:.75rem;">
+                                <div class="field-row">
+                                    <div class="field"><div class="field-label">Roof Type</div><div class="field-value">Metal Sheet</div></div>
+                                    <div class="field"><div class="field-label">Condition</div><div class="field-value">Good</div></div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field"><div class="field-label">Length (m)</div><div class="field-value">30</div></div>
+                                    <div class="field"><div class="field-label">Width (m)</div><div class="field-value">15</div></div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field"><div class="field-label">Total Area</div><div class="field-value" style="color:var(--green);">450 m²</div></div>
+                                    <div class="field"><div class="field-label">Usable (70%)</div><div class="field-value" style="color:var(--green);">315 m²</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">2</div><div class="step-title tri-text"><span class="lang-he">📐 זווית וכיוון</span><span class="lang-en">📐 Angle & Direction</span><span class="lang-th">📐 มุมและทิศทาง</span></div></div>
+            <div class="step-body">
+                <div class="grid-2">
+                    <div class="tri-text">
+                        <span class="lang-he"><b>זווית:</b> 0° (שטוח) עד 45° — אידיאלי: 10-15° לקו"פ<br><b>כיוון:</b> דרום הכי טוב (קופנגן = 10°N)<br>מזרח/מערב = 85% תפוקה, צפון = 70%<br><br><b>כלל אצבע:</b> בקו"פ, גגות שטוחים הכי נפוצים ואידיאליים — מותקנים פאנלים בזווית 10° דרומה</span>
+                        <span class="lang-en"><b>Angle:</b> 0° (flat) to 45° — ideal: 10-15° for Koh Phangan<br><b>Direction:</b> South is best (KP = 10°N latitude)<br>East/West = 85% yield, North = 70%<br><br><b>Rule of thumb:</b> In Koh Phangan, flat roofs are most common and ideal — panels installed at 10° south tilt</span>
+                        <span class="lang-th"><b>มุม:</b> 0° (แบน) ถึง 45° — เหมาะสุด: 10-15° สำหรับเกาะพะงัน<br><b>ทิศทาง:</b> ใต้ดีที่สุด (KP = ละติจูด 10°N)<br>ตะวันออก/ตะวันตก = 85% ผลผลิต, เหนือ = 70%<br><br><b>กฎง่ายๆ:</b> ที่เกาะพะงัน หลังคาแบนพบมากที่สุดและเหมาะสม — ติดตั้งแผงเอียง 10° ทิศใต้</span>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:5rem;margin-bottom:.5rem;">☀️</div>
+                        <div style="font-size:.85rem;color:rgba(255,255,255,.5);">
+                            <div>⬆️ N (70%)</div>
+                            <div>← W (85%) &nbsp;&nbsp;&nbsp; → E (85%)</div>
+                            <div style="color:var(--sun);font-weight:700;">⬇️ S (100%) ⭐</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">3</div><div class="step-title tri-text"><span class="lang-he">⚡ חשמל — Electrical</span><span class="lang-en">⚡ Electrical Assessment</span><span class="lang-th">⚡ ประเมินไฟฟ้า</span></div></div>
+            <div class="step-body tri-text">
+                <span class="lang-he"><b>לוח חשמל:</b> ראשי / משני — יש מקום להוסיף מפסקים?<br><b>מונה PEA:</b> צלם! מספר מונה נחוץ לבקשת חיבור<br><b>פאזה:</b> חד-פאזי (220V) / תלת-פאזי (380V) — תלת עדיף ל-10kWp+<br><b>מפסק ראשי:</b> כמה אמפר? חשוב לחישוב DC:AC ratio<br><b>הארקה:</b> יש? תקינה? צריך לבדוק מוליכות</span>
+                <span class="lang-en"><b>Electrical panel:</b> main / sub — room to add breakers?<br><b>PEA meter:</b> photo! meter number needed for connection application<br><b>Phase:</b> single (220V) / three-phase (380V) — three-phase preferred for 10kWp+<br><b>Main breaker:</b> how many amps? critical for DC:AC ratio<br><b>Grounding:</b> existing? adequate? need to test conductivity</span>
+                <span class="lang-th"><b>ตู้ไฟ:</b> หลัก / รอง — มีที่เพิ่มเบรกเกอร์ไหม?<br><b>มิเตอร์ กฟภ:</b> ถ่ายรูป! เลขมิเตอร์ต้องใช้ขอเชื่อมต่อ<br><b>เฟส:</b> เฟสเดียว (220V) / สามเฟส (380V) — สามเฟสดีกว่าสำหรับ 10kWp+<br><b>เบรกเกอร์หลัก:</b> กี่แอมป์? สำคัญสำหรับคำนวณ DC:AC ratio<br><b>กราวด์:</b> มีไหม? เพียงพอไหม? ต้องทดสอบค่านำไฟฟ้า</span>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">4</div><div class="step-title tri-text"><span class="lang-he">🌳 הצללות — Shading</span><span class="lang-en">🌳 Shading Analysis</span><span class="lang-th">🌳 วิเคราะห์เงา</span></div></div>
+            <div class="step-body tri-text">
+                <span class="lang-he"><b>בדקו:</b> עצים, בניינים סמוכים, אנטנות, מכלי מים<br><b>שעות:</b> הצללה ב-9:00-15:00 = בעייתי<br><b>עונות:</b> דקלים גדלים! בדקו לעוד 5 שנים<br><b>כתבו:</b> "הצללה חלקית 10:00-11:00 מעץ בצד מערב"<br><br><b>חוק:</b> הצללה על פאנל אחד = ירידה בכל ה-String. תכננו Strings נפרדים לאזורי צל.</span>
+                <span class="lang-en"><b>Check:</b> trees, adjacent buildings, antennas, water tanks<br><b>Hours:</b> shading at 9:00-15:00 = problematic<br><b>Seasons:</b> palm trees grow! check for next 5 years<br><b>Document:</b> "Partial shading 10:00-11:00 from tree on west side"<br><br><b>Rule:</b> Shading on one panel = drop in entire String. Plan separate strings for shaded areas.</span>
+                <span class="lang-th"><b>ตรวจ:</b> ต้นไม้ อาคารข้างเคียง เสาอากาศ แท็งก์น้ำ<br><b>เวลา:</b> เงาช่วง 9:00-15:00 = มีปัญหา<br><b>ฤดูกาล:</b> ต้นมะพร้าวโตได้! ตรวจล่วงหน้า 5 ปี<br><b>บันทึก:</b> "เงาบางส่วน 10:00-11:00 จากต้นไม้ฝั่งตะวันตก"<br><br><b>กฎ:</b> เงาบนแผงเดียว = ผลผลิตทั้ง String ลด วางแผน String แยกสำหรับพื้นที่ร่ม</span>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <div class="step-header"><div class="step-num">5</div><div class="step-title tri-text"><span class="lang-he">📍 GPS + נגישות</span><span class="lang-en">📍 GPS + Access</span><span class="lang-th">📍 GPS + การเข้าถึง</span></div></div>
+            <div class="step-body tri-text">
+                <span class="lang-he"><b>GPS:</b> אוטומטי מהטלפון — נשמר ב-CRM<br><b>נגישות גג:</b> סולם פנימי / חיצוני / מנוף<br><b>נגישות רכב:</b> משאית 6 גלגלים מגיעה? דרך עפר?<br><b>הערות:</b> "כביש עפר 200 מטר, מנוף לא נכנס — הובלה ידנית"</span>
+                <span class="lang-en"><b>GPS:</b> auto from phone — saved in CRM<br><b>Roof access:</b> internal / external ladder / crane<br><b>Vehicle access:</b> can a 6-wheel truck arrive? dirt road?<br><b>Notes:</b> "200m dirt road, crane can't enter — manual carry"</span>
+                <span class="lang-th"><b>GPS:</b> อัตโนมัติจากโทรศัพท์ — บันทึกใน CRM<br><b>ทางขึ้นหลังคา:</b> บันไดภายใน / ภายนอก / เครน<br><b>ทางเข้ารถ:</b> รถ 6 ล้อเข้าได้ไหม? ถนนดิน?<br><b>หมายเหตุ:</b> "ถนนดิน 200 เมตร เครนเข้าไม่ได้ — ขนด้วยมือ"</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 4: CRM ENTRY -->
+<section class="slide">
+    <span class="slide-num">03</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">הזנה ל-CRM</span> — מה ממלאים</span>
+            <span class="lang-en"><span class="accent">CRM Entry</span> — What to Fill</span>
+            <span class="lang-th"><span class="accent">กรอกใน CRM</span> — กรอกอะไร</span>
+        </h2>
+        <div class="mockup">
+            <div class="mockup-bar"><div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+                <span style="margin-right:auto;font-size:.7rem;color:rgba(255,255,255,.4);">kophangan-solar-crm.vercel.app/site-survey</span>
+            </div>
+            <div class="mockup-body">
+                <div style="font-size:.8rem;color:var(--sun);font-weight:700;margin-bottom:1rem;">New Site Survey — Santhiya Resort</div>
+                <div class="field-row">
+                    <div class="field"><div class="field-label">Roof Type</div><div class="field-value">Metal Sheet</div></div>
+                    <div class="field"><div class="field-label">Condition</div><div class="field-value">Good</div></div>
+                </div>
+                <div class="field-row">
+                    <div class="field"><div class="field-label">Total Area (m²)</div><div class="field-value">850</div></div>
+                    <div class="field"><div class="field-label">Usable Area (70%)</div><div class="field-value" style="color:var(--green);">595 m²</div></div>
+                </div>
+                <div class="field-row">
+                    <div class="field"><div class="field-label">Angle</div><div class="field-value">5°</div></div>
+                    <div class="field"><div class="field-label">Direction</div><div class="field-value">South ☀️</div></div>
+                </div>
+                <div class="field-row">
+                    <div class="field"><div class="field-label">Phase</div><div class="field-value">3-Phase (380V)</div></div>
+                    <div class="field"><div class="field-label">Main Breaker</div><div class="field-value">100A</div></div>
+                </div>
+                <div class="field-row">
+                    <div class="field"><div class="field-label">Shading</div><div class="field-value">Partial — west side 10-11am</div></div>
+                    <div class="field"><div class="field-label">Access</div><div class="field-value">External staircase ✅</div></div>
+                </div>
+                <div class="field-row">
+                    <div class="field" style="grid-column:span 2;"><div class="field-label">Notes</div><div class="field-value" style="color:rgba(255,255,255,.7);">Large resort, 3 buildings. Survey covers main building. Good structure. PEA meter #KP-2847291. Owner: Mr. Tanaka.</div></div>
+                </div>
+                <div style="margin-top:1rem;text-align:left;">
+                    <div style="display:inline-block;background:var(--sun);color:#0A0A0A;padding:.4rem 1rem;border-radius:6px;font-weight:700;font-size:.8rem;">💾 Save Survey</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:1.5rem;border-color:rgba(67,160,71,.3);">
+            <h3 class="tri-text"><span class="lang-he">✅ אוטומציה של ה-CRM</span><span class="lang-en">✅ CRM Automation</span><span class="lang-th">✅ CRM อัตโนมัติ</span></h3>
+            <div class="grid-3">
+                <div class="tri-text"><span class="lang-he">🧮 <b>שטח שמיש</b> = שטח × 70% אוטומטי</span><span class="lang-en">🧮 <b>Usable area</b> = area × 70% auto</span><span class="lang-th">🧮 <b>พื้นที่ใช้ได้</b> = พื้นที่ × 70% อัตโนมัติ</span></div>
+                <div class="tri-text"><span class="lang-he">📍 <b>GPS</b> נשמר אוטומטית</span><span class="lang-en">📍 <b>GPS</b> saved automatically</span><span class="lang-th">📍 <b>GPS</b> บันทึกอัตโนมัติ</span></div>
+                <div class="tri-text"><span class="lang-he">📊 <b>Max kWp</b> = שטח שמיש ÷ 5.5</span><span class="lang-en">📊 <b>Max kWp</b> = usable ÷ 5.5</span><span class="lang-th">📊 <b>Max kWp</b> = ใช้ได้ ÷ 5.5</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 5: COMMON SCENARIOS -->
+<section class="slide">
+    <span class="slide-num">04</span>
+    <div class="container">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">תרחישים נפוצים</span> בקופנגן</span>
+            <span class="lang-en"><span class="accent">Common Scenarios</span> in Koh Phangan</span>
+            <span class="lang-th"><span class="accent">สถานการณ์ทั่วไป</span>ในเกาะพะงัน</span>
+        </h2>
+        <div class="grid-2">
+            <div class="card" style="border-right:3px solid var(--green);">
+                <h3>🏨 Resort — 200-1000m²</h3>
+                <p class="tri-text">
+                    <span class="lang-he"><b>גג:</b> מתכת, שטוח או 5°<br><b>חשמל:</b> 3-phase, 100-400A<br><b>הצללות:</b> דקלים! חייב לבדוק<br><b>נגישות:</b> בדרך כלל טובה<br><b>kWp:</b> 25-130 kWp<br><b>מודל:</b> PPA (לא רוצים CapEx)</span>
+                    <span class="lang-en"><b>Roof:</b> metal, flat or 5°<br><b>Electrical:</b> 3-phase, 100-400A<br><b>Shading:</b> palm trees! must check<br><b>Access:</b> usually good<br><b>kWp:</b> 25-130 kWp<br><b>Model:</b> PPA (no CapEx wanted)</span>
+                    <span class="lang-th"><b>หลังคา:</b> โลหะ แบนหรือ 5°<br><b>ไฟฟ้า:</b> 3 เฟส 100-400A<br><b>เงา:</b> ต้นมะพร้าว! ต้องตรวจ<br><b>การเข้าถึง:</b> ปกติดี<br><b>kWp:</b> 25-130 kWp<br><b>โมเดล:</b> PPA (ไม่อยากจ่ายล่วงหน้า)</span>
+                </p>
+            </div>
+            <div class="card" style="border-right:3px solid var(--sun);">
+                <h3>🏠 Villa — 50-200m²</h3>
+                <p class="tri-text">
+                    <span class="lang-he"><b>גג:</b> בטון/רעפים, 15-30°<br><b>חשמל:</b> חד-פאזי, 30-60A<br><b>הצללות:</b> עצים סמוכים<br><b>נגישות:</b> סולם, מקום מוגבל<br><b>kWp:</b> 5-25 kWp<br><b>מודל:</b> EPC (בעלים רוצים לקנות)</span>
+                    <span class="lang-en"><b>Roof:</b> concrete/tile, 15-30°<br><b>Electrical:</b> single-phase, 30-60A<br><b>Shading:</b> nearby trees<br><b>Access:</b> ladder, limited space<br><b>kWp:</b> 5-25 kWp<br><b>Model:</b> EPC (owners want to buy)</span>
+                    <span class="lang-th"><b>หลังคา:</b> คอนกรีต/กระเบื้อง 15-30°<br><b>ไฟฟ้า:</b> เฟสเดียว 30-60A<br><b>เงา:</b> ต้นไม้ใกล้เคียง<br><b>การเข้าถึง:</b> บันได พื้นที่จำกัด<br><b>kWp:</b> 5-25 kWp<br><b>โมเดล:</b> EPC (เจ้าของอยากซื้อ)</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 6: NEXT -->
+<section class="slide" style="background:linear-gradient(160deg,var(--ocean-deep),#0A0A0A 60%);">
+    <span class="slide-num">05</span>
+    <div class="container" style="text-align:center;">
+        <h2 class="tri-text">
+            <span class="lang-he"><span class="accent">השלב הבא</span> → ניתוח חשמל</span>
+            <span class="lang-en"><span class="accent">Next Step</span> → Electricity Analysis</span>
+            <span class="lang-th"><span class="accent">ขั้นตอนถัดไป</span> → วิเคราะห์ไฟฟ้า</span>
+        </h2>
+        <p class="subtitle tri-text" style="margin:0 auto 2rem;">
+            <span class="lang-he">אחרי הסקר — מבקשים מהלקוח 12 חשבונות חשמל PEA. מזינים ב-CRM ומקבלים ניתוח אוטומטי: המלצת kWp, חיסכון צפוי, Payback.</span>
+            <span class="lang-en">After the survey — ask the client for 12 PEA electricity bills. Enter in CRM and get automatic analysis: recommended kWp, expected savings, payback.</span>
+            <span class="lang-th">หลังสำรวจ — ขอบิลค่าไฟ กฟภ 12 เดือนจากลูกค้า กรอกใน CRM แล้วได้วิเคราะห์อัตโนมัติ: kWp แนะนำ ประหยัดที่คาดหวัง คืนทุน</span>
+        </p>
+        <div style="display:flex;gap:.5rem;justify-content:center;">
+            <a href="crm-step1-lead-capture.html" class="nav-btn">← Step 1: Lead Capture</a>
+            <a href="crm-value-chain.html" class="nav-btn">Overview</a>
+            <a href="crm-step3-electricity.html" class="nav-btn" style="background:var(--sun);color:#0A0A0A;">Step 3: Electricity →</a>
+        </div>
+    </div>
+</section>
+
+<script>
+function setLang(lang){document.body.setAttribute('data-lang',lang);document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');localStorage.setItem('tm-lang',lang);}
+const saved=localStorage.getItem('tm-lang');if(saved){document.body.setAttribute('data-lang',saved);document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',b.textContent.includes(saved==='he'?'עברית':saved==='en'?'English':'ไทย'));});}
+</script>
+</body>
+</html>

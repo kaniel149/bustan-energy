@@ -1,0 +1,221 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9465856,
+          9.4302767
+        ]
+      },
+      "properties": {
+        "id": "osm_12613076985",
+        "osm_id": 12613076985,
+        "osm_type": "node",
+        "power_type": "transformer",
+        "region": "koh_samui",
+        "source": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.2359346,
+          9.06552
+        ]
+      },
+      "properties": {
+        "id": "osm_13353483376",
+        "osm_id": 13353483376,
+        "osm_type": "node",
+        "power_type": "transformer",
+        "region": "surat_thani",
+        "source": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.2357495,
+          9.0658378
+        ]
+      },
+      "properties": {
+        "id": "osm_13353483377",
+        "osm_id": 13353483377,
+        "osm_type": "node",
+        "power_type": "transformer",
+        "region": "surat_thani",
+        "source": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9914,
+          9.7113
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_0_thongsala_center",
+        "power_type": "transformer",
+        "name": "Thongsala Center",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9781,
+          9.7284
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_1_sri_thanu",
+        "power_type": "transformer",
+        "name": "Sri Thanu",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9724,
+          9.7536
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_2_mae_haad",
+        "power_type": "transformer",
+        "name": "Mae Haad",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9651,
+          9.77
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_3_chaloklum",
+        "power_type": "transformer",
+        "name": "Chaloklum",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0313,
+          9.6979
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_4_ban_khai",
+        "power_type": "transformer",
+        "name": "Ban Khai",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0642,
+          9.6769
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_5_haad_rin",
+        "power_type": "transformer",
+        "name": "Haad Rin",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0289,
+          9.7329
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_6_east_coast",
+        "power_type": "transformer",
+        "name": "East Coast",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0549,
+          9.763
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_7_thong_nai_pan",
+        "power_type": "transformer",
+        "name": "Thong Nai Pan",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.981,
+          9.721
+        ]
+      },
+      "properties": {
+        "id": "kp_tx_8_wok_tum",
+        "power_type": "transformer",
+        "name": "Wok Tum",
+        "voltage": "33000/400",
+        "region": "koh_phangan",
+        "source": "power-grid-map.html (estimated)"
+      }
+    }
+  ]
+}

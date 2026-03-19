@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ko Phangan & Samui — Land & Roof GIS Mapper</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.1.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="app.css">
+<script src="https://unpkg.com/maplibre-gl@4.1.1/dist/maplibre-gl.js"></script>
+</head>
+<body>
+
+<div class="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Loading GIS Data...</div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>🌍 Ko Phangan/Samui — Land & Roof GIS</h1>
+    <p id="subtitle">Loading properties...</p>
+  </div>
+  
+  <div class="stats-bar">
+    <div class="stat-box" onclick="setFilter('all')"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Properties</div></div>
+    <div class="stat-box" onclick="setFilter('land')"><div class="stat-val" id="s-land">0</div><div class="stat-lbl">Lands</div></div>
+    <div class="stat-box" onclick="setFilter('roof')"><div class="stat-val" id="s-roof">0</div><div class="stat-lbl">Roofs</div></div>
+    <div class="stat-box"><div class="stat-val" id="s-sale" style="color:var(--reef)">0</div><div class="stat-lbl">For Sale</div></div>
+  </div>
+
+  <div class="sidebar-list-content">
+    <div class="filters" id="filtersRow">
+      <div class="filter-group">
+        <span class="filter-label">Type</span>
+        <div class="filter-chips">
+          <button class="fbtn on" data-f="all">All</button>
+          <button class="fbtn" data-f="land">🏞️ Lands</button>
+          <button class="fbtn" data-f="roof">🏢 Roofs</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <div class="filter-chips">
+          <button class="fbtn" data-f="sale">💰 For Sale</button>
+          <button class="fbtn" data-f="rent">🔑 For Rent</button>
+          <button class="fbtn" data-f="private">🔒 Private</button>
+        </div>
+      </div>
+    </div>
+    <div class="search-sort-row">
+      <input type="text" id="search" placeholder="🔍 Search location, price, size...">
+    </div>
+  </div>
+
+  <div class="sidebar-body">
+    <div class="building-list" id="propertyList"></div>
+    <div class="detail-view">
+      <div id="detailContent"></div>
+    </div>
+  </div>
+</div>
+
+<div class="map-container">
+  <div id="map"></div>
+  <div class="htgl">
+    <button class="htb on" onclick="setStyle('sat',this)">🛰️ Satellite</button>
+    <button class="htb" onclick="setStyle('str',this)">🗺️ Map</button>
+  </div>
+  <div class="map-ctrl">
+    <button class="mbtn" onclick="map.zoomIn()">+</button>
+    <button class="mbtn" onclick="map.zoomOut()">−</button>
+    <button class="mbtn" onclick="resetView()">⌂</button>
+  </div>
+  <div class="legend">
+    <div class="lg-i"><div class="lg-d" style="background:#E8A820"></div>Land (For Sale)</div>
+    <div class="lg-i"><div class="lg-d" style="background:#2ED89A"></div>Roof (Potential)</div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
