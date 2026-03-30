@@ -1,9 +1,6 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  motion,
-  useInView,
-} from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 import {
   Sun,
   Zap,
@@ -14,20 +11,35 @@ import {
   Phone,
   Building2,
   Home,
+  Battery,
+  MapPin,
+  Star,
+  ChevronRight,
+  MessageCircle,
 } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
 import { useLanguage } from '../i18n/LanguageContext'
 import { SEOHead } from '../components/seo/SEOHead'
-import { breadcrumbSchema, homeBreadcrumb } from '../components/seo/schemas'
+import { breadcrumbSchema, homeBreadcrumb, faqSchema } from '../components/seo/schemas'
 
-// ─── Image paths (served from /public) ───────────────────────────────────────
+const SolarInstallationScroll = lazy(
+  () => import('../components/SolarInstallationScroll')
+)
+
+// ─── Image paths ────────────────────────────────────────────────────────────
 const aerialImg = '/assets/images/strategy-01-aerial.png'
 const longiImg = '/assets/images/longi-panel.png'
 const huaweiImg = '/assets/images/huawei-inverter.png'
 const villaImg = '/assets/images/bizplan-05-villa.png'
 const resortImg = '/assets/images/strategy-03-resort.png'
+const installImg = '/assets/images/install-06-panel.png'
+const happyImg = '/assets/images/sales-10-happy.png'
+const monitorImg = '/assets/images/monitor-02-app.png'
 
-// ─── Shared animation variants ────────────────────────────────────────────────
+// ─── Project images mapped to 6 items ───────────────────────────────────────
+const projectImages = [villaImg, resortImg, aerialImg, happyImg, monitorImg, installImg]
+
+// ─── Animation variants ─────────────────────────────────────────────────────
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
@@ -38,89 +50,60 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.12 } },
 }
 
-// ─── Animated counter hook ────────────────────────────────────────────────────
+// ─── Animated counter ───────────────────────────────────────────────────────
 function useCountUp(target: number, duration = 1800, started = false) {
   const [value, setValue] = useState(0)
-
   useEffect(() => {
     if (!started) return
     const startTime = performance.now()
     let frame: number
-
     function tick(now: number) {
       const elapsed = now - startTime
       const progress = Math.min(elapsed / duration, 1)
-      // Ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3)
       setValue(Math.round(eased * target))
       if (progress < 1) frame = requestAnimationFrame(tick)
     }
-
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
   }, [started, target, duration])
-
   return value
 }
 
-// ─── Section wrapper ──────────────────────────────────────────────────────────
-function Section({
-  children,
-  className = '',
-  id,
-  style,
-}: {
-  children: React.ReactNode
-  className?: string
-  id?: string
-  style?: React.CSSProperties
-}) {
-  return (
-    <section id={id} className={className} style={style}>
-      {children}
-    </section>
-  )
-}
-
-// ─── 1. HERO ──────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// 1. HERO
+// ═══════════════════════════════════════════════════════════════════════════
 function HeroSection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Gradient background */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(14,77,115,0.55) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(232,168,32,0.08) 0%, transparent 60%), var(--color-dark)',
-        }}
-      />
+      {/* Aerial background image */}
+      <div className="absolute inset-0">
+        <img
+          src={aerialImg}
+          alt="Aerial view of solar panels on Ko Phangan"
+          className="w-full h-full object-cover"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(13,17,23,0.75) 0%, rgba(13,17,23,0.6) 40%, rgba(13,17,23,0.85) 100%)',
+          }}
+        />
+      </div>
 
-      {/* Animated grid pattern */}
+      {/* Subtle grid overlay */}
       <div
-        className="absolute inset-0 opacity-[0.06]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
             'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)',
           backgroundSize: '64px 64px',
         }}
       />
-
-      {/* Floating panel image */}
-      <motion.div
-        className="absolute right-[5%] top-1/2 -translate-y-1/2 w-64 md:w-80 lg:w-[420px] opacity-20 md:opacity-30 lg:opacity-40 pointer-events-none"
-        animate={{ y: [-12, 12, -12], rotate: [-1.5, 1.5, -1.5] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        <img
-          src={longiImg}
-          alt="Solar panel"
-          className="w-full h-auto drop-shadow-2xl"
-          loading="lazy"
-        />
-      </motion.div>
 
       {/* Hero content */}
       <motion.div
@@ -150,7 +133,9 @@ function HeroSection() {
         >
           {t.home.hero.title}
           <br />
-          <span style={{ color: 'var(--color-gold)' }}>{t.home.hero.titleAccent}</span>
+          <span style={{ color: 'var(--color-gold)' }}>
+            {t.home.hero.titleAccent}
+          </span>
         </motion.h1>
 
         <motion.p
@@ -170,9 +155,11 @@ function HeroSection() {
               style={{
                 background: 'var(--color-gold)',
                 color: 'var(--color-dark)',
-                boxShadow: '0 0 0 0 rgba(232,168,32,0)',
               }}
-              whileHover={{ scale: 1.04, boxShadow: '0 0 28px 6px rgba(232,168,32,0.30)' }}
+              whileHover={{
+                scale: 1.04,
+                boxShadow: '0 0 28px 6px rgba(232,168,32,0.30)',
+              }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
@@ -181,23 +168,36 @@ function HeroSection() {
             </motion.span>
           </Link>
 
-          <a href="#work">
+          <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
             <motion.span
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                backdropFilter: 'blur(12px)',
-                color: 'white',
+                background: 'rgba(37,211,102,0.15)',
+                border: '1px solid rgba(37,211,102,0.35)',
+                color: '#25D366',
               }}
-              whileHover={{ scale: 1.03, borderColor: 'rgba(255,255,255,0.36)' }}
+              whileHover={{
+                scale: 1.03,
+                borderColor: 'rgba(37,211,102,0.6)',
+              }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
+              <MessageCircle size={16} />
               {t.home.hero.ctaSecondary}
             </motion.span>
           </a>
         </motion.div>
+
+        {/* Trust line */}
+        {'trustLine' in t.home.hero && (
+          <motion.p
+            variants={fadeUp}
+            className="mt-8 text-sm text-white/35 tracking-wide"
+          >
+            {(t.home.hero as any).trustLine}
+          </motion.p>
+        )}
       </motion.div>
 
       {/* Scroll indicator */}
@@ -219,21 +219,26 @@ function HeroSection() {
   )
 }
 
-// ─── 2. STATS BAR ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// 2. STATS BAR
+// ═══════════════════════════════════════════════════════════════════════════
 function StatItem({
   target,
   suffix,
   label,
   started,
+  icon,
 }: {
   target: number
   suffix: string
   label: string
   started: boolean
+  icon: React.ReactNode
 }) {
   const value = useCountUp(target, 1800, started)
   return (
-    <div className="flex flex-col items-center gap-1 px-8 py-6">
+    <div className="flex flex-col items-center gap-2 px-6 py-8">
+      <div className="text-white/30 mb-1">{icon}</div>
       <span
         className="text-4xl md:text-5xl font-bold tabular-nums"
         style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-gold)' }}
@@ -251,6 +256,12 @@ function StatsBar() {
   const inView = useInView(ref, { once: true, margin: '-60px 0px' })
   const { t } = useTranslation()
 
+  const icons = [
+    <Home size={20} key="h" />,
+    <Zap size={20} key="z" />,
+    <TrendingUp size={20} key="t" />,
+    <MapPin size={20} key="m" />,
+  ]
   const stats = [
     t.home.stats.installations,
     t.home.stats.installed,
@@ -269,45 +280,79 @@ function StatsBar() {
       }}
     >
       <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-white/[0.06]">
-        {stats.map((stat) => (
-          <StatItem key={stat.label} target={stat.value} suffix={stat.suffix} label={stat.label} started={inView} />
+        {stats.map((stat, i) => (
+          <StatItem
+            key={stat.label}
+            target={stat.value}
+            suffix={stat.suffix}
+            label={stat.label}
+            started={inView}
+            icon={icons[i]}
+          />
         ))}
       </div>
+      {/* Trust line */}
+      {'trustLine' in t.home.hero && (
+        <div className="text-center pb-6 pt-2">
+          <p className="text-xs text-white/25 tracking-widest uppercase">
+            {(t.home.hero as any).trustLine}
+          </p>
+        </div>
+      )}
     </div>
   )
 }
 
-// ─── 3. SERVICES ──────────────────────────────────────────────────────────────
-function ServicesPreview() {
+// ═══════════════════════════════════════════════════════════════════════════
+// 3. SERVICES (4 cards with images)
+// ═══════════════════════════════════════════════════════════════════════════
+function ServicesSection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
 
   const services = [
     {
-      icon: <Home size={28} />,
+      icon: <Home size={24} />,
       title: t.home.services.residential.title,
       description: t.home.services.residential.description,
       cta: t.home.services.residential.cta,
       href: langPath('/services#residential'),
+      image: villaImg,
+      bullets: ['Save 40-70% on electricity', 'Increase property value', 'Battery backup available'],
     },
     {
-      icon: <Building2 size={28} />,
+      icon: <Building2 size={24} />,
       title: t.home.services.commercial.title,
       description: t.home.services.commercial.description,
       cta: t.home.services.commercial.cta,
       href: langPath('/services#commercial'),
+      image: resortImg,
+      bullets: ['PPA — zero upfront cost', 'Maximize ROI', 'Reduce operating costs'],
     },
     {
-      icon: <Sun size={28} />,
+      icon: <Sun size={24} />,
       title: t.home.services.solarFarm.title,
       description: t.home.services.solarFarm.description,
       cta: t.home.services.solarFarm.cta,
       href: langPath('/services#farm'),
+      image: aerialImg,
+      bullets: ['VSPP licensing', 'Grid connection', '1 MW to 100 MW'],
+    },
+    {
+      icon: <Battery size={24} />,
+      title: (t.home.services as any).batteryStorage?.title ?? 'Battery Storage',
+      description:
+        (t.home.services as any).batteryStorage?.description ??
+        'Blackout protection and 24/7 power independence.',
+      cta: (t.home.services as any).batteryStorage?.cta ?? 'Learn More',
+      href: langPath('/services#battery'),
+      image: huaweiImg,
+      bullets: ['Blackout protection', '24/7 power', 'Peak shaving'],
     },
   ]
 
   return (
-    <Section className="py-24 px-6" id="services">
+    <section className="py-24 px-6" id="services">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p
@@ -320,12 +365,12 @@ function ServicesPreview() {
             className="text-4xl md:text-5xl"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
-            {t.home.services.title}
+            Solar Energy Services on Ko Phangan
           </h2>
         </div>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -335,67 +380,167 @@ function ServicesPreview() {
             <motion.div
               key={svc.title}
               variants={fadeUp}
-              className="group relative flex flex-col p-8 rounded-2xl cursor-pointer"
+              className="group relative flex flex-col rounded-2xl overflow-hidden cursor-pointer"
               style={{
-                background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
-                backdropFilter: 'blur(16px)',
               }}
               whileHover={{
-                y: -6,
+                y: -4,
                 borderColor: 'rgba(232,168,32,0.35)',
-                boxShadow: '0 24px 64px rgba(0,0,0,0.35), 0 0 0 1px rgba(232,168,32,0.15)',
+                boxShadow:
+                  '0 24px 64px rgba(0,0,0,0.35), 0 0 0 1px rgba(232,168,32,0.15)',
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 24 }}
             >
+              {/* Image */}
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src={svc.image}
+                  alt={svc.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'linear-gradient(to bottom, rgba(13,17,23,0.2) 0%, rgba(13,17,23,0.8) 100%)',
+                  }}
+                />
+                {/* Icon badge */}
+                <div
+                  className="absolute top-4 left-4 w-11 h-11 rounded-xl flex items-center justify-center"
+                  style={{
+                    background: 'rgba(232,168,32,0.15)',
+                    border: '1px solid rgba(232,168,32,0.3)',
+                    color: 'var(--color-gold)',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
+                  {svc.icon}
+                </div>
+              </div>
+
+              {/* Content */}
               <div
-                className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-colors duration-300 group-hover:bg-[rgba(232,168,32,0.2)]"
+                className="flex flex-col flex-1 p-6"
                 style={{
-                  background: 'rgba(232,168,32,0.10)',
-                  color: 'var(--color-gold)',
+                  background: 'rgba(13,33,55,0.6)',
+                  backdropFilter: 'blur(16px)',
                 }}
               >
-                {svc.icon}
+                <h3 className="text-xl font-semibold mb-2">{svc.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed mb-4">
+                  {svc.description}
+                </p>
+                <ul className="flex flex-col gap-1.5 mb-5">
+                  {svc.bullets.map((b) => (
+                    <li
+                      key={b}
+                      className="flex items-center gap-2 text-sm text-white/40"
+                    >
+                      <ChevronRight
+                        size={12}
+                        style={{ color: 'var(--color-gold)' }}
+                      />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to={svc.href}
+                  className="inline-flex items-center gap-1.5 mt-auto text-sm font-medium transition-colors duration-200"
+                  style={{ color: 'var(--color-gold)' }}
+                >
+                  {svc.cta}
+                  <ArrowRight size={14} />
+                </Link>
               </div>
-              <h3 className="text-xl font-semibold mb-3">{svc.title}</h3>
-              <p className="text-white/55 text-sm leading-relaxed flex-1">
-                {svc.description}
-              </p>
-              <Link
-                to={svc.href}
-                className="inline-flex items-center gap-1.5 mt-6 text-sm font-medium transition-colors duration-200"
-                style={{ color: 'var(--color-gold)' }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {svc.cta}
-                <ArrowRight size={14} />
-              </Link>
             </motion.div>
           ))}
         </motion.div>
       </div>
-    </Section>
+    </section>
   )
 }
 
-// ─── 4. WHY TM ENERGY ─────────────────────────────────────────────────────────
-const featureIcons = [
-  <Sun size={24} />,
-  <Shield size={24} />,
-  <Zap size={24} />,
-  <TrendingUp size={24} />,
+// ═══════════════════════════════════════════════════════════════════════════
+// 4. SCROLL ANIMATION (integrated)
+// ═══════════════════════════════════════════════════════════════════════════
+function ScrollAnimationSection() {
+  const { t } = useTranslation()
+  const scrollData = (t.home as any).scrollAnimation
+
+  return (
+    <section>
+      {/* Header */}
+      <div
+        className="py-16 px-6 text-center"
+        style={{
+          background:
+            'linear-gradient(to bottom, var(--color-dark), #f8f9fa)',
+        }}
+      >
+        <p
+          className="text-sm font-medium tracking-widest uppercase mb-3"
+          style={{ color: 'var(--color-gold)' }}
+        >
+          {scrollData?.sectionTag ?? 'SEE THE PROCESS'}
+        </p>
+        <h2
+          className="text-4xl md:text-5xl text-gray-900"
+          style={{ fontFamily: 'var(--font-serif)' }}
+        >
+          {scrollData?.title ?? 'Watch Your Solar System Come to Life'}
+        </h2>
+        <p className="text-gray-500 text-base mt-3 max-w-xl mx-auto">
+          {scrollData?.subtitle ??
+            'Scroll through a real installation — from bare roof to fully powered solar system'}
+        </p>
+      </div>
+
+      {/* The scroll component */}
+      <Suspense
+        fallback={
+          <div className="h-screen flex items-center justify-center bg-white">
+            <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+          </div>
+        }
+      >
+        <SolarInstallationScroll />
+      </Suspense>
+
+      {/* Transition back to dark */}
+      <div
+        className="h-24"
+        style={{
+          background: 'linear-gradient(to bottom, #f8f9fa, var(--color-dark))',
+        }}
+      />
+    </section>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 5. WHY TM ENERGY (split layout)
+// ═══════════════════════════════════════════════════════════════════════════
+const whyIcons = [
+  <MapPin size={22} key="1" />,
+  <Shield size={22} key="2" />,
+  <Sun size={22} key="3" />,
+  <Zap size={22} key="4" />,
 ]
 
 function WhySection() {
   const { t } = useTranslation()
 
   return (
-    <Section
+    <section
       className="py-24 px-6"
       style={{
         background:
           'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(14,77,115,0.18) 0%, transparent 70%)',
-      } as React.CSSProperties}
+      }}
     >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
@@ -413,48 +558,86 @@ function WhySection() {
           </h2>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-        >
-          {t.home.why.items.map((feat, i) => (
-            <motion.div
-              key={feat.title}
-              variants={fadeUp}
-              className="flex gap-5 p-7 rounded-2xl"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          {/* Left — image */}
+          <motion.div
+            className="relative rounded-2xl overflow-hidden"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <img
+              src={installImg}
+              alt="Solar panel installation on Ko Phangan roof"
+              className="w-full h-[400px] lg:h-[500px] object-cover"
+              loading="lazy"
+            />
+            <div
+              className="absolute inset-0"
               style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.07)',
+                background:
+                  'linear-gradient(to top, rgba(13,17,23,0.7) 0%, transparent 50%)',
+              }}
+            />
+            {/* Badge */}
+            <div
+              className="absolute bottom-6 left-6 px-5 py-2.5 rounded-xl text-sm font-semibold"
+              style={{
+                background: 'rgba(232,168,32,0.9)',
+                color: 'var(--color-dark)',
               }}
             >
-              <div
-                className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center mt-0.5"
+              8+ Years Serving Ko Phangan
+            </div>
+          </motion.div>
+
+          {/* Right — features */}
+          <motion.div
+            className="flex flex-col gap-5"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+          >
+            {t.home.why.items.map((feat, i) => (
+              <motion.div
+                key={feat.title}
+                variants={fadeUp}
+                className="flex gap-5 p-6 rounded-2xl"
                 style={{
-                  background: 'rgba(10,61,92,0.6)',
-                  color: 'var(--color-gold)',
-                  border: '1px solid rgba(232,168,32,0.2)',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.07)',
                 }}
               >
-                {featureIcons[i]}
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">{feat.title}</h3>
-                <p className="text-white/55 text-sm leading-relaxed">
-                  {feat.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+                <div
+                  className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center mt-0.5"
+                  style={{
+                    background: 'rgba(10,61,92,0.6)',
+                    color: 'var(--color-gold)',
+                    border: '1px solid rgba(232,168,32,0.2)',
+                  }}
+                >
+                  {whyIcons[i]}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-1.5">{feat.title}</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    {feat.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
-    </Section>
+    </section>
   )
 }
 
-// ─── 5. PROCESS ───────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// 6. PROCESS
+// ═══════════════════════════════════════════════════════════════════════════
 const stepNums = ['01', '02', '03', '04']
 
 function ProcessSection() {
@@ -462,7 +645,7 @@ function ProcessSection() {
   const { langPath } = useLanguage()
 
   return (
-    <Section className="py-24 px-6" id="process">
+    <section className="py-24 px-6" id="process">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-6">
           <p
@@ -487,10 +670,13 @@ function ProcessSection() {
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
         >
-          {/* Connector line — desktop only */}
+          {/* Connector line */}
           <div
             className="hidden md:block absolute top-[34px] left-[12.5%] right-[12.5%] h-px"
-            style={{ background: 'linear-gradient(90deg, transparent, rgba(232,168,32,0.3) 20%, rgba(232,168,32,0.3) 80%, transparent)' }}
+            style={{
+              background:
+                'linear-gradient(90deg, transparent, rgba(232,168,32,0.3) 20%, rgba(232,168,32,0.3) 80%, transparent)',
+            }}
           />
 
           {t.home.process.steps.map((step, i) => (
@@ -506,14 +692,15 @@ function ProcessSection() {
               }}
               className="flex flex-col items-center text-center px-6 pb-8 md:pb-0 relative"
             >
-              {/* Vertical connector — mobile only */}
               {i < t.home.process.steps.length - 1 && (
                 <div
                   className="md:hidden absolute left-1/2 -translate-x-1/2 top-[68px] w-px h-full"
-                  style={{ background: 'linear-gradient(180deg, rgba(232,168,32,0.3), transparent)' }}
+                  style={{
+                    background:
+                      'linear-gradient(180deg, rgba(232,168,32,0.3), transparent)',
+                  }}
                 />
               )}
-
               <div
                 className="w-[68px] h-[68px] rounded-full flex items-center justify-center text-xl font-bold mb-5 relative z-10"
                 style={{
@@ -526,12 +713,26 @@ function ProcessSection() {
                 {stepNums[i]}
               </div>
               <h3 className="text-base font-semibold mb-2">{step.title}</h3>
-              <p className="text-white/50 text-sm leading-relaxed">{step.description}</p>
+              <p className="text-white/50 text-sm leading-relaxed">
+                {step.description}
+              </p>
             </motion.div>
           ))}
         </motion.div>
 
-        <div className="mt-14 flex justify-center">
+        {/* Stats line */}
+        {'statsLine' in t.home.process && (
+          <div className="mt-10 text-center">
+            <p
+              className="text-sm font-semibold"
+              style={{ color: 'var(--color-gold)' }}
+            >
+              {(t.home.process as any).statsLine}
+            </p>
+          </div>
+        )}
+
+        <div className="mt-10 flex justify-center">
           <Link to={langPath('/contact')}>
             <motion.span
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold cursor-pointer select-none"
@@ -539,7 +740,10 @@ function ProcessSection() {
                 background: 'var(--color-gold)',
                 color: 'var(--color-dark)',
               }}
-              whileHover={{ scale: 1.04, boxShadow: '0 0 28px 6px rgba(232,168,32,0.30)' }}
+              whileHover={{
+                scale: 1.04,
+                boxShadow: '0 0 28px 6px rgba(232,168,32,0.30)',
+              }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
@@ -549,18 +753,19 @@ function ProcessSection() {
           </Link>
         </div>
       </div>
-    </Section>
+    </section>
   )
 }
 
-// ─── 6. FEATURED PROJECTS ─────────────────────────────────────────────────────
-const projectImages = [villaImg, resortImg, aerialImg]
-
+// ═══════════════════════════════════════════════════════════════════════════
+// 7. PROJECTS GALLERY (6 items)
+// ═══════════════════════════════════════════════════════════════════════════
 function ProjectsSection() {
   const { t } = useTranslation()
+  const { langPath } = useLanguage()
 
   return (
-    <Section className="py-24 px-6" id="work">
+    <section className="py-24 px-6" id="work">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p
@@ -596,12 +801,11 @@ function ProjectsSection() {
               {/* Image */}
               <div className="relative h-56 overflow-hidden">
                 <img
-                  src={projectImages[i]}
-                  alt={proj.name}
+                  src={projectImages[i % projectImages.length]}
+                  alt={`Solar panel installation ${proj.name} ${proj.location} Ko Phangan`}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                {/* Gradient overlay */}
                 <div
                   className="absolute inset-0"
                   style={{
@@ -619,39 +823,320 @@ function ProjectsSection() {
                 >
                   Saves {proj.savings}
                 </div>
+                {/* Type badge */}
+                {'type' in proj && (
+                  <div
+                    className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium"
+                    style={{
+                      background: 'rgba(255,255,255,0.15)',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                    }}
+                  >
+                    {(proj as any).type}
+                  </div>
+                )}
               </div>
 
-              {/* Details overlay */}
+              {/* Details */}
               <div
                 className="px-6 py-5"
-                style={{ background: 'rgba(13,33,55,0.85)', backdropFilter: 'blur(12px)' }}
+                style={{
+                  background: 'rgba(13,33,55,0.85)',
+                  backdropFilter: 'blur(12px)',
+                }}
               >
                 <h3 className="text-lg font-semibold mb-1">{proj.name}</h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/50 text-sm">{proj.location}</span>
+                  <span className="text-white/50 text-sm flex items-center gap-1">
+                    <MapPin size={12} />
+                    {proj.location}
+                  </span>
                   <span
                     className="text-sm font-medium"
                     style={{ color: 'var(--color-gold)' }}
                   >
-                    {proj.size} System
+                    {proj.size}
                   </span>
                 </div>
               </div>
             </motion.div>
           ))}
         </motion.div>
+
+        {'viewAll' in t.home.projects && (
+          <div className="mt-10 flex justify-center">
+            <Link
+              to={langPath('/projects')}
+              className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
+              style={{ color: 'var(--color-gold)' }}
+            >
+              {(t.home.projects as any).viewAll}
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        )}
       </div>
-    </Section>
+    </section>
   )
 }
 
-// ─── 7. CTA SECTION ───────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// 8. TESTIMONIALS
+// ═══════════════════════════════════════════════════════════════════════════
+function TestimonialsSection() {
+  const { t } = useTranslation()
+  const testimonials = (t.home as any).testimonials
+  const [active, setActive] = useState(0)
+
+  // Auto-rotate
+  useEffect(() => {
+    if (!testimonials?.items?.length) return
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % testimonials.items.length)
+    }, 6000)
+    return () => clearInterval(timer)
+  }, [testimonials?.items?.length])
+
+  if (!testimonials?.items?.length) return null
+
+  return (
+    <section
+      className="py-24 px-6"
+      style={{
+        background:
+          'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(14,77,115,0.15) 0%, transparent 70%)',
+      }}
+    >
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <p
+            className="text-sm font-medium tracking-widest uppercase mb-3"
+            style={{ color: 'var(--color-gold)' }}
+          >
+            {testimonials.sectionTag}
+          </p>
+          <h2
+            className="text-4xl md:text-5xl"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            {testimonials.title}
+          </h2>
+        </div>
+
+        {/* Testimonial card */}
+        <div
+          className="relative rounded-2xl px-8 py-10 md:px-12 md:py-14 text-center min-h-[280px] flex flex-col items-center justify-center"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(16px)',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.4 }}
+              className="flex flex-col items-center"
+            >
+              {/* Stars */}
+              <div className="flex gap-1 mb-6">
+                {Array.from({ length: testimonials.items[active].stars }).map(
+                  (_, i) => (
+                    <Star
+                      key={i}
+                      size={18}
+                      fill="#E8A820"
+                      color="#E8A820"
+                    />
+                  )
+                )}
+              </div>
+
+              {/* Quote */}
+              <p className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl mb-8 italic">
+                "{testimonials.items[active].quote}"
+              </p>
+
+              {/* Author */}
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                  style={{
+                    background: 'rgba(232,168,32,0.2)',
+                    color: 'var(--color-gold)',
+                  }}
+                >
+                  {testimonials.items[active].name.charAt(0)}
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-semibold">
+                    {testimonials.items[active].name}
+                  </p>
+                  <p className="text-xs text-white/40">
+                    {testimonials.items[active].role}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Dots */}
+          <div className="flex gap-2 mt-8">
+            {testimonials.items.map((_: any, i: number) => (
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  i === active
+                    ? 'w-6 bg-[var(--color-gold)]'
+                    : 'bg-white/20 hover:bg-white/40'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Rating badge */}
+        <div className="mt-8 flex justify-center">
+          <div
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm"
+            style={{
+              background: 'rgba(232,168,32,0.1)',
+              border: '1px solid rgba(232,168,32,0.25)',
+              color: 'var(--color-gold)',
+            }}
+          >
+            <Star size={14} fill="#E8A820" />
+            {testimonials.rating}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 9. FAQ (accordion)
+// ═══════════════════════════════════════════════════════════════════════════
+function FAQItem({
+  question,
+  answer,
+  isOpen,
+  onToggle,
+}: {
+  question: string
+  answer: string
+  isOpen: boolean
+  onToggle: () => void
+}) {
+  return (
+    <div
+      className="rounded-xl overflow-hidden"
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: isOpen
+          ? '1px solid rgba(232,168,32,0.25)'
+          : '1px solid rgba(255,255,255,0.07)',
+      }}
+    >
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-6 py-5 text-left cursor-pointer"
+      >
+        <span className="text-base font-medium pr-4">{question}</span>
+        <motion.div
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="shrink-0"
+          style={{ color: 'var(--color-gold)' }}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M10 4v12M4 10h12"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <p className="px-6 pb-5 text-sm text-white/55 leading-relaxed">
+              {answer}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function FAQSection() {
+  const { t } = useTranslation()
+  const faqData = (t.home as any).faq
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
+
+  if (!faqData?.items?.length) return null
+
+  return (
+    <section className="py-24 px-6" id="faq">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-14">
+          <p
+            className="text-sm font-medium tracking-widest uppercase mb-3"
+            style={{ color: 'var(--color-gold)' }}
+          >
+            {faqData.sectionTag}
+          </p>
+          <h2
+            className="text-4xl md:text-5xl"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            {faqData.title}
+          </h2>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {faqData.items.map(
+            (item: { question: string; answer: string }, i: number) => (
+              <FAQItem
+                key={i}
+                question={item.question}
+                answer={item.answer}
+                isOpen={openIndex === i}
+                onToggle={() =>
+                  setOpenIndex(openIndex === i ? null : i)
+                }
+              />
+            )
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 10. FINAL CTA
+// ═══════════════════════════════════════════════════════════════════════════
 function CTASection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
 
   return (
-    <Section className="py-28 px-6" id="contact">
+    <section className="py-28 px-6" id="contact">
       <div
         className="max-w-3xl mx-auto rounded-3xl text-center px-8 py-16 relative overflow-hidden"
         style={{
@@ -660,7 +1145,7 @@ function CTASection() {
           backdropFilter: 'blur(24px)',
         }}
       >
-        {/* Gold glow blob */}
+        {/* Gold glow */}
         <div
           className="absolute inset-0 rounded-3xl pointer-events-none"
           style={{
@@ -687,6 +1172,7 @@ function CTASection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* Primary CTA */}
             <Link to={langPath('/contact')}>
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold cursor-pointer select-none"
@@ -694,7 +1180,10 @@ function CTASection() {
                   background: 'var(--color-gold)',
                   color: 'var(--color-dark)',
                 }}
-                whileHover={{ scale: 1.04, boxShadow: '0 0 28px 6px rgba(232,168,32,0.32)' }}
+                whileHover={{
+                  scale: 1.04,
+                  boxShadow: '0 0 28px 6px rgba(232,168,32,0.32)',
+                }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
@@ -703,6 +1192,28 @@ function CTASection() {
               </motion.span>
             </Link>
 
+            {/* WhatsApp */}
+            <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
+              <motion.span
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
+                style={{
+                  background: 'rgba(37,211,102,0.15)',
+                  border: '1px solid rgba(37,211,102,0.35)',
+                  color: '#25D366',
+                }}
+                whileHover={{
+                  scale: 1.03,
+                  borderColor: 'rgba(37,211,102,0.6)',
+                }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              >
+                <MessageCircle size={16} />
+                {(t.home.cta as any).ctaWhatsapp ?? 'WhatsApp Us'}
+              </motion.span>
+            </a>
+
+            {/* Call */}
             <a href="tel:+66000000000">
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
@@ -712,34 +1223,45 @@ function CTASection() {
                   backdropFilter: 'blur(12px)',
                   color: 'white',
                 }}
-                whileHover={{ scale: 1.03, borderColor: 'rgba(255,255,255,0.38)' }}
+                whileHover={{
+                  scale: 1.03,
+                  borderColor: 'rgba(255,255,255,0.38)',
+                }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
                 <Phone size={16} />
-                {t.home.cta.ctaSecondary}
+                {(t.home.cta as any).ctaCall ?? 'Call Now'}
               </motion.span>
             </a>
           </div>
+
+          {/* Urgency line */}
+          {'urgency' in (t.home.cta as any) && (
+            <p className="mt-6 text-sm text-white/35">
+              ⚡ {(t.home.cta as any).urgency}
+            </p>
+          )}
         </div>
       </div>
-    </Section>
+    </section>
   )
 }
 
-// ─── 8. PARTNERS BAR ──────────────────────────────────────────────────────────
-const partnerImages = [longiImg, huaweiImg, null]
-
+// ═══════════════════════════════════════════════════════════════════════════
+// 11. PARTNERS BAR
+// ═══════════════════════════════════════════════════════════════════════════
 function PartnersBar() {
   const { t } = useTranslation()
+  const partnerImages = [longiImg, huaweiImg, null]
 
   return (
-    <Section
+    <section
       className="py-14 px-6"
       style={{
         borderTop: '1px solid rgba(255,255,255,0.06)',
         background: 'rgba(255,255,255,0.015)',
-      } as React.CSSProperties}
+      }}
     >
       <div className="max-w-5xl mx-auto">
         <p className="text-center text-xs font-medium tracking-widest uppercase text-white/30 mb-10">
@@ -760,7 +1282,9 @@ function PartnersBar() {
                 />
               ) : (
                 <div className="h-10 flex items-center">
-                  <span className="text-2xl font-bold tracking-tight text-white">PEA</span>
+                  <span className="text-2xl font-bold tracking-tight text-white">
+                    PEA
+                  </span>
                 </div>
               )}
               <div className="text-center">
@@ -770,50 +1294,118 @@ function PartnersBar() {
             </div>
           ))}
         </div>
+        {/* Local SEO signal */}
+        <p className="text-center text-xs text-white/20 mt-8">
+          Serving Ko Phangan, Ko Samui, and Surat Thani Province
+        </p>
       </div>
-    </Section>
+    </section>
   )
 }
 
-// ─── FOOTER ───────────────────────────────────────────────────────────────────
-function Footer() {
-  const { t } = useTranslation()
-
-  return (
-    <footer
-      className="py-10 px-6 text-center"
-      style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
-    >
-      <p className="text-white/25 text-sm">
-        {t.footer.copyright}
-      </p>
-    </footer>
-  )
+// ═══════════════════════════════════════════════════════════════════════════
+// SEO SCHEMAS
+// ═══════════════════════════════════════════════════════════════════════════
+function howToSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How Solar Installation Works on Ko Phangan',
+    description:
+      'Step-by-step guide to getting solar panels installed on your home or business in Ko Phangan, Thailand.',
+    step: [
+      {
+        '@type': 'HowToStep',
+        position: 1,
+        name: 'Free Site Survey',
+        text: 'We visit your property, assess roof orientation, shading, and energy usage.',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 2,
+        name: 'Custom Design',
+        text: 'Solar system designed specifically for your home or business on Ko Phangan.',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 3,
+        name: 'Professional Installation',
+        text: 'PEA-certified team installs your system, typically 1-3 days.',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 4,
+        name: 'Monitor & Save',
+        text: 'Real-time app monitoring. Watch your savings grow every day.',
+      },
+    ],
+    totalTime: 'P14D',
+  }
 }
 
-// ─── PAGE ASSEMBLY ────────────────────────────────────────────────────────────
+function aggregateRatingSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'TM Energy',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      bestRating: '5',
+      ratingCount: '50',
+      reviewCount: '50',
+    },
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PAGE ASSEMBLY
+// ═══════════════════════════════════════════════════════════════════════════
 export default function HomePage() {
   const { t, lang } = useTranslation()
+  const faqData = (t.home as any).faq
+
+  // Build FAQ schema from translation data
+  const faqItems = faqData?.items ?? []
+  const schemas = [
+    breadcrumbSchema(homeBreadcrumb(lang)),
+    howToSchema(),
+    aggregateRatingSchema(),
+    ...(faqItems.length > 0 ? [faqSchema(faqItems)] : []),
+  ]
 
   return (
     <>
       <SEOHead
-        title={t.seo.home.title}
-        description={t.seo.home.description}
+        title={
+          lang === 'th'
+            ? 'ติดตั้งโซลาร์เซลล์เกาะพะงัน — โซลาร์เซลล์บ้าน รีสอร์ท ธุรกิจ'
+            : 'Solar Panel Installation Ko Phangan — Homes, Villas & Resorts'
+        }
+        description={
+          lang === 'th'
+            ? 'TM Energy ผู้เชี่ยวชาญติดตั้งโซลาร์เซลล์บนเกาะพะงัน เกาะสมุย ประหยัดค่าไฟ 40% ได้รับอนุญาตจาก กฟภ. แผง LONGi อินเวอร์เตอร์ Huawei รับประกัน 25 ปี'
+            : 'TM Energy — Ko Phangan\'s trusted solar installer. Save 40% on electricity with premium LONGi panels & Huawei inverters. PEA licensed. 500+ installations. Free site survey.'
+        }
         path="/"
         lang={lang}
-        schema={breadcrumbSchema(homeBreadcrumb(lang))}
+        schema={schemas}
       />
-      <div className="min-h-screen" style={{ background: 'var(--color-dark)', color: 'white' }}>
+      <div
+        className="min-h-screen"
+        style={{ background: 'var(--color-dark)', color: 'white' }}
+      >
         <HeroSection />
         <StatsBar />
-        <ServicesPreview />
+        <ServicesSection />
+        <ScrollAnimationSection />
         <WhySection />
         <ProcessSection />
         <ProjectsSection />
+        <TestimonialsSection />
+        <FAQSection />
         <CTASection />
         <PartnersBar />
-        <Footer />
       </div>
     </>
   )

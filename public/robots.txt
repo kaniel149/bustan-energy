@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /platform
+Disallow: /crm
 
 Sitemap: https://energy-tm.com/sitemap.xml

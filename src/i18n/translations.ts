@@ -37,19 +37,19 @@ const en = {
 
   home: {
     hero: {
-      badge: "Ko Phangan's #1 Solar Installer",
+      badge: 'Trusted by 500+ Homes & Businesses on Ko Phangan',
       title: 'Power Your',
       titleAccent: 'Paradise',
-      subtitle:
-        'Premium solar energy solutions for Ko Phangan. Save up to 40% on electricity while protecting the island you love.',
+      subtitle: 'Premium solar panel installation for homes, villas & resorts on Ko Phangan. Save 40% on electricity with Thailand\'s most trusted island solar company.',
       ctaPrimary: 'Get Free Quote',
-      ctaSecondary: 'See Our Work',
+      ctaSecondary: 'WhatsApp Us',
+      trustLine: 'Licensed by PEA · LONGi Certified · Huawei Authorized · Full Warranty',
     },
     stats: {
       installations: { value: 500, suffix: '+', label: 'Installations' },
       installed: { value: 15, suffix: ' MW', label: 'Installed' },
       savings: { value: 40, suffix: '%', label: 'Average Savings' },
-      experience: { value: 8, suffix: '+', label: 'Years Experience' },
+      experience: { value: 8, suffix: '+', label: 'Years on Ko Phangan' },
     },
     services: {
       sectionTag: 'WHAT WE DO',
@@ -72,72 +72,80 @@ const en = {
           'Ground-mount installations from 1 MW to 100 MW. Full VSPP licensing and grid connection.',
         cta: 'Learn More',
       },
+      batteryStorage: {
+        title: 'Battery Storage',
+        description: 'Blackout protection and 24/7 power independence. Huawei LUNA battery systems for homes and businesses.',
+        cta: 'Learn More',
+      },
     },
     why: {
       sectionTag: 'OUR ADVANTAGE',
-      title: 'Why Choose TM Energy',
+      title: 'Why Ko Phangan Trusts TM Energy',
       items: [
         {
-          title: 'Local Expertise',
-          description:
-            "Born on Ko Phangan. We understand the island's unique climate, regulations, and energy needs.",
+          title: 'Island Specialists',
+          description: 'We live here. We know the salt air, the humidity, the storms. Every system is engineered for tropical island conditions.',
+        },
+        {
+          title: 'PEA Licensed',
+          description: 'Fully licensed and approved by the Provincial Electricity Authority. No shortcuts, no surprises.',
         },
         {
           title: 'Premium Equipment',
-          description:
-            'We use only tier-1 panels (LONGi) and inverters (Huawei) with 25-year warranties.',
+          description: 'LONGi panels + Huawei inverters. Tier-1 brands with 25-year warranty.',
         },
         {
-          title: 'End-to-End Service',
-          description:
-            'From site survey to monitoring — we handle everything. You just enjoy the savings.',
-        },
-        {
-          title: 'Proven ROI',
-          description:
-            'Our systems pay for themselves in 4–6 years with 20+ years of free electricity after.',
+          title: 'Blackout Protection',
+          description: "Ko Phangan loses power. Your home doesn't. Battery backup keeps you running 24/7.",
         },
       ],
     },
     process: {
       sectionTag: 'SIMPLE PROCESS',
-      title: 'How It Works',
-      subtitle: '4 simple steps to solar',
+      title: 'How Solar Installation Works on Ko Phangan',
+      subtitle: '4 simple steps from consultation to clean energy',
       steps: [
         {
-          title: 'Free Consultation',
-          description: 'We assess your property and energy needs',
+          title: 'Free Site Survey',
+          description: 'We visit your property, assess roof orientation, shading, and energy usage',
         },
         {
           title: 'Custom Design',
-          description: 'Engineered specifically for your roof and usage',
+          description: 'Solar system designed specifically for your home or business on Ko Phangan',
         },
         {
-          title: 'Professional Install',
-          description: 'Our certified team handles everything',
+          title: 'Professional Installation',
+          description: 'PEA-certified team, typically 1-3 days from start to finish',
         },
         {
           title: 'Monitor & Save',
-          description: 'Track your production and savings in real-time',
+          description: 'Real-time app monitoring. Watch your savings grow every day',
         },
       ],
-      cta: 'Start Your Solar Journey',
+      statsLine: 'Average installation time: 2 days · Payback period: 3 years',
+      cta: 'Get Free Site Survey',
     },
     projects: {
       sectionTag: 'PORTFOLIO',
-      title: 'Our Work',
+      title: 'Solar Installations Across Ko Phangan',
+      viewAll: 'View All Projects',
       items: [
-        { name: 'Villa Sunset', location: 'Thong Sala', size: '15kW', savings: '42%' },
-        { name: 'Coconut Resort', location: 'Haad Rin', size: '45kW', savings: '38%' },
-        { name: 'Beach Club', location: 'Srithanu', size: '30kW', savings: '44%' },
+        { name: 'Private Villa', location: 'Haad Rin', size: '8.5kW', savings: '42%', type: 'Residential' },
+        { name: 'Beach Resort', location: 'Thong Nai Pan', size: '45kW', savings: '38%', type: 'Commercial' },
+        { name: 'Boutique Hotel', location: 'Sri Thanu', size: '22kW', savings: '51%', type: 'Commercial' },
+        { name: 'Restaurant & Bar', location: 'Thong Sala', size: '12kW', savings: '44%', type: 'Residential' },
+        { name: 'Wellness Center', location: 'Haad Yao', size: '15kW', savings: '48%', type: 'Commercial' },
+        { name: 'Off-Grid Villa', location: 'Bottle Beach', size: '6kW + Battery', savings: '95%', type: 'Residential' },
       ],
     },
     cta: {
       sectionTag: 'GET STARTED TODAY',
-      title: 'Ready to Go Solar?',
-      subtitle: 'Join 500+ homes and businesses on Ko Phangan already saving with TM Energy.',
-      ctaPrimary: 'Get Your Free Quote',
-      ctaSecondary: 'Call Us Now',
+      title: 'Ready to Power Your Paradise?',
+      subtitle: 'Join 500+ homes and businesses on Ko Phangan already saving with solar energy. Get your free site survey today.',
+      ctaPrimary: 'Get Free Quote',
+      ctaWhatsapp: 'WhatsApp Us',
+      ctaCall: 'Call Now',
+      urgency: 'Free site survey · No obligation · Response within 24 hours',
     },
     partners: {
       title: 'TRUSTED EQUIPMENT PARTNERS',
@@ -146,6 +154,74 @@ const en = {
         { name: 'Huawei FusionSolar', subtitle: 'Smart Inverters' },
         { name: 'PEA Thailand', subtitle: 'Grid Authority' },
       ],
+    },
+    testimonials: {
+      sectionTag: 'WHAT OUR CLIENTS SAY',
+      title: 'Trusted Across Ko Phangan',
+      rating: '4.9/5 from 50+ reviews',
+      items: [
+        {
+          quote: 'TM Energy transformed our villa. We went from ฿15,000/month electricity bills to almost zero. The system paid for itself in under 3 years.',
+          name: 'Sarah M.',
+          role: 'Villa Owner, Haad Rin',
+          stars: 5,
+        },
+        {
+          quote: 'As a resort manager, reliability is everything. TM Energy delivered a 45kW system on time and the monitoring dashboard is excellent. Our guests love knowing we run on solar.',
+          name: 'James T.',
+          role: 'Resort Manager, Thong Nai Pan',
+          stars: 5,
+        },
+        {
+          quote: 'ติดตั้งเร็ว ราคาสมเหตุสมผล ทีมงานเป็นมืออาชีพมาก ไฟฟ้าบ้านไม่เคยดับเลยตั้งแต่ติดแบตเตอรี่',
+          name: 'สมชาย ว.',
+          role: 'เจ้าของบ้าน ศรีธนู',
+          stars: 5,
+        },
+      ],
+    },
+    faq: {
+      sectionTag: 'FREQUENTLY ASKED QUESTIONS',
+      title: 'Solar Energy FAQ for Ko Phangan',
+      items: [
+        {
+          question: 'How much does solar installation cost on Ko Phangan?',
+          answer: 'Residential systems (3-15kW) typically cost ฿180,000-฿850,000 including all equipment, installation, permits, and PEA grid connection. Most homeowners see full payback within 3-4 years.',
+        },
+        {
+          question: 'How much can I save with solar panels in Thailand?',
+          answer: 'Our clients on Ko Phangan save an average of 40% on electricity bills. With high sunshine hours (1,800+ per year) and rising electricity costs, solar is one of the best investments on the island.',
+        },
+        {
+          question: 'Do solar panels work during Thailand\'s rainy season?',
+          answer: 'Yes. Modern solar panels generate electricity even on cloudy days — typically 10-25% of peak output. Ko Phangan still receives significant sunshine year-round, and your annual production remains excellent.',
+        },
+        {
+          question: 'What happens during a power outage with solar?',
+          answer: 'With a standard grid-tied system, solar shuts off during outages for safety. However, with a battery storage system (like Huawei LUNA), your home stays powered 24/7 regardless of grid outages — a major advantage on Ko Phangan.',
+        },
+        {
+          question: 'Is solar worth it for a small villa on Ko Phangan?',
+          answer: 'Absolutely. Even a small 3-5kW system can slash your electricity bill by 40-60%. With Ko Phangan\'s high electricity rates and abundant sunshine, the ROI is excellent for properties of any size.',
+        },
+        {
+          question: 'Do I need PEA approval for solar panels?',
+          answer: 'Yes, all grid-connected solar systems in Thailand require PEA approval. TM Energy handles the entire licensing process for you — from application to final inspection and grid connection.',
+        },
+        {
+          question: 'How long does solar installation take?',
+          answer: 'Residential systems typically take 1-3 days to install. Commercial systems (30kW+) take 3-7 days. PEA grid connection approval adds 2-4 weeks, which we manage entirely on your behalf.',
+        },
+        {
+          question: 'What warranty do you offer?',
+          answer: 'All systems include: 25-year power output warranty on LONGi panels, 10-year product warranty on Huawei inverters, and 10-year workmanship warranty on our installation. We are fully licensed and insured.',
+        },
+      ],
+    },
+    scrollAnimation: {
+      sectionTag: 'SEE THE PROCESS',
+      title: 'Watch Your Solar System Come to Life',
+      subtitle: 'Scroll through a real installation — from bare roof to fully powered solar system',
     },
   },
 
@@ -640,19 +716,19 @@ const th = {
 
   home: {
     hero: {
-      badge: 'ผู้ติดตั้งโซลาร์เซลล์อันดับ 1 เกาะพะงัน',
+      badge: 'บ้านและธุรกิจกว่า 500 แห่งบนเกาะพะงันไว้วางใจเรา',
       title: 'เปลี่ยนแสงอาทิตย์ให้เป็น',
       titleAccent: 'พลังงานของคุณ',
-      subtitle:
-        'ติดตั้งโซลาร์เซลล์คุณภาพสูงบนเกาะพะงัน ประหยัดค่าไฟได้ถึง 40% พร้อมดูแลเกาะสวรรค์ที่คุณรัก',
+      subtitle: 'ติดตั้งแผงโซลาร์เซลล์คุณภาพสูงสำหรับบ้าน วิลล่า และรีสอร์ทบนเกาะพะงัน ประหยัดค่าไฟ 40% กับบริษัทโซลาร์เซลล์ที่ไว้วางใจได้มากที่สุดบนเกาะ',
       ctaPrimary: 'ขอใบเสนอราคาฟรี',
-      ctaSecondary: 'ดูผลงาน',
+      ctaSecondary: 'แชท WhatsApp',
+      trustLine: 'ได้รับอนุญาตจาก กฟภ. · รับรองโดย LONGi · ตัวแทน Huawei · รับประกันเต็มรูปแบบ',
     },
     stats: {
       installations: { value: 500, suffix: '+', label: 'โครงการที่ติดตั้งแล้ว' },
       installed: { value: 15, suffix: ' MW', label: 'กำลังการผลิตรวม' },
       savings: { value: 40, suffix: '%', label: 'ประหยัดค่าไฟเฉลี่ย' },
-      experience: { value: 8, suffix: '+', label: 'ปีแห่งประสบการณ์' },
+      experience: { value: 8, suffix: '+', label: 'ปีบนเกาะพะงัน' },
     },
     services: {
       sectionTag: 'บริการของเรา',
@@ -675,73 +751,80 @@ const th = {
           'โครงการติดตั้งภาคพื้นดินตั้งแต่ 1 MW ถึง 100 MW พร้อมใบอนุญาต VSPP และการเชื่อมต่อกริด',
         cta: 'เรียนรู้เพิ่มเติม',
       },
+      batteryStorage: {
+        title: 'ระบบกักเก็บพลังงาน',
+        description: 'ป้องกันไฟดับและใช้พลังงานอิสระ 24 ชม. ระบบแบตเตอรี่ Huawei LUNA สำหรับบ้านและธุรกิจ',
+        cta: 'เรียนรู้เพิ่มเติม',
+      },
     },
     why: {
       sectionTag: 'ข้อได้เปรียบของเรา',
-      title: 'ทำไมต้องเลือก TM Energy',
+      title: 'ทำไมเกาะพะงันไว้วางใจ TM Energy',
       items: [
         {
-          title: 'ความเชี่ยวชาญท้องถิ่น',
-          description:
-            'เราเกิดและเติบโตบนเกาะพะงัน เข้าใจสภาพอากาศ กฎระเบียบ และความต้องการพลังงานของเกาะอย่างลึกซึ้ง',
+          title: 'ผู้เชี่ยวชาญบนเกาะ',
+          description: 'เราอยู่ที่นี่ เรารู้จักลมทะเล ความชื้น และพายุ ทุกระบบถูกออกแบบสำหรับสภาพอากาศเกาะเขตร้อน',
         },
         {
-          title: 'อุปกรณ์คุณภาพสูงสุด',
-          description:
-            'เราใช้เฉพาะแผงโซลาร์ระดับ Tier-1 (LONGi) และอินเวอร์เตอร์ (Huawei) พร้อมการรับประกัน 25 ปี',
+          title: 'ได้รับอนุญาตจาก กฟภ.',
+          description: 'ได้รับใบอนุญาตและการรับรองจากการไฟฟ้าส่วนภูมิภาคอย่างสมบูรณ์ ไม่มีทางลัด ไม่มีเซอร์ไพรส์',
         },
         {
-          title: 'บริการครบวงจร',
-          description:
-            'ตั้งแต่สำรวจพื้นที่จนถึงการมอนิเตอร์ระบบ เราดูแลทุกขั้นตอน คุณแค่เพลิดเพลินกับการประหยัดค่าไฟ',
+          title: 'อุปกรณ์ระดับพรีเมียม',
+          description: 'แผงโซลาร์ LONGi + อินเวอร์เตอร์ Huawei แบรนด์ระดับ Tier-1 พร้อมการรับประกัน 25 ปี',
         },
         {
-          title: 'ผลตอบแทนที่พิสูจน์แล้ว',
-          description:
-            'ระบบของเราคืนทุนภายใน 4–6 ปี และมีพลังงานฟรีอีกกว่า 20 ปีหลังจากนั้น',
+          title: 'ป้องกันไฟดับ',
+          description: 'เกาะพะงันไฟดับบ่อย แต่บ้านคุณไม่ต้องดับ ระบบแบตเตอรี่สำรองให้คุณใช้ไฟได้ 24/7',
         },
       ],
     },
     process: {
       sectionTag: 'ขั้นตอนง่ายๆ',
-      title: 'วิธีการทำงาน',
-      subtitle: '4 ขั้นตอนง่ายๆ สู่พลังงานโซลาร์',
+      title: 'ขั้นตอนการติดตั้งโซลาร์เซลล์บนเกาะพะงัน',
+      subtitle: '4 ขั้นตอนง่ายๆ จากการปรึกษาสู่พลังงานสะอาด',
       steps: [
         {
-          title: 'ปรึกษาฟรี',
-          description: 'เราประเมินทรัพย์สินและความต้องการพลังงานของคุณ',
+          title: 'สำรวจพื้นที่ฟรี',
+          description: 'เราเยี่ยมชมทรัพย์สินของคุณ ประเมินทิศทางหลังคา ร่มเงา และการใช้พลังงาน',
         },
         {
           title: 'ออกแบบเฉพาะคุณ',
-          description: 'วิศวกรรมสำหรับหลังคาและการใช้งานของคุณโดยเฉพาะ',
+          description: 'ระบบโซลาร์เซลล์ที่ออกแบบเฉพาะสำหรับบ้านหรือธุรกิจของคุณบนเกาะพะงัน',
         },
         {
           title: 'ติดตั้งโดยผู้เชี่ยวชาญ',
-          description: 'ทีมงานที่ได้รับการรับรองดูแลทุกขั้นตอน',
+          description: 'ทีมงานที่ได้รับการรับรองจาก กฟภ. ใช้เวลาเพียง 1-3 วัน',
         },
         {
           title: 'มอนิเตอร์และประหยัด',
-          description: 'ติดตามการผลิตไฟฟ้าและการประหยัดแบบเรียลไทม์',
+          description: 'ติดตามผ่านแอปแบบเรียลไทม์ เห็นการประหยัดค่าไฟทุกวัน',
         },
       ],
-      cta: 'เริ่มต้นเส้นทางโซลาร์ของคุณ',
+      statsLine: 'เวลาติดตั้งเฉลี่ย: 2 วัน · ระยะเวลาคืนทุน: 3 ปี',
+      cta: 'ขอสำรวจพื้นที่ฟรี',
     },
     projects: {
       sectionTag: 'ผลงานของเรา',
-      title: 'ผลงานที่ผ่านมา',
+      title: 'โครงการติดตั้งโซลาร์เซลล์ทั่วเกาะพะงัน',
+      viewAll: 'ดูผลงานทั้งหมด',
       items: [
-        { name: 'Villa Sunset', location: 'ทองสาลา', size: '15kW', savings: '42%' },
-        { name: 'Coconut Resort', location: 'หาดรีน', size: '45kW', savings: '38%' },
-        { name: 'Beach Club', location: 'ศรีธนู', size: '30kW', savings: '44%' },
+        { name: 'วิลล่าส่วนตัว', location: 'หาดรีน', size: '8.5kW', savings: '42%', type: 'บ้านพัก' },
+        { name: 'บีช รีสอร์ท', location: 'ท้องนายปาน', size: '45kW', savings: '38%', type: 'ธุรกิจ' },
+        { name: 'บูติค โฮเทล', location: 'ศรีธนู', size: '22kW', savings: '51%', type: 'ธุรกิจ' },
+        { name: 'ร้านอาหาร', location: 'ทองสาลา', size: '12kW', savings: '44%', type: 'บ้านพัก' },
+        { name: 'ศูนย์สุขภาพ', location: 'หาดยาว', size: '15kW', savings: '48%', type: 'ธุรกิจ' },
+        { name: 'วิลล่าออฟกริด', location: 'หาดขวด', size: '6kW + แบตเตอรี่', savings: '95%', type: 'บ้านพัก' },
       ],
     },
     cta: {
       sectionTag: 'เริ่มต้นวันนี้',
-      title: 'พร้อมใช้โซลาร์เซลล์หรือยัง?',
-      subtitle:
-        'ร่วมกับบ้านและธุรกิจกว่า 500 แห่งบนเกาะพะงันที่ประหยัดค่าไฟกับ TM Energy แล้ว',
+      title: 'พร้อมเปลี่ยนสวรรค์ให้เป็นพลังงาน?',
+      subtitle: 'ร่วมกับบ้านและธุรกิจกว่า 500 แห่งบนเกาะพะงันที่ประหยัดค่าไฟด้วยพลังงานแสงอาทิตย์แล้ว สำรวจพื้นที่ฟรีวันนี้',
       ctaPrimary: 'ขอใบเสนอราคาฟรี',
-      ctaSecondary: 'โทรหาเรา',
+      ctaWhatsapp: 'แชท WhatsApp',
+      ctaCall: 'โทรเลย',
+      urgency: 'สำรวจพื้นที่ฟรี · ไม่มีข้อผูกมัด · ตอบกลับภายใน 24 ชั่วโมง',
     },
     partners: {
       title: 'พันธมิตรอุปกรณ์ที่ไว้วางใจได้',
@@ -750,6 +833,74 @@ const th = {
         { name: 'Huawei FusionSolar', subtitle: 'อินเวอร์เตอร์อัจฉริยะ' },
         { name: 'PEA Thailand', subtitle: 'การไฟฟ้าส่วนภูมิภาค' },
       ],
+    },
+    testimonials: {
+      sectionTag: 'ลูกค้าพูดถึงเรา',
+      title: 'ได้รับความไว้วางใจทั่วเกาะพะงัน',
+      rating: '4.9/5 จาก 50+ รีวิว',
+      items: [
+        {
+          quote: 'TM Energy เปลี่ยนวิลล่าของเรา จากค่าไฟเดือนละ 15,000 บาทเหลือเกือบศูนย์ ระบบคืนทุนภายใน 3 ปี',
+          name: 'Sarah M.',
+          role: 'เจ้าของวิลล่า หาดรีน',
+          stars: 5,
+        },
+        {
+          quote: 'ในฐานะผู้จัดการรีสอร์ท ความเชื่อถือได้สำคัญที่สุด TM Energy ส่งมอบระบบ 45kW ตรงเวลา แดชบอร์ดมอนิเตอร์ยอดเยี่ยม แขกของเราชอบที่รู้ว่าเราใช้โซลาร์',
+          name: 'James T.',
+          role: 'ผู้จัดการรีสอร์ท ท้องนายปาน',
+          stars: 5,
+        },
+        {
+          quote: 'ติดตั้งเร็ว ราคาสมเหตุสมผล ทีมงานเป็นมืออาชีพมาก ไฟฟ้าบ้านไม่เคยดับเลยตั้งแต่ติดแบตเตอรี่',
+          name: 'สมชาย ว.',
+          role: 'เจ้าของบ้าน ศรีธนู',
+          stars: 5,
+        },
+      ],
+    },
+    faq: {
+      sectionTag: 'คำถามที่พบบ่อย',
+      title: 'คำถามที่พบบ่อยเกี่ยวกับโซลาร์เซลล์บนเกาะพะงัน',
+      items: [
+        {
+          question: 'ติดตั้งโซลาร์เซลล์บนเกาะพะงันราคาเท่าไหร่?',
+          answer: 'ระบบสำหรับบ้านพัก (3-15kW) ราคาประมาณ 180,000-850,000 บาท รวมอุปกรณ์ทั้งหมด การติดตั้ง ใบอนุญาต และการเชื่อมต่อกริด กฟภ. เจ้าของบ้านส่วนใหญ่คืนทุนภายใน 3-4 ปี',
+        },
+        {
+          question: 'ติดโซลาร์เซลล์แล้วประหยัดค่าไฟได้เท่าไหร่?',
+          answer: 'ลูกค้าของเราบนเกาะพะงันประหยัดค่าไฟเฉลี่ย 40% ด้วยชั่วโมงแดดที่สูง (1,800+ ชั่วโมงต่อปี) และค่าไฟที่เพิ่มขึ้น โซลาร์เซลล์เป็นการลงทุนที่คุ้มค่าที่สุดบนเกาะ',
+        },
+        {
+          question: 'โซลาร์เซลล์ทำงานได้ไหมในช่วงฤดูฝนของประเทศไทย?',
+          answer: 'ได้ แผงโซลาร์สมัยใหม่ผลิตไฟฟ้าได้แม้ในวันที่มีเมฆ โดยปกติจะผลิตได้ 10-25% ของกำลังสูงสุด เกาะพะงันยังคงได้รับแสงแดดอย่างมีนัยสำคัญตลอดทั้งปี',
+        },
+        {
+          question: 'ไฟดับแล้วโซลาร์เซลล์ทำงานยังไง?',
+          answer: 'ระบบที่เชื่อมต่อกริดมาตรฐานจะหยุดทำงานเมื่อไฟดับเพื่อความปลอดภัย แต่หากมีระบบแบตเตอรี่ (เช่น Huawei LUNA) บ้านของคุณจะมีไฟใช้ 24/7 ไม่ว่ากริดจะเป็นอย่างไร',
+        },
+        {
+          question: 'วิลล่าเล็กๆ บนเกาะพะงันคุ้มไหมที่จะติดโซลาร์?',
+          answer: 'แน่นอน แม้ระบบเล็ก 3-5kW ก็ลดค่าไฟได้ 40-60% ด้วยค่าไฟที่สูงของเกาะพะงันและแสงแดดที่อุดมสมบูรณ์ ROI จึงดีเยี่ยมสำหรับทรัพย์สินทุกขนาด',
+        },
+        {
+          question: 'ต้องขออนุญาต กฟภ. ไหมในการติดตั้งโซลาร์?',
+          answer: 'ใช่ ระบบโซลาร์ที่เชื่อมต่อกริดทุกระบบต้องได้รับอนุมัติจาก กฟภ. TM Energy จัดการกระบวนการรับใบอนุญาตทั้งหมดให้คุณ ตั้งแต่การยื่นคำร้องจนถึงการตรวจสอบและเชื่อมต่อกริด',
+        },
+        {
+          question: 'ติดตั้งโซลาร์เซลล์ใช้เวลานานแค่ไหน?',
+          answer: 'ระบบบ้านพักใช้เวลา 1-3 วัน ระบบเชิงพาณิชย์ (30kW+) ใช้เวลา 3-7 วัน การอนุมัติเชื่อมต่อกริดจาก กฟภ. เพิ่มอีก 2-4 สัปดาห์ ซึ่งเราจัดการให้ทั้งหมด',
+        },
+        {
+          question: 'มีการรับประกันอะไรบ้าง?',
+          answer: 'ทุกระบบรวม: รับประกันกำลังการผลิต 25 ปีสำหรับแผง LONGi, รับประกันผลิตภัณฑ์ 10 ปีสำหรับอินเวอร์เตอร์ Huawei, และรับประกันงานติดตั้ง 10 ปี เราได้รับใบอนุญาตและประกันภัยครบถ้วน',
+        },
+      ],
+    },
+    scrollAnimation: {
+      sectionTag: 'ดูขั้นตอนการติดตั้ง',
+      title: 'ชมระบบโซลาร์เซลล์ของคุณมีชีวิต',
+      subtitle: 'เลื่อนเพื่อดูการติดตั้งจริง — จากหลังคาเปล่าสู่ระบบโซลาร์เต็มรูปแบบ',
     },
   },
 

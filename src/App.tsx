@@ -18,6 +18,7 @@ const CRMPage = lazy(() => import('./pages/CRMPage'))
 const CRMDashboard = lazy(() => import('./components/CRM/Dashboard'))
 const CRMPipeline = lazy(() => import('./components/CRM/Pipeline'))
 const LeadDetail = lazy(() => import('./components/CRM/LeadDetail'))
+const PreviewScroll = lazy(() => import('./pages/PreviewScroll'))
 
 function LoadingScreen() {
   return (
@@ -85,6 +86,9 @@ export default function App() {
                 <Route path="pipeline" element={<CRMPipeline />} />
                 <Route path="leads/:id" element={<LeadDetail />} />
               </Route>
+
+              {/* Preview scroll animation */}
+              <Route path="/preview-scroll" element={<PreviewScroll />} />
 
               {/* Internal platform */}
               <Route path="/platform" element={<PlatformPage />} />
