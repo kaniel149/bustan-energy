@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1080">
+<title>TM Energy — Roof Temperature</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:       #0A1628;
+    --bg-card:  rgba(255, 255, 255, 0.04);
+    --border:   rgba(255, 255, 255, 0.08);
+    --gold:     #E8A820;
+    --green:    #1A7A5A;
+    --green-lt: #22C97A;
+    --navy:     #0D2137;
+    --white:    #FFFFFF;
+    --muted:    #94A3B8;
+    --font-heading: 'Space Grotesk', system-ui, sans-serif;
+    --font-body:    'DM Sans', system-ui, sans-serif;
+  }
+
+  html, body {
+    width:  1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: var(--font-body);
+    color: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 64px 44px;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 40%, rgba(232, 168, 32, 0.06) 0%, transparent 70%),
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 100% 100%, 60px 60px, 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 880px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 72px 56px 64px;
+    border-radius: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232, 168, 32, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .label {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 36px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 44px;
+    position: relative;
+  }
+
+  .fact {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    max-width: 740px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .fact .highlight {
+    color: var(--green-lt);
+  }
+
+  .detail {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 640px;
+    position: relative;
+  }
+
+  .brand-footer {
+    position: absolute;
+    bottom: 44px;
+    right: 64px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1;
+  }
+
+  .brand-footer .sun-icon {
+    width: 22px;
+    height: 22px;
+    position: relative;
+  }
+
+  .brand-footer .sun-icon::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .brand-footer .sun-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    opacity: 0.4;
+  }
+
+  .brand-footer span {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="card">
+    <div class="label">DID YOU KNOW?</div>
+    <div class="fact">Solar panels reduce your roof temperature by up to <span class="highlight">5&deg;C</span></div>
+    <div class="detail">Lower cooling costs, longer roof lifespan, and clean energy — all from one installation.</div>
+  </div>
+
+  <div class="brand-footer">
+    <div class="sun-icon"></div>
+    <span>TM Energy</span>
+  </div>
+
+</body>
+</html>
