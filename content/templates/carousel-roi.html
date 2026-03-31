@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1080">
+<title>TM Energy — ROI Carousel</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  /* ═══════════════════════════════════════════════════════════
+     RESET + TOKENS
+     ═══════════════════════════════════════════════════════════ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:        #0A1628;
+    --bg-alt:    #0D2137;
+    --bg-card:   rgba(255, 255, 255, 0.035);
+    --border:    rgba(255, 255, 255, 0.07);
+    --gold:      #E8A820;
+    --gold-dim:  rgba(232, 168, 32, 0.15);
+    --green:     #1A7A5A;
+    --green-lt:  #22C97A;
+    --green-dim: rgba(34, 201, 122, 0.12);
+    --red:       #E85A4F;
+    --red-dim:   rgba(232, 90, 79, 0.12);
+    --white:     #FFFFFF;
+    --muted:     rgba(255, 255, 255, 0.5);
+    --muted-lt:  rgba(255, 255, 255, 0.7);
+    --font-h:    'Space Grotesk', system-ui, sans-serif;
+    --font-b:    'DM Sans', system-ui, sans-serif;
+  }
+
+  html, body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: var(--font-b);
+    color: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     SLIDE CONTAINER
+     ═══════════════════════════════════════════════════════════ */
+  .slide {
+    display: none;
+    width: 1080px;
+    height: 1080px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 48px 64px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  /* ── Background grid + radial glow (per-slide) ──────────── */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Per-slide glow color */
+  .slide[data-slide="1"]::after { background: radial-gradient(ellipse 70% 50% at 50% 45%, rgba(232, 168, 32, 0.07) 0%, transparent 70%); }
+  .slide[data-slide="2"]::after { background: radial-gradient(ellipse 65% 50% at 50% 50%, rgba(232, 90, 79, 0.06) 0%, transparent 70%); }
+  .slide[data-slide="3"]::after { background: radial-gradient(ellipse 65% 50% at 50% 50%, rgba(34, 201, 122, 0.07) 0%, transparent 70%); }
+  .slide[data-slide="4"]::after { background: radial-gradient(ellipse 70% 50% at 50% 45%, rgba(232, 168, 32, 0.07) 0%, transparent 70%); }
+  .slide[data-slide="5"]::after { background: radial-gradient(ellipse 65% 55% at 50% 50%, rgba(34, 201, 122, 0.08) 0%, transparent 70%); }
+  .slide[data-slide="6"]::after { background: radial-gradient(ellipse 70% 50% at 50% 45%, rgba(232, 168, 32, 0.08) 0%, transparent 70%); }
+
+  /* ═══════════════════════════════════════════════════════════
+     DOTS
+     ═══════════════════════════════════════════════════════════ */
+  .dots {
+    display: flex;
+    gap: 10px;
+    z-index: 2;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .dot.active {
+    background: var(--gold);
+    box-shadow: 0 0 12px rgba(232, 168, 32, 0.45);
+    width: 28px;
+    border-radius: 5px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     GLASSMORPHISM CARD
+     ═══════════════════════════════════════════════════════════ */
+  .card {
+    flex: 1;
+    width: 100%;
+    max-width: 920px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 52px 56px;
+    margin: 28px 0;
+    border-radius: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    pointer-events: none;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     BRAND FOOTER
+     ═══════════════════════════════════════════════════════════ */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-end;
+    z-index: 2;
+  }
+
+  .brand .sun {
+    width: 22px;
+    height: 22px;
+    position: relative;
+  }
+  .brand .sun::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .brand .sun::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    opacity: 0.35;
+  }
+  .brand span {
+    font-family: var(--font-h);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     TYPOGRAPHY PRIMITIVES
+     ═══════════════════════════════════════════════════════════ */
+  .heading-xl {
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: 58px;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+  }
+
+  .heading-lg {
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: 46px;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+  }
+
+  .heading-md {
+    font-family: var(--font-h);
+    font-weight: 600;
+    font-size: 34px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .body-lg {
+    font-family: var(--font-b);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.5;
+    color: var(--muted-lt);
+  }
+
+  .body-md {
+    font-family: var(--font-b);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .stat-huge {
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: 108px;
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .stat-large {
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: 84px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .label {
+    font-family: var(--font-h);
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     VISUAL ELEMENTS
+     ═══════════════════════════════════════════════════════════ */
+
+  /* ── Question mark (slide 1) ───────────────────────────── */
+  .question-mark {
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: 240px;
+    line-height: 1;
+    color: rgba(232, 168, 32, 0.08);
+    position: absolute;
+    right: 40px;
+    bottom: 20px;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ── Bill icon (slide 2) ───────────────────────────────── */
+  .bill-icon {
+    width: 72px;
+    height: 88px;
+    border-radius: 8px;
+    border: 2px solid var(--red);
+    position: relative;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+  .bill-icon::before {
+    content: '฿';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: 36px;
+    color: var(--red);
+  }
+  .bill-icon::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--red);
+    border: 3px solid var(--bg);
+  }
+
+  /* ── Arrow down (slide 3) ──────────────────────────────── */
+  .arrow-down {
+    width: 56px;
+    height: 80px;
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .arrow-down::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 50px;
+    background: var(--green-lt);
+    border-radius: 2px;
+  }
+  .arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-top: 22px solid var(--green-lt);
+  }
+
+  /* ── Timeline bar (slide 4) ────────────────────────────── */
+  .timeline-bar {
+    width: 600px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    position: relative;
+    margin: 28px 0 16px;
+    overflow: visible;
+  }
+  .timeline-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 12px;
+    width: 32%;
+    background: linear-gradient(90deg, var(--gold), #F0C040);
+    border-radius: 6px;
+    box-shadow: 0 0 16px rgba(232, 168, 32, 0.35);
+  }
+  .timeline-dot {
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 12px rgba(232, 168, 32, 0.5);
+  }
+  .timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+    margin-top: 6px;
+  }
+
+  /* ── Money visual (slide 5) ────────────────────────────── */
+  .money-glow {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(34, 201, 122, 0.18) 0%, transparent 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .money-glow::before {
+    content: '฿';
+    font-family: var(--font-h);
+    font-weight: 700;
+    font-size: 72px;
+    color: var(--green-lt);
+    opacity: 0.3;
+  }
+
+  /* ── Ring accents (slide 5) ────────────────────────────── */
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── CTA button (slide 6) ──────────────────────────────── */
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 48px;
+    background: linear-gradient(135deg, var(--gold) 0%, #D49518 100%);
+    border-radius: 14px;
+    font-family: var(--font-h);
+    font-weight: 600;
+    font-size: 24px;
+    color: var(--bg);
+    letter-spacing: 0.01em;
+    margin-top: 20px;
+    box-shadow:
+      0 4px 24px rgba(232, 168, 32, 0.35),
+      0 1px 3px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+    border-radius: 14px 14px 0 0;
+    pointer-events: none;
+  }
+  .cta-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--bg);
+  }
+
+  .cta-domain {
+    font-family: var(--font-b);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--muted-lt);
+    margin-top: 20px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Divider line ──────────────────────────────────────── */
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 2px;
+    margin: 20px 0;
+    opacity: 0.5;
+  }
+
+  /* ── Pill badges ───────────────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 100px;
+    font-family: var(--font-h);
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+  }
+  .pill-gold {
+    background: var(--gold-dim);
+    color: var(--gold);
+    border: 1px solid rgba(232, 168, 32, 0.2);
+  }
+  .pill-green {
+    background: var(--green-dim);
+    color: var(--green-lt);
+    border: 1px solid rgba(34, 201, 122, 0.2);
+  }
+  .pill-red {
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid rgba(232, 90, 79, 0.2);
+  }
+
+  /* ── Spacing helpers ───────────────────────────────────── */
+  .mt-8  { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; }
+  .mt-24 { margin-top: 24px; }
+  .mt-32 { margin-top: 32px; }
+  .mb-8  { margin-bottom: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-24 { margin-bottom: 24px; }
+
+  /* ── Color helpers ─────────────────────────────────────── */
+  .c-gold   { color: var(--gold); }
+  .c-green  { color: var(--green-lt); }
+  .c-red    { color: var(--red); }
+  .c-muted  { color: var(--muted); }
+  .c-white  { color: var(--white); }
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 1 — Hook: "How Much Is Electricity Really Costing Your Resort?"
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="1">
+  <div class="dots">
+    <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+
+  <div class="card">
+    <div class="question-mark">?</div>
+    <span class="pill pill-gold mb-24">Koh Phangan Resorts</span>
+    <h1 class="heading-xl c-gold" style="max-width: 780px;">
+      How Much Is Electricity Really Costing Your Resort?
+    </h1>
+    <div class="divider mt-24"></div>
+    <p class="body-lg mt-16" style="max-width: 620px;">
+      The numbers might surprise you. Swipe to see the real impact on your bottom line.
+    </p>
+  </div>
+
+  <div class="brand"><div class="sun"></div><span>TM Energy</span></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 2 — Problem: "Average monthly bill ฿45,000"
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="2">
+  <div class="dots">
+    <div class="dot"></div><div class="dot active"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+
+  <div class="card">
+    <span class="pill pill-red mb-20">Current Situation</span>
+    <h2 class="heading-md c-white mb-16">Average Koh Phangan Resort</h2>
+    <div class="bill-icon"></div>
+    <p class="body-md mb-8">Monthly electricity bill</p>
+    <div class="stat-huge c-red">฿45,000</div>
+    <div class="divider mt-24"></div>
+    <p class="body-md mt-16 c-muted" style="max-width: 540px;">
+      That's ฿540,000 per year going straight to the grid — money that could be powering your growth.
+    </p>
+  </div>
+
+  <div class="brand"><div class="sun"></div><span>TM Energy</span></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 3 — Solution: "With TM Energy Solar — ฿8,000"
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="3">
+  <div class="dots">
+    <div class="dot"></div><div class="dot"></div><div class="dot active"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+
+  <div class="card">
+    <span class="pill pill-green mb-20">With TM Energy Solar</span>
+    <h2 class="heading-md c-white mb-16">Monthly Bill Drops To</h2>
+    <div class="arrow-down"></div>
+    <div class="stat-huge c-green">฿8,000</div>
+    <div class="divider mt-24"></div>
+    <div style="display: flex; align-items: center; gap: 16px; margin-top: 20px;">
+      <div style="
+        width: 60px; height: 60px; border-radius: 50%;
+        background: var(--green-dim);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-h); font-weight: 700; font-size: 22px;
+        color: var(--green-lt);
+      ">82%</div>
+      <p class="body-md c-muted">reduction in electricity costs</p>
+    </div>
+  </div>
+
+  <div class="brand"><div class="sun"></div><span>TM Energy</span></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 4 — Payback: "3.2 years"
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="4">
+  <div class="dots">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+
+  <div class="card">
+    <span class="pill pill-gold mb-20">Return on Investment</span>
+    <h2 class="heading-md c-white mb-12">System Pays For Itself In</h2>
+    <div class="stat-large c-gold mt-8">3.2 years</div>
+    <div class="timeline-bar mt-32">
+      <div class="timeline-fill">
+        <div class="timeline-dot"></div>
+      </div>
+    </div>
+    <div class="timeline-labels">
+      <span class="label">Year 0</span>
+      <span class="label c-gold" style="margin-left: -180px;">Payback</span>
+      <span class="label">Year 10</span>
+    </div>
+    <div class="divider mt-24"></div>
+    <p class="body-md mt-16 c-muted" style="max-width: 520px;">
+      After payback, every baht saved goes straight to your profit.
+    </p>
+  </div>
+
+  <div class="brand"><div class="sun"></div><span>TM Energy</span></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 5 — Pure Savings: "฿444,000 per year"
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="5">
+  <div class="dots">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot active"></div><div class="dot"></div>
+  </div>
+
+  <div class="card">
+    <!-- Decorative rings -->
+    <div class="ring" style="width: 500px; height: 500px; border-color: rgba(34,201,122,0.05); top: 50%; left: 50%; transform: translate(-50%,-50%);"></div>
+    <div class="ring" style="width: 360px; height: 360px; border-color: rgba(34,201,122,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%);"></div>
+
+    <span class="pill pill-green mb-20" style="position:relative; z-index:1;">After Payback</span>
+    <h2 class="heading-md c-white mb-8" style="position:relative; z-index:1;">Pure Savings Every Year</h2>
+    <div class="money-glow"></div>
+    <div class="stat-huge c-green" style="position:relative; z-index:1;">฿444,000</div>
+    <p class="heading-md c-muted mt-12" style="position:relative; z-index:1;">per year</p>
+    <div class="divider mt-20"></div>
+    <p class="body-md mt-16 c-muted" style="max-width: 500px; position:relative; z-index:1;">
+      Over 25 years, that's <strong class="c-green">฿11.1 million</strong> back in your pocket.
+    </p>
+  </div>
+
+  <div class="brand"><div class="sun"></div><span>TM Energy</span></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE 6 — CTA: "Ready to Save?"
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="6">
+  <div class="dots">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot active"></div>
+  </div>
+
+  <div class="card">
+    <span class="pill pill-gold mb-24">Take The First Step</span>
+    <h1 class="heading-xl c-gold mb-12" style="max-width: 700px;">Ready to Save?</h1>
+    <p class="body-lg mb-24 c-muted" style="max-width: 560px;">
+      Get a free roof assessment and custom savings report for your resort.
+    </p>
+    <div class="cta-btn">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      Free Roof Assessment
+    </div>
+    <p class="cta-domain mt-24">energy-tm.com</p>
+    <div class="divider mt-20"></div>
+    <div style="display: flex; gap: 32px; margin-top: 20px;">
+      <span class="body-md c-muted">No obligation</span>
+      <span class="body-md c-muted" style="opacity:0.3;">|</span>
+      <span class="body-md c-muted">Results in 48 hours</span>
+    </div>
+  </div>
+
+  <div class="brand"><div class="sun"></div><span>TM Energy</span></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SLIDE ROUTER — reads ?slide=N from URL, or shows slide 1
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const requested = parseInt(params.get('slide') || '0', 10);
+
+  const slides = document.querySelectorAll('.slide');
+
+  if (requested >= 1 && requested <= slides.length) {
+    // Show only the requested slide
+    slides.forEach(s => s.classList.remove('active'));
+    const target = document.querySelector(`.slide[data-slide="${requested}"]`);
+    if (target) target.classList.add('active');
+  } else {
+    // No ?slide param — show slide 1 by default
+    if (slides.length > 0) slides[0].classList.add('active');
+  }
+})();
+</script>
+
+</body>
+</html>
