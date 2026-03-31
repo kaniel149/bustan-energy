@@ -1,0 +1,29 @@
+{
+  "name": "content",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "studio": "remotion studio src/index.tsx",
+    "render": "remotion render src/index.tsx",
+    "render:reel": "remotion render src/index.tsx --height=1920 --width=1080",
+    "render:square": "remotion render src/index.tsx --height=1080 --width=1080",
+    "render:landscape": "remotion render src/index.tsx --height=1080 --width=1920"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@remotion/cli": "^4.0.441",
+    "@remotion/player": "^4.0.441",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.441"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.2"
+  }
+}
