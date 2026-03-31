@@ -1,11 +1,19 @@
 import React from 'react';
 import { Composition } from 'remotion';
+import { SatelliteScanReel } from './videos/SatelliteScanReel';
 
 export const Root: React.FC = () => {
   return (
     <>
       {/* Reels — 9:16 portrait, 30fps */}
-      {/* Compositions will be added per video */}
+      <Composition
+        id="SatelliteScanReel"
+        component={SatelliteScanReel}
+        durationInFrames={900}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
     </>
   );
 };
