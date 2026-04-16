@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { CheckCircle2, ArrowRight, Sun } from 'lucide-react'
+import { CheckCircle2, ArrowRight, Sun, Home, Building2, BatteryFull, Wrench } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
 import { useLanguage } from '../i18n/LanguageContext'
 import { SEOHead } from '../components/seo/SEOHead'
@@ -28,7 +28,7 @@ interface ServiceSectionProps {
   badge: string
 }
 
-function ServiceSection({ image, title, description, benefits, cta, ctaLink, reversed, badge }: ServiceSectionProps) {
+function ServiceSection({ image, title, description, benefits, cta, ctaLink, reversed, badge, altText }: ServiceSectionProps & { altText?: string }) {
   return (
     <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
@@ -44,7 +44,7 @@ function ServiceSection({ image, title, description, benefits, cta, ctaLink, rev
             <div className="relative rounded-3xl overflow-hidden group">
               <img
                 src={image}
-                alt={title}
+                alt={altText ?? title}
                 loading="lazy"
                 className="w-full h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -164,6 +164,7 @@ export default function ServicesPage() {
             cta={t.services.residential.cta}
             ctaLink={langPath('/contact')}
             reversed={false}
+            altText="Residential solar panel installation on a villa roof in Ko Phangan"
           />
         </div>
 
@@ -182,6 +183,7 @@ export default function ServicesPage() {
             cta={t.services.commercial.cta}
             ctaLink={langPath('/contact')}
             reversed={true}
+            altText="Commercial solar system installed on a resort rooftop in Ko Phangan"
           />
         </div>
 
@@ -200,8 +202,83 @@ export default function ServicesPage() {
             cta={t.services.solarFarm.cta}
             ctaLink={langPath('/contact')}
             reversed={false}
+            altText="Aerial view of solar farm installation on Ko Phangan island"
           />
         </div>
+
+        {/* Explore Services */}
+        <section className="py-24">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-80px' }}
+              variants={stagger}
+              className="text-center mb-12"
+            >
+              <motion.h2
+                variants={fadeUp}
+                className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4"
+              >
+                Explore Our Services
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
+                Dive deeper into each service to find the right solution for your property.
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-40px' }}
+              variants={stagger}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {[
+                {
+                  icon: Home,
+                  title: 'Residential Solar',
+                  desc: 'Rooftop systems for homes and villas. 3kW to 10kW with battery backup options.',
+                  link: '/services/residential',
+                },
+                {
+                  icon: Building2,
+                  title: 'Commercial Solar',
+                  desc: 'Hotel, resort, and business solar. 30kW to 500kW with PPA financing.',
+                  link: '/services/commercial',
+                },
+                {
+                  icon: BatteryFull,
+                  title: 'Off-Grid & Battery',
+                  desc: 'Energy independence with Huawei LUNA batteries and hybrid systems.',
+                  link: '/services/off-grid',
+                },
+                {
+                  icon: Wrench,
+                  title: 'Maintenance & Support',
+                  desc: 'Monitoring, cleaning, repairs, and annual inspections for all systems.',
+                  link: '/services/maintenance',
+                },
+              ].map((card) => (
+                <motion.div key={card.title} variants={fadeUp}>
+                  <Link
+                    to={langPath(card.link)}
+                    className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center mb-4">
+                      <card.icon className="w-5 h-5 text-[var(--color-gold)]" />
+                    </div>
+                    <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">{card.title}</h3>
+                    <p className="text-white/45 text-sm leading-relaxed mb-4">{card.desc}</p>
+                    <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
+                      Learn more <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
 
         {/* Bottom CTA */}
         <section className="py-24">

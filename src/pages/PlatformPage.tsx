@@ -8,6 +8,7 @@ import { Scanner } from '../components/Scanner/Scanner'
 import { MobileBottomNav } from '../components/MobileNav/MobileBottomNav'
 import { useAppStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
+import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { loadGridData, loadRoofData, loadLandData, enrichWithGridProximity } from '../lib/load-data'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
@@ -43,10 +44,20 @@ export default function PlatformPage() {
   useEffect(() => {
     if (!supabase) return
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+      const u = session?.user ?? null
+      setUser(u)
+      if (u) {
+        identifyUser(u.id, { email: u.email })
+      } else {
+        resetAnalytics()
+      }
     })
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+      const u = session?.user ?? null
+      setUser(u)
+      if (u) {
+        identifyUser(u.id, { email: u.email })
+      }
     })
     return () => subscription.unsubscribe()
   }, [setUser])

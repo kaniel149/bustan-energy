@@ -118,7 +118,7 @@ export default function AboutPage() {
             <motion.div variants={fadeUp}>
               <img
                 src="/assets/images/strategy-01-aerial.png"
-                alt="Ko Phangan aerial view"
+                alt="Aerial view of Ko Phangan island showing solar energy potential across tropical rooftops"
                 loading="lazy"
                 className="w-full h-[480px] object-cover rounded-3xl"
               />
@@ -228,7 +228,7 @@ export default function AboutPage() {
           >
             <img
               src="/assets/images/sales-10-happy.png"
-              alt="TM Energy team"
+              alt="TM Energy solar installation team on Ko Phangan ready for a commercial project"
               loading="lazy"
               className="w-full h-[400px] object-cover"
             />

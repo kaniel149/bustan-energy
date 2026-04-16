@@ -19,6 +19,13 @@ const CRMDashboard = lazy(() => import('./components/CRM/Dashboard'))
 const CRMPipeline = lazy(() => import('./components/CRM/Pipeline'))
 const LeadDetail = lazy(() => import('./components/CRM/LeadDetail'))
 const PreviewScroll = lazy(() => import('./pages/PreviewScroll'))
+const ResidentialSolarPage = lazy(() => import('./pages/services/ResidentialSolarPage'))
+const CommercialSolarPage = lazy(() => import('./pages/services/CommercialSolarPage'))
+const OffGridSolarPage = lazy(() => import('./pages/services/OffGridSolarPage'))
+const MaintenancePage = lazy(() => import('./pages/services/MaintenancePage'))
+const BlogPostPage = lazy(() => import('./pages/BlogPostPage'))
+const ToolsPage = lazy(() => import('./pages/ToolsPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 function LoadingScreen() {
   return (
@@ -37,12 +44,19 @@ function PageRoutes() {
     <>
       <Route index element={<HomePage />} />
       <Route path="services" element={<ServicesPage />} />
+      <Route path="services/residential" element={<ResidentialSolarPage />} />
+      <Route path="services/commercial" element={<CommercialSolarPage />} />
+      <Route path="services/off-grid" element={<OffGridSolarPage />} />
+      <Route path="services/maintenance" element={<MaintenancePage />} />
       <Route path="how-it-works" element={<HowItWorksPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route path="projects" element={<ProjectsPage />} />
       <Route path="about" element={<AboutPage />} />
       <Route path="blog" element={<BlogPage />} />
+      <Route path="blog/:slug" element={<BlogPostPage />} />
       <Route path="contact" element={<ContactPage />} />
+      <Route path="tools" element={<ToolsPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </>
   )
 }

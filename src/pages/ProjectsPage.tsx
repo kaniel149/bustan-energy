@@ -66,7 +66,7 @@ function ProjectCard({ project, index }: { project: ProjectItem; index: number }
       <div className="relative h-52 overflow-hidden">
         <img
           src={project.image}
-          alt={project.name}
+          alt={`${project.name} — ${project.size} solar installation in ${project.location}, Ko Phangan`}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />

@@ -168,7 +168,7 @@ function HeroSection() {
             </motion.span>
           </Link>
 
-          <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/66946692011" target="_blank" rel="noopener noreferrer">
             <motion.span
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
               style={{
@@ -318,6 +318,7 @@ function ServicesSection() {
       cta: t.home.services.residential.cta,
       href: langPath('/services#residential'),
       image: villaImg,
+      altText: 'Residential solar panel installation on a villa roof in Ko Phangan',
       bullets: ['Save 40-70% on electricity', 'Increase property value', 'Battery backup available'],
     },
     {
@@ -327,6 +328,7 @@ function ServicesSection() {
       cta: t.home.services.commercial.cta,
       href: langPath('/services#commercial'),
       image: resortImg,
+      altText: 'Commercial solar system installed on a resort rooftop in Ko Phangan',
       bullets: ['PPA — zero upfront cost', 'Maximize ROI', 'Reduce operating costs'],
     },
     {
@@ -336,6 +338,7 @@ function ServicesSection() {
       cta: t.home.services.solarFarm.cta,
       href: langPath('/services#farm'),
       image: aerialImg,
+      altText: 'Aerial view of a solar farm installation on Ko Phangan island',
       bullets: ['VSPP licensing', 'Grid connection', '1 MW to 100 MW'],
     },
     {
@@ -347,6 +350,7 @@ function ServicesSection() {
       cta: (t.home.services as any).batteryStorage?.cta ?? 'Learn More',
       href: langPath('/services#battery'),
       image: huaweiImg,
+      altText: 'Huawei battery storage system for off-grid solar power on Ko Phangan',
       bullets: ['Blackout protection', '24/7 power', 'Peak shaving'],
     },
   ]
@@ -396,7 +400,7 @@ function ServicesSection() {
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={svc.image}
-                  alt={svc.title}
+                  alt={svc.altText}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -1193,7 +1197,7 @@ function CTASection() {
             </Link>
 
             {/* WhatsApp */}
-            <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/66946692011" target="_blank" rel="noopener noreferrer">
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
                 style={{
@@ -1214,7 +1218,7 @@ function CTASection() {
             </a>
 
             {/* Call */}
-            <a href="tel:+66000000000">
+            <a href="tel:+66946692011">
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
                 style={{
@@ -1276,7 +1280,7 @@ function PartnersBar() {
               {partnerImages[i] ? (
                 <img
                   src={partnerImages[i]!}
-                  alt={p.name}
+                  alt={`${p.name} — official solar equipment partner of TM Energy`}
                   loading="lazy"
                   className="h-10 w-auto object-contain grayscale brightness-200"
                 />

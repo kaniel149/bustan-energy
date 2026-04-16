@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ko Phangan Solar — Bill Scanner & Proposal Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);color:var(--white);min-height:100vh}
+
+.app{max-width:1100px;margin:0 auto;padding:40px 24px 100px}
+
+.header{text-align:center;margin-bottom:40px}
+.header h1{font-size:clamp(24px,4vw,36px);font-weight:900;margin-bottom:8px}
+.header .sub{font-size:16px;opacity:.6}
+.gold{color:var(--gold)}
+.reef-text{color:#2ED89A}
+
+.steps{display:flex;gap:0;margin-bottom:32px;justify-content:center}
+.step{display:flex;align-items:center;gap:8px;padding:10px 20px;font-size:14px;font-weight:600;opacity:.4;transition:all .3s}
+.step.active{opacity:1;color:var(--gold)}
+.step.done{opacity:.7;color:#2ED89A}
+.step-num{width:28px;height:28px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.step.active .step-num{background:var(--gold);color:var(--night);border-color:var(--gold)}
+.step.done .step-num{background:#2ED89A;color:var(--night);border-color:#2ED89A}
+.step-arrow{font-size:18px;opacity:.3;margin:0 4px}
+
+.panel{display:none;animation:fadeIn .4s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Step 1: Input */
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.input-grid{grid-template-columns:1fr}}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:rgba(255,255,255,.7)}
+.input-group input,.input-group select{width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.15);border-radius:10px;background:rgba(255,255,255,.05);color:var(--white);font-family:inherit;font-size:15px;transition:border .2s}
+.input-group input:focus,.input-group select:focus{outline:none;border-color:var(--gold)}
+.input-group select option{background:var(--night);color:var(--white)}
+.input-hint{font-size:11px;opacity:.4;margin-top:4px}
+
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:24px;margin-bottom:20px}
+.card h3{font-size:18px;font-weight:700;margin-bottom:16px}
+
+.upload-zone{border:2px dashed rgba(232,168,32,.3);border-radius:14px;padding:40px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px}
+.upload-zone:hover{border-color:var(--gold);background:rgba(232,168,32,.05)}
+.upload-zone .icon{font-size:40px;margin-bottom:8px}
+.upload-zone p{font-size:14px;opacity:.6}
+.upload-zone .small{font-size:11px;opacity:.3;margin-top:8px}
+.upload-zone.has-file{border-color:#2ED89A;background:rgba(46,216,154,.05)}
+
+.bill-preview{max-width:100%;max-height:300px;border-radius:10px;margin-top:12px;border:1px solid rgba(255,255,255,.1)}
+
+/* Step 2: Analysis */
+.analysis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+@media(max-width:700px){.analysis-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;text-align:center}
+.stat-card .val{font-size:24px;font-weight:900;color:var(--gold);margin-bottom:4px}
+.stat-card .lbl{font-size:11px;opacity:.5}
+.stat-card.green .val{color:#2ED89A}
+.stat-card.red .val{color:var(--coral)}
+
+.comparison{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin:24px 0}
+.vs{font-size:24px;font-weight:900;color:var(--gold);text-align:center}
+.compare-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px;text-align:center}
+.compare-card h4{font-size:14px;margin-bottom:12px;opacity:.6}
+.compare-card .price{font-size:28px;font-weight:900;margin-bottom:4px}
+.compare-card .detail{font-size:12px;opacity:.5}
+.compare-card.solar{border-color:rgba(46,216,154,.3)}
+.compare-card.solar .price{color:#2ED89A}
+
+.savings-bar{background:rgba(46,216,154,.1);border:1px solid rgba(46,216,154,.3);border-radius:12px;padding:20px;text-align:center;margin:16px 0}
+.savings-bar .big{font-size:32px;font-weight:900;color:#2ED89A}
+.savings-bar .sub{font-size:14px;opacity:.7;margin-top:4px}
+
+.chart-container{height:200px;display:flex;align-items:flex-end;gap:6px;padding:20px 0}
+.chart-bar{flex:1;border-radius:6px 6px 0 0;position:relative;transition:height .6s ease;min-width:0}
+.chart-bar .bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;opacity:.4;white-space:nowrap}
+.chart-bar .bar-val{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;white-space:nowrap}
+
+/* Step 3: Proposal */
+.proposal-frame{background:linear-gradient(135deg,rgba(10,61,92,.3),rgba(13,33,55,.8));border:2px solid rgba(232,168,32,.3);border-radius:16px;padding:40px;position:relative;overflow:hidden}
+.proposal-frame::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),#2ED89A)}
+.proposal-header{text-align:center;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid rgba(232,168,32,.2)}
+.proposal-header h2{font-size:24px;margin-bottom:4px}
+.proposal-header .date{font-size:13px;opacity:.5}
+
+.proposal-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.proposal-table th{background:rgba(232,168,32,.12);padding:10px 14px;text-align:left;font-weight:600;border:1px solid rgba(255,255,255,.1)}
+.proposal-table td{padding:10px 14px;border:1px solid rgba(255,255,255,.06)}
+
+.proposal-models{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:24px 0}
+@media(max-width:700px){.proposal-models{grid-template-columns:1fr}}
+.model-option{border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:all .3s}
+.model-option:hover{border-color:var(--gold)}
+.model-option.selected{border-color:var(--gold);background:rgba(232,168,32,.08)}
+.model-option h4{font-size:16px;margin-bottom:8px}
+.model-option .model-price{font-size:28px;font-weight:900;color:var(--gold);margin:8px 0}
+.model-option .model-detail{font-size:12px;opacity:.6;line-height:1.6}
+.model-option.ppa{border-color:rgba(46,216,154,.2)}
+.model-option.ppa.selected{border-color:#2ED89A;background:rgba(46,216,154,.08)}
+.model-option.ppa .model-price{color:#2ED89A}
+
+.btn{padding:14px 32px;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-gold{background:var(--gold);color:var(--night)}
+.btn-green{background:#2ED89A;color:var(--night)}
+.btn-outline{background:none;border:2px solid var(--gold);color:var(--gold)}
+.btn-outline:hover{background:var(--gold);color:var(--night)}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+
+.back-btn{position:fixed;bottom:20px;right:20px;background:rgba(255,255,255,.1);color:var(--white);border:1px solid rgba(255,255,255,.2);padding:10px 24px;border-radius:8px;font-family:'Heebo';font-size:14px;cursor:pointer;z-index:100;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,.15)}
+
+@media print{
+  body{background:#fff;color:#111}
+  .steps,.back-btn,.btn-row,.upload-zone{display:none!important}
+  .proposal-frame{border-color:#0A3D5C!important;page-break-inside:avoid}
+  .proposal-frame::before{background:#0A3D5C!important}
+  .gold,.stat-card .val{color:#0A3D5C!important}
+  .reef-text,.stat-card.green .val,.compare-card.solar .price,.savings-bar .big{color:#1A7A5A!important}
+}
+</style>
+</head>
+<body>
+<script src="auth.js"></script>
+
+<a href="assets.html" class="back-btn">Back to Assets</a>
+
+<div class="app">
+
+<div class="header">
+  <h1>🧾 Bill Scanner — <span class="gold">Instant Solar Proposal</span></h1>
+  <div class="sub">Enter PEA bill data, get savings analysis + proposal in seconds</div>
+</div>
+
+<!-- Steps indicator -->
+<div class="steps">
+  <div class="step active" id="step-ind-1"><span class="step-num">1</span> Bill Data</div>
+  <span class="step-arrow">→</span>
+  <div class="step" id="step-ind-2"><span class="step-num">2</span> Analysis</div>
+  <span class="step-arrow">→</span>
+  <div class="step" id="step-ind-3"><span class="step-num">3</span> Proposal</div>
+</div>
+
+<!-- ==================== STEP 1: INPUT ==================== -->
+<div class="panel active" id="panel-1">
+
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('billFile').click()">
+    <div class="icon">📸</div>
+    <p>Upload PEA bill photo (optional)</p>
+    <div class="small">For reference — data still entered manually below</div>
+    <input type="file" id="billFile" accept="image/*" style="display:none" onchange="handleUpload(this)">
+    <img id="billPreview" class="bill-preview" style="display:none">
+  </div>
+
+  <div class="card">
+    <h3>🧾 PEA Bill Details</h3>
+    <div class="input-grid">
+      <div>
+        <div class="input-group">
+          <label>Customer Name</label>
+          <input type="text" id="inName" placeholder="e.g. Sunset Villa Resort">
+        </div>
+        <div class="input-group">
+          <label>Customer Type</label>
+          <select id="inType">
+            <option value="resort">Resort / Hotel</option>
+            <option value="villa">Villa / House</option>
+            <option value="business">Business / Office</option>
+            <option value="restaurant">Restaurant / Bar</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Location</label>
+          <input type="text" id="inLocation" placeholder="e.g. Had Rin, Koh Phangan">
+        </div>
+      </div>
+      <div>
+        <div class="input-group">
+          <label>Monthly Consumption (kWh)</label>
+          <input type="number" id="inKwh" placeholder="e.g. 5000" min="100" max="500000">
+          <div class="input-hint">From PEA bill: "kWh" or "Units Used"</div>
+        </div>
+        <div class="input-group">
+          <label>Monthly Bill Amount (฿)</label>
+          <input type="number" id="inBill" placeholder="e.g. 25000" min="500" max="5000000">
+          <div class="input-hint">Total amount on the PEA bill (before VAT)</div>
+        </div>
+        <div class="input-group">
+          <label>PEA Tariff Category</label>
+          <select id="inTariff">
+            <option value="auto">Auto-detect from bill</option>
+            <option value="1.1">1.1 Residential ≤150 units</option>
+            <option value="1.2">1.2 Residential >150 units</option>
+            <option value="2">2. Small Business</option>
+            <option value="3">3. Medium Business</option>
+            <option value="4">4. Large Business</option>
+            <option value="5">5. Government</option>
+            <option value="6">6. Non-Profit</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Roof / Site Info (optional)</h3>
+    <div class="input-grid">
+      <div>
+        <div class="input-group">
+          <label>Available Roof Area (m²)</label>
+          <input type="number" id="inRoof" placeholder="e.g. 200">
+          <div class="input-hint">Leave blank for auto-sizing from consumption</div>
+        </div>
+        <div class="input-group">
+          <label>Roof Type</label>
+          <select id="inRoofType">
+            <option value="flat">Flat / Concrete</option>
+            <option value="metal">Metal Sheet</option>
+            <option value="tile">Tile</option>
+            <option value="ground">Ground Mount</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <div class="input-group">
+          <label>Shading Issues?</label>
+          <select id="inShading">
+            <option value="none">No shading</option>
+            <option value="light">Light shading (trees nearby)</option>
+            <option value="medium">Medium shading (partial)</option>
+            <option value="heavy">Heavy shading (significant)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Preferred Model</label>
+          <select id="inModel">
+            <option value="both">Show both EPC & PPA</option>
+            <option value="epc">EPC only (customer buys)</option>
+            <option value="ppa">PPA only (we own, customer pays/kWh)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-gold" onclick="analyze()">Analyze & Calculate →</button>
+  </div>
+</div>
+
+<!-- ==================== STEP 2: ANALYSIS ==================== -->
+<div class="panel" id="panel-2">
+
+  <div class="analysis-grid" id="statsGrid"></div>
+
+  <div class="comparison" id="comparison"></div>
+
+  <div class="savings-bar" id="savingsBar"></div>
+
+  <div class="card">
+    <h3>📊 15-Year Projection</h3>
+    <div style="overflow-x:auto">
+      <table class="proposal-table" id="projectionTable"></table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📈 Monthly Cost: PEA vs Solar</h3>
+    <div class="chart-container" id="monthChart"></div>
+    <div style="display:flex;gap:20px;justify-content:center;margin-top:24px;font-size:12px">
+      <span><span style="display:inline-block;width:12px;height:12px;background:var(--coral);border-radius:3px;margin-left:4px"></span> Current PEA</span>
+      <span><span style="display:inline-block;width:12px;height:12px;background:#2ED89A;border-radius:3px;margin-left:4px"></span> With Solar</span>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+    <button class="btn btn-gold" onclick="goStep(3)">Generate Proposal →</button>
+  </div>
+</div>
+
+<!-- ==================== STEP 3: PROPOSAL ==================== -->
+<div class="panel" id="panel-3">
+
+  <div class="proposal-frame" id="proposalFrame">
+    <div class="proposal-header">
+      <div style="font-size:32px;margin-bottom:8px">☀️</div>
+      <h2>Ko Phangan Solar — <span class="gold">Solar Proposal</span></h2>
+      <div class="date" id="propDate"></div>
+      <div style="font-size:14px;margin-top:8px;opacity:.6" id="propCustomer"></div>
+    </div>
+
+    <h3 style="margin-bottom:12px">System Recommendation</h3>
+    <table class="proposal-table" id="propSystemTable"></table>
+
+    <h3 style="margin:24px 0 12px">Your Options</h3>
+    <div class="proposal-models" id="propModels"></div>
+
+    <h3 style="margin:24px 0 12px">15-Year Financial Summary</h3>
+    <table class="proposal-table" id="propFinTable"></table>
+
+    <div class="savings-bar" id="propSavings" style="margin-top:24px"></div>
+
+    <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid rgba(232,168,32,.2)">
+      <p style="font-size:14px;opacity:.6">Ko Phangan Solar — TM Energy</p>
+      <p style="font-size:12px;opacity:.4;margin-top:4px">Koh Phangan, Surat Thani, Thailand | Line: @kophangansolar</p>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="goStep(2)">← Back</button>
+    <button class="btn btn-green" onclick="window.print()">Print / Save PDF</button>
+    <button class="btn btn-gold" onclick="sendWhatsApp()">Send via WhatsApp</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+// === Constants ===
+const COST_PER_KWP = 12000; // actual cost
+const PRICE_PER_KWP = 30000; // EPC selling price
+const PPA_RATE = 4.50;
+const PPA_ESCALATION = 0.03;
+const SUN_HOURS = 4.5;
+const DEGRADATION = 0.005;
+const PEA_ESCALATION = 0.03;
+const OM_PER_KWP_YEAR = 720;
+const INSURANCE_RATE = 0.01;
+const PANEL_WP = 580;
+const PANEL_AREA = 2.58; // m² per panel
+const CONTRACT_YEARS = 15;
+
+// Shading factors
+const SHADING = { none: 1.0, light: 0.92, medium: 0.82, heavy: 0.65 };
+
+let calcData = {};
+
+function handleUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = document.getElementById('billPreview');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('uploadZone').classList.add('has-file');
+  };
+  reader.readAsDataURL(file);
+}
+
+function analyze() {
+  const kwh = parseFloat(document.getElementById('inKwh').value);
+  const bill = parseFloat(document.getElementById('inBill').value);
+  const name = document.getElementById('inName').value || 'Customer';
+  const type = document.getElementById('inType').value;
+  const location = document.getElementById('inLocation').value || 'Koh Phangan';
+  const roofArea = parseFloat(document.getElementById('inRoof').value) || 0;
+  const roofType = document.getElementById('inRoofType').value;
+  const shading = document.getElementById('inShading').value;
+  const model = document.getElementById('inModel').value;
+
+  if (!kwh || kwh < 100) { alert('Please enter monthly consumption (kWh)'); return; }
+
+  // Calculate effective tariff
+  const effectiveTariff = bill && bill > 0 ? bill / kwh : 5.5;
+
+  // Optimal system size (kWp)
+  const annualKwh = kwh * 12;
+  const shadingFactor = SHADING[shading];
+  let optimalKwp = Math.ceil(annualKwh / (SUN_HOURS * 365 * shadingFactor));
+
+  // Cap by roof area if provided
+  if (roofArea > 0) {
+    const maxPanels = Math.floor(roofArea / PANEL_AREA);
+    const maxKwp = Math.floor(maxPanels * PANEL_WP / 1000);
+    if (maxKwp < optimalKwp) optimalKwp = maxKwp;
+  }
+
+  // Ensure minimum 3kWp
+  if (optimalKwp < 3) optimalKwp = 3;
+
+  const numPanels = Math.ceil(optimalKwp * 1000 / PANEL_WP);
+  const actualKwp = numPanels * PANEL_WP / 1000;
+  const roofNeeded = numPanels * PANEL_AREA;
+
+  // Annual production
+  const annualProduction = actualKwp * SUN_HOURS * 365 * shadingFactor;
+  const selfConsumptionRatio = Math.min(1, annualKwh / annualProduction);
+  const solarUsed = annualProduction * selfConsumptionRatio;
+
+  // EPC calculations
+  const epcPrice = Math.round(actualKwp * PRICE_PER_KWP);
+  const annualSavings = solarUsed * effectiveTariff;
+  const paybackEPC = epcPrice / annualSavings;
+
+  // PPA calculations
+  const ppaCostY1 = solarUsed * PPA_RATE;
+  const peaCostY1 = solarUsed * effectiveTariff;
+  const ppaSavingsY1 = peaCostY1 - ppaCostY1;
+  const ppaSavingsPct = (ppaSavingsY1 / peaCostY1) * 100;
+
+  // 15-year projections
+  let epc15 = { totalSavings: 0, rows: [] };
+  let ppa15 = { totalSavings: 0, rows: [] };
+  let pea15Total = 0;
+
+  for (let y = 1; y <= 15; y++) {
+    const deg = Math.pow(1 - DEGRADATION, y - 1);
+    const prod = annualProduction * deg;
+    const used = prod * selfConsumptionRatio;
+
+    // PEA cost (what they'd pay without solar)
+    const peaTariffY = effectiveTariff * Math.pow(1 + PEA_ESCALATION, y - 1);
+    const peaCostY = used * peaTariffY;
+    pea15Total += peaCostY;
+
+    // EPC: savings = avoided PEA cost, minus O&M
+    const omCost = actualKwp * OM_PER_KWP_YEAR;
+    const epcSavY = peaCostY - omCost;
+    epc15.totalSavings += epcSavY;
+    epc15.rows.push({ year: y, prod: Math.round(prod), tariff: peaTariffY, savings: epcSavY, cumulative: epc15.totalSavings - epcPrice });
+
+    // PPA: savings = PEA cost - PPA cost
+    const ppaTariffY = PPA_RATE * Math.pow(1 + PPA_ESCALATION, y - 1);
+    const ppaCostYr = used * ppaTariffY;
+    const ppaSavY = peaCostY - ppaCostYr;
+    ppa15.totalSavings += ppaSavY;
+    ppa15.rows.push({ year: y, prod: Math.round(prod), peaTariff: peaTariffY, ppaTariff: ppaTariffY, savings: ppaSavY, cumulative: ppa15.totalSavings });
+  }
+
+  calcData = {
+    name, type, location, kwh, bill, effectiveTariff,
+    actualKwp, numPanels, roofNeeded, annualProduction,
+    selfConsumptionRatio, solarUsed, shading, shadingFactor,
+    epcPrice, annualSavings, paybackEPC,
+    ppaSavingsY1, ppaSavingsPct,
+    epc15, ppa15, pea15Total, model
+  };
+
+  renderAnalysis();
+  goStep(2);
+}
+
+function fmt(n) {
+  if (Math.abs(n) >= 1e6) return '฿' + (n/1e6).toFixed(1) + 'M';
+  if (Math.abs(n) >= 1e3) return '฿' + (n/1e3).toFixed(0) + 'K';
+  return '฿' + Math.round(n);
+}
+
+function renderAnalysis() {
+  const d = calcData;
+
+  // Stats grid
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="val">${d.actualKwp.toFixed(1)} kWp</div><div class="lbl">Recommended System</div></div>
+    <div class="stat-card"><div class="val">${d.numPanels}</div><div class="lbl">Panels (${PANEL_WP}W)</div></div>
+    <div class="stat-card"><div class="val">${Math.round(d.roofNeeded)} m²</div><div class="lbl">Roof Area Needed</div></div>
+    <div class="stat-card green"><div class="val">${Math.round(d.solarUsed/12).toLocaleString()}</div><div class="lbl">kWh/month from Solar</div></div>
+  `;
+
+  // Comparison
+  document.getElementById('comparison').innerHTML = `
+    <div class="compare-card">
+      <h4>Current PEA Bill</h4>
+      <div class="price" style="color:var(--coral)">${fmt(d.kwh * d.effectiveTariff)}</div>
+      <div class="detail">${d.kwh.toLocaleString()} kWh × ฿${d.effectiveTariff.toFixed(2)}/kWh</div>
+    </div>
+    <div class="vs">→</div>
+    <div class="compare-card solar">
+      <h4>With Solar (PPA)</h4>
+      <div class="price">${fmt(d.kwh * d.effectiveTariff - d.ppaSavingsY1/12)}</div>
+      <div class="detail">PPA ฿${PPA_RATE}/kWh + remaining PEA</div>
+    </div>
+  `;
+
+  // Savings bar
+  document.getElementById('savingsBar').innerHTML = `
+    <div class="big">${fmt(d.annualSavings)}/year savings (EPC) | ${fmt(d.ppaSavingsY1)}/year savings (PPA)</div>
+    <div class="sub">15-year EPC savings: ${fmt(d.epc15.totalSavings)} | 15-year PPA savings: ${fmt(d.ppa15.totalSavings)}</div>
+  `;
+
+  // Projection table
+  let thtml = '<tr><th>Year</th><th>Production</th><th>PEA Tariff</th><th>EPC Savings</th><th>EPC Cumulative</th><th>PPA Tariff</th><th>PPA Savings</th><th>PPA Cumulative</th></tr>';
+  for (const r of d.epc15.rows) {
+    const pr = d.ppa15.rows[r.year-1];
+    thtml += `<tr>
+      <td>${r.year}</td>
+      <td>${(r.prod/1000).toFixed(1)}K</td>
+      <td>฿${r.tariff.toFixed(2)}</td>
+      <td>${fmt(r.savings)}</td>
+      <td style="color:${r.cumulative>=0?'#2ED89A':'var(--coral)'}">${fmt(r.cumulative)}</td>
+      <td>฿${pr.ppaTariff.toFixed(2)}</td>
+      <td>${fmt(pr.savings)}</td>
+      <td class="reef-text">${fmt(pr.cumulative)}</td>
+    </tr>`;
+  }
+  document.getElementById('projectionTable').innerHTML = thtml;
+
+  // Monthly chart (12 months)
+  let chartHtml = '';
+  const monthlyPEA = d.kwh * d.effectiveTariff;
+  const monthlySolar = monthlyPEA - d.annualSavings/12;
+  const maxVal = monthlyPEA * 1.1;
+  for (let m = 1; m <= 12; m++) {
+    const peaH = (monthlyPEA / maxVal) * 180;
+    const solH = (Math.max(0, monthlySolar) / maxVal) * 180;
+    chartHtml += `
+      <div class="chart-bar" style="height:${peaH}px;background:rgba(232,93,58,.6)">
+        <div class="bar-val" style="color:var(--coral)">${(monthlyPEA/1000).toFixed(0)}K</div>
+        <div class="bar-label">${m}</div>
+      </div>
+      <div class="chart-bar" style="height:${solH}px;background:rgba(46,216,154,.6)">
+        <div class="bar-val" style="color:#2ED89A">${(monthlySolar/1000).toFixed(0)}K</div>
+      </div>
+    `;
+  }
+  document.getElementById('monthChart').innerHTML = chartHtml;
+}
+
+function goStep(n) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + n).classList.add('active');
+
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i + 1 < n) s.classList.add('done');
+    if (i + 1 === n) s.classList.add('active');
+  });
+
+  if (n === 3) renderProposal();
+  window.scrollTo(0, 0);
+}
+
+function renderProposal() {
+  const d = calcData;
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  document.getElementById('propDate').textContent = dateStr;
+  document.getElementById('propCustomer').textContent = `Prepared for: ${d.name} | ${d.location}`;
+
+  // System table
+  document.getElementById('propSystemTable').innerHTML = `
+    <tr><th>Parameter</th><th>Value</th></tr>
+    <tr><td>System Size</td><td><strong>${d.actualKwp.toFixed(1)} kWp</strong></td></tr>
+    <tr><td>Panels</td><td>${d.numPanels} × Longi Hi-MO X6 ${PANEL_WP}W</td></tr>
+    <tr><td>Inverter</td><td>Huawei SUN2000</td></tr>
+    <tr><td>Roof Area Required</td><td>${Math.round(d.roofNeeded)} m²</td></tr>
+    <tr><td>Annual Production (Year 1)</td><td>${Math.round(d.annualProduction).toLocaleString()} kWh</td></tr>
+    <tr><td>Solar Coverage</td><td>${Math.round(d.selfConsumptionRatio * 100)}% of consumption</td></tr>
+    <tr><td>Current Monthly Bill</td><td>${fmt(d.kwh * d.effectiveTariff)} (${d.kwh.toLocaleString()} kWh)</td></tr>
+    <tr><td>Effective PEA Tariff</td><td>฿${d.effectiveTariff.toFixed(2)}/kWh</td></tr>
+  `;
+
+  // Model options
+  let modelsHtml = '';
+  if (d.model !== 'ppa') {
+    modelsHtml += `
+      <div class="model-option" onclick="this.classList.toggle('selected')">
+        <h4>⚡ EPC — Buy the System</h4>
+        <div class="model-price">${fmt(d.epcPrice)}</div>
+        <div class="model-detail">
+          You own the system<br>
+          Payback: ${d.paybackEPC.toFixed(1)} years<br>
+          15-year savings: ${fmt(d.epc15.totalSavings)}<br>
+          ROI: ${Math.round((d.epc15.totalSavings/d.epcPrice)*100)}%<br>
+          Payment: 30% / 40% / 30%<br>
+          Warranty: 10yr work, 25yr panels
+        </div>
+      </div>
+    `;
+  }
+  if (d.model !== 'epc') {
+    modelsHtml += `
+      <div class="model-option ppa" onclick="this.classList.toggle('selected')">
+        <h4>🔄 PPA — Zero Upfront</h4>
+        <div class="model-price">฿0 upfront</div>
+        <div class="model-detail">
+          We own, you pay ฿${PPA_RATE}/kWh<br>
+          Save ${Math.round(d.ppaSavingsPct)}% from day 1<br>
+          Year 1 savings: ${fmt(d.ppaSavingsY1)}<br>
+          15-year savings: ${fmt(d.ppa15.totalSavings)}<br>
+          O&M included in tariff<br>
+          System yours after 15 years (฿1)
+        </div>
+      </div>
+    `;
+  }
+  document.getElementById('propModels').innerHTML = modelsHtml;
+
+  // Financial summary
+  document.getElementById('propFinTable').innerHTML = `
+    <tr><th></th><th>Without Solar</th><th>EPC (Buy)</th><th>PPA (฿0 Upfront)</th></tr>
+    <tr><td>Upfront Cost</td><td>฿0</td><td>${fmt(d.epcPrice)}</td><td><strong class="reef-text">฿0</strong></td></tr>
+    <tr><td>Year 1 Electricity Cost</td><td>${fmt(d.kwh*12*d.effectiveTariff)}</td><td>${fmt(d.kwh*12*d.effectiveTariff - d.annualSavings)}</td><td>${fmt(d.kwh*12*d.effectiveTariff - d.ppaSavingsY1)}</td></tr>
+    <tr><td>15-Year Total Cost</td><td>${fmt(d.pea15Total)}</td><td>${fmt(d.pea15Total - d.epc15.totalSavings + d.epcPrice)}</td><td>${fmt(d.pea15Total - d.ppa15.totalSavings)}</td></tr>
+    <tr style="background:rgba(46,216,154,.08)"><td><strong>15-Year Savings</strong></td><td>—</td><td><strong class="reef-text">${fmt(d.epc15.totalSavings - d.epcPrice)}</strong></td><td><strong class="reef-text">${fmt(d.ppa15.totalSavings)}</strong></td></tr>
+  `;
+
+  // Savings bar
+  const bestSaving = Math.max(d.epc15.totalSavings - d.epcPrice, d.ppa15.totalSavings);
+  document.getElementById('propSavings').innerHTML = `
+    <div class="big">Save up to ${fmt(bestSaving)} over 15 years</div>
+    <div class="sub">Start saving from Day 1 — free site survey, no obligation</div>
+  `;
+}
+
+function sendWhatsApp() {
+  const d = calcData;
+  const text = encodeURIComponent(
+    `☀️ Ko Phangan Solar — Proposal for ${d.name}\n\n` +
+    `System: ${d.actualKwp.toFixed(1)} kWp (${d.numPanels} panels)\n` +
+    `Current bill: ${fmt(d.kwh * d.effectiveTariff)}/month\n` +
+    `EPC price: ${fmt(d.epcPrice)} (payback ${d.paybackEPC.toFixed(1)} yrs)\n` +
+    `PPA: ฿0 upfront, save ${Math.round(d.ppaSavingsPct)}% immediately\n\n` +
+    `15-year savings: up to ${fmt(Math.max(d.epc15.totalSavings - d.epcPrice, d.ppa15.totalSavings))}\n\n` +
+    `📞 Free site survey — contact us!`
+  );
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+</script>
+</body>
+</html>

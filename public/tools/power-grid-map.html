@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koh Phangan Power Grid Map — TM Energy</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', Arial, sans-serif; }
+#map { width: 100%; height: 100vh; }
+.header-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(13,33,55,.95); backdrop-filter: blur(10px);
+  padding: 10px 20px; display: flex; align-items: center; gap: 12px;
+}
+.header-bar .logo { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #E8A820; display: flex; align-items: center; justify-content: center; color: #E8A820; font-weight: 900; font-size: 11px; }
+.header-bar h1 { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+.header-bar .subtitle { color: rgba(255,255,255,.5); font-size: 12px; margin-left: auto; }
+.legend {
+  position: fixed; bottom: 20px; left: 20px; z-index: 1000;
+  background: rgba(255,255,255,.95); backdrop-filter: blur(8px);
+  border-radius: 12px; padding: 16px 20px; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  font-size: 13px; max-width: 320px;
+}
+.legend h3 { font-size: 14px; color: #0D2137; margin-bottom: 8px; }
+.legend-item { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.legend-line { width: 24px; height: 4px; border-radius: 2px; }
+.legend-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+.info-panel {
+  position: fixed; top: 60px; right: 20px; z-index: 1000;
+  background: rgba(255,255,255,.95); backdrop-filter: blur(8px);
+  border-radius: 12px; padding: 16px 20px; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  font-size: 13px; max-width: 340px; line-height: 1.7;
+}
+.info-panel h3 { font-size: 14px; color: #0D2137; margin-bottom: 8px; }
+.info-panel b { color: #0D2137; }
+.stat-row { display: flex; gap: 12px; margin-top: 8px; }
+.stat-box { background: #f0f4f8; border-radius: 8px; padding: 8px 12px; flex: 1; text-align: center; }
+.stat-box .val { font-size: 18px; font-weight: 900; color: #0D2137; }
+.stat-box .lbl { font-size: 10px; color: #6b7a8d; }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <div class="logo">TM</div>
+  <h1>Koh Phangan Power Grid</h1>
+  <span class="subtitle">Source: OSM + PEA Public Data</span>
+</div>
+
+<div id="map"></div>
+
+<div class="info-panel">
+  <h3>⚡ Grid Infrastructure</h3>
+  <p><b>Power Source:</b> 115 kV submarine cable from Khanom (mainland) → Koh Samui → Koh Phangan</p>
+  <p><b>Total Capacity:</b> ~174 MW shared with Koh Samui (4 circuits)</p>
+  <p><b>Operator:</b> PEA (Provincial Electricity Authority)</p>
+  <p><b>Upgrade:</b> New 230 kV cable planned for 2028-2029</p>
+  <div class="stat-row">
+    <div class="stat-box"><div class="val">115</div><div class="lbl">kV Main</div></div>
+    <div class="stat-box"><div class="val">33</div><div class="lbl">kV Distribution</div></div>
+    <div class="stat-box"><div class="val">~54</div><div class="lbl">km Submarine</div></div>
+  </div>
+</div>
+
+<div class="legend">
+  <h3>Legend / สัญลักษณ์</h3>
+  <div class="legend-item"><div class="legend-line" style="background:#ff0000;"></div> 115 kV Submarine Cable (from Koh Samui)</div>
+  <div class="legend-item"><div class="legend-line" style="background:#ff6600;"></div> 33 kV Distribution Lines (estimated)</div>
+  <div class="legend-item"><div class="legend-line" style="background:#0066ff;height:2px;border:1px dashed #0066ff;"></div> Main Road Power Corridors</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff0000;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3);"></div> 115 kV Substation (PEA)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff6600;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3);width:10px;height:10px;"></div> Distribution Transformer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ffcc00;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3);"></div> PEA Office</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#00cc44;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.3);"></div> Solar / Diesel Generator</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#E8A820;border:2px solid #0D2137;box-shadow:0 0 4px rgba(0,0,0,.3);"></div> Beamtech Project (TM Energy)</div>
+</div>
+
+<script>
+const map = L.map('map', { zoomControl: false }).setView([9.735, 100.01], 13);
+
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+// Google Satellite tiles
+L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', {
+  maxZoom: 22,
+  attribution: '© Google'
+}).addTo(map);
+
+// Road overlay for context
+L.tileLayer('https://mt0.google.com/vt/lyrs=h&hl=en&x={x}&y={y}&z={z}', {
+  maxZoom: 22,
+  opacity: 0.7
+}).addTo(map);
+
+// === 115 kV SUBSTATION (from OSM data) ===
+const substationCoords = [
+  [9.706905, 99.994643],
+  [9.7062097, 99.9946189],
+  [9.7062361, 99.9950775],
+  [9.7069711, 99.995048],
+  [9.706905, 99.994643]
+];
+L.polygon(substationCoords, {
+  color: '#ff0000', weight: 3, fillColor: '#ff0000', fillOpacity: 0.3
+}).addTo(map).bindPopup('<b>⚡ PEA 115 kV Substation</b><br>Main substation for Koh Phangan<br>Receives power from Koh Samui<br>Voltage: 115,000V<br><br><i>สถานีไฟฟ้า 115 kV เกาะพะงัน</i>');
+
+L.marker([9.7066, 99.9948], {
+  icon: L.divIcon({
+    className: '',
+    html: '<div style="background:#ff0000;color:#fff;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3);">⚡ 115kV Substation</div>',
+    iconAnchor: [60, 30]
+  })
+}).addTo(map);
+
+// === SUBMARINE CABLE (from OSM - "Koh Samui Export") ===
+const submarineCable = [
+  [9.5672669, 100.0032039],
+  [9.5691125, 100.0034376],
+  [9.5733183, 100.0034569],
+  [9.5885082, 100.0035566],
+  [9.7055602, 99.994877],
+  [9.7063099, 99.9948196],
+  [9.7064041, 99.9947288],
+  [9.7064741, 99.9947557]
+];
+L.polyline(submarineCable, {
+  color: '#ff0000', weight: 4, dashArray: '10, 8', opacity: 0.9
+}).addTo(map).bindPopup('<b>🔌 115 kV Submarine Cable</b><br>From Koh Samui to Koh Phangan<br>Operator: PEA<br>Underground/Submarine<br><br><i>สายเคเบิลใต้น้ำ 115 kV จากเกาะสมุย</i>');
+
+// === DIESEL + SOLAR GENERATORS (from OSM) ===
+L.circleMarker([9.6943013, 100.0758419], {
+  radius: 8, color: '#fff', weight: 2, fillColor: '#00cc44', fillOpacity: 0.9
+}).addTo(map).bindPopup('<b>🏭 Diesel Generator</b><br>Backup power generation<br>Type: Reciprocating engine<br><br><i>เครื่องกำเนิดไฟฟ้าดีเซล</i>');
+
+L.circleMarker([9.6942576, 100.0757869], {
+  radius: 8, color: '#fff', weight: 2, fillColor: '#00cc44', fillOpacity: 0.9
+}).addTo(map).bindPopup('<b>☀️ Solar PV Generator</b><br>Photovoltaic system<br><br><i>ระบบผลิตไฟฟ้าโซลาร์เซลล์</i>');
+
+// === PEA OFFICE ===
+L.circleMarker([9.7175, 99.9860], {
+  radius: 10, color: '#fff', weight: 2, fillColor: '#ffcc00', fillOpacity: 0.9
+}).addTo(map).bindPopup('<b>🏢 PEA Office — Koh Phangan Branch</b><br>การไฟฟ้าส่วนภูมิภาค สาขาเกาะพะงัน<br>📞 077-377072, 077-377073<br>Location: Thongsala area<br><br><i>สำนักงานการไฟฟ้าส่วนภูมิภาค อ.เกาะพะงัน</i>');
+
+L.marker([9.7175, 99.9860], {
+  icon: L.divIcon({
+    className: '',
+    html: '<div style="background:#ffcc00;color:#0D2137;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3);">🏢 PEA Office</div>',
+    iconAnchor: [40, 30]
+  })
+}).addTo(map);
+
+// === WASTE PLANT (from OSM) ===
+L.circleMarker([9.7268, 99.9915], {
+  radius: 7, color: '#fff', weight: 2, fillColor: '#888', fillOpacity: 0.7
+}).addTo(map).bindPopup('<b>♻️ Trash Burning Factory</b><br>Waste combustion plant (no electricity output)<br><br><i>โรงเผาขยะ</i>');
+
+// === BEAMTECH PROJECT ===
+L.circleMarker([9.7615, 99.9785], {
+  radius: 12, color: '#0D2137', weight: 3, fillColor: '#E8A820', fillOpacity: 0.9
+}).addTo(map).bindPopup('<b>☀️ Beamtech Residences — TM Energy</b><br>32.5 kWp | 56 panels | 2 buildings<br>Status: Proposal sent<br><br><i>โปรเจกต์ TM Energy — Beamtech</i>');
+
+L.marker([9.7615, 99.9785], {
+  icon: L.divIcon({
+    className: '',
+    html: '<div style="background:#E8A820;color:#0D2137;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3);">☀️ Beamtech 32.5 kWp</div>',
+    iconAnchor: [60, -5]
+  })
+}).addTo(map);
+
+// === ESTIMATED 33kV DISTRIBUTION LINES ===
+// Main distribution follows the ring road and major roads
+const distribution33kV = [
+  // From substation going north along west coast
+  [[9.7066, 99.9948], [9.7120, 99.9900], [9.7175, 99.9860], [9.7250, 99.9830], [9.7350, 99.9780], [9.7450, 99.9760], [9.7550, 99.9770], [9.7650, 99.9780], [9.7750, 99.9800], [9.7850, 99.9830], [9.7950, 99.9870], [9.8050, 99.9930]],
+  // From substation going east through Thongsala
+  [[9.7066, 99.9948], [9.7100, 100.0000], [9.7130, 100.0060], [9.7160, 100.0120], [9.7200, 100.0180], [9.7250, 100.0250], [9.7300, 100.0320]],
+  // South branch to Haad Rin
+  [[9.7130, 100.0060], [9.7050, 100.0100], [9.6980, 100.0200], [9.6920, 100.0350], [9.6880, 100.0500], [9.6870, 100.0600], [9.6850, 100.0700]],
+  // North to Chaloklum
+  [[9.7850, 99.9830], [9.7900, 99.9900], [9.7950, 99.9950], [9.8000, 100.0020], [9.8050, 100.0070]],
+  // East coast branch
+  [[9.7300, 100.0320], [9.7400, 100.0400], [9.7500, 100.0450], [9.7600, 100.0480], [9.7700, 100.0450], [9.7800, 100.0350], [9.7900, 100.0250], [9.8000, 100.0100]]
+];
+
+distribution33kV.forEach(coords => {
+  L.polyline(coords, {
+    color: '#ff6600', weight: 3, opacity: 0.7, dashArray: '8, 5'
+  }).addTo(map).bindPopup('<b>33 kV Distribution Line</b><br>Estimated route along main roads<br>Operator: PEA<br><br><i>สายจำหน่าย 33 kV (ประมาณตามถนนหลัก)</i>');
+});
+
+// === ESTIMATED TRANSFORMER LOCATIONS (major intersections) ===
+const transformers = [
+  { lat: 9.7250, lng: 99.9830, name: 'Ban Tai Junction' },
+  { lat: 9.7450, lng: 99.9760, name: 'Ban Tai Beach' },
+  { lat: 9.7650, lng: 99.9780, name: 'Sri Thanu' },
+  { lat: 9.7850, lng: 99.9830, name: 'Mae Haad' },
+  { lat: 9.8000, lng: 100.0020, name: 'Chaloklum' },
+  { lat: 9.7200, lng: 100.0180, name: 'Thongsala Center' },
+  { lat: 9.7300, lng: 100.0320, name: 'Wok Tum' },
+  { lat: 9.6920, lng: 100.0350, name: 'Haad Rin Road' },
+  { lat: 9.6870, lng: 100.0600, name: 'Haad Rin' },
+  { lat: 9.7500, lng: 100.0450, name: 'Thong Nai Pan' },
+  { lat: 9.7800, lng: 100.0350, name: 'Bottle Beach Rd' },
+];
+
+transformers.forEach(t => {
+  L.circleMarker([t.lat, t.lng], {
+    radius: 5, color: '#fff', weight: 1.5, fillColor: '#ff6600', fillOpacity: 0.8
+  }).addTo(map).bindPopup(`<b>🔌 Distribution Transformer</b><br>${t.name}<br>33kV → 400/230V<br><i>Estimated location</i>`);
+});
+
+</script>
+</body>
+</html>

@@ -31,7 +31,7 @@ const en = {
     whatsapp: 'WhatsApp',
     line: 'LINE: @tmenergy',
     email: 'info@energy-tm.com',
-    address: 'Thong Sala, Ko Phangan\nSurat Thani 84280, Thailand',
+    address: 'Ko Pha-ngan, Surat Thani 84280\nThailand',
     copyright: '© 2026 TM Energy Co., Ltd. All rights reserved.',
   },
 
@@ -510,6 +510,42 @@ const en = {
     },
     posts: [
       {
+        slug: 'solar-energy-koh-phangan-guide',
+        tag: 'Guide',
+        title: 'The Complete Guide to Solar Energy on Koh Phangan (2026)',
+        excerpt:
+          'Everything you need to know about going solar on Ko Phangan — costs, system sizes, PEA permits, monsoon performance, and more.',
+        date: 'April 2026',
+        readTime: '12 min read',
+      },
+      {
+        slug: 'solar-panel-cost-thailand',
+        tag: 'Finance',
+        title: 'How Much Do Solar Panels Cost in Thailand? (2026 Pricing Guide)',
+        excerpt:
+          'A transparent breakdown of solar panel prices in Thailand by system size, plus ROI timelines, financing options, and hidden costs.',
+        date: 'April 2026',
+        readTime: '10 min read',
+      },
+      {
+        slug: 'off-grid-solar-koh-phangan',
+        tag: 'Guide',
+        title: 'Off-Grid Solar on Koh Phangan: Everything You Need to Know',
+        excerpt:
+          'A practical guide to off-grid and hybrid solar systems on Ko Phangan — batteries, sizing, costs, and why the island is ideal for it.',
+        date: 'April 2026',
+        readTime: '11 min read',
+      },
+      {
+        slug: 'koh-phangan-power-outages-solar-solution',
+        tag: 'Tips',
+        title: 'Koh Phangan Power Outages: Why Solar Is the Solution',
+        excerpt:
+          'Power outages on Ko Phangan are a fact of life. Here is how solar + battery storage eliminates the problem — and what it costs NOT to act.',
+        date: 'April 2026',
+        readTime: '8 min read',
+      },
+      {
         slug: 'thailand-solar-regulations',
         tag: 'Regulations',
         title: "Understanding Thailand's Solar Regulations",
@@ -555,13 +591,31 @@ const en = {
         readTime: '5 min read',
       },
       {
+        slug: 'pea-permit-solar-thailand',
+        tag: 'Regulations',
+        title: 'PEA Permit Process: How to Connect Solar to Thailand\'s Grid',
+        excerpt:
+          'A step-by-step walkthrough of the PEA solar permit application — documents needed, typical timeline, common mistakes, and tips to speed up approval.',
+        date: 'April 2026',
+        readTime: '9 min read',
+      },
+      {
+        slug: 'solar-panel-maintenance-thailand',
+        tag: 'Tips',
+        title: 'Solar Panel Maintenance in Tropical Climate: What You Need to Know',
+        excerpt:
+          'Humidity, salt air, and monsoon rains affect solar panels differently in the tropics. A complete maintenance guide for Ko Phangan and Thailand.',
+        date: 'April 2026',
+        readTime: '8 min read',
+      },
+      {
         slug: 'commercial-solar-roi-thailand',
         tag: 'Business',
-        title: 'The Financial Case for Commercial Solar in Thailand',
+        title: 'Commercial Solar ROI in Thailand: Case Study Analysis',
         excerpt:
-          'Detailed ROI analysis for hotels, resorts, and businesses considering solar. Real numbers from real Ko Phangan installations.',
-        date: 'November 2025',
-        readTime: '10 min read',
+          'Real ROI analysis for hotels, resorts, and businesses in Thailand — with anonymized case studies, payback calculations, and before/after electricity bills.',
+        date: 'April 2026',
+        readTime: '11 min read',
       },
     ],
     cta: {
@@ -587,7 +641,7 @@ const en = {
       email: 'Email',
       emailPlaceholder: 'you@example.com',
       phone: 'Phone / WhatsApp',
-      phonePlaceholder: '+66 XX XXX XXXX',
+      phonePlaceholder: '+66 94 669 2011',
       propertyType: {
         label: 'Property Type',
         placeholder: 'Select type',
@@ -612,7 +666,7 @@ const en = {
     info: {
       whatsapp: {
         label: 'WhatsApp',
-        value: '+66 XX XXX XXXX',
+        value: '+66 94 669 2011',
         cta: 'Chat with us instantly',
       },
       line: {
@@ -1226,6 +1280,42 @@ const th = {
     },
     posts: [
       {
+        slug: 'solar-energy-koh-phangan-guide',
+        tag: 'คู่มือ',
+        title: 'คู่มือครบวงจร: พลังงานแสงอาทิตย์บนเกาะพะงัน (2026)',
+        excerpt:
+          'ทุกสิ่งที่ต้องรู้เกี่ยวกับการติดโซลาร์บนเกาะพะงัน — ค่าใช้จ่าย ขนาดระบบ ใบอนุญาต PEA ประสิทธิภาพช่วงมรสุม และอื่นๆ',
+        date: 'เมษายน 2026',
+        readTime: 'อ่าน 12 นาที',
+      },
+      {
+        slug: 'solar-panel-cost-thailand',
+        tag: 'การเงิน',
+        title: 'แผงโซลาร์เซลล์ราคาเท่าไหร่ในไทย? (คู่มือราคา 2026)',
+        excerpt:
+          'รายละเอียดราคาแผงโซลาร์ตามขนาดระบบอย่างโปร่งใส พร้อมระยะเวลาคืนทุน ตัวเลือกทางการเงิน และค่าใช้จ่ายแฝง',
+        date: 'เมษายน 2026',
+        readTime: 'อ่าน 10 นาที',
+      },
+      {
+        slug: 'off-grid-solar-koh-phangan',
+        tag: 'คู่มือ',
+        title: 'โซลาร์ออฟกริดบนเกาะพะงัน: ทุกสิ่งที่ต้องรู้',
+        excerpt:
+          'คู่มือเชิงปฏิบัติเกี่ยวกับระบบโซลาร์ออฟกริดและไฮบริดบนเกาะพะงัน — แบตเตอรี่ การกำหนดขนาด ค่าใช้จ่าย',
+        date: 'เมษายน 2026',
+        readTime: 'อ่าน 11 นาที',
+      },
+      {
+        slug: 'koh-phangan-power-outages-solar-solution',
+        tag: 'เคล็ดลับ',
+        title: 'ไฟดับบนเกาะพะงัน: ทำไมโซลาร์คือทางออก',
+        excerpt:
+          'ไฟดับบนเกาะพะงันเป็นเรื่องปกติ ดูว่าโซลาร์ + แบตเตอรี่จะแก้ปัญหาได้อย่างไร — และต้นทุนของการไม่ทำอะไร',
+        date: 'เมษายน 2026',
+        readTime: 'อ่าน 8 นาที',
+      },
+      {
         slug: 'thailand-solar-regulations',
         tag: 'กฎระเบียบ',
         title: 'ทำความเข้าใจกฎระเบียบโซลาร์เซลล์ในไทย',
@@ -1271,13 +1361,31 @@ const th = {
         readTime: 'อ่าน 5 นาที',
       },
       {
+        slug: 'pea-permit-solar-thailand',
+        tag: 'กฎระเบียบ',
+        title: 'กระบวนการขออนุญาต PEA: วิธีเชื่อมต่อโซลาร์กับระบบกริดในไทย',
+        excerpt:
+          'คำแนะนำทีละขั้นตอนสำหรับการยื่นขออนุญาต PEA — เอกสารที่ต้องใช้ ระยะเวลา ข้อผิดพลาดทั่วไป และเคล็ดลับเร่งอนุมัติ',
+        date: 'เมษายน 2026',
+        readTime: 'อ่าน 9 นาที',
+      },
+      {
+        slug: 'solar-panel-maintenance-thailand',
+        tag: 'เคล็ดลับ',
+        title: 'การดูแลรักษาแผงโซลาร์ในสภาพอากาศร้อนชื้น: สิ่งที่ต้องรู้',
+        excerpt:
+          'ความชื้น เกลือในอากาศ และมรสุม ส่งผลต่อแผงโซลาร์แตกต่างกันในเขตร้อน คู่มือการดูแลรักษาฉบับสมบูรณ์สำหรับเกาะพะงัน',
+        date: 'เมษายน 2026',
+        readTime: 'อ่าน 8 นาที',
+      },
+      {
         slug: 'commercial-solar-roi-thailand',
         tag: 'ธุรกิจ',
-        title: 'ความคุ้มค่าทางการเงินของโซลาร์เชิงพาณิชย์ในไทย',
+        title: 'ROI โซลาร์เชิงพาณิชย์ในไทย: วิเคราะห์กรณีศึกษา',
         excerpt:
-          'วิเคราะห์ ROI โดยละเอียดสำหรับโรงแรม รีสอร์ท และธุรกิจที่พิจารณาติดตั้งโซลาร์ ตัวเลขจริงจากโครงการบนเกาะพะงัน',
-        date: 'พฤศจิกายน 2025',
-        readTime: 'อ่าน 10 นาที',
+          'วิเคราะห์ ROI จริงสำหรับโรงแรม รีสอร์ท และธุรกิจในไทย พร้อมกรณีศึกษา การคำนวณระยะคืนทุน และบิลก่อน-หลังติดโซลาร์',
+        date: 'เมษายน 2026',
+        readTime: 'อ่าน 11 นาที',
       },
     ],
     cta: {
@@ -1303,7 +1411,7 @@ const th = {
       email: 'อีเมล',
       emailPlaceholder: 'you@example.com',
       phone: 'โทรศัพท์ / WhatsApp',
-      phonePlaceholder: '+66 XX XXX XXXX',
+      phonePlaceholder: '+66 94 669 2011',
       propertyType: {
         label: 'ประเภทอสังหาริมทรัพย์',
         placeholder: 'เลือกประเภท',
@@ -1328,7 +1436,7 @@ const th = {
     info: {
       whatsapp: {
         label: 'WhatsApp',
-        value: '+66 XX XXX XXXX',
+        value: '+66 94 669 2011',
         cta: 'แชทกับเราได้ทันที',
       },
       line: {

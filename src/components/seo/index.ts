@@ -3,7 +3,9 @@ export { SEOHead } from './SEOHead'
 
 // ─── Schema Helpers ───────────────────────────────────────────────────────────
 export {
+  BASE_URL,
   localBusinessSchema,
+  websiteSchema,
   serviceSchema,
   faqSchema,
   articleSchema,

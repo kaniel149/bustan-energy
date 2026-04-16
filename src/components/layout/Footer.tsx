@@ -4,7 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext'
 import { useTranslation } from '../../i18n/useTranslation'
 
 export function Footer() {
-  const { langPath } = useLanguage()
+  const { langPath, lang } = useLanguage()
   const { t } = useTranslation()
 
   const QUICK_LINKS = [
@@ -15,6 +15,7 @@ export function Footer() {
     { label: t.nav.about, path: '/about' },
     { label: t.nav.blog, path: '/blog' },
     { label: t.nav.contact, path: '/contact' },
+    { label: lang === 'th' ? 'เครื่องมือโซลาร์' : 'Solar Tools', path: '/tools' },
   ]
 
   const SERVICES = [
@@ -64,7 +65,7 @@ export function Footer() {
             {/* Social / contact quick icons */}
             <div className="flex items-center gap-3 mt-1">
               <a
-                href="https://wa.me/66000000000"
+                href="https://wa.me/66946692011"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-xl bg-white/8 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/25 hover:bg-white/12 transition-colors"
@@ -137,13 +138,13 @@ export function Footer() {
             <ul className="flex flex-col gap-4">
               <li>
                 <a
-                  href="https://wa.me/66000000000"
+                  href="https://wa.me/66946692011"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors group"
                 >
                   <Phone size={15} className="mt-0.5 shrink-0 text-gold/70 group-hover:text-gold transition-colors" />
-                  <span>WhatsApp: +66 00 000 0000</span>
+                  <span>WhatsApp: +66 94 669 2011</span>
                 </a>
               </li>
               <li>
