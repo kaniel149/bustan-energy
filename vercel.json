@@ -9,6 +9,7 @@
     }
   },
   "rewrites": [
+    { "source": "/tools/:path*", "destination": "/tools/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
