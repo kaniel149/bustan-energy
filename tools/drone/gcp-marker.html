@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>GCP Marker — Drone Ortho</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 13px -apple-system, system-ui, sans-serif; background: #0a0e1a; color: #e6e9ef; height: 100vh; display: grid; grid-template-rows: auto 1fr auto; }
+  header { padding: 8px 14px; background: #0f1624; border-bottom: 1px solid #1f2a3f; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; }
+  header .stat { color: #6b7a99; font-size: 12px; }
+  .btn { background: #1f6feb; color: white; border: 0; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 500; }
+  .btn:hover { background: #2980f2; }
+  .btn.ghost { background: transparent; border: 1px solid #334161; color: #a4b4d7; }
+  .btn.ghost:hover { border-color: #5b6b8f; color: #fff; }
+  .btn.danger { background: #c5302b; }
+  input[type=file], input[type=number] { background: #0a0e1a; color: #e6e9ef; border: 1px solid #334161; border-radius: 6px; padding: 5px 8px; font-size: 12px; }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #000; overflow: hidden; }
+  .pane { position: relative; background: #000; overflow: hidden; }
+  .pane .label { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 11px; z-index: 500; }
+  #photoCanvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+  #map { height: 100%; width: 100%; }
+  .photo-nav { position: absolute; bottom: 8px; left: 8px; right: 8px; display: flex; gap: 4px; overflow-x: auto; background: rgba(0,0,0,0.6); padding: 4px; border-radius: 6px; z-index: 500; }
+  .thumb { flex: 0 0 60px; height: 45px; border-radius: 3px; cursor: pointer; border: 2px solid transparent; background-size: cover; background-position: center; opacity: 0.55; font-size: 9px; color: #fff; display: flex; align-items: flex-end; justify-content: center; padding: 2px; text-shadow: 0 1px 2px #000; }
+  .thumb:hover, .thumb.active { opacity: 1; border-color: #1f6feb; }
+  .thumb.has-gcp { border-color: #28a745; opacity: 0.85; }
+  footer { background: #0f1624; border-top: 1px solid #1f2a3f; max-height: 260px; overflow-y: auto; }
+  footer table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  footer th, footer td { padding: 5px 8px; text-align: start; border-bottom: 1px solid #1a2338; }
+  footer th { background: #0a0e1a; color: #6b7a99; font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  footer tr.pending { background: #2a1f08; }
+  footer tr:hover { background: #16203a; }
+  .mark { position: absolute; width: 12px; height: 12px; border: 2px solid #ffdd00; border-radius: 50%; background: rgba(255,221,0,0.3); pointer-events: none; transform: translate(-50%, -50%); z-index: 400; }
+  .mark.confirmed { border-color: #28a745; background: rgba(40,167,69,0.3); }
+  .coord-input { display: flex; gap: 6px; align-items: center; }
+  .coord-input input { width: 90px; }
+  .legend { color: #6b7a99; font-size: 11px; margin: 0 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎯 GCP Marker</h1>
+  <span class="stat" id="stat">0 photos · 0 GCPs</span>
+  <input type="file" id="photoFiles" multiple accept="image/jpeg">
+  <button class="btn ghost" onclick="loadManifest()">📋 Load Manifest</button>
+  <span class="legend">|</span>
+  <button class="btn" onclick="addGCP()" id="addBtn" disabled>➕ Add GCP pair</button>
+  <button class="btn ghost" onclick="clearMarks()">🧹 Clear marks</button>
+  <span class="legend">|</span>
+  <button class="btn" onclick="exportGCP()">💾 Export gcp_list.txt</button>
+  <button class="btn ghost" onclick="exportJSON()">📤 Export JSON</button>
+  <button class="btn danger" onclick="resetAll()">🗑 Reset</button>
+</header>
+
+<main>
+  <div class="pane">
+    <div class="label" id="photoLabel">← בחר תמונות או טען manifest</div>
+    <canvas id="photoCanvas"></canvas>
+    <div class="photo-nav" id="photoNav"></div>
+    <div class="mark" id="photoMark" style="display:none"></div>
+  </div>
+  <div class="pane">
+    <div class="label">🛰 Satellite (Google) — קליק על אותה נקודה בדיוק</div>
+    <div id="map"></div>
+  </div>
+</main>
+
+<footer>
+  <table id="gcpTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Photo</th>
+        <th>Pixel (x, y)</th>
+        <th>Lat / Lon</th>
+        <th>Alt (m)</th>
+        <th>Note</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="gcpBody"></tbody>
+  </table>
+</footer>
+
+<script>
+/* ========== State ========== */
+const state = {
+  photos: [],        // {name, url, width, height}
+  current: null,     // index into photos
+  pixelPick: null,   // {x, y} photo-pixel
+  gpsPick: null,     // {lat, lon}
+  gcps: JSON.parse(localStorage.getItem('gcps') || '[]'),
+  altDefault: 43     // typical Koh Phangan ground alt
+};
+
+/* ========== Canvas + Photo ========== */
+const canvas = document.getElementById('photoCanvas');
+const ctx = canvas.getContext('2d');
+const mark = document.getElementById('photoMark');
+let imgEl = null;
+let viewXform = { scale: 1, offX: 0, offY: 0 };
+
+function drawPhoto() {
+  if (!imgEl) return;
+  const pw = canvas.clientWidth, ph = canvas.clientHeight;
+  canvas.width = pw; canvas.height = ph;
+  const s = Math.min(pw / imgEl.naturalWidth, ph / imgEl.naturalHeight);
+  viewXform.scale = s;
+  viewXform.offX = (pw - imgEl.naturalWidth * s) / 2;
+  viewXform.offY = (ph - imgEl.naturalHeight * s) / 2;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, pw, ph);
+  ctx.drawImage(imgEl, viewXform.offX, viewXform.offY,
+                imgEl.naturalWidth * s, imgEl.naturalHeight * s);
+  // redraw existing GCPs for this photo
+  state.gcps.filter(g => g.file === state.photos[state.current].name).forEach(g => {
+    const x = g.px * s + viewXform.offX;
+    const y = g.py * s + viewXform.offY;
+    ctx.strokeStyle = '#28a745'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.stroke();
+  });
+  // redraw pixel pick
+  if (state.pixelPick) {
+    const x = state.pixelPick.x * s + viewXform.offX;
+    const y = state.pixelPick.y * s + viewXform.offY;
+    mark.style.display = 'block';
+    mark.style.left = x + 'px';
+    mark.style.top = y + 'px';
+  } else {
+    mark.style.display = 'none';
+  }
+}
+
+canvas.addEventListener('click', e => {
+  if (!imgEl) return;
+  const r = canvas.getBoundingClientRect();
+  const cx = e.clientX - r.left, cy = e.clientY - r.top;
+  const px = Math.round((cx - viewXform.offX) / viewXform.scale);
+  const py = Math.round((cy - viewXform.offY) / viewXform.scale);
+  if (px < 0 || py < 0 || px > imgEl.naturalWidth || py > imgEl.naturalHeight) return;
+  state.pixelPick = { x: px, y: py };
+  drawPhoto();
+  updateAddBtn();
+});
+
+window.addEventListener('resize', drawPhoto);
+
+/* ========== Photo nav ========== */
+function rebuildNav() {
+  const nav = document.getElementById('photoNav');
+  nav.innerHTML = '';
+  state.photos.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'thumb' + (i === state.current ? ' active' : '')
+                 + (state.gcps.some(g => g.file === p.name) ? ' has-gcp' : '');
+    d.style.backgroundImage = `url(${p.url})`;
+    d.textContent = (i + 1);
+    d.title = p.name;
+    d.onclick = () => showPhoto(i);
+    nav.appendChild(d);
+  });
+}
+function showPhoto(i) {
+  state.current = i;
+  state.pixelPick = null;
+  imgEl = new Image();
+  imgEl.onload = drawPhoto;
+  imgEl.src = state.photos[i].url;
+  document.getElementById('photoLabel').textContent = state.photos[i].name;
+  rebuildNav();
+  updateAddBtn();
+}
+
+/* ========== File loader ========== */
+document.getElementById('photoFiles').addEventListener('change', e => {
+  const files = [...e.target.files].filter(f => f.type.startsWith('image/'));
+  state.photos = files.map(f => ({
+    name: f.name, url: URL.createObjectURL(f), file: f
+  }));
+  if (state.photos.length) showPhoto(0);
+  updateStat();
+});
+
+async function loadManifest() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json,.json';
+  input.onchange = async e => {
+    const text = await e.target.files[0].text();
+    const m = JSON.parse(text);
+    // Manifest has .images[] with .clean paths — user must still pick local dir
+    alert(`Manifest "${m.batch}" loaded: ${m.clean_count} images.\nNow pick the photos folder via the file input.`);
+  };
+  input.click();
+}
+
+/* ========== Map ========== */
+const map = L.map('map', { zoomControl: true, attributionControl: false })
+  .setView([9.733, 100.005], 14);
+L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', {
+  maxZoom: 22, subdomains: ['mt0','mt1','mt2','mt3']
+}).addTo(map);
+let gpsMark = null;
+let confirmedLayer = L.layerGroup().addTo(map);
+
+function refreshMapGCPs() {
+  confirmedLayer.clearLayers();
+  state.gcps.forEach((g, i) => {
+    L.circleMarker([g.lat, g.lon], {
+      radius: 6, color: '#28a745', fillColor: '#28a745', fillOpacity: 0.7, weight: 2
+    }).bindTooltip(`#${i+1} ${g.file}`, { permanent: false }).addTo(confirmedLayer);
+  });
+}
+
+map.on('click', e => {
+  state.gpsPick = { lat: +e.latlng.lat.toFixed(7), lon: +e.latlng.lng.toFixed(7) };
+  if (gpsMark) map.removeLayer(gpsMark);
+  gpsMark = L.circleMarker([state.gpsPick.lat, state.gpsPick.lon], {
+    radius: 8, color: '#ffdd00', fillColor: '#ffdd00', fillOpacity: 0.4, weight: 2
+  }).addTo(map);
+  updateAddBtn();
+});
+
+/* ========== GCP management ========== */
+function updateAddBtn() {
+  const ok = state.pixelPick && state.gpsPick && state.current != null;
+  document.getElementById('addBtn').disabled = !ok;
+}
+function addGCP() {
+  if (!state.pixelPick || !state.gpsPick) return;
+  const alt = prompt('גובה פני הקרקע (m, AGL-above-sea). הקש Enter לברירת מחדל ' + state.altDefault, state.altDefault);
+  if (alt === null) return;
+  state.gcps.push({
+    file: state.photos[state.current].name,
+    px: state.pixelPick.x, py: state.pixelPick.y,
+    lat: state.gpsPick.lat, lon: state.gpsPick.lon,
+    alt: parseFloat(alt) || state.altDefault,
+    note: prompt('הערה (landmark, למשל "road junction")?', '') || '',
+    ts: Date.now()
+  });
+  clearMarks();
+  save();
+  rebuildNav();
+  drawPhoto();
+  refreshMapGCPs();
+  renderTable();
+  updateStat();
+}
+function clearMarks() {
+  state.pixelPick = null;
+  state.gpsPick = null;
+  if (gpsMark) { map.removeLayer(gpsMark); gpsMark = null; }
+  drawPhoto();
+  updateAddBtn();
+}
+function deleteGCP(i) {
+  if (!confirm('למחוק GCP #' + (i+1) + '?')) return;
+  state.gcps.splice(i, 1);
+  save(); rebuildNav(); refreshMapGCPs(); renderTable(); updateStat(); drawPhoto();
+}
+function renderTable() {
+  const tb = document.getElementById('gcpBody');
+  tb.innerHTML = '';
+  state.gcps.forEach((g, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td>${g.file}</td>
+      <td>${g.px}, ${g.py}</td>
+      <td>${g.lat.toFixed(6)}, ${g.lon.toFixed(6)}</td>
+      <td>${g.alt}</td>
+      <td>${g.note || '—'}</td>
+      <td><button class="btn ghost" onclick="deleteGCP(${i})">✕</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function updateStat() {
+  const byPhoto = new Set(state.gcps.map(g => g.file));
+  document.getElementById('stat').textContent =
+    `${state.photos.length} photos · ${state.gcps.length} GCPs (${byPhoto.size} photos covered)`;
+}
+function save() { localStorage.setItem('gcps', JSON.stringify(state.gcps)); }
+
+/* ========== Export ========== */
+function exportGCP() {
+  // ODM format: EPSG:4326\n<lon> <lat> <alt> <px> <py> <filename>
+  const lines = ['EPSG:4326'];
+  state.gcps.forEach(g => {
+    lines.push(`${g.lon} ${g.lat} ${g.alt} ${g.px} ${g.py} ${g.file}`);
+  });
+  download('gcp_list.txt', lines.join('\n'), 'text/plain');
+}
+function exportJSON() {
+  download('gcps.json', JSON.stringify(state.gcps, null, 2), 'application/json');
+}
+function download(name, body, mime) {
+  const blob = new Blob([body], { type: mime });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function resetAll() {
+  if (!confirm('למחוק את כל ה-GCPs? פעולה זו בלתי הפיכה.')) return;
+  state.gcps = [];
+  save(); rebuildNav(); refreshMapGCPs(); renderTable(); updateStat();
+}
+
+/* ========== Init ========== */
+refreshMapGCPs();
+renderTable();
+updateStat();
+setTimeout(() => map.invalidateSize(), 100);
+
+/* Keyboard: arrow keys to navigate photos, Enter to add */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight' && state.current < state.photos.length - 1) showPhoto(state.current + 1);
+  else if (e.key === 'ArrowLeft' && state.current > 0) showPhoto(state.current - 1);
+  else if (e.key === 'Enter' && !document.getElementById('addBtn').disabled) addGCP();
+  else if (e.key === 'Escape') clearMarks();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "_comment": "Drone camera profiles for TM Energy Koh Phangan orthomosaic pipeline. Used by ODM, GSD calculator, and filter scripts.",
+  "_updated": "2026-04-19",
+  "cameras": {
+    "dji_mini_4_pro": {
+      "model": "DJI Mini 4 Pro",
+      "exif_model": "FC9113",
+      "sensor_mm": { "w": 9.728, "h": 7.296 },
+      "resolution_px": { "w": 4096, "h": 3072 },
+      "focal_mm": 8.67,
+      "focal_35mm_equiv": 24,
+      "fov_deg": 82.1,
+      "gps": { "type": "GNSS", "rtk": false, "horizontal_m": 5, "vertical_m": 10 },
+      "status": "legacy — used for 122 photos, March 2026",
+      "known_issues": ["GPS drift 5-15m → orthomosaic offset 20-30m without GCPs"]
+    },
+    "dji_air_2s": {
+      "model": "DJI Air 2S",
+      "exif_model": "FC3411",
+      "sensor_mm": { "w": 13.2, "h": 8.8 },
+      "resolution_px": { "w": 5472, "h": 3648 },
+      "focal_mm": 8.4,
+      "focal_35mm_equiv": 22,
+      "fov_deg": 88,
+      "gps": { "type": "GPS+GLONASS", "rtk": false, "horizontal_m": 1.5, "vertical_m": 3 },
+      "status": "active — April 2026 onwards",
+      "advantages": [
+        "1\" sensor (vs 1/1.3\") → ~2x light, better dynamic range",
+        "5472×3648 (20MP) vs 4096×3072 (12.5MP) → 70% more pixels/photo",
+        "Better GPS → horizontal 1.5m vs 5m"
+      ],
+      "still_needs_gcps": "GPS is ~1.5m — much better than Mini 4, but for pixel-accurate alignment on high-zoom maps still need GCPs. Target offset <1m.",
+      "recommended_flight": {
+        "altitude_m_agl": 100,
+        "overlap_forward_pct": 80,
+        "overlap_side_pct": 70,
+        "gsd_cm_per_px": 2.6,
+        "footprint_m": { "w": 157, "h": 105 },
+        "photos_per_km2_approx": 180
+      }
+    }
+  },
+  "_gsd_formula": "GSD_cm = (altitude_m * sensor_w_mm * 100) / (focal_mm * image_w_px)",
+  "_air2s_example": "GSD = (100 * 13.2 * 100) / (8.4 * 5472) = 2.87 cm/px — call it ~3cm"
+}
