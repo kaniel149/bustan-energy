@@ -1,0 +1,7 @@
+# Don't commit raw photos (huge, live in Drive)
+raw/
+clean/
+# Legacy tiles — keep in repo as historical reference (18MB, small)
+# tiles-legacy/
+# PMTiles live on Supabase Storage
+pmtiles/

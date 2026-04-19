@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Drone Ops Plan | תוכנית סריקת רחפן</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Heebo',sans-serif; background:#0A1929; color:#E0E0E0; line-height:1.7; }
+a { color:#E8A820; text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+/* Sticky nav */
+.topnav { position:sticky; top:0; z-index:1000; background:#0D2137; border-bottom:2px solid #E8A820; padding:12px 24px; display:flex; align-items:center; gap:16px; overflow-x:auto; }
+.topnav .logo { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.topnav .logo-circle { width:32px; height:32px; background:#E8A820; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:12px; color:#0D2137; }
+.topnav .logo-text { font-weight:700; font-size:16px; white-space:nowrap; }
+.topnav .logo-text span { color:#E8A820; }
+.nav-links { display:flex; gap:4px; flex-wrap:nowrap; }
+.nav-links a { padding:6px 12px; border-radius:6px; font-size:13px; font-weight:500; white-space:nowrap; transition:0.2s; }
+.nav-links a:hover, .nav-links a.active { background:rgba(232,168,32,0.15); color:#E8A820; text-decoration:none; }
+
+/* Hero */
+.hero { background:linear-gradient(135deg,#0D2137 0%,#1a3a5c 50%,#0D2137 100%); padding:60px 24px; text-align:center; border-bottom:1px solid rgba(232,168,32,0.2); }
+.hero h1 { font-size:42px; font-weight:900; margin-bottom:8px; }
+.hero h1 span { color:#E8A820; }
+.hero .sub { font-size:18px; opacity:0.7; max-width:700px; margin:0 auto 24px; }
+.hero-stats { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; }
+.hero-stat { text-align:center; }
+.hero-stat .val { font-size:32px; font-weight:900; color:#E8A820; }
+.hero-stat .label { font-size:12px; opacity:0.6; text-transform:uppercase; letter-spacing:1px; }
+
+/* Section */
+.section { max-width:1200px; margin:0 auto; padding:48px 24px; }
+.section-title { font-size:28px; font-weight:800; color:#E8A820; margin-bottom:8px; display:flex; align-items:center; gap:12px; }
+.section-title .num { background:#E8A820; color:#0D2137; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; flex-shrink:0; }
+.section-sub { opacity:0.6; margin-bottom:24px; }
+
+/* Cards */
+.cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; margin:16px 0; }
+.card { background:#0D2137; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:20px; transition:0.2s; }
+.card:hover { border-color:#E8A820; transform:translateY(-2px); }
+.card h3 { color:#E8A820; font-size:16px; margin-bottom:8px; }
+.card p { font-size:14px; opacity:0.8; }
+.card .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700; margin-top:8px; }
+.tag-must { background:rgba(232,93,58,0.2); color:#E85D3A; }
+.tag-rec { background:rgba(232,168,32,0.2); color:#E8A820; }
+.tag-opt { background:rgba(26,122,90,0.2); color:#1A7A5A; }
+.tag-free { background:rgba(26,122,90,0.3); color:#1A7A5A; }
+
+/* Table */
+table { width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+th { background:#0D2137; color:#E8A820; padding:10px 12px; text-align:right; font-weight:700; border-bottom:2px solid #E8A820; }
+td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.06); }
+tr:hover td { background:rgba(232,168,32,0.05); }
+.price { color:#E8A820; font-weight:700; }
+
+/* Timeline */
+.timeline { position:relative; padding-right:40px; }
+.timeline::before { content:''; position:absolute; right:14px; top:0; bottom:0; width:3px; background:linear-gradient(180deg,#E8A820,#1A7A5A); border-radius:2px; }
+.tl-item { position:relative; margin-bottom:24px; background:#0D2137; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px 20px; }
+.tl-item::before { content:''; position:absolute; right:-33px; top:20px; width:12px; height:12px; border-radius:50%; background:#E8A820; border:3px solid #0A1929; }
+.tl-item.active::before { background:#1A7A5A; box-shadow:0 0 8px rgba(26,122,90,0.5); }
+.tl-item h4 { color:#E8A820; font-size:15px; margin-bottom:4px; }
+.tl-meta { font-size:12px; opacity:0.5; margin-bottom:8px; }
+.tl-item ul { font-size:13px; padding-right:20px; }
+.tl-item li { margin-bottom:4px; }
+
+/* Checklist */
+.checklist { list-style:none; padding:0; }
+.checklist li { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; display:flex; align-items:center; gap:10px; }
+.checklist li::before { content:'☐'; font-size:18px; color:#E8A820; flex-shrink:0; }
+.checklist li.done::before { content:'☑'; color:#1A7A5A; }
+
+/* Map section */
+#zone-map { height:500px; border-radius:12px; border:2px solid rgba(232,168,32,0.3); margin:16px 0; }
+
+/* Zone detail panel */
+.zone-detail { background:#0D2137; border:1px solid rgba(232,168,32,0.3); border-radius:12px; padding:20px; margin:16px 0; display:none; }
+.zone-detail.active { display:block; }
+.zone-detail h3 { color:#E8A820; margin-bottom:12px; }
+
+/* Software grid */
+.sw-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+.sw-card { background:#0D2137; border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:16px; }
+.sw-card h4 { color:#E8A820; font-size:14px; margin-bottom:4px; }
+.sw-card .sw-use { font-size:12px; opacity:0.6; margin-bottom:8px; }
+.sw-card .sw-price { color:#1A7A5A; font-weight:700; font-size:13px; }
+.sw-card .sw-url { font-size:12px; }
+
+/* Buy links */
+.buy-box { background:linear-gradient(135deg,#0D2137,#1a3a5c); border:2px solid #E8A820; border-radius:12px; padding:24px; margin:16px 0; }
+.buy-box h3 { color:#E8A820; font-size:20px; margin-bottom:16px; }
+.buy-links { display:flex; flex-wrap:wrap; gap:12px; }
+.buy-link { display:inline-flex; align-items:center; gap:8px; background:rgba(232,168,32,0.15); padding:10px 20px; border-radius:8px; font-weight:600; font-size:14px; transition:0.2s; }
+.buy-link:hover { background:#E8A820; color:#0D2137; text-decoration:none; }
+
+/* Responsive */
+@media(max-width:768px) {
+  .hero h1 { font-size:28px; }
+  .hero-stats { gap:20px; }
+  .cards { grid-template-columns:1fr; }
+  .topnav { padding:8px 12px; }
+  .section { padding:32px 16px; }
+}
+
+/* Print */
+@media print {
+  .topnav { display:none; }
+  body { background:#fff; color:#000; }
+  .card, .tl-item, .sw-card { border-color:#ddd; }
+  .section-title, h3, h4, .hero h1 span, th { color:#0D2137 !important; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">
+    <div class="logo-circle">TM</div>
+    <div class="logo-text"><span>Drone</span> Ops</div>
+  </div>
+  <div class="nav-links">
+    <a href="#equipment">ציוד</a>
+    <a href="#buy">רכישה</a>
+    <a href="#software">תוכנות</a>
+    <a href="#storage">אחסון</a>
+    <a href="#zones">אזורי סריקה</a>
+    <a href="#flight">טכניקת צילום</a>
+    <a href="#processing">עיבוד</a>
+    <a href="#timeline">לוח זמנים</a>
+    <a href="#regulations">רגולציה</a>
+    <a href="#checklist">צ'קליסט</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>תוכנית סריקת <span>רחפן</span></h1>
+  <div class="sub">מיפוי מלא של קו פנגן — כל גג, כל חלקה, כל פוטנציאל סולארי. מהרחפן ועד להצעת מחיר אוטומטית.</div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="val">22</div><div class="label">km² סריקה</div></div>
+    <div class="hero-stat"><div class="val">2,500+</div><div class="label">גגות</div></div>
+    <div class="hero-stat"><div class="val">190</div><div class="label">טיסות</div></div>
+    <div class="hero-stat"><div class="val">8</div><div class="label">שבועות</div></div>
+    <div class="hero-stat"><div class="val">฿170K</div><div class="label">תקציב ציוד</div></div>
+  </div>
+</div>
+
+<!-- 1. EQUIPMENT -->
+<div class="section" id="equipment">
+  <div class="section-title"><span class="num">1</span> ציוד — מה לקנות</div>
+  <div class="section-sub">רשימת קניות מלאה עם לינקים ומחירים</div>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">🛸 רחפן ראשי — DJI Mavic 3 Enterprise</h3>
+  <table>
+    <tr><th>פריט</th><th>דגם / מפרט</th><th>כמות</th><th>מחיר</th></tr>
+    <tr><td><strong>רחפן + שלט</strong></td><td>DJI Mavic 3 Enterprise (M3E) + RC Pro Enterprise</td><td>1</td><td class="price">฿115,000</td></tr>
+    <tr><td><strong>סוללות</strong></td><td>DJI M3E Intelligent Flight Battery (5000mAh)</td><td>6 (3 כלולות + 3 נוספות)</td><td class="price">฿18,000</td></tr>
+    <tr><td><strong>Charging Hub</strong></td><td>DJI M3E Battery Charging Hub (BS65)</td><td>1 (כלול ב-Fly More)</td><td class="price">—</td></tr>
+    <tr><td><strong>DJI Care Enterprise</strong></td><td>ביטוח תיקון/החלפה — שנה</td><td>1</td><td class="price">฿8,000</td></tr>
+    <tr><td><strong>ND Filters</strong></td><td>DJI M3E ND Filter Set (ND8/16/32/64)</td><td>1</td><td class="price">฿3,500</td></tr>
+    <tr><td><strong>תיק נשיאה</strong></td><td>DJI M3E Protector Case (כלול ב-Fly More)</td><td>1</td><td class="price">—</td></tr>
+  </table>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">💾 אחסון שטח</h3>
+  <table>
+    <tr><th>פריט</th><th>מפרט</th><th>כמות</th><th>מחיר</th></tr>
+    <tr><td><strong>MicroSD לרחפן</strong></td><td>SanDisk Extreme Pro 256GB V30 A2</td><td>4</td><td class="price">฿5,600</td></tr>
+    <tr><td><strong>SSD נייד (שטח)</strong></td><td>Samsung T7 Shield 2TB (waterproof)</td><td>2</td><td class="price">฿7,000</td></tr>
+    <tr><td><strong>Card Reader</strong></td><td>Anker USB-C SD/MicroSD Reader</td><td>1</td><td class="price">฿500</td></tr>
+  </table>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">🔋 חשמל שטח</h3>
+  <table>
+    <tr><th>פריט</th><th>מפרט</th><th>כמות</th><th>מחיר</th></tr>
+    <tr><td><strong>Power Station</strong></td><td>EcoFlow River 2 (256Wh, 300W) — טעינת סוללות בשטח</td><td>1</td><td class="price">฿9,000</td></tr>
+    <tr><td><strong>Solar Panel נייד</strong></td><td>EcoFlow 60W Portable Panel — טעינה מהשמש</td><td>1</td><td class="price">฿5,500</td></tr>
+    <tr><td><strong>Power Bank</strong></td><td>Anker 737 (25,600mAh) — לטאבלט ושלט</td><td>1</td><td class="price">฿3,000</td></tr>
+  </table>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">🛠️ אביזרי שטח</h3>
+  <table>
+    <tr><th>פריט</th><th>למה</th><th>מחיר</th></tr>
+    <tr><td>Landing Pad (75cm מתקפל)</td><td>משטח נחיתה נקי — חול/אבק הורס gimbal</td><td class="price">฿600</td></tr>
+    <tr><td>iPad Mini (אם אין)</td><td>מסך גדול לניווט + DJI Pilot 2</td><td class="price">฿15,000</td></tr>
+    <tr><td>כובע + קרם הגנה</td><td>3-4 שעות שמש טרופית ליום</td><td class="price">฿500</td></tr>
+    <tr><td>Vest עם כיסים</td><td>סוללות, כרטיסים, שלט</td><td class="price">฿800</td></tr>
+    <tr><td>אפוד זוהר (reflective)</td><td>נראות + מקצועיות</td><td class="price">฿200</td></tr>
+    <tr><td>טאבלט GCS mount</td><td>מחזיק טאבלט לשלט</td><td class="price">฿400</td></tr>
+    <tr><td>Logbook (מחברת)</td><td>תיעוד טיסות — חובה ברגולציה</td><td class="price">฿100</td></tr>
+  </table>
+
+  <div style="background:#1a3a5c; padding:16px 20px; border-radius:10px; margin-top:20px; border-right:4px solid #E8A820;">
+    <strong style="color:#E8A820;">סה"כ ציוד:</strong> ฿192,200 (~$5,340)<br>
+    <span style="font-size:13px; opacity:0.7;">כולל רחפן, 6 סוללות, אחסון 4TB, חשמל שטח, אביזרים</span>
+  </div>
+</div>
+
+<!-- 2. BUY -->
+<div class="section" id="buy">
+  <div class="section-title"><span class="num">2</span> איפה לקנות</div>
+
+  <div class="buy-box">
+    <h3>🛸 DJI Mavic 3 Enterprise — לינקים לרכישה</h3>
+    <div class="buy-links">
+      <a class="buy-link" href="https://store.dji.com/product/dji-mavic-3-enterprise" target="_blank">🌐 DJI Store (Global)</a>
+      <a class="buy-link" href="https://www.lazada.co.th/catalog/?q=DJI+Mavic+3+Enterprise" target="_blank">🛒 Lazada Thailand</a>
+      <a class="buy-link" href="https://shopee.co.th/search?keyword=dji%20mavic%203%20enterprise" target="_blank">🛒 Shopee Thailand</a>
+      <a class="buy-link" href="https://www.dji.com/th/where-to-buy" target="_blank">📍 DJI Dealers Thailand</a>
+    </div>
+    <p style="margin-top:12px; font-size:13px; opacity:0.7;">
+      <strong>חנות פיזית:</strong> DJI Experience Store — Siam Paragon, Floor 3, Bangkok<br>
+      <strong>Authorized Dealer בסוראתהני:</strong> חפש "DJI Surat Thani" או "Camera Shop Surat Thani" — נסיעה 1.5 שעות מנמל דונסק<br>
+      <strong>טיפ:</strong> Fly More Combo כולל 3 סוללות + charging hub + case — חוסך ~฿8,000 מרכישה בנפרד
+    </p>
+  </div>
+
+  <div class="buy-box" style="border-color:#1A7A5A;">
+    <h3>💾 אחסון — לינקים</h3>
+    <div class="buy-links">
+      <a class="buy-link" href="https://www.lazada.co.th/catalog/?q=sandisk+extreme+pro+256gb+microsd" target="_blank">MicroSD 256GB</a>
+      <a class="buy-link" href="https://www.lazada.co.th/catalog/?q=samsung+t7+shield+2tb" target="_blank">Samsung T7 Shield 2TB</a>
+      <a class="buy-link" href="https://www.lazada.co.th/catalog/?q=ecoflow+river+2" target="_blank">EcoFlow River 2</a>
+    </div>
+  </div>
+</div>
+
+<!-- 3. SOFTWARE -->
+<div class="section" id="software">
+  <div class="section-title"><span class="num">3</span> תוכנות — כל שלב</div>
+  <div class="section-sub">מ-תכנון טיסה ועד מפה אינטראקטיבית</div>
+
+  <h3 style="color:#E8A820; margin-bottom:12px;">שלב A — תכנון + טיסה</h3>
+  <div class="sw-grid">
+    <div class="sw-card">
+      <h4>DJI Pilot 2</h4>
+      <div class="sw-use">תכנון טיסה אוטומטי — waypoints, grid pattern, terrain follow</div>
+      <div class="sw-price">חינם (מותקן על RC Pro)</div>
+      <div class="sw-url"><a href="https://www.dji.com/dji-pilot-2" target="_blank">dji.com/dji-pilot-2</a></div>
+      <p style="font-size:12px; margin-top:8px;">מגדירים: גובה 80-120m, overlap 80/70%, speed 5-8 m/s, nadir (למטה)</p>
+    </div>
+    <div class="sw-card">
+      <h4>DJI FlightHub 2</h4>
+      <div class="sw-use">ניהול צי רחפנים, מעקב חי, cloud sync</div>
+      <div class="sw-price">Free tier (1 drone)</div>
+      <div class="sw-url"><a href="https://www.dji.com/flighthub-2" target="_blank">dji.com/flighthub-2</a></div>
+    </div>
+    <div class="sw-card">
+      <h4>Litchi</h4>
+      <div class="sw-use">חלופה ל-DJI Pilot — waypoint missions מתקדמים</div>
+      <div class="sw-price">$25 (חד פעמי)</div>
+      <div class="sw-url"><a href="https://flylitchi.com" target="_blank">flylitchi.com</a></div>
+    </div>
+  </div>
+
+  <h3 style="color:#E8A820; margin:24px 0 12px;">שלב B — עיבוד תמונות → Orthomosaic</h3>
+  <div class="sw-grid">
+    <div class="sw-card" style="border-color:#E8A820;">
+      <h4>⭐ WebODM (מומלץ)</h4>
+      <div class="sw-use">Orthomosaic, DSM, Point Cloud — קוד פתוח, רץ על Mac Mini</div>
+      <div class="sw-price" style="color:#1A7A5A;">חינם (self-hosted via Docker)</div>
+      <div class="sw-url"><a href="https://www.opendronemap.org/webodm/" target="_blank">opendronemap.org/webodm</a></div>
+      <p style="font-size:12px; margin-top:8px;">
+        <code>docker run -d -p 8080:8080 opendronemap/webodm</code><br>
+        Mac Mini M2 = מספיק ל-500-1000 תמונות per batch
+      </p>
+    </div>
+    <div class="sw-card">
+      <h4>DroneDeploy</h4>
+      <div class="sw-use">עיבוד ענן — אוטומטי, מהיר, אבל יקר</div>
+      <div class="sw-price">$329/חודש (Advanced)</div>
+      <div class="sw-url"><a href="https://www.dronedeploy.com" target="_blank">dronedeploy.com</a></div>
+    </div>
+    <div class="sw-card">
+      <h4>Pix4Dmapper</h4>
+      <div class="sw-use">סטנדרט תעשייתי לfotogrammetry — desktop processing</div>
+      <div class="sw-price">$350/חודש או $4,990 perpetual</div>
+      <div class="sw-url"><a href="https://www.pix4d.com/product/pix4dmapper-photogrammetry-software" target="_blank">pix4d.com</a></div>
+    </div>
+    <div class="sw-card">
+      <h4>Agisoft Metashape</h4>
+      <div class="sw-use">fotogrammetry מקצועי — חלופה זולה ל-Pix4D</div>
+      <div class="sw-price">$179 (Standard) / $3,499 (Pro)</div>
+      <div class="sw-url"><a href="https://www.agisoft.com" target="_blank">agisoft.com</a></div>
+    </div>
+  </div>
+
+  <h3 style="color:#E8A820; margin:24px 0 12px;">שלב C — ניתוח + GIS</h3>
+  <div class="sw-grid">
+    <div class="sw-card" style="border-color:#E8A820;">
+      <h4>⭐ QGIS</h4>
+      <div class="sw-use">GIS מלא — שכבות, ניתוח, ייצוא. Roof polygons + solar analysis</div>
+      <div class="sw-price" style="color:#1A7A5A;">חינם (קוד פתוח)</div>
+      <div class="sw-url"><a href="https://qgis.org" target="_blank">qgis.org</a></div>
+    </div>
+    <div class="sw-card">
+      <h4>Google Earth Pro</h4>
+      <div class="sw-use">השוואה לפני/אחרי, מדידת מרחקים, KML export</div>
+      <div class="sw-price" style="color:#1A7A5A;">חינם</div>
+      <div class="sw-url"><a href="https://earth.google.com" target="_blank">earth.google.com</a></div>
+    </div>
+    <div class="sw-card">
+      <h4>Segment Anything Model (SAM)</h4>
+      <div class="sw-use">AI roof detection — מסגמנט אוטומטי של גגות מ-orthomosaic</div>
+      <div class="sw-price" style="color:#1A7A5A;">חינם (Meta AI)</div>
+      <div class="sw-url"><a href="https://segment-anything.com" target="_blank">segment-anything.com</a></div>
+    </div>
+  </div>
+
+  <h3 style="color:#E8A820; margin:24px 0 12px;">שלב D — מפה אינטראקטיבית</h3>
+  <div class="sw-grid">
+    <div class="sw-card" style="border-color:#E8A820;">
+      <h4>⭐ Leaflet.js + GeoJSON</h4>
+      <div class="sw-use">מפה אינטראקטיבית — G בונה את KP Solar Atlas</div>
+      <div class="sw-price" style="color:#1A7A5A;">חינם</div>
+      <div class="sw-url"><a href="https://leafletjs.com" target="_blank">leafletjs.com</a></div>
+    </div>
+    <div class="sw-card">
+      <h4>Mapbox GL JS</h4>
+      <div class="sw-use">חלופה ל-Leaflet עם 3D, vector tiles, custom styles</div>
+      <div class="sw-price">Free tier (50K loads/month)</div>
+      <div class="sw-url"><a href="https://www.mapbox.com/mapbox-gljs" target="_blank">mapbox.com</a></div>
+    </div>
+  </div>
+
+  <div style="background:#1a3a5c; padding:16px 20px; border-radius:10px; margin-top:20px; border-right:4px solid #1A7A5A;">
+    <strong style="color:#1A7A5A;">עלות תוכנות מומלצת:</strong> ฿0 (הכל קוד פתוח/חינמי)<br>
+    <span style="font-size:13px; opacity:0.7;">WebODM + QGIS + SAM + Leaflet = pipeline מלא בלי לשלם שקל</span>
+  </div>
+</div>
+
+<!-- 4. STORAGE -->
+<div class="section" id="storage">
+  <div class="section-title"><span class="num">4</span> אחסון — נפח ומבנה</div>
+
+  <h3 style="color:#E8A820; margin-bottom:12px;">כמה מקום צריך?</h3>
+  <table>
+    <tr><th>סוג</th><th>לטיסה</th><th>לzone</th><th>לכל האי</th></tr>
+    <tr><td>תמונות RAW (20MP JPEG)</td><td>~4 GB</td><td>~80 GB</td><td class="price">~700 GB</td></tr>
+    <tr><td>וידאו 4K (לדמו)</td><td>~2 GB</td><td>~20 GB</td><td class="price">~200 GB</td></tr>
+    <tr><td>Orthomosaic (per zone)</td><td>—</td><td>~5 GB</td><td class="price">~50 GB</td></tr>
+    <tr><td>DSM (per zone)</td><td>—</td><td>~3 GB</td><td class="price">~30 GB</td></tr>
+    <tr><td>Point Cloud (per zone)</td><td>—</td><td>~10 GB</td><td class="price">~100 GB</td></tr>
+    <tr><td><strong>סה"כ</strong></td><td>—</td><td>—</td><td class="price"><strong>~1.1 TB</strong></td></tr>
+  </table>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">מבנה תיקיות</h3>
+  <div style="background:#0D2137; padding:16px; border-radius:10px; font-family:monospace; font-size:13px; direction:ltr; text-align:left; overflow-x:auto;">
+    <pre style="color:#E0E0E0;">
+KP-Solar-Scan/
+├── raw/                          # תמונות גולמיות מהרחפן
+│   ├── 2026-04-07_Z1_flight01/   # תאריך_zone_מספר טיסה
+│   ├── 2026-04-07_Z1_flight02/
+│   ├── 2026-04-07_Z1_flight03/
+│   └── ...
+├── video/                        # סרטוני 4K לדמו/שיווק
+│   ├── Z1_thongsala_overview.mp4
+│   └── ...
+├── processed/                    # תוצרי WebODM
+│   ├── Z1_orthomosaic.tif        # תמונה אחידה
+│   ├── Z1_dsm.tif                # מודל גובה
+│   ├── Z1_pointcloud.las         # ענן נקודות
+│   └── ...
+├── analysis/                     # GIS + AI
+│   ├── roofs_Z1.geojson          # polygons של גגות
+│   ├── solar_potential_Z1.csv    # חישוב סולארי
+│   └── ...
+├── proposals/                    # הצעות אוטומטיות
+│   ├── Z1-0001_pantip_market.pdf
+│   └── ...
+├── map/                          # KP Solar Atlas
+│   ├── index.html
+│   ├── tiles/                    # orthomosaic tiles
+│   └── data/                     # GeoJSON layers
+└── logs/                         # יומני טיסה
+    ├── flight_log.csv
+    └── battery_log.csv
+    </pre>
+  </div>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">אסטרטגיית גיבוי</h3>
+  <div class="cards">
+    <div class="card">
+      <h3>שטח — SSD נייד</h3>
+      <p>Samsung T7 Shield 2TB × 2 — אחד ראשי, אחד backup. העתקה בסוף כל יום טיסה.</p>
+      <span class="tag tag-must">חובה</span>
+    </div>
+    <div class="card">
+      <h3>בית — Mac Mini</h3>
+      <p>העברה לדיסק הפנימי של Mac Mini בכל ערב. WebODM עובד מקומית.</p>
+      <span class="tag tag-must">חובה</span>
+    </div>
+    <div class="card">
+      <h3>ענן — Backblaze B2</h3>
+      <p>$0.005/GB/month = ~$5.50/month ל-1.1TB. Upload בלילה. שחזור אסון.</p>
+      <span class="tag tag-rec">מומלץ</span>
+    </div>
+  </div>
+</div>
+
+<!-- 5. ZONES MAP -->
+<div class="section" id="zones">
+  <div class="section-title"><span class="num">5</span> אזורי סריקה — מפה אינטראקטיבית</div>
+  <div class="section-sub">לחץ על אזור במפה לפרטי טיסה</div>
+
+  <div id="zone-map"></div>
+
+  <table>
+    <tr><th>Zone</th><th>אזור</th><th>שטח</th><th>גגות</th><th>טיסות</th><th>ימים</th><th>עדיפות</th></tr>
+    <tr><td style="color:#E85D3A; font-weight:700;">Z1</td><td>Thong Sala — עיר + נמל + שוק</td><td>2.5 km²</td><td>800+</td><td>~21</td><td>4</td><td>🔴 ראשון</td></tr>
+    <tr><td style="color:#E85D3A; font-weight:700;">Z2</td><td>Ban Tai — חופים + resorts + Beamtech</td><td>3.0 km²</td><td>500+</td><td>~25</td><td>5</td><td>🔴 ראשון</td></tr>
+    <tr><td style="color:#E8A820; font-weight:700;">Z3</td><td>Haad Rin — Full Moon + מלונות</td><td>1.5 km²</td><td>300+</td><td>~13</td><td>3</td><td>🟡 שני</td></tr>
+    <tr><td style="color:#E8A820; font-weight:700;">Z4</td><td>Sri Thanu — wellness + yoga</td><td>2.0 km²</td><td>200+</td><td>~17</td><td>3</td><td>🟡 שני</td></tr>
+    <tr><td style="color:#E8A820; font-weight:700;">Z5</td><td>Chaloklum — כפר דייגים + resorts</td><td>2.0 km²</td><td>250+</td><td>~17</td><td>3</td><td>🟡 שני</td></tr>
+    <tr><td style="color:#E8A820; font-weight:700;">Z6</td><td>Wok Tum / Hin Kong</td><td>1.5 km²</td><td>150+</td><td>~13</td><td>3</td><td>🟡 שני</td></tr>
+    <tr><td style="color:#1A7A5A; font-weight:700;">Z7</td><td>Ban Khai / Thong Nai Pan</td><td>2.0 km²</td><td>200+</td><td>~17</td><td>3</td><td>🟢 שלישי</td></tr>
+    <tr><td style="color:#1A7A5A; font-weight:700;">Z8</td><td>Mae Haad / Koh Ma</td><td>1.0 km²</td><td>100+</td><td>~9</td><td>2</td><td>🟢 שלישי</td></tr>
+    <tr><td colspan="3"><strong>סה"כ Phase 1-3</strong></td><td><strong>2,500+</strong></td><td><strong>~132</strong></td><td><strong>~26</strong></td><td></td></tr>
+  </table>
+</div>
+
+<!-- 6. FLIGHT TECHNIQUE -->
+<div class="section" id="flight">
+  <div class="section-title"><span class="num">6</span> טכניקת צילום</div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>🔧 הגדרות טיסה</h3>
+      <p>
+        <strong>גובה:</strong> 80-120m AGL (100m = default)<br>
+        <strong>מהירות:</strong> 5-8 m/s (8 = ברוח שקטה)<br>
+        <strong>חפיפה:</strong> 80% forward, 70% side<br>
+        <strong>כיוון מצלמה:</strong> Nadir (90° למטה)<br>
+        <strong>GSD:</strong> ~2.5 cm/pixel<br>
+        <strong>Trigger:</strong> interval 2 שניות<br>
+        <strong>Format:</strong> JPEG + DNG (RAW)
+      </p>
+    </div>
+    <div class="card">
+      <h3>⏰ זמני טיסה אופטימליים</h3>
+      <p>
+        <strong>בוקר:</strong> 06:00 — 10:00 (אור רך, רוח חלשה)<br>
+        <strong>⛔ צהריים:</strong> 11:00 — 14:00 (צל מינימלי = פחות קונטרסט)<br>
+        <strong>אחה"צ:</strong> 15:00 — 17:30 (אור חם, אבל רוח)<br>
+        <strong>⛔ גשם:</strong> לא לטוס! M3E לא waterproof<br>
+        <strong>עונה:</strong> דצמבר-אפריל = dry season = אידיאלי
+      </p>
+    </div>
+    <div class="card">
+      <h3>📐 Grid Pattern — איך סורקים zone</h3>
+      <p>
+        1. פתח DJI Pilot 2 → Mapping Mission<br>
+        2. צייר polygon על גבולות ה-zone<br>
+        3. הגדר: 100m altitude, 80/70 overlap<br>
+        4. Auto-calculate: מסלול, מספר תמונות, זמן<br>
+        5. אם zone > 25 דקות → פצל ל-sub-zones<br>
+        6. טס → נחת → החלף סוללה → המשך<br>
+        7. צלם 4K video overview בסוף (לשיווק)
+      </p>
+    </div>
+    <div class="card">
+      <h3>📸 צילום נוסף — לא רק grid</h3>
+      <p>
+        <strong>Oblique (45°):</strong> טיסה נוספת בזווית — ל-3D model<br>
+        <strong>POI (Point of Interest):</strong> orbit סביב מבנים גדולים (resorts)<br>
+        <strong>Zoom inspection:</strong> 56× zoom לבדיקת מצב גג ספציפי<br>
+        <strong>Video flyover:</strong> סרטון תעופה 4K — לשיווק + presentation<br>
+        <strong>Panorama:</strong> 360° panoramic per zone — ל-VR/website
+      </p>
+    </div>
+    <div class="card">
+      <h3>⚠️ בטיחות — כללים קשיחים</h3>
+      <p>
+        ❌ לא מעל אנשים (חוף מלא, שוק)<br>
+        ❌ לא ברוח מעל 10 m/s (38 km/h)<br>
+        ❌ לא בגשם / ערפל / ענן נמוך<br>
+        ❌ לא ליד נמל תעופה / seaplane<br>
+        ❌ לא בפארק לאומי בלי אישור<br>
+        ✅ תמיד VLOS (קו ראייה)<br>
+        ✅ תמיד Landing Pad<br>
+        ✅ תמיד סוללה > 20% = RTH
+      </p>
+    </div>
+    <div class="card">
+      <h3>📝 Logbook — מה לתעד</h3>
+      <p>
+        לכל טיסה:<br>
+        - תאריך, שעה, zone<br>
+        - מזג אוויר (רוח, עננות)<br>
+        - מספר סוללה (cycle count)<br>
+        - מספר תמונות<br>
+        - בעיות (GPS lock, wind warning)<br>
+        - SD card מספר<br>
+        - העתקה ל-SSD ☑
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- 7. PROCESSING PIPELINE -->
+<div class="section" id="processing">
+  <div class="section-title"><span class="num">7</span> עיבוד — מתמונות למפה</div>
+
+  <div style="background:#0D2137; padding:20px; border-radius:12px; border:1px solid rgba(232,168,32,0.2); margin-bottom:20px; direction:ltr; text-align:center;">
+    <div style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; font-size:14px;">
+      <span style="background:#E85D3A; padding:6px 12px; border-radius:6px;">📸 RAW Photos</span>
+      <span style="color:#E8A820;">→</span>
+      <span style="background:#E8A820; color:#0D2137; padding:6px 12px; border-radius:6px;">🗺️ WebODM</span>
+      <span style="color:#E8A820;">→</span>
+      <span style="background:#1A7A5A; padding:6px 12px; border-radius:6px;">📐 Orthomosaic + DSM</span>
+      <span style="color:#E8A820;">→</span>
+      <span style="background:#E8A820; color:#0D2137; padding:6px 12px; border-radius:6px;">🤖 AI Roof Detection</span>
+      <span style="color:#E8A820;">→</span>
+      <span style="background:#1A7A5A; padding:6px 12px; border-radius:6px;">☀️ Solar Analysis</span>
+      <span style="color:#E8A820;">→</span>
+      <span style="background:#E85D3A; padding:6px 12px; border-radius:6px;">🗺️ KP Solar Atlas</span>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>שלב 1: WebODM (Mac Mini)</h3>
+      <p>
+        <code style="background:#1a3a5c; padding:2px 6px; border-radius:4px; font-size:12px;">docker run -d -p 8080:8080 opendronemap/webodm</code><br><br>
+        Upload 500-1000 photos per batch → Process → Download orthomosaic.tif + dsm.tif<br>
+        <strong>זמן:</strong> ~2-4 שעות per zone על Mac Mini M2<br>
+        <strong>RAM:</strong> 16GB מספיק ל-1000 תמונות
+      </p>
+    </div>
+    <div class="card">
+      <h3>שלב 2: AI Roof Detection</h3>
+      <p>
+        Option A: SAM (Segment Anything) — auto segment<br>
+        Option B: RoofPedia / RoofSense — trained on roofs<br>
+        Option C: Manual QGIS — אם AI לא מספיק טוב<br><br>
+        <strong>Output:</strong> GeoJSON עם polygon per roof + metadata (area, type)
+      </p>
+    </div>
+    <div class="card">
+      <h3>שלב 3: Solar Calculation</h3>
+      <p>
+        לכל roof polygon:<br>
+        - Usable area = polygon area × 0.70<br>
+        - kWp = usable / 5.5 m²<br>
+        - Annual kWh = kWp × 1,350<br>
+        - Savings = kWh × ฿5.50 (avg tariff)<br>
+        - EPC cost = kWp × ฿32,500<br>
+        - Payback = cost / savings<br>
+        - Potential: green(>10kWp), yellow(5-10), red(<5)
+      </p>
+    </div>
+    <div class="card">
+      <h3>שלב 4: Auto-Proposal</h3>
+      <p>
+        Script generates PDF from Beamtech template:<br>
+        - 3 options (EPC / PPA / EPC+Storage)<br>
+        - Aerial photo of specific roof<br>
+        - System design auto-calculated<br>
+        - WhatsApp CTA link<br>
+        - Auto-import to CRM as lead
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- 8. TIMELINE -->
+<div class="section" id="timeline">
+  <div class="section-title"><span class="num">8</span> לוח זמנים — 10 שבועות</div>
+
+  <div class="timeline">
+    <div class="tl-item active">
+      <h4>שבוע 0 — הכנה</h4>
+      <div class="tl-meta">לפני הטיסה הראשונה</div>
+      <ul>
+        <li>רכישת M3E + אביזרים (Lazada/Bangkok)</li>
+        <li>רישום CAAT (אם M3E > 250g — כן, 920g)</li>
+        <li>ביטוח צד ג'</li>
+        <li>התקנת WebODM על Mac Mini (Docker)</li>
+        <li>הכנת SSD + מבנה תיקיות</li>
+        <li>3-5 טיסות אימון (ליד הבית)</li>
+        <li>בקשת אישור DNP (אופציונלי, לשלב 4)</li>
+      </ul>
+    </div>
+    <div class="tl-item">
+      <h4>שבוע 1-2 — Phase 1: Thong Sala + Ban Tai</h4>
+      <div class="tl-meta">Z1 + Z2 | 5.5 km² | ~46 טיסות | 9 ימים</div>
+      <ul>
+        <li>Z1 Thong Sala: 4 ימי טיסה (21 flights)</li>
+        <li>Z2 Ban Tai: 5 ימי טיסה (25 flights) — כולל Beamtech!</li>
+        <li>כל ערב: העתקה ל-SSD + backup</li>
+        <li>סוף שבוע 2: התחלת עיבוד WebODM</li>
+      </ul>
+    </div>
+    <div class="tl-item">
+      <h4>שבוע 3 — עיבוד Phase 1 + הצעות ראשונות</h4>
+      <div class="tl-meta">🎯 First proposals out!</div>
+      <ul>
+        <li>WebODM processing Z1 + Z2 (~2 ימים)</li>
+        <li>AI Roof Detection — test + calibrate</li>
+        <li>Solar calculation script</li>
+        <li>10-20 הצעות מחיר ראשונות (גגות הכי גדולים)</li>
+        <li>KP Solar Atlas — Phase 1 data live</li>
+      </ul>
+    </div>
+    <div class="tl-item">
+      <h4>שבוע 3-4 — Phase 2: חופים + Resorts</h4>
+      <div class="tl-meta">Z3-Z6 | 7 km² | ~60 טיסות | 12 ימים</div>
+      <ul>
+        <li>Z3 Haad Rin: 3 ימים</li>
+        <li>Z4 Sri Thanu: 3 ימים</li>
+        <li>Z5 Chaloklum: 3 ימים</li>
+        <li>Z6 Wok Tum: 3 ימים</li>
+        <li>Video: flyover per zone לשיווק</li>
+      </ul>
+    </div>
+    <div class="tl-item">
+      <h4>שבוע 5-6 — Phase 3: אזורים מרוחקים</h4>
+      <div class="tl-meta">Z7-Z8 + agricultural | 6 km² | ~26 טיסות | 5 ימים</div>
+      <ul>
+        <li>Z7 Ban Khai / Thong Nai Pan: 3 ימים</li>
+        <li>Z8 Mae Haad / Koh Ma: 2 ימים</li>
+        <li>שטחים חקלאיים פנימיים</li>
+      </ul>
+    </div>
+    <div class="tl-item">
+      <h4>שבוע 7-8 — עיבוד סופי + Map Build</h4>
+      <div class="tl-meta">All zones processed → Atlas live</div>
+      <ul>
+        <li>WebODM — all remaining zones</li>
+        <li>Full AI roof detection (2,500+ roofs)</li>
+        <li>Solar analysis — all roofs</li>
+        <li>Owner identification (Google Maps, Booking, Facebook)</li>
+        <li>KP Solar Atlas — full island live</li>
+        <li>Auto-proposal generator operational</li>
+      </ul>
+    </div>
+    <div class="tl-item">
+      <h4>שבוע 9-10 — Launch + Outreach</h4>
+      <div class="tl-meta">🚀 Go live</div>
+      <ul>
+        <li>Launch KP Solar Atlas publicly (tmenergy.asia/map)</li>
+        <li>Facebook post: "מיפינו כל גג בקו פנגן"</li>
+        <li>WhatsApp outreach ל-top 50 roofs</li>
+        <li>YouTube: "We Scanned Every Roof on Koh Phangan"</li>
+        <li>LinkedIn: data-driven post with stats</li>
+        <li>CRM: 2,500 leads imported with solar data</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 9. REGULATIONS -->
+<div class="section" id="regulations">
+  <div class="section-title"><span class="num">9</span> רגולציה — מה מותר</div>
+
+  <div class="cards">
+    <div class="card" style="border-color:#E85D3A;">
+      <h3>⚠️ M3E = חייב רישום CAAT</h3>
+      <p>
+        M3E שוקל <strong>920 גרם</strong> = Category 2 (2-25 kg)<br><br>
+        <strong>נדרש:</strong><br>
+        1. רישום באתר CAAT (<a href="https://uas.caat.or.th" target="_blank">uas.caat.or.th</a>)<br>
+        2. ביטוח צד ג' (฿3,000/שנה)<br>
+        3. Pilot ID (טופס + תמונה + דרכון)<br>
+        <strong>זמן:</strong> 2-3 שבועות<br>
+        <strong>עלות:</strong> ฿1,000 registration + ฿3,000 insurance
+      </p>
+      <span class="tag tag-must">חובה</span>
+    </div>
+    <div class="card">
+      <h3>🏔️ פארק לאומי Than Sadet</h3>
+      <p>
+        66% מהאי = שטח פארק לאומי<br>
+        <strong>אסור לטוס בלי אישור DNP</strong><br><br>
+        Phase 1-3 (22 km²) = מחוץ לפארק = OK<br>
+        Phase 4 = תוך הפארק = צריך אישור<br><br>
+        <a href="https://portal.dnp.go.th" target="_blank">portal.dnp.go.th</a> — בקשה מקוונת
+      </p>
+      <span class="tag tag-rec">Phase 4 בלבד</span>
+    </div>
+    <div class="card">
+      <h3>📋 כללי טיסה CAAT</h3>
+      <p>
+        ✅ גובה מקסימלי: 90 מטרים (אנחנו טסים ב-80-100)<br>
+        ✅ קו ראייה (VLOS) — תמיד<br>
+        ✅ יום בלבד — לא בלילה<br>
+        ❌ לא מעל אנשים / קהל<br>
+        ❌ לא ב-5 ק"מ מנמל תעופה (אין ב-KP)<br>
+        ❌ לא מעל אזורים צבאיים / ממשלתיים
+      </p>
+    </div>
+    <div class="card">
+      <h3>🔒 פרטיות</h3>
+      <p>
+        ב-100m גובה — אנשים לא ניתנים לזיהוי<br>
+        <strong>בכל זאת:</strong><br>
+        - לא לצלם חלונות/מרפסות בזום<br>
+        - blur פנים אם מזוהים (בעיבוד)<br>
+        - מפרט "aerial mapping for solar energy" — לגיטימי<br>
+        - שלט TM Energy על vest = מקצועיות
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- 10. CHECKLIST -->
+<div class="section" id="checklist">
+  <div class="section-title"><span class="num">10</span> צ'קליסט — לפני שמתחילים</div>
+
+  <h3 style="color:#E8A820; margin-bottom:12px;">רכישות</h3>
+  <ul class="checklist">
+    <li>DJI Mavic 3 Enterprise (Fly More Combo)</li>
+    <li>3× סוללות נוספות (סה"כ 6)</li>
+    <li>DJI Care Enterprise (ביטוח)</li>
+    <li>ND Filter Set</li>
+    <li>4× MicroSD 256GB V30</li>
+    <li>2× Samsung T7 Shield 2TB SSD</li>
+    <li>Card Reader USB-C</li>
+    <li>EcoFlow River 2 + 60W Panel</li>
+    <li>Power Bank 25K+</li>
+    <li>Landing Pad 75cm</li>
+    <li>Reflective vest</li>
+    <li>Flight logbook</li>
+  </ul>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">רישומים</h3>
+  <ul class="checklist">
+    <li>CAAT drone registration (uas.caat.or.th)</li>
+    <li>Pilot ID</li>
+    <li>ביטוח צד ג'</li>
+    <li>DNP permit request (לPhase 4)</li>
+  </ul>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">תוכנות</h3>
+  <ul class="checklist">
+    <li>Docker Desktop on Mac Mini</li>
+    <li>WebODM container running</li>
+    <li>QGIS installed</li>
+    <li>DJI Pilot 2 configured (on RC Pro)</li>
+    <li>DJI FlightHub 2 account</li>
+    <li>Backblaze B2 account (backup)</li>
+  </ul>
+
+  <h3 style="color:#E8A820; margin:20px 0 12px;">לפני כל יום טיסה</h3>
+  <ul class="checklist">
+    <li>מזג אוויר — רוח < 10 m/s, ללא גשם</li>
+    <li>6 סוללות טעונות</li>
+    <li>SD cards formatted</li>
+    <li>EcoFlow charged</li>
+    <li>Flight plan loaded in DJI Pilot 2</li>
+    <li>Landing pad + vest</li>
+    <li>מים + כובע (3-4 שעות שמש!)</li>
+  </ul>
+</div>
+
+<!-- FOOTER -->
+<div style="text-align:center; padding:40px 24px; opacity:0.5; font-size:13px; border-top:1px solid rgba(255,255,255,0.05);">
+  TM Energy — Drone Operations Plan — March 2026<br>
+  Prepared by G | <a href="solar-atlas.html">KP Solar Atlas →</a> | <a href="assets.html">All Assets →</a>
+</div>
+
+<!-- Zone Map Script -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var zmap = L.map('zone-map', {
+  center: [9.7450, 100.015],
+  zoom: 13,
+  maxZoom: 18
+});
+
+L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', {
+  maxZoom: 22,
+  attribution: '© Google Satellite'
+}).addTo(zmap);
+
+var zones = [
+  { id:'Z1', name:'Thong Sala', color:'#E85D3A', center:[9.7205,99.9784],
+    coords:[[9.712,99.968],[9.712,99.988],[9.728,99.988],[9.728,99.968]],
+    info:'עיר ראשית + נמל + שוק. 800+ גגות. 21 טיסות / 4 ימים. נקודות המראה: חניון נמל, שטח ריק ליד Big C.' },
+  { id:'Z2', name:'Ban Tai', color:'#E85D3A', center:[9.7120,100.010],
+    coords:[[9.704,99.995],[9.704,100.030],[9.720,100.030],[9.720,99.995]],
+    info:'חוף + resorts + Beamtech. 500+ גגות. 25 טיסות / 5 ימים. נקודות המראה: חניון Beach, שטח ליד 7-11.' },
+  { id:'Z3', name:'Haad Rin', color:'#E8A820', center:[9.6785,100.065],
+    coords:[[9.672,100.055],[9.672,100.078],[9.688,100.078],[9.688,100.055]],
+    info:'Full Moon Party zone. 300+ גגות. 13 טיסות / 3 ימים. ⚠️ לא לטוס בערב Full Moon! נקודת המראה: חניון ליד נמל Haad Rin.' },
+  { id:'Z4', name:'Sri Thanu', color:'#E8A820', center:[9.7450,99.960],
+    coords:[[9.735,99.948],[9.735,99.970],[9.755,99.970],[9.755,99.948]],
+    info:'Wellness + yoga community. 200+ גגות. 17 טיסות / 3 ימים. נקודות המראה: חניון ליד Srithanu Beach.' },
+  { id:'Z5', name:'Chaloklum', color:'#E8A820', center:[9.7920,100.025],
+    coords:[[9.783,100.012],[9.783,100.040],[9.800,100.040],[9.800,100.012]],
+    info:'כפר דייגים + resorts צפון. 250+ גגות. 17 טיסות / 3 ימים. נקודת המראה: חוף Chaloklum.' },
+  { id:'Z6', name:'Wok Tum', color:'#E8A820', center:[9.7350,99.985],
+    coords:[[9.726,99.975],[9.726,99.995],[9.744,99.995],[9.744,99.975]],
+    info:'Hin Kong + Wok Tum. 150+ גגות. 13 טיסות / 3 ימים.' },
+  { id:'Z7', name:'Ban Khai', color:'#1A7A5A', center:[9.7500,100.075],
+    coords:[[9.740,100.060],[9.740,100.088],[9.760,100.088],[9.760,100.060]],
+    info:'Thong Nai Pan road + resorts. 200+ גגות. 17 טיסות / 3 ימים. כביש הרים — צריך סקוטר.' },
+  { id:'Z8', name:'Mae Haad', color:'#1A7A5A', center:[9.7850,99.970],
+    coords:[[9.778,99.960],[9.778,99.982],[9.792,99.982],[9.792,99.960]],
+    info:'Koh Ma + diving centers. 100+ גגות. 9 טיסות / 2 ימים.' },
+];
+
+zones.forEach(function(z) {
+  var poly = L.polygon(z.coords, {
+    color: z.color,
+    weight: 3,
+    fillOpacity: 0.15,
+    fillColor: z.color
+  }).addTo(zmap);
+
+  poly.bindPopup('<div style="direction:rtl; min-width:250px;">' +
+    '<h3 style="color:' + z.color + '; margin:0 0 8px;">' + z.id + ' — ' + z.name + '</h3>' +
+    '<p style="font-size:13px; line-height:1.6;">' + z.info + '</p>' +
+  '</div>');
+
+  L.marker(z.center, {
+    icon: L.divIcon({
+      className: '',
+      html: '<div style="background:' + z.color + '; color:#fff; padding:3px 8px; border-radius:4px; font-size:12px; font-weight:700; white-space:nowrap; font-family:Inter,sans-serif;">' + z.id + '</div>',
+      iconSize: [40, 20],
+      iconAnchor: [20, 10]
+    })
+  }).addTo(zmap);
+});
+
+// National park overlay
+L.polygon([
+  [9.730, 99.990], [9.740, 100.010], [9.755, 100.030], [9.770, 100.045],
+  [9.785, 100.040], [9.790, 100.020], [9.785, 100.000], [9.775, 99.985],
+  [9.760, 99.975], [9.745, 99.978]
+], {
+  color: '#ff6b6b',
+  weight: 1,
+  fillOpacity: 0.08,
+  fillColor: '#ff6b6b',
+  dashArray: '4,4'
+}).addTo(zmap).bindPopup('<div style="direction:rtl;"><h3 style="color:#ff6b6b;">פארק לאומי Than Sadet</h3><p>66% מהאי — אישור DNP נדרש לטיסה. Phase 4 בלבד.</p></div>');
+</script>
+</body>
+</html>
