@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package } from 'lucide-react'
 import { onAuthChange, signOut, isAdmin } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 import { AdminToast } from '../../components/admin/AdminToast'
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/admin', icon: LayoutDashboard, label: 'דשבורד', end: true },
   { to: '/admin/proposals/new', icon: FilePlus, label: 'הצעה חדשה', end: false },
   { to: '/admin/proposals', icon: FileText, label: 'כל ההצעות', end: true },
+  { to: '/admin/bom', icon: Package, label: 'רכש · BOM', end: true, internal: true },
 ]
 
 function LoadingScreen() {
@@ -91,7 +92,7 @@ export default function AdminLayout() {
 
         {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1" aria-label="ניווט ראשי">
-          {NAV_ITEMS.map(({ to, icon: Icon, label, end }) => (
+          {NAV_ITEMS.filter((i) => !('internal' in i) || !i.internal).map(({ to, icon: Icon, label, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -109,6 +110,32 @@ export default function AdminLayout() {
               {label}
             </NavLink>
           ))}
+
+          {/* Internal-only section divider + items */}
+          <div className="pt-4 mt-4 border-t border-white/5">
+            <p className="px-3 mb-2 text-[10px] uppercase tracking-[0.15em] text-white/30 flex items-center gap-1.5">
+              <span>🔒</span> כלים פנימיים
+            </p>
+            {NAV_ITEMS.filter((i) => 'internal' in i && i.internal).map(({ to, icon: Icon, label, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                    isActive
+                      ? 'bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/20'
+                      : 'text-white/50 hover:text-white hover:bg-white/5'
+                  }`
+                }
+                title="כלי פנימי — לא מוצג ללקוח"
+              >
+                <Icon size={16} />
+                {label}
+              </NavLink>
+            ))}
+          </div>
         </nav>
 
         {/* User */}
