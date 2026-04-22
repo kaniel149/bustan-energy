@@ -1,0 +1,282 @@
+{
+  "$schema_version": "1.0",
+  "description": "BOM (Bill of Materials) templates for TM Energy proposals. Quantities use formulas — see tools/proposal-builder/bom-calc.mjs.",
+  "last_updated": "2026-04-22",
+  "author": "TM Energy",
+
+  "_formulas": {
+    "panels": "number of solar modules (input)",
+    "kwp": "panels × panel_watt / 1000",
+    "strings": "ceil(panels / panels_per_string), default panels_per_string=13",
+    "ac_current_a": "kwp × 1000 / (1.732 × 400 × 0.95)"
+  },
+
+  "price_database_thb": {
+    "_note": "Reference prices — used for BOM cost estimation. Update after each actual quote.",
+    "_currency": "THB",
+    "_last_quote_source": "Integra Renewable Energy · solarshop.integra-re.co.th · 2026-04-22",
+
+    "modules": {
+      "JA_JAM72S30_555": { "price": 1665, "watt": 555, "area_m2": 2.42 },
+      "Jinko_TigerNeo_620": { "price": 1850, "watt": 620, "area_m2": 2.42 },
+      "Jinko_NType_580": { "price": 1720, "watt": 580, "area_m2": 2.28 },
+      "Jinko_TigerPro_550": { "price": 1650, "watt": 550, "area_m2": 2.18 }
+    },
+
+    "inverters_grid_tied": {
+      "Huawei_SUN2000_50K_MC0": { "price": 83200, "kw": 50, "mppt": 6, "max_dc_kw": 65 },
+      "Huawei_SUN2000_60K_MB0": { "price": 98000, "kw": 60, "mppt": 8, "max_dc_kw": 78 },
+      "Huawei_SUN2000_75KTL_M0": { "price": 122000, "kw": 75, "mppt": 10, "max_dc_kw": 97 },
+      "Huawei_SUN2000_100KTL_M1": { "price": 168000, "kw": 100, "mppt": 10, "max_dc_kw": 130 },
+      "Huawei_SUN2000_185KTL_H1": { "price": 245000, "kw": 185, "mppt": 12, "max_dc_kw": 240 }
+    },
+
+    "inverters_hybrid": {
+      "Huawei_SUN2000_12KTL_M2": { "price": 98000, "kw": 12, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true },
+      "Huawei_SUN2000_20KTL_M5": { "price": 125000, "kw": 20, "mppt": 3, "battery_max_kwh": 40, "backup_capable": true },
+      "Huawei_SUN2000_50KTL_NHM1": { "price": 198000, "kw": 50, "mppt": 6, "battery_max_kwh": 60, "backup_capable": true, "three_phase": true }
+    },
+
+    "batteries": {
+      "Huawei_LUNA2000_5_S0":  { "price": 72000, "kwh": 5,  "dod_pct": 100, "cycles": 6000 },
+      "Huawei_LUNA2000_10_S0": { "price": 138000, "kwh": 10, "dod_pct": 100, "cycles": 6000 },
+      "Huawei_LUNA2000_15_S0": { "price": 198000, "kwh": 15, "dod_pct": 100, "cycles": 6000 },
+      "Huawei_LUNA2000_power_module": { "price": 15000, "kw": 5, "role": "addon_for_5kw_output_boost" }
+    },
+
+    "mounting": {
+      "Antal_Rail_4.4m": { "price": 420, "length_m": 4.4 },
+      "Trapezoidal_Clamp_metal_roof": { "price": 180 },
+      "Mid_Clamp_35_40mm": { "price": 45 },
+      "End_Clamp_35_40mm": { "price": 55 },
+      "Rail_Splice_Kit": { "price": 85 },
+      "Self_Drill_Screw_TEKs_5.5x35": { "price": 3 }
+    },
+
+    "dc_side": {
+      "DC_Combiner_Box_12_in_1": { "price": 18500 },
+      "DC_Combiner_Box_6_in_1": { "price": 9200 },
+      "MC4_Connector_Pair_Staubli": { "price": 60 },
+      "MC4_Crimping_Tool": { "price": 3500 },
+      "DC_Fuse_15A_1100V": { "price": 80 }
+    },
+
+    "ac_side": {
+      "Cable_NYY_4Cx50_25mm2_per_m": { "price": 920 },
+      "Cable_NYY_4Cx70_35mm2_per_m": { "price": 1350 },
+      "MCCB_3P_200A_Schneider": { "price": 8500 },
+      "MCCB_3P_250A_Schneider": { "price": 11200 },
+      "AC_SPD_Type_II_40kA": { "price": 4200 },
+      "Cable_Lug_50mm2": { "price": 45 },
+      "Cable_Lug_70mm2": { "price": 68 }
+    },
+
+    "grounding_lightning": {
+      "Copper_Ground_Rod_2.4m": { "price": 650 },
+      "Ground_Wire_16mm2_per_m": { "price": 95 },
+      "Exothermic_Weld_Kit": { "price": 420 },
+      "Lightning_Arrester_ESE": { "price": 6800 },
+      "Down_Conductor_50mm2_per_m": { "price": 180 },
+      "Ground_Inspection_Pit": { "price": 1500 }
+    },
+
+    "monitoring": {
+      "Huawei_DDSU666_H_smart_meter": { "price": 8200 },
+      "Huawei_Smart_Dongle_WLAN_FE": { "price": 1760 },
+      "CT_Clamps_250A_set_of_3": { "price": 2100 },
+      "Huawei_4G_Dongle_A02": { "price": 2800 }
+    },
+
+    "labels_safety": {
+      "Label_Danger_HV_TH_EN": { "price": 45 },
+      "Label_PV_Array_DC": { "price": 55 },
+      "Label_DC_Isolation": { "price": 45 },
+      "Label_AC_Isolation": { "price": 55 },
+      "Label_Utility_Interconnection": { "price": 65 },
+      "Label_Do_Not_Switch_Under_Load_TH": { "price": 45 },
+      "Placard_Emergency_Shutdown_A4": { "price": 250 },
+      "Label_Authorized_Only": { "price": 85 },
+      "Label_Circuit_ID_per_unit": { "price": 15 }
+    },
+
+    "consumables": {
+      "Cable_Tie_UV_Black_300mm_per_pc": { "price": 3 },
+      "Silicone_Sealant_Neutral_tube": { "price": 130 },
+      "EPDM_Sealant_tube": { "price": 170 },
+      "Flexible_Conduit_25mm_per_m": { "price": 34 },
+      "Cable_Duct_60x40_per_m": { "price": 95 },
+      "Heat_Shrink_Kit_assorted": { "price": 480 }
+    }
+  },
+
+  "templates": [
+    {
+      "id": "grid-tied-commercial-metal-roof",
+      "name": "Grid-Tied Commercial — Metal Roof (PEA)",
+      "description": "Commercial rooftop PV, trapezoidal metal sheet roof, PEA-compliant, 30-200 kWp range",
+      "use_case": "Factories, warehouses, offices, resorts with metal sheet roof. No battery.",
+      "applicable_size_kwp": { "min": 30, "max": 200 },
+      "defaults": {
+        "panel_sku": "JA_JAM72S30_555",
+        "panels_per_string": 13,
+        "roof_type": "metal_trapezoidal",
+        "ac_cable_run_m": 15
+      },
+
+      "items": [
+        {
+          "category": "1. Modules + Inverter",
+          "sku": "JA_JAM72S30_555",
+          "qty_formula": "panels",
+          "db_path": "modules.JA_JAM72S30_555"
+        },
+        {
+          "category": "1. Modules + Inverter",
+          "sku_selector": { "kwp": "use smallest inverter where max_dc_kw >= kwp × 1.1" },
+          "qty_formula": "1",
+          "db_path": "inverters_grid_tied",
+          "auto_pick_by": "kwp"
+        },
+
+        { "category": "2. Mounting", "sku": "Trapezoidal_Clamp_metal_roof", "qty_formula": "panels * 2", "db_path": "mounting.Trapezoidal_Clamp_metal_roof" },
+        { "category": "2. Mounting", "sku": "Antal_Rail_4.4m", "qty_formula": "ceil(panels / 6.5)", "db_path": "mounting.Antal_Rail_4.4m" },
+        { "category": "2. Mounting", "sku": "Rail_Splice_Kit", "qty_formula": "ceil(panels / 8)", "db_path": "mounting.Rail_Splice_Kit" },
+        { "category": "2. Mounting", "sku": "Mid_Clamp_35_40mm", "qty_formula": "panels * 2 - 40", "db_path": "mounting.Mid_Clamp_35_40mm" },
+        { "category": "2. Mounting", "sku": "End_Clamp_35_40mm", "qty_formula": "ceil(panels / 3.3)", "db_path": "mounting.End_Clamp_35_40mm" },
+        { "category": "2. Mounting", "sku": "Self_Drill_Screw_TEKs_5.5x35", "qty_formula": "ceil(panels * 3.2)", "db_path": "mounting.Self_Drill_Screw_TEKs_5.5x35" },
+
+        { "category": "3. DC Side", "sku": "DC_Combiner_Box_12_in_1", "qty_formula": "ceil(strings / 12)", "db_path": "dc_side.DC_Combiner_Box_12_in_1" },
+        { "category": "3. DC Side", "sku": "MC4_Connector_Pair_Staubli", "qty_formula": "strings * 2 + 20", "db_path": "dc_side.MC4_Connector_Pair_Staubli" },
+        { "category": "3. DC Side", "sku": "MC4_Crimping_Tool", "qty_formula": "1", "db_path": "dc_side.MC4_Crimping_Tool" },
+        { "category": "3. DC Side", "sku": "DC_Fuse_15A_1100V_spare", "qty_formula": "ceil(strings * 0.25)", "db_path": "dc_side.DC_Fuse_15A_1100V" },
+
+        { "category": "4. AC Side", "sku": "Cable_NYY_ac_per_m", "qty_formula": "ac_cable_run_m", "db_path_by_current": { "under_200a": "ac_side.Cable_NYY_4Cx50_25mm2_per_m", "over_200a": "ac_side.Cable_NYY_4Cx70_35mm2_per_m" } },
+        { "category": "4. AC Side", "sku": "MCCB", "qty_formula": "1", "db_path_by_current": { "under_200a": "ac_side.MCCB_3P_200A_Schneider", "over_200a": "ac_side.MCCB_3P_250A_Schneider" } },
+        { "category": "4. AC Side", "sku": "AC_SPD_Type_II_40kA", "qty_formula": "1", "db_path": "ac_side.AC_SPD_Type_II_40kA" },
+        { "category": "4. AC Side", "sku": "Cable_Lug_50mm2", "qty_formula": "12", "db_path": "ac_side.Cable_Lug_50mm2" },
+
+        { "category": "5. Grounding + Lightning", "sku": "Copper_Ground_Rod_2.4m", "qty_formula": "ceil(kwp / 35)", "db_path": "grounding_lightning.Copper_Ground_Rod_2.4m" },
+        { "category": "5. Grounding + Lightning", "sku": "Ground_Wire_16mm2_per_m", "qty_formula": "80", "db_path": "grounding_lightning.Ground_Wire_16mm2_per_m" },
+        { "category": "5. Grounding + Lightning", "sku": "Exothermic_Weld_Kit", "qty_formula": "6", "db_path": "grounding_lightning.Exothermic_Weld_Kit" },
+        { "category": "5. Grounding + Lightning", "sku": "Lightning_Arrester_ESE", "qty_formula": "1", "db_path": "grounding_lightning.Lightning_Arrester_ESE" },
+        { "category": "5. Grounding + Lightning", "sku": "Down_Conductor_50mm2_per_m", "qty_formula": "15", "db_path": "grounding_lightning.Down_Conductor_50mm2_per_m" },
+        { "category": "5. Grounding + Lightning", "sku": "Ground_Inspection_Pit", "qty_formula": "1", "db_path": "grounding_lightning.Ground_Inspection_Pit" },
+
+        { "category": "6. Monitoring", "sku": "Huawei_DDSU666_H_smart_meter", "qty_formula": "1", "db_path": "monitoring.Huawei_DDSU666_H_smart_meter" },
+        { "category": "6. Monitoring", "sku": "Huawei_Smart_Dongle_WLAN_FE", "qty_formula": "1", "db_path": "monitoring.Huawei_Smart_Dongle_WLAN_FE" },
+        { "category": "6. Monitoring", "sku": "CT_Clamps_250A_set_of_3", "qty_formula": "1", "db_path": "monitoring.CT_Clamps_250A_set_of_3" },
+
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_Danger_HV_TH_EN", "qty_formula": "4", "db_path": "labels_safety.Label_Danger_HV_TH_EN" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_PV_Array_DC", "qty_formula": "2", "db_path": "labels_safety.Label_PV_Array_DC" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_DC_Isolation", "qty_formula": "ceil(strings / 4)", "db_path": "labels_safety.Label_DC_Isolation" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_AC_Isolation", "qty_formula": "1", "db_path": "labels_safety.Label_AC_Isolation" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_Utility_Interconnection", "qty_formula": "1", "db_path": "labels_safety.Label_Utility_Interconnection" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_Do_Not_Switch_Under_Load_TH", "qty_formula": "4", "db_path": "labels_safety.Label_Do_Not_Switch_Under_Load_TH" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Placard_Emergency_Shutdown_A4", "qty_formula": "1", "db_path": "labels_safety.Placard_Emergency_Shutdown_A4" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_Authorized_Only", "qty_formula": "1", "db_path": "labels_safety.Label_Authorized_Only" },
+        { "category": "7. Safety Labels (PEA)", "sku": "Label_Circuit_ID_per_unit", "qty_formula": "30", "db_path": "labels_safety.Label_Circuit_ID_per_unit" },
+
+        { "category": "8. Consumables", "sku": "Cable_Tie_UV_Black_300mm_per_pc", "qty_formula": "500", "db_path": "consumables.Cable_Tie_UV_Black_300mm_per_pc" },
+        { "category": "8. Consumables", "sku": "Silicone_Sealant_Neutral_tube", "qty_formula": "ceil(kwp / 20)", "db_path": "consumables.Silicone_Sealant_Neutral_tube" },
+        { "category": "8. Consumables", "sku": "EPDM_Sealant_tube", "qty_formula": "2", "db_path": "consumables.EPDM_Sealant_tube" },
+        { "category": "8. Consumables", "sku": "Flexible_Conduit_25mm_per_m", "qty_formula": "20", "db_path": "consumables.Flexible_Conduit_25mm_per_m" },
+        { "category": "8. Consumables", "sku": "Cable_Duct_60x40_per_m", "qty_formula": "10", "db_path": "consumables.Cable_Duct_60x40_per_m" },
+        { "category": "8. Consumables", "sku": "Heat_Shrink_Kit_assorted", "qty_formula": "1", "db_path": "consumables.Heat_Shrink_Kit_assorted" }
+      ]
+    },
+
+    {
+      "id": "hybrid-commercial-with-battery",
+      "name": "Hybrid Commercial — Metal Roof + Battery Backup (PEA)",
+      "description": "Commercial PV with Huawei hybrid inverter + LUNA2000 battery. Self-consumption + backup during grid outages.",
+      "use_case": "Sites that need backup during blackouts — resorts, clinics, remote properties. Koh Phangan power outages are frequent, so backup justifies premium.",
+      "applicable_size_kwp": { "min": 10, "max": 80 },
+      "defaults": {
+        "panel_sku": "JA_JAM72S30_555",
+        "panels_per_string": 13,
+        "roof_type": "metal_trapezoidal",
+        "ac_cable_run_m": 15,
+        "battery_kwh_target": 20,
+        "battery_unit_sku": "Huawei_LUNA2000_10_S0"
+      },
+
+      "_note_inverter_selection": "12kW hybrid for <18kWp, 20kW hybrid for 18-30kWp, 50kW NHM1 for 30-80kWp. Above 80kWp = recommend grid-tied + separate battery system.",
+
+      "items": [
+        {
+          "category": "1. Modules + Hybrid Inverter",
+          "sku": "JA_JAM72S30_555",
+          "qty_formula": "panels",
+          "db_path": "modules.JA_JAM72S30_555"
+        },
+        {
+          "category": "1. Modules + Hybrid Inverter",
+          "sku_selector": "auto_by_kwp_hybrid",
+          "qty_formula": "1",
+          "db_path_by_kwp": {
+            "under_18": "inverters_hybrid.Huawei_SUN2000_12KTL_M2",
+            "under_30": "inverters_hybrid.Huawei_SUN2000_20KTL_M5",
+            "over_30":  "inverters_hybrid.Huawei_SUN2000_50KTL_NHM1"
+          }
+        },
+
+        {
+          "category": "1. Battery Storage",
+          "sku": "Huawei_LUNA2000_10_S0",
+          "qty_formula": "ceil(battery_kwh_target / 10)",
+          "db_path": "batteries.Huawei_LUNA2000_10_S0",
+          "note": "Stack up to 3 units per inverter in 12/20kW models, up to 6 in 50kW"
+        },
+
+        { "category": "2. Mounting",        "sku": "Trapezoidal_Clamp_metal_roof", "qty_formula": "panels * 2", "db_path": "mounting.Trapezoidal_Clamp_metal_roof" },
+        { "category": "2. Mounting",        "sku": "Antal_Rail_4.4m",               "qty_formula": "ceil(panels / 6.5)", "db_path": "mounting.Antal_Rail_4.4m" },
+        { "category": "2. Mounting",        "sku": "Rail_Splice_Kit",               "qty_formula": "ceil(panels / 8)", "db_path": "mounting.Rail_Splice_Kit" },
+        { "category": "2. Mounting",        "sku": "Mid_Clamp_35_40mm",             "qty_formula": "panels * 2 - 40", "db_path": "mounting.Mid_Clamp_35_40mm" },
+        { "category": "2. Mounting",        "sku": "End_Clamp_35_40mm",             "qty_formula": "ceil(panels / 3.3)", "db_path": "mounting.End_Clamp_35_40mm" },
+        { "category": "2. Mounting",        "sku": "Self_Drill_Screw_TEKs_5.5x35",  "qty_formula": "ceil(panels * 3.2)", "db_path": "mounting.Self_Drill_Screw_TEKs_5.5x35" },
+
+        { "category": "3. DC Side",         "sku": "DC_Combiner_Box_6_in_1",        "qty_formula": "ceil(strings / 6)", "db_path": "dc_side.DC_Combiner_Box_6_in_1" },
+        { "category": "3. DC Side",         "sku": "MC4_Connector_Pair_Staubli",    "qty_formula": "strings * 2 + 20", "db_path": "dc_side.MC4_Connector_Pair_Staubli" },
+        { "category": "3. DC Side",         "sku": "MC4_Crimping_Tool",             "qty_formula": "1", "db_path": "dc_side.MC4_Crimping_Tool" },
+
+        { "category": "4. AC Side",         "sku": "Cable_NYY_ac_per_m",            "qty_formula": "ac_cable_run_m", "db_path_by_current": { "under_200a": "ac_side.Cable_NYY_4Cx50_25mm2_per_m", "over_200a": "ac_side.Cable_NYY_4Cx70_35mm2_per_m" } },
+        { "category": "4. AC Side",         "sku": "MCCB",                          "qty_formula": "1", "db_path_by_current": { "under_200a": "ac_side.MCCB_3P_200A_Schneider", "over_200a": "ac_side.MCCB_3P_250A_Schneider" } },
+        { "category": "4. AC Side",         "sku": "AC_SPD_Type_II_40kA",           "qty_formula": "1", "db_path": "ac_side.AC_SPD_Type_II_40kA" },
+        { "category": "4. AC Side",         "sku": "Cable_Lug_50mm2",               "qty_formula": "12", "db_path": "ac_side.Cable_Lug_50mm2" },
+
+        { "category": "4b. Backup Circuit", "sku": "MCCB_3P_100A_backup",           "qty_formula": "1", "note": "Dedicated critical-loads panel breaker", "price_override_thb": 4500 },
+        { "category": "4b. Backup Circuit", "sku": "ATS_or_manual_changeover",      "qty_formula": "1", "note": "Auto Transfer Switch or manual changeover for backup mode", "price_override_thb": 12000 },
+        { "category": "4b. Backup Circuit", "sku": "Critical_Load_Panel_small",     "qty_formula": "1", "note": "Sub-panel for backup-fed loads (fridge, lighting, network)", "price_override_thb": 6500 },
+
+        { "category": "5. Grounding + Lightning", "sku": "Copper_Ground_Rod_2.4m",       "qty_formula": "ceil(kwp / 35)", "db_path": "grounding_lightning.Copper_Ground_Rod_2.4m" },
+        { "category": "5. Grounding + Lightning", "sku": "Ground_Wire_16mm2_per_m",      "qty_formula": "80", "db_path": "grounding_lightning.Ground_Wire_16mm2_per_m" },
+        { "category": "5. Grounding + Lightning", "sku": "Exothermic_Weld_Kit",          "qty_formula": "6", "db_path": "grounding_lightning.Exothermic_Weld_Kit" },
+        { "category": "5. Grounding + Lightning", "sku": "Lightning_Arrester_ESE",       "qty_formula": "1", "db_path": "grounding_lightning.Lightning_Arrester_ESE" },
+        { "category": "5. Grounding + Lightning", "sku": "Down_Conductor_50mm2_per_m",   "qty_formula": "15", "db_path": "grounding_lightning.Down_Conductor_50mm2_per_m" },
+        { "category": "5. Grounding + Lightning", "sku": "Ground_Inspection_Pit",        "qty_formula": "1", "db_path": "grounding_lightning.Ground_Inspection_Pit" },
+
+        { "category": "6. Monitoring",            "sku": "Huawei_DDSU666_H_smart_meter", "qty_formula": "1", "db_path": "monitoring.Huawei_DDSU666_H_smart_meter" },
+        { "category": "6. Monitoring",            "sku": "Huawei_Smart_Dongle_WLAN_FE",  "qty_formula": "1", "db_path": "monitoring.Huawei_Smart_Dongle_WLAN_FE" },
+        { "category": "6. Monitoring",            "sku": "CT_Clamps_250A_set_of_3",      "qty_formula": "1", "db_path": "monitoring.CT_Clamps_250A_set_of_3" },
+
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_Danger_HV_TH_EN",         "qty_formula": "6", "note": "Extra for battery cabinet", "db_path": "labels_safety.Label_Danger_HV_TH_EN" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_Battery_Storage_Warning", "qty_formula": "2", "note": "Li-ion specific warning", "price_override_thb": 95 },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_PV_Array_DC",             "qty_formula": "2", "db_path": "labels_safety.Label_PV_Array_DC" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_DC_Isolation",            "qty_formula": "ceil(strings / 4)", "db_path": "labels_safety.Label_DC_Isolation" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_AC_Isolation",            "qty_formula": "2", "note": "Grid side + backup side", "db_path": "labels_safety.Label_AC_Isolation" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_Utility_Interconnection", "qty_formula": "1", "db_path": "labels_safety.Label_Utility_Interconnection" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_Do_Not_Switch_Under_Load_TH", "qty_formula": "5", "db_path": "labels_safety.Label_Do_Not_Switch_Under_Load_TH" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Placard_Emergency_Shutdown_A4", "qty_formula": "1", "db_path": "labels_safety.Placard_Emergency_Shutdown_A4" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_Authorized_Only",         "qty_formula": "2", "note": "Also on battery room", "db_path": "labels_safety.Label_Authorized_Only" },
+        { "category": "7. Safety Labels (PEA)",   "sku": "Label_Circuit_ID_per_unit",     "qty_formula": "40", "db_path": "labels_safety.Label_Circuit_ID_per_unit" },
+
+        { "category": "8. Consumables",           "sku": "Cable_Tie_UV_Black_300mm_per_pc","qty_formula": "500", "db_path": "consumables.Cable_Tie_UV_Black_300mm_per_pc" },
+        { "category": "8. Consumables",           "sku": "Silicone_Sealant_Neutral_tube", "qty_formula": "ceil(kwp / 20)", "db_path": "consumables.Silicone_Sealant_Neutral_tube" },
+        { "category": "8. Consumables",           "sku": "EPDM_Sealant_tube",             "qty_formula": "2", "db_path": "consumables.EPDM_Sealant_tube" },
+        { "category": "8. Consumables",           "sku": "Flexible_Conduit_25mm_per_m",   "qty_formula": "20", "db_path": "consumables.Flexible_Conduit_25mm_per_m" },
+        { "category": "8. Consumables",           "sku": "Cable_Duct_60x40_per_m",        "qty_formula": "15", "db_path": "consumables.Cable_Duct_60x40_per_m" },
+        { "category": "8. Consumables",           "sku": "Heat_Shrink_Kit_assorted",      "qty_formula": "1", "db_path": "consumables.Heat_Shrink_Kit_assorted" }
+      ]
+    }
+  ]
+}
