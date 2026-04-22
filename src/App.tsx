@@ -34,6 +34,7 @@ const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage')
 const NewProposalPage = lazy(() => import('./pages/admin/NewProposalPage'))
 const ProposalsListPage = lazy(() => import('./pages/admin/ProposalsListPage'))
 const ProposalDetailPage = lazy(() => import('./pages/admin/ProposalDetailPage'))
+const BOMPage = lazy(() => import('./pages/admin/BOMPage'))
 
 function LoadingScreen() {
   return (
@@ -87,6 +88,7 @@ export default function App() {
                   <Route path="proposals" element={<ProposalsListPage />} />
                   <Route path="proposals/new" element={<NewProposalPage />} />
                   <Route path="proposals/:ref" element={<ProposalDetailPage />} />
+                  <Route path="bom" element={<BOMPage />} />
                 </Route>
                 <Route path="/crm" element={<ErrorBoundary><CRMPage /></ErrorBoundary>}>
                   <Route index element={<CRMDashboard />} />

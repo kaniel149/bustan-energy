@@ -9,6 +9,7 @@ import {
   Eye,
   Clock,
   Loader2,
+  Package,
 } from 'lucide-react'
 import { fetchProposal, buildTimeline, downloadProposalPDF, downloadSignedPDF } from '../../lib/admin-service'
 import { useAdminStore } from '../../lib/admin-store'
@@ -167,6 +168,31 @@ export default function ProposalDetailPage() {
               PDF חתום
             </button>
           )}
+
+          {/* Internal BOM / Supplier order — shown for any proposal, highlighted after signature */}
+          <button
+            onClick={() => {
+              const params = new URLSearchParams({
+                panels: String(proposal.panel_count ?? 0),
+                watt: String(proposal.panel_watt ?? 555),
+                template: 'grid-tied-commercial-metal-roof',
+                ref: proposal.ref_number,
+                client_name: proposal.client_name ?? '',
+                client_site: proposal.location ?? 'Koh Phangan, Surat Thani 84280',
+              })
+              navigate(`/admin/bom?${params}`)
+            }}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all ${
+              proposal.status === 'signed'
+                ? 'bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/30 animate-pulse'
+                : 'bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10'
+            }`}
+            aria-label="הכן הזמנה לספק"
+            title={proposal.status === 'signed' ? 'הצעה חתומה — מומלץ להוציא הזמנה' : 'כלי פנימי — הכן BOM + בקשה לספק'}
+          >
+            <Package size={15} />
+            {proposal.status === 'signed' ? '🛒 הכן הזמנה לספק' : 'BOM'}
+          </button>
           <button
             onClick={() => window.open(proposalUrl, '_blank')}
             className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white/50 text-sm hover:text-white hover:bg-white/10 transition-all"
