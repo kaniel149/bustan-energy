@@ -20,6 +20,7 @@ export interface RoofAnalysisResult {
 interface RoofImageUploaderProps {
   proposalRef: string
   panelCount: number
+  panelWatt?: number
   originalUrl: string
   panelsUrl: string
   onOriginalChange: (url: string) => void
@@ -30,6 +31,7 @@ interface RoofImageUploaderProps {
 export function RoofImageUploader({
   proposalRef,
   panelCount,
+  panelWatt = 580,
   originalUrl,
   panelsUrl,
   onOriginalChange,
@@ -105,7 +107,11 @@ export function RoofImageUploader({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ image_url: originalUrl }),
+        body: JSON.stringify({
+          image_url: originalUrl,
+          panel_watt: panelWatt,
+          usable_pct: 80, // commercial-friendly default
+        }),
       })
 
       // Handle non-JSON responses (e.g. 413 returns "Request Entity Too Large")

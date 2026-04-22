@@ -356,21 +356,43 @@ export default function NewProposalPage() {
 
         {/* Section B — Roof Images */}
         <Section>
-          <SectionTitle number="ב" title="תמונות גג" />
-          <div className="mb-4">
+          <SectionTitle number="ב" title="תמונות גג + ניתוח AI" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+            <FormField label="הספק פאנל (W)" hint="ל-AI ולחישוב">
+              <Select
+                value={String(form.panel_watt)}
+                onChange={(e) => {
+                  const w = parseInt(e.target.value, 10)
+                  update('panel_watt', w)
+                  // Auto-update panel model name
+                  const models: Record<number, string> = {
+                    550: 'Jinko Tiger Pro 550W',
+                    580: 'Jinko N-Type 580W',
+                    600: 'Jinko Tiger Neo 600W',
+                    620: 'Jinko Tiger Neo 620W',
+                  }
+                  if (models[w]) update('panel_model', models[w])
+                }}
+              >
+                <option value="550">550W</option>
+                <option value="580">580W</option>
+                <option value="600">600W</option>
+                <option value="620">620W (Tiger Neo)</option>
+              </Select>
+            </FormField>
             <FormField label="מספר פאנלים">
               <Input
                 type="number"
                 value={form.panel_count}
                 onChange={(e) => update('panel_count', parseInt(e.target.value, 10) || 0)}
                 min={1}
-                className="w-32"
               />
             </FormField>
           </div>
           <RoofImageUploader
             proposalRef={form.ref}
             panelCount={form.panel_count}
+            panelWatt={form.panel_watt}
             originalUrl={form.roof_original_url}
             panelsUrl={form.roof_panels_url}
             onOriginalChange={(url) => update('roof_original_url', url)}

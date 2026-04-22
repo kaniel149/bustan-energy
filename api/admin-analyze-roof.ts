@@ -39,11 +39,28 @@ export interface RoofAnalysis {
   notes: string
 }
 
-// Tight prompt — less text to send + less tokens to generate = faster
-const PROMPT = `Analyze this roof photo. Panel: 580W (2.28m²). PSH=5.0, PR=0.78, Thailand.
+// Panel dimensions by wattage (Jinko Tiger Neo / N-Type mono spec)
+function panelAreaForWatt(w: number): number {
+  if (w >= 620) return 2.42   // Jinko 620W ~1.90×1.13 + frame
+  if (w >= 600) return 2.38   // 600W
+  if (w >= 580) return 2.28   // 580W ~1.80×1.13
+  if (w >= 550) return 2.18   // 550W ~1.76×1.13
+  return 2.10                  // <=540W
+}
+
+// Build the prompt dynamically based on panel watt + usability % the caller wants
+function buildPrompt(panelWatt: number, panelArea: number, usablePct: number): string {
+  return `You are a solar PV designer. Analyze this roof photo (drone or aerial view).
+
+CRITICAL: Count the TOTAL combined roof area across ALL visible buildings/structures in the frame. Include every separate building roof that could host panels. Do NOT limit yourself to the largest visible roof. Commercial sites often have 2-10+ buildings.
+
+Panel spec: ${panelWatt}W, each ~${panelArea}m² (Jinko mono).
+Site: Thailand. PSH=5.0, PR=0.78.
+Usable fraction: target ${usablePct}% of total roof (typical commercial flat/low-pitch roofs can reach 75-85%; residential with obstacles 55-70%).
 
 Return ONLY JSON:
-{"roof_area_m2":int,"usable_area_m2":int,"suggested_panel_count":int,"suggested_system_kwp":float,"estimated_annual_kwh":int,"roof_type":"concrete"|"tile"|"metal"|"mixed"|"unknown","orientation":"south"|"east"|"west"|"east-west"|"mixed"|"unknown","shading":"none"|"partial"|"heavy","tilt_deg_estimate":int,"confidence":0-1,"notes":"3 short Hebrew sentences on roof condition, obstructions, recommendations"}`
+{"roof_area_m2":int,"usable_area_m2":int,"suggested_panel_count":int,"suggested_system_kwp":float,"estimated_annual_kwh":int,"roof_type":"concrete"|"tile"|"metal"|"mixed"|"unknown","orientation":"south"|"east"|"west"|"east-west"|"mixed"|"unknown","shading":"none"|"partial"|"heavy","tilt_deg_estimate":int,"confidence":0-1,"notes":"3 short Hebrew sentences: total area counting, building count, any constraints"}`
+}
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 })
@@ -54,7 +71,19 @@ export default async function handler(req: Request): Promise<Response> {
     if (!email) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
 
     const body = await req.json()
-    const { image_url, image_base64 } = body as { image_url?: string; image_base64?: string }
+    const {
+      image_url,
+      image_base64,
+      panel_watt = 580,
+      usable_pct = 75,
+    } = body as {
+      image_url?: string
+      image_base64?: string
+      panel_watt?: number
+      usable_pct?: number
+    }
+    const panelArea = panelAreaForWatt(panel_watt)
+    const PROMPT = buildPrompt(panel_watt, panelArea, usable_pct)
 
     let b64: string
     let mime = 'image/jpeg'
@@ -149,9 +178,9 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
 
-    // Recompute derived values server-side (keep physics sane)
+    // Recompute derived values server-side using the ACTUAL panel wattage
     const panels = Math.max(1, Math.round(Number(analysis.suggested_panel_count) || 0))
-    const kwp = Math.round(panels * 0.580 * 100) / 100
+    const kwp = Math.round(panels * (panel_watt / 1000) * 100) / 100
     const annualKwh = Math.round(kwp * 5.0 * 365 * 0.78)
 
     return Response.json({
@@ -161,6 +190,8 @@ export default async function handler(req: Request): Promise<Response> {
         suggested_panel_count: panels,
         suggested_system_kwp: kwp,
         estimated_annual_kwh: annualKwh,
+        panel_watt_used: panel_watt,
+        panel_area_m2: panelArea,
       },
       _timing: { fetch_ms: tFetch, gemini_ms: tGemini, total_ms: Date.now() - t0 },
     })
