@@ -85,29 +85,32 @@ export function RoofImageUploader({
 
     setAnalyzing(true)
     try {
-      const response = await fetch(originalUrl)
-      const blob = await response.blob()
-      const file = new File([blob], 'roof.jpg', { type: blob.type || 'image/jpeg' })
-      const image_base64 = await fileToBase64(file)
-
       const session = await import('../../lib/admin-auth').then((m) => m.getSession())
       const token = session?.access_token
       if (!token) {
         throw new Error('לא מחובר — התחבר מחדש לאדמין')
       }
 
+      // Send the image URL — server fetches it (avoids 4.5MB client body limit)
       const res = await fetch('/api/admin-analyze-roof', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ image_base64 }),
+        body: JSON.stringify({ image_url: originalUrl }),
       })
 
-      const data = await res.json() as { ok: boolean; analysis?: RoofAnalysisResult; error?: string; detail?: string }
+      // Handle non-JSON responses (e.g. 413 returns "Request Entity Too Large")
+      const raw = await res.text()
+      let data: { ok: boolean; analysis?: RoofAnalysisResult; error?: string; detail?: string }
+      try {
+        data = JSON.parse(raw)
+      } catch {
+        throw new Error(`HTTP ${res.status}: ${raw.slice(0, 120)}`)
+      }
       if (!data.ok || !data.analysis) {
-        throw new Error(data.error || 'ניתוח נכשל')
+        throw new Error(data.error || data.detail || `ניתוח נכשל (HTTP ${res.status})`)
       }
 
       setLastAnalysis(data.analysis)
