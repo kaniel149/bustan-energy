@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { Upload, Sparkles, Loader2, Image as ImageIcon, X, Wand2 } from 'lucide-react'
-import { uploadProposalImage, proposalImagePath, fileToBase64 } from '../../lib/storage'
+import { uploadProposalImage, proposalImagePath, fileToBase64, resizeImage } from '../../lib/storage'
 import { useAdminStore } from '../../lib/admin-store'
 
 export interface RoofAnalysisResult {
@@ -54,18 +54,25 @@ export function RoofImageUploader({
       return
     }
 
-    // Validate size (10MB bucket limit)
-    if (file.size > 10 * 1024 * 1024) {
-      showToast(`הקובץ גדול מדי (${(file.size / 1024 / 1024).toFixed(1)}MB, מקסימום 10MB)`, 'error')
-      return
-    }
-
     setUploadingOriginal(true)
     try {
+      // Resize drone photos (often 12-48MP / 10-30MB) down to 2048px / ~1MB
+      const originalSizeMB = (file.size / 1024 / 1024).toFixed(1)
+      const resized = await resizeImage(file, 2048, 0.85)
+      const resizedSizeMB = (resized.size / 1024 / 1024).toFixed(1)
+      if (resized !== file) {
+        console.log(`Resized ${originalSizeMB}MB → ${resizedSizeMB}MB`)
+      }
+
       const path = proposalImagePath(proposalRef || 'draft', 'original')
-      const url = await uploadProposalImage(file, path)
+      const url = await uploadProposalImage(resized, path)
       onOriginalChange(url)
-      showToast('תמונה הועלתה בהצלחה — לחץ ״נתח גג״ לקבלת המלצות', 'success')
+      showToast(
+        resized !== file
+          ? `תמונה דחוסה ל-${resizedSizeMB}MB והועלתה — לחץ ״נתח גג״`
+          : 'תמונה הועלתה בהצלחה — לחץ ״נתח גג״',
+        'success'
+      )
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       // Show detailed error to help debug RLS issues
