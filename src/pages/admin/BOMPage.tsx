@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { ChevronLeft, Loader2, Copy, Check, Download, Mail, Package } from 'lucide-react'
+import { ChevronLeft, Loader2, Copy, Check, Download, Mail, Package, Save, ExternalLink } from 'lucide-react'
 import { getSession } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 
@@ -55,9 +55,12 @@ export default function BOMPage() {
   const [clientSite, setClientSite] = useState(params.get('client_site') || 'Koh Phangan, Surat Thani 84280')
 
   const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [savedOrderId, setSavedOrderId] = useState<string | null>(null)
   const [result, setResult] = useState<BOMResponse | null>(null)
   const [tab, setTab] = useState<'bom' | 'supplier' | 'markdown'>('bom')
   const [copied, setCopied] = useState('')
+  const [leadId, setLeadId] = useState(params.get('lead_id') || '')
 
   const run = async () => {
     setLoading(true)
@@ -112,6 +115,43 @@ export default function BOMPage() {
     a.download = filename
     a.click()
     setTimeout(() => URL.revokeObjectURL(url), 60_000)
+  }
+
+  const saveBOM = async () => {
+    if (!result) return
+    setSaving(true)
+    try {
+      const session = await getSession()
+      const token = session?.access_token
+      if (!token) throw new Error('לא מחובר')
+
+      const res = await fetch('/api/admin-procurement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          proposal_ref: proposalRef || undefined,
+          lead_id: leadId || undefined,
+          bom_template: template,
+          system_kwp: result.bom.summary.kwp,
+          panels: result.bom.summary.panels,
+          panel_watt: result.bom.summary.watt,
+          battery_kwh: result.bom.summary.battery_kwh || 0,
+          bom_json: result.bom,
+          supplier_email_text: result.supplier_email_text,
+          estimated_thb: result.bom.totals.total_with_vat_thb,
+        }),
+      })
+
+      const data = await res.json()
+      if (!data.ok) throw new Error(data.error || 'שמירה נכשלה')
+
+      setSavedOrderId(data.order.id)
+      showToast(`✅ נשמר · הזמנה #${data.order.id.slice(0, 8)}`, 'success')
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'שגיאה', 'error')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const sendEmail = () => {
@@ -263,6 +303,53 @@ export default function BOMPage() {
             <StatCard label="חומרים" value={thb(result.bom.totals.materials_thb)} highlight />
             <StatCard label="סה״כ עם VAT" value={thb(result.bom.totals.total_with_vat_thb)} highlight />
           </div>
+
+          {/* Save banner — shown BEFORE saving */}
+          {!savedOrderId && (
+            <div className="flex items-center justify-between gap-3 mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
+              <div className="flex items-start gap-3">
+                <Save size={18} className="text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-emerald-300">שמור BOM ל-CRM</p>
+                  <p className="text-xs text-emerald-200/70 mt-0.5">
+                    יצור הזמנת רכש במערכת — תוכל לעקוב אחריה עד להתקנה, ולראות היסטוריה מלאה.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={saveBOM}
+                disabled={saving}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-[#0D1117] font-semibold text-sm hover:bg-emerald-400 disabled:opacity-40 whitespace-nowrap"
+              >
+                {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+                {saving ? 'שומר...' : '💾 שמור הזמנת רכש'}
+              </button>
+            </div>
+          )}
+
+          {/* Success banner — shown AFTER saving */}
+          {savedOrderId && (
+            <div className="flex items-center justify-between gap-3 mb-6 p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40">
+              <div className="flex items-center gap-3">
+                <Check size={18} className="text-emerald-300" />
+                <div>
+                  <p className="text-sm font-semibold text-emerald-200">
+                    ✅ הזמנת רכש נוצרה · #{savedOrderId.slice(0, 8)}
+                  </p>
+                  <p className="text-xs text-emerald-200/70 mt-0.5">
+                    CRM עודכן אוטומטית · תוכל לעקוב בעמוד "רכש"
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/admin/procurement')}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 text-white text-sm hover:bg-white/20"
+              >
+                <ExternalLink size={14} />
+                לרשימת הזמנות
+              </button>
+            </div>
+          )}
 
           {/* Tabs */}
           <div className="flex gap-2 mb-4">

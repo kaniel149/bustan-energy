@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart } from 'lucide-react'
 import { onAuthChange, signOut, isAdmin } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 import { AdminToast } from '../../components/admin/AdminToast'
@@ -10,7 +10,8 @@ const NAV_ITEMS = [
   { to: '/admin', icon: LayoutDashboard, label: 'דשבורד', end: true },
   { to: '/admin/proposals/new', icon: FilePlus, label: 'הצעה חדשה', end: false },
   { to: '/admin/proposals', icon: FileText, label: 'כל ההצעות', end: true },
-  { to: '/admin/bom', icon: Package, label: 'רכש · BOM', end: true, internal: true },
+  { to: '/admin/bom', icon: Package, label: 'BOM חדש', end: true, internal: true },
+  { to: '/admin/procurement', icon: ShoppingCart, label: 'הזמנות רכש', end: true, internal: true },
 ]
 
 function LoadingScreen() {

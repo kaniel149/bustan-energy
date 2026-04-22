@@ -478,6 +478,28 @@ export default function LeadDetail() {
               Create Proposal
             </button>
 
+            {/* Internal: generate BOM + supplier order directly from lead */}
+            {(project.panel_count ?? 0) > 0 && (
+              <button
+                onClick={() => {
+                  const params = new URLSearchParams({
+                    panels: String(project.panel_count ?? 0),
+                    watt: '555',
+                    template: 'grid-tied-commercial-metal-roof',
+                    lead_id: project.id,
+                    client_name: project.client_name ?? '',
+                    client_site: project.property_address ?? 'Koh Phangan, Surat Thani 84280',
+                  })
+                  navigate(`/admin/bom?${params}`)
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/10 text-emerald-300 text-xs font-semibold hover:bg-emerald-500/20 border border-emerald-500/25 transition-colors"
+                title="כלי פנימי — לא מוצג ללקוח"
+              >
+                <span className="text-base leading-none">🛒</span>
+                BOM / Supplier Order
+              </button>
+            )}
+
             {project.building_id && (
               <Link
                 to={`/platform?highlight=${project.building_id}`}
