@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, lazy, Suspense } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { getSession, isAdmin } from '../lib/admin-auth'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import {
   Sun,
@@ -1368,6 +1369,27 @@ function aggregateRatingSchema() {
 export default function HomePage() {
   const { t, lang } = useTranslation()
   const faqData = (t.home as any).faq
+  const navigate = useNavigate()
+  const [showAdminBanner, setShowAdminBanner] = useState(false)
+
+  // If admin is logged in, auto-redirect to /admin (once)
+  useEffect(() => {
+    let cancelled = false
+    getSession().then((session) => {
+      if (cancelled || !session?.user?.email) return
+      if (!isAdmin(session.user.email)) return
+      // Don't auto-redirect if user explicitly came to home (e.g. via nav click)
+      if (sessionStorage.getItem('tm_admin_skip_redirect') === '1') {
+        setShowAdminBanner(true)
+        return
+      }
+      sessionStorage.setItem('tm_admin_skip_redirect', '1')
+      navigate('/admin', { replace: true })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [navigate])
 
   // Build FAQ schema from translation data
   const faqItems = faqData?.items ?? []
@@ -1380,6 +1402,11 @@ export default function HomePage() {
 
   return (
     <>
+      {showAdminBanner && (
+        <div style={{position:'fixed',top:0,left:0,right:0,zIndex:10000,background:'linear-gradient(135deg,#E8A820,#E85D3A)',color:'#0D2137',padding:'12px 20px',textAlign:'center',fontWeight:700,fontFamily:'Heebo,sans-serif'}}>
+          🎯 אתה מחובר כאדמין · <a href="/admin" style={{color:'#0D2137',textDecoration:'underline',fontWeight:900}}>לחץ כאן לעבור לדשבורד האדמין ←</a>
+        </div>
+      )}
       <SEOHead
         title={
           lang === 'th'

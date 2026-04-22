@@ -27,6 +27,14 @@ const BlogPostPage = lazy(() => import('./pages/BlogPostPage'))
 const ToolsPage = lazy(() => import('./pages/ToolsPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
+// Admin pages — lazy loaded, separate auth context
+const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'))
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'))
+const NewProposalPage = lazy(() => import('./pages/admin/NewProposalPage'))
+const ProposalsListPage = lazy(() => import('./pages/admin/ProposalsListPage'))
+const ProposalDetailPage = lazy(() => import('./pages/admin/ProposalDetailPage'))
+
 function LoadingScreen() {
   return (
     <div className="min-h-screen bg-[var(--color-dark)] flex items-center justify-center">
@@ -73,6 +81,13 @@ export default function App() {
           <LanguageProvider>
             <Suspense fallback={<LoadingScreen />}>
               <Routes>
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="proposals" element={<ProposalsListPage />} />
+                  <Route path="proposals/new" element={<NewProposalPage />} />
+                  <Route path="proposals/:ref" element={<ProposalDetailPage />} />
+                </Route>
                 <Route path="/crm" element={<ErrorBoundary><CRMPage /></ErrorBoundary>}>
                   <Route index element={<CRMDashboard />} />
                   <Route path="pipeline" element={<CRMPipeline />} />
@@ -94,6 +109,15 @@ export default function App() {
         <LanguageProvider>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
+              {/* Admin routes */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
+                <Route path="proposals" element={<ProposalsListPage />} />
+                <Route path="proposals/new" element={<NewProposalPage />} />
+                <Route path="proposals/:ref" element={<ProposalDetailPage />} />
+              </Route>
+
               {/* CRM routes (also accessible via /crm on main domain) */}
               <Route path="/crm" element={<ErrorBoundary><CRMPage /></ErrorBoundary>}>
                 <Route index element={<CRMDashboard />} />

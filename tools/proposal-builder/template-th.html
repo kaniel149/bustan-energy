@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="th" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — ใบเสนอราคาระบบโซลาร์ · Amir Mizrahi</title>
+<meta name="description" content="ใบเสนอราคาระบบโซลาร์ 12.76 kWp — เกาะพะงัน, ประเทศไทย. TM Energy.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0D2137;
+  --navy-light: #132D4A;
+  --gold: #E8A820;
+  --gold-soft: rgba(232,168,32,.08);
+  --green: #1A7A5A;
+  --green-soft: rgba(26,122,90,.08);
+  --white: #FFFFFF;
+  --bg: #F7F8FA;
+  --text: #1A2332;
+  --text-secondary: #6B7A8D;
+  --border: rgba(0,0,0,.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.1);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Heebo', 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  direction: ltr;
+}
+h1, h2, h3 { font-weight: 900; }
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+section { padding: 72px 0; }
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+}
+.section-heading {
+  font-size: clamp(28px, 4vw, 38px); font-weight: 900;
+  color: var(--navy); line-height: 1.3; margin-bottom: 8px;
+}
+.section-desc {
+  font-size: 16px; color: var(--text-secondary);
+  max-width: 560px; margin-bottom: 40px;
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13,33,55,.97);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(232,168,32,.15);
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { font-weight: 800; font-size: 13px; color: var(--gold); letter-spacing: 2.5px; }
+.nav-logo-img { width: 38px; height: 38px; margin-left: 10px; vertical-align: middle; border-radius: 50%; }
+.nav-ref { font-size: 12px; color: rgba(255,255,255,.6); font-family: 'Inter', monospace; }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white; padding: 140px 0 100px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -50%; left: -20%;
+  width: 80%; height: 200%; background: radial-gradient(circle, rgba(232,168,32,.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-ref {
+  display: inline-block; padding: 6px 14px;
+  background: rgba(232,168,32,.12); border: 1px solid rgba(232,168,32,.3);
+  border-radius: 100px; color: var(--gold);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 24px;
+}
+.hero h1 {
+  font-size: clamp(36px, 6vw, 60px); font-weight: 900;
+  line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px;
+}
+.hero h1 span { color: var(--gold); }
+.hero p {
+  font-size: 18px; color: rgba(255,255,255,.75);
+  max-width: 620px; margin-bottom: 40px;
+}
+.hero-meta {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; max-width: 600px; position: relative; z-index: 2;
+}
+.hero-meta-item { border-right: 1px solid rgba(232,168,32,.3); padding-right: 20px; }
+.hero-meta-item:last-child { border-right: none; }
+.hero-meta-label {
+  font-size: 11px; color: rgba(255,255,255,.5);
+  font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;
+}
+.hero-meta-value { font-size: 20px; font-weight: 800; color: white; }
+
+/* ── VISUAL ── */
+.visual-compare {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin: 40px 0;
+}
+.visual-card {
+  background: white; border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+.visual-card img { width: 100%; height: auto; display: block; }
+.visual-caption {
+  padding: 14px 18px; font-size: 13px; font-weight: 700;
+  color: var(--navy); border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.visual-tag {
+  background: var(--gold-soft); color: var(--gold);
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 10px; letter-spacing: 1px;
+}
+.visual-tag.green { background: var(--green-soft); color: var(--green); }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-top: 24px;
+}
+.stat {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 20px;
+  text-align: center; box-shadow: var(--shadow-sm);
+}
+.stat-value {
+  font-size: clamp(28px, 4vw, 38px); font-weight: 900;
+  color: var(--navy); line-height: 1; margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 12px; color: var(--text-secondary);
+  font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+}
+
+/* ── TABLE ── */
+.spec-table {
+  background: white; border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.spec-row {
+  display: grid; grid-template-columns: 1fr 2fr;
+  padding: 18px 28px; border-bottom: 1px solid var(--border);
+  font-size: 15px;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-row:nth-child(odd) { background: rgba(13,33,55,.015); }
+.spec-label { font-weight: 700; color: var(--text-secondary); }
+.spec-value { color: var(--navy); font-weight: 600; }
+
+/* ── PSH CHART ── */
+.psh-chart {
+  background: white; border-radius: var(--radius);
+  padding: 28px; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border); margin-top: 24px;
+}
+.psh-bars {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  gap: 8px; align-items: end; height: 160px; margin-top: 20px;
+}
+.psh-bar { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.psh-bar-fill {
+  width: 100%; background: linear-gradient(180deg, var(--gold) 0%, #D49010 100%);
+  border-radius: 6px 6px 0 0; min-height: 8px; position: relative;
+}
+.psh-bar-value {
+  font-size: 10px; font-weight: 800; color: var(--navy);
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+}
+.psh-bar-label { font-size: 10px; color: var(--text-secondary); font-weight: 600; }
+.psh-summary {
+  display: flex; justify-content: space-between;
+  padding-top: 20px; margin-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.psh-summary-item { }
+.psh-summary-label {
+  font-size: 11px; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+}
+.psh-summary-value {
+  font-size: 22px; font-weight: 900; color: var(--navy); margin-top: 4px;
+}
+
+/* ── ROI ── */
+.roi-wrap {
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-top: 24px;
+}
+.roi-price-card {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white; border-radius: var(--radius); padding: 40px;
+  position: relative; overflow: hidden;
+}
+.roi-price-card::before {
+  content: '☀️'; position: absolute; top: -20px; left: -20px;
+  font-size: 180px; opacity: 0.05; transform: rotate(-15deg);
+}
+.roi-tag {
+  display: inline-block; padding: 6px 14px;
+  background: rgba(232,168,32,.15); border: 1px solid rgba(232,168,32,.35);
+  border-radius: 100px; color: var(--gold);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 20px;
+}
+.roi-price {
+  font-size: clamp(40px, 6vw, 56px); font-weight: 900;
+  line-height: 1; margin-bottom: 8px;
+}
+.roi-price .currency { font-size: 24px; color: var(--gold); margin-left: 4px; }
+.roi-turnkey { font-size: 14px; color: rgba(255,255,255,.7); margin-bottom: 28px; }
+.roi-included { list-style: none; }
+.roi-included li {
+  font-size: 14px; padding: 8px 0; color: rgba(255,255,255,.85);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  display: flex; align-items: center; gap: 10px;
+}
+.roi-included li:last-child { border-bottom: none; }
+.roi-included li::before {
+  content: '✓'; color: var(--gold); font-weight: 900; font-size: 16px;
+}
+
+.roi-savings {
+  background: white; border-radius: var(--radius);
+  padding: 32px; box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.roi-savings-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 14px 0; border-bottom: 1px dashed var(--border);
+}
+.roi-savings-row:last-child { border-bottom: none; padding-top: 20px; }
+.roi-savings-label { font-size: 14px; color: var(--text-secondary); font-weight: 600; }
+.roi-savings-value { font-size: 20px; font-weight: 900; color: var(--navy); }
+.roi-savings-value.big { font-size: 32px; color: var(--green); }
+
+/* ── TAX / INCENTIVE ── */
+.incentive-card {
+  background: linear-gradient(135deg, var(--green) 0%, #11604B 100%);
+  color: white; border-radius: var(--radius); padding: 36px 40px;
+  margin-top: 24px; display: grid; grid-template-columns: auto 1fr;
+  gap: 24px; align-items: center; box-shadow: var(--shadow-md);
+}
+.incentive-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(255,255,255,.15); display: flex;
+  align-items: center; justify-content: center; font-size: 36px;
+}
+.incentive-title {
+  font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+  color: rgba(255,255,255,.75); text-transform: uppercase; margin-bottom: 6px;
+}
+.incentive-heading { font-size: 24px; font-weight: 900; color: white; margin-bottom: 8px; }
+.incentive-desc { font-size: 14px; color: rgba(255,255,255,.85); line-height: 1.6; }
+.incentive-desc strong { color: var(--gold); }
+
+/* ── CUMULATIVE ── */
+.cumulative-chart {
+  background: white; border-radius: var(--radius);
+  padding: 28px; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border); margin-top: 24px;
+}
+.cumulative-bars {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 14px; align-items: end; height: 220px; margin-top: 28px;
+}
+.cum-bar { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; }
+.cum-bar-fill {
+  width: 100%; border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, var(--green) 0%, #11604B 100%);
+  min-height: 12px; position: relative;
+}
+.cum-bar-fill.peak { background: linear-gradient(180deg, var(--gold) 0%, #D49010 100%); }
+.cum-bar-value {
+  font-size: 12px; font-weight: 900; color: var(--navy);
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+}
+.cum-bar-label {
+  font-size: 11px; color: var(--text-secondary);
+  font-weight: 700; text-align: center;
+}
+
+/* ── CTA ── */
+.cta {
+  background: linear-gradient(135deg, var(--gold) 0%, #D49010 100%);
+  color: white; border-radius: var(--radius);
+  padding: 60px 40px; text-align: center;
+  margin-top: 40px; box-shadow: var(--shadow-lg);
+}
+.cta h2 { font-size: clamp(26px, 4vw, 34px); color: white; margin-bottom: 12px; }
+.cta p { font-size: 16px; color: rgba(255,255,255,.9); margin-bottom: 28px; }
+.cta-btn {
+  display: inline-block; padding: 16px 36px;
+  background: var(--navy); color: white; text-decoration: none;
+  font-weight: 800; border-radius: 100px; font-size: 15px;
+  letter-spacing: 0.5px; transition: transform .2s;
+}
+.cta-btn:hover { transform: translateY(-2px); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy); color: rgba(255,255,255,.6);
+  padding: 40px 0; text-align: center; font-size: 13px;
+}
+footer strong { color: var(--gold); }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  section { padding: 48px 0; }
+  .hero { padding: 110px 0 70px; }
+  .hero-meta { grid-template-columns: 1fr; gap: 16px; }
+  .hero-meta-item { border-right: none; border-bottom: 1px solid rgba(232,168,32,.2); padding: 0 0 12px 0; }
+  .hero-meta-item:last-child { border-bottom: none; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .visual-compare { grid-template-columns: 1fr; }
+  .roi-wrap { grid-template-columns: 1fr; }
+  .spec-row { grid-template-columns: 1fr; gap: 4px; padding: 14px 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div>
+    <img class="nav-logo-img" src="./tm-energy-logo.png" alt="TM Energy">
+    <span class="nav-brand">TM ENERGY · PHANGAN</span>
+  </div>
+  <div class="nav-ref">REF · AMIR-001 · 2026</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container" style="position: relative; z-index: 2;">
+    <span class="hero-ref">ใบเสนอราคา · เมษายน 2026</span>
+    <h1>ระบบโซลาร์<br><span>12.76 kWp + แบตเตอรี่</span></h1>
+    <p>ระบบไฮบริด Huawei สำหรับเกาะพะงัน — แผง Jinko N-Type 22 แผง + อินเวอร์เตอร์ Huawei SUN2000 + แบตเตอรี่ Huawei LUNA2000 10 kWh. พึ่งพาตนเองด้านพลังงานแม้ไฟดับ ประหยัด ฿79,900 ต่อปี</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">ลูกค้า</div>
+        <div class="hero-meta-value">אמיר מזרחי</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">สถานที่</div>
+        <div class="hero-meta-value">เกาะพะงัน, TH</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">มีอายุ</div>
+        <div class="hero-meta-value">30 วัน</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISUAL MOCKUP -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">ภาพจำลอง</div>
+    <h2 class="section-heading">ระบบบนหลังคาของคุณจะเป็นแบบนี้</h2>
+    <p class="section-desc">דימוי AI מדויק המבוסס על תמונת הרחפן של הגג — מראה מדויק של สถานที่ ומספר הแผง.</p>
+    <div class="visual-compare">
+      <div class="visual-card">
+        <img src="./amir-mizrahi-001-roof-original.jpeg" alt="גג מקורי" loading="lazy">
+        <div class="visual-caption">
+          <span>ก่อน</span>
+          <span class="visual-tag">ภาพโดรน</span>
+        </div>
+      </div>
+      <div class="visual-card">
+        <img src="./amir-mizrahi-001-roof-with-panels.png" alt="גג עם แผง" loading="lazy">
+        <div class="visual-caption">
+          <span>หลัง</span>
+          <span class="visual-tag green">22 แผง · 12.76 kWp</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROOF ANALYSIS -->
+<section>
+  <div class="container">
+    <div class="section-label">วิเคราะห์หลังคา</div>
+    <h2 class="section-heading">ขนาดและแผนผัง</h2>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-value">120</div>
+        <div class="stat-label">ตรม. พื้นที่หลังคา</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">22</div>
+        <div class="stat-label">แผงที่ใช้งาน</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">แกน N-S</div>
+        <div class="stat-label">ทิศทาง</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">กระเบื้อง</div>
+        <div class="stat-label">ประเภทหลังคา</div>
+      </div>
+    </div>
+    <div class="spec-table" style="margin-top: 24px;">
+      <div class="spec-row">
+        <span class="spec-label">ด้านซ้าย (ตะวันออก)</span>
+        <span class="spec-value">~48 m² · 10 แผง (2×5)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">ด้านขวา (ตะวันตก)</span>
+        <span class="spec-value">~48 m² · 8 แผง (2×4)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">ส่วนบน (clerestory)</span>
+        <span class="spec-value">~18 m² · 4 แผงเพิ่ม (2×2)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">รวมแผงทั้งหมด</span>
+        <span class="spec-value">22 × 580W = 12.76 kWp</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">การบังเงา</span>
+        <span class="spec-value">5-8% ตอนเช้าจากต้นมะม่วง · น้อยมาก</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM SPECS -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">สเปคระบบ</div>
+    <h2 class="section-heading">อุปกรณ์ Tier-1 เท่านั้น</h2>
+    <div class="spec-table">
+      <div class="spec-row">
+        <span class="spec-label">แผง</span>
+        <span class="spec-value">22× Jinko Solar N-Type 580W (25 שנות หลังות ייצור)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">อินเวอร์เตอร์</span>
+        <span class="spec-value">Huawei SUN2000-12KTL-M2 ไฮบริด (10 שנות หลังות)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">แบตเตอรี่</span>
+        <span class="spec-value">Huawei LUNA2000-10-S0 · 10 kWh · LFP (10 שנות หลังות · 100% DoD)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">กำลัง DC</span>
+        <span class="spec-value">12.76 kWp</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">การเชื่อมต่อ</span>
+        <span class="spec-value">PEA On-Grid Hybrid · สำรองไฟอัตโนมัติเมื่อไฟดับ</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">โครงยึด</span>
+        <span class="spec-value">Tile hooks อลูมิเนียมกันซึม EPDM</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">มอนิเตอร์</span>
+        <span class="spec-value">FusionSolar App — ผลผลิตเรียลไทม์ + แจ้งเตือน</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">ระบบป้องกัน</span>
+        <span class="spec-value">DC/AC isolator, SPD, RCD, mini-CB (มาตรฐาน IEC 62446)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTION / PSH -->
+<section>
+  <div class="container">
+    <div class="section-label">คาดการณ์ผลผลิต</div>
+    <h2 class="section-heading">Peak sun hours รายเดือน · เกาะพะงัน 9.7°N</h2>
+    <p class="section-desc">คำนวณจากข้อมูล NASA SSE ของพื้นที่นี้ ปรับแก้ความร้อนเขตร้อน (PR=0.78)</p>
+    <div class="psh-chart">
+      <div class="psh-bars">
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 86%;"><span class="psh-bar-value">5.7</span></div><span class="psh-bar-label">ม.ค.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 92%;"><span class="psh-bar-value">6.1</span></div><span class="psh-bar-label">ก.พ.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 95%;"><span class="psh-bar-value">6.3</span></div><span class="psh-bar-label">มี.ค.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 90%;"><span class="psh-bar-value">6.0</span></div><span class="psh-bar-label">เม.ย.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">พ.ค.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 66%;"><span class="psh-bar-value">4.4</span></div><span class="psh-bar-label">มิ.ย.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">ก.ค.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 60%;"><span class="psh-bar-value">4.0</span></div><span class="psh-bar-label">ส.ค.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">ก.ย.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 57%;"><span class="psh-bar-value">3.8</span></div><span class="psh-bar-label">ต.ค.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">พ.ย.</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 81%;"><span class="psh-bar-value">5.4</span></div><span class="psh-bar-label">ธ.ค.</span></div>
+      </div>
+      <div class="psh-summary">
+        <div class="psh-summary-item">
+          <div class="psh-summary-label">เฉลี่ยต่อปี (PSH)</div>
+          <div class="psh-summary-value">5.0 ชม. / วัน</div>
+        </div>
+        <div class="psh-summary-item">
+          <div class="psh-summary-label">ผลผลิตต่อปี</div>
+          <div class="psh-summary-value">18,171 kWh</div>
+        </div>
+        <div class="psh-summary-item">
+          <div class="psh-summary-label">เฉลี่ยต่อเดือน</div>
+          <div class="psh-summary-value">~1,514 kWh</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCIAL / ROI -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">การลงทุนและผลตอบแทน</div>
+    <h2 class="section-heading">คาดการณ์ทางการเงิน</h2>
+    <div class="roi-wrap">
+      <div class="roi-price-card">
+        <span class="roi-tag">Turnkey — รวมทุกอย่าง</span>
+        <div class="roi-price">450,000<span class="currency">฿</span></div>
+        <div class="roi-turnkey">ราคาคงที่ · ไม่รวม VAT · จ่าย 50% มัดจำ + 50% ติดตั้งเสร็จ</div>
+        <ul class="roi-included">
+          <li>22 แผง Jinko N-Type 580W</li>
+          <li>Huawei SUN2000-12KTL-M2 ไฮบริด</li>
+          <li>แบตเตอรี่ Huawei LUNA2000 10 kWh — รวมแล้ว</li>
+          <li>מבנה תומך, כבלים, ระบบป้องกัน IEC 62446</li>
+          <li>ติดตั้งโดยมืออาชีพ (3-4 วัน)</li>
+          <li>ขนส่ง + จัดส่งถึงเกาะพะงัน</li>
+          <li>ยื่นและอนุมัติ PEA</li>
+          <li>หลังות 2 ปี על התקנה</li>
+          <li>מוมอนิเตอร์ינג FusionSolar + בדיקת שנה ראשונה</li>
+        </ul>
+      </div>
+      <div class="roi-savings">
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">อัตราค่าไฟ PEA เฉลี่ย</span>
+          <span class="roi-savings-value">4.40 ฿/kWh</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">ประหยัดต่อเดือน</span>
+          <span class="roi-savings-value">~6,660 ฿</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">ประหยัดต่อปี</span>
+          <span class="roi-savings-value">~79,900 ฿</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">คืนทุน (ไม่รวมลดภาษี)</span>
+          <span class="roi-savings-value">5.6 ปี</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">คืนทุน (รวมลดภาษี)</span>
+          <span class="roi-savings-value" style="color: var(--green);">3.1 ปี</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">ประหยัดสะสม 25 ปี</span>
+          <span class="roi-savings-value big">~2.0M ฿</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAX INCENTIVE -->
+    <div class="incentive-card">
+      <div class="incentive-icon">🏛️</div>
+      <div>
+        <div class="incentive-title">มาตรการรัฐบาลไทย · 2026</div>
+        <div class="incentive-heading">ลดหย่อนภาษีเงินได้สูงสุด ฿200,000</div>
+        <div class="incentive-desc">
+          สำหรับระบบโซลาร์ On-Grid บ้านพักอาศัยถึง 10 kWp รัฐบาลให้
+          <strong>ลดหย่อนภาษีเงินได้สูงสุด ฿200,000</strong> ในปีภาษีที่ติดตั้ง
+          ในทางปฏิบัติ การลงทุนสุทธิจะเหลือ<strong>~฿250,000</strong> และระยะคืนทุนจะสั้นลงเหลือ<strong>~3.8 ปี</strong>.
+          ใช้หักภาษีได้กับใบกำกับภาษีอย่างเป็นทางการ — TM Energy จัดเตรียมเอกสารทั้งหมด
+        </div>
+      </div>
+    </div>
+
+    <!-- CUMULATIVE SAVINGS -->
+    <div class="cumulative-chart">
+      <div class="section-label" style="margin-bottom: 4px;">ประหยัดสะสม</div>
+      <h3 style="font-size: 20px; color: var(--navy);">ROI לאורך זמן (หลัง ניכוי מס)</h3>
+      <div class="cumulative-bars">
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 20%;"><span class="cum-bar-value">฿400K</span></div>
+          <span class="cum-bar-label">ปีที่ 5</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 40%;"><span class="cum-bar-value">฿799K</span></div>
+          <span class="cum-bar-label">ปีที่ 10</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 60%;"><span class="cum-bar-value">฿1.2M</span></div>
+          <span class="cum-bar-label">ปีที่ 15</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 80%;"><span class="cum-bar-value">฿1.6M</span></div>
+          <span class="cum-bar-label">ปีที่ 20</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill peak" style="height: 100%;"><span class="cum-bar-value">฿2.0M</span></div>
+          <span class="cum-bar-label">ปีที่ 25</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section>
+  <div class="container">
+    <div class="section-label">ตารางเวลา</div>
+    <h2 class="section-heading">พ.ค.שור ההצעה ועד การเชื่อมต่อ לרשת</h2>
+    <div class="spec-table" style="margin-top: 24px;">
+      <div class="spec-row">
+        <span class="spec-label">สัปดาห์ที่ 1</span>
+        <span class="spec-value">ลงนามสัญญา · จ่ายงวดแรก · สั่งอุปกรณ์</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">สัปดาห์ที่ 2-3</span>
+        <span class="spec-value">เตรียมเอกสาร PEA · ยื่น · อุปกรณ์มาถึง</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">สัปดาห์ที่ 4</span>
+        <span class="spec-value">ติดตั้ง (3 วัน) · ทดสอบ</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">สัปดาห์ที่ 5-6</span>
+        <span class="spec-value">อนุมัติ PEA · เปลี่ยนมิเตอร์ · COD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="container">
+    <div class="cta">
+      <h2>พร้อมประหยัดแล้วหรือยัง?</h2>
+      <p>นัดเราเข้าสำรวจพื้นที่ที่เกาะพะงัน — ฟรี ไม่มีข้อผูกมัด</p>
+      <a class="cta-btn" href="https://wa.me/66946692011?text=%D7%94%D7%99%D7%99%20TM%20Energy%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%94%D7%94%D7%A6%D7%A2%D7%94%20AMIR-001%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%AA%D7%90%D7%9D%20%D7%91%D7%99%D7%A7%D7%95%D7%A8">
+        WhatsApp · +66 94 669 2011 →
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><strong>TM Energy · Phangan</strong> · energy-tm.com · +66 94 669 2011</p>
+    <p style="margin-top: 8px; font-size: 12px;">הצעה זו תקפה 30 วัน · REF AMIR-001 · เม.ย.יל 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>

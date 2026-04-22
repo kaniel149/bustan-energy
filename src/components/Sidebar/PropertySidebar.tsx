@@ -468,6 +468,23 @@ export function PropertySidebar() {
                 <FileDown size={14} />
                 Quick Report (PDF)
               </button>
+              <button
+                onClick={() => {
+                  const params = new URLSearchParams({
+                    client_name: property.ownerName || '',
+                    location: `${regionConfig.nameEn}`,
+                    system_size_kwp: String(financial.capacityKwp || ''),
+                    total_price_thb: String(financial.epcCost || ''),
+                    annual_savings_thb: String(financial.annualSavingsYear1 || ''),
+                    payback_years: String(financial.paybackYears || ''),
+                  })
+                  window.open(`/admin/proposals/new?${params.toString()}`, '_blank')
+                }}
+                className="w-full py-2.5 rounded-xl bg-[#1A7A5A] text-white text-sm flex items-center justify-center gap-2 hover:bg-[#11604B] transition-colors font-semibold"
+              >
+                <Send size={14} />
+                Create Branded Proposal (Admin)
+              </button>
             </div>
           )}
 

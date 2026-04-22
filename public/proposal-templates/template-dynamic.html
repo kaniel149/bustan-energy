@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — הצעת מחיר סולארית · {{client_name}}</title>
+<meta name="description" content="הצעת מחיר למערכת סולארית {{system_size_kwp}} kWp — קופנגן, תאילנד. TM Energy.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0D2137;
+  --navy-light: #132D4A;
+  --gold: #E8A820;
+  --gold-soft: rgba(232,168,32,.08);
+  --green: #1A7A5A;
+  --green-soft: rgba(26,122,90,.08);
+  --white: #FFFFFF;
+  --bg: #F7F8FA;
+  --text: #1A2332;
+  --text-secondary: #6B7A8D;
+  --border: rgba(0,0,0,.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.1);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Heebo', 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  direction: rtl;
+}
+h1, h2, h3 { font-weight: 900; }
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+section { padding: 72px 0; }
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+}
+.section-heading {
+  font-size: clamp(28px, 4vw, 38px); font-weight: 900;
+  color: var(--navy); line-height: 1.3; margin-bottom: 8px;
+}
+.section-desc {
+  font-size: 16px; color: var(--text-secondary);
+  max-width: 560px; margin-bottom: 40px;
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13,33,55,.97);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(232,168,32,.15);
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { font-weight: 800; font-size: 13px; color: var(--gold); letter-spacing: 2.5px; }
+.nav-logo-img { width: 38px; height: 38px; margin-left: 10px; vertical-align: middle; border-radius: 50%; }
+.nav-ref { font-size: 12px; color: rgba(255,255,255,.6); font-family: 'Inter', monospace; }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white; padding: 140px 0 100px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -50%; left: -20%;
+  width: 80%; height: 200%; background: radial-gradient(circle, rgba(232,168,32,.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-ref {
+  display: inline-block; padding: 6px 14px;
+  background: rgba(232,168,32,.12); border: 1px solid rgba(232,168,32,.3);
+  border-radius: 100px; color: var(--gold);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 24px;
+}
+.hero h1 {
+  font-size: clamp(36px, 6vw, 60px); font-weight: 900;
+  line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px;
+}
+.hero h1 span { color: var(--gold); }
+.hero p {
+  font-size: 18px; color: rgba(255,255,255,.75);
+  max-width: 620px; margin-bottom: 40px;
+}
+.hero-meta {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; max-width: 600px; position: relative; z-index: 2;
+}
+.hero-meta-item { border-right: 1px solid rgba(232,168,32,.3); padding-right: 20px; }
+.hero-meta-item:last-child { border-right: none; }
+.hero-meta-label {
+  font-size: 11px; color: rgba(255,255,255,.5);
+  font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;
+}
+.hero-meta-value { font-size: 20px; font-weight: 800; color: white; }
+
+/* ── VISUAL ── */
+.visual-compare {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin: 40px 0;
+}
+.visual-card {
+  background: white; border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+.visual-card img { width: 100%; height: auto; display: block; }
+.visual-caption {
+  padding: 14px 18px; font-size: 13px; font-weight: 700;
+  color: var(--navy); border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.visual-tag {
+  background: var(--gold-soft); color: var(--gold);
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 10px; letter-spacing: 1px;
+}
+.visual-tag.green { background: var(--green-soft); color: var(--green); }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-top: 24px;
+}
+.stat {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 20px;
+  text-align: center; box-shadow: var(--shadow-sm);
+}
+.stat-value {
+  font-size: clamp(28px, 4vw, 38px); font-weight: 900;
+  color: var(--navy); line-height: 1; margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 12px; color: var(--text-secondary);
+  font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+}
+
+/* ── TABLE ── */
+.spec-table {
+  background: white; border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.spec-row {
+  display: grid; grid-template-columns: 1fr 2fr;
+  padding: 18px 28px; border-bottom: 1px solid var(--border);
+  font-size: 15px;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-row:nth-child(odd) { background: rgba(13,33,55,.015); }
+.spec-label { font-weight: 700; color: var(--text-secondary); }
+.spec-value { color: var(--navy); font-weight: 600; }
+
+/* ── PSH CHART ── */
+.psh-chart {
+  background: white; border-radius: var(--radius);
+  padding: 28px; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border); margin-top: 24px;
+}
+.psh-bars {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  gap: 8px; align-items: end; height: 160px; margin-top: 20px;
+}
+.psh-bar { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.psh-bar-fill {
+  width: 100%; background: linear-gradient(180deg, var(--gold) 0%, #D49010 100%);
+  border-radius: 6px 6px 0 0; min-height: 8px; position: relative;
+}
+.psh-bar-value {
+  font-size: 10px; font-weight: 800; color: var(--navy);
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+}
+.psh-bar-label { font-size: 10px; color: var(--text-secondary); font-weight: 600; }
+.psh-summary {
+  display: flex; justify-content: space-between;
+  padding-top: 20px; margin-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.psh-summary-item { }
+.psh-summary-label {
+  font-size: 11px; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+}
+.psh-summary-value {
+  font-size: 22px; font-weight: 900; color: var(--navy); margin-top: 4px;
+}
+
+/* ── ROI ── */
+.roi-wrap {
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-top: 24px;
+}
+.roi-price-card {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white; border-radius: var(--radius); padding: 40px;
+  position: relative; overflow: hidden;
+}
+.roi-price-card::before {
+  content: '☀️'; position: absolute; top: -20px; left: -20px;
+  font-size: 180px; opacity: 0.05; transform: rotate(-15deg);
+}
+.roi-tag {
+  display: inline-block; padding: 6px 14px;
+  background: rgba(232,168,32,.15); border: 1px solid rgba(232,168,32,.35);
+  border-radius: 100px; color: var(--gold);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 20px;
+}
+.roi-price {
+  font-size: clamp(40px, 6vw, 56px); font-weight: 900;
+  line-height: 1; margin-bottom: 8px;
+}
+.roi-price .currency { font-size: 24px; color: var(--gold); margin-left: 4px; }
+.roi-turnkey { font-size: 14px; color: rgba(255,255,255,.7); margin-bottom: 28px; }
+.roi-included { list-style: none; }
+.roi-included li {
+  font-size: 14px; padding: 8px 0; color: rgba(255,255,255,.85);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  display: flex; align-items: center; gap: 10px;
+}
+.roi-included li:last-child { border-bottom: none; }
+.roi-included li::before {
+  content: '✓'; color: var(--gold); font-weight: 900; font-size: 16px;
+}
+
+.roi-savings {
+  background: white; border-radius: var(--radius);
+  padding: 32px; box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.roi-savings-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 14px 0; border-bottom: 1px dashed var(--border);
+}
+.roi-savings-row:last-child { border-bottom: none; padding-top: 20px; }
+.roi-savings-label { font-size: 14px; color: var(--text-secondary); font-weight: 600; }
+.roi-savings-value { font-size: 20px; font-weight: 900; color: var(--navy); }
+.roi-savings-value.big { font-size: 32px; color: var(--green); }
+
+/* ── TAX / INCENTIVE ── */
+.incentive-card {
+  background: linear-gradient(135deg, var(--green) 0%, #11604B 100%);
+  color: white; border-radius: var(--radius); padding: 36px 40px;
+  margin-top: 24px; display: grid; grid-template-columns: auto 1fr;
+  gap: 24px; align-items: center; box-shadow: var(--shadow-md);
+}
+.incentive-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(255,255,255,.15); display: flex;
+  align-items: center; justify-content: center; font-size: 36px;
+}
+.incentive-title {
+  font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+  color: rgba(255,255,255,.75); text-transform: uppercase; margin-bottom: 6px;
+}
+.incentive-heading { font-size: 24px; font-weight: 900; color: white; margin-bottom: 8px; }
+.incentive-desc { font-size: 14px; color: rgba(255,255,255,.85); line-height: 1.6; }
+.incentive-desc strong { color: var(--gold); }
+
+/* ── CUMULATIVE ── */
+.cumulative-chart {
+  background: white; border-radius: var(--radius);
+  padding: 28px; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border); margin-top: 24px;
+}
+.cumulative-bars {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 14px; align-items: end; height: 220px; margin-top: 28px;
+}
+.cum-bar { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; }
+.cum-bar-fill {
+  width: 100%; border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, var(--green) 0%, #11604B 100%);
+  min-height: 12px; position: relative;
+}
+.cum-bar-fill.peak { background: linear-gradient(180deg, var(--gold) 0%, #D49010 100%); }
+.cum-bar-value {
+  font-size: 12px; font-weight: 900; color: var(--navy);
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+}
+.cum-bar-label {
+  font-size: 11px; color: var(--text-secondary);
+  font-weight: 700; text-align: center;
+}
+
+/* ── CTA ── */
+.cta {
+  background: linear-gradient(135deg, var(--gold) 0%, #D49010 100%);
+  color: white; border-radius: var(--radius);
+  padding: 60px 40px; text-align: center;
+  margin-top: 40px; box-shadow: var(--shadow-lg);
+}
+.cta h2 { font-size: clamp(26px, 4vw, 34px); color: white; margin-bottom: 12px; }
+.cta p { font-size: 16px; color: rgba(255,255,255,.9); margin-bottom: 28px; }
+.cta-btn {
+  display: inline-block; padding: 16px 36px;
+  background: var(--navy); color: white; text-decoration: none;
+  font-weight: 800; border-radius: 100px; font-size: 15px;
+  letter-spacing: 0.5px; transition: transform .2s;
+}
+.cta-btn:hover { transform: translateY(-2px); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy); color: rgba(255,255,255,.6);
+  padding: 40px 0; text-align: center; font-size: 13px;
+}
+footer strong { color: var(--gold); }
+
+/* ── OPTIONS GRID ── */
+.options-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; margin-top: 8px;
+}
+.option-card {
+  background: white; border-radius: var(--radius);
+  border: 2px solid var(--border); padding: 28px 24px 24px;
+  display: flex; flex-direction: column;
+  box-shadow: var(--shadow-sm); position: relative;
+  transition: box-shadow .2s, border-color .2s;
+}
+.option-card:hover { box-shadow: var(--shadow-md); }
+.option-card.featured {
+  border-color: var(--gold); box-shadow: 0 8px 32px rgba(232,168,32,.18);
+}
+.option-tag {
+  position: absolute; top: -13px; right: 50%; transform: translateX(50%);
+  background: var(--gold); color: var(--navy);
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+  padding: 4px 12px; border-radius: 100px;
+  white-space: nowrap;
+}
+.option-icon { font-size: 36px; margin-bottom: 12px; }
+.option-name { font-size: 17px; font-weight: 900; color: var(--navy); margin-bottom: 4px; }
+.option-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+.option-price {
+  font-size: 26px; font-weight: 900; color: var(--navy);
+  margin-bottom: 4px; line-height: 1.2;
+}
+.option-price-note { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-top: 2px; }
+.option-features { flex: 1; margin: 16px 0; }
+.option-feature {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--text); padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+.option-feature:last-child { border-bottom: none; }
+.check-icon { color: var(--green); font-weight: 900; flex-shrink: 0; }
+.option-bottom {
+  margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-sm);
+}
+.option-bottom.green { background: var(--green-soft); }
+.option-bottom.gold { background: var(--gold-soft); }
+.option-bottom-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px; }
+.option-bottom-value { font-size: 22px; font-weight: 900; }
+.option-bottom-value.green-text { color: var(--green); }
+.option-bottom-value.gold-text { color: var(--gold); }
+.option-bottom-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.option-choose-btn {
+  display: block; width: 100%; margin-top: 16px;
+  padding: 10px; border-radius: var(--radius-sm);
+  border: 2px solid var(--navy); background: transparent;
+  color: var(--navy); font-weight: 700; font-size: 13px;
+  cursor: pointer; text-align: center; transition: all .15s;
+}
+.option-choose-btn:hover, .option-card.featured .option-choose-btn {
+  background: var(--navy); color: white;
+}
+.option-card.featured .option-choose-btn {
+  background: var(--gold); border-color: var(--gold); color: var(--navy);
+}
+
+/* ── COMPARE TABLE ── */
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  background: white; border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-md);
+  font-size: 14px;
+}
+.compare-table th {
+  padding: 16px 20px; font-weight: 700; font-size: 14px;
+}
+.compare-table td {
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:nth-child(even) td { background: rgba(13,33,55,.015); }
+.compare-table td:first-child { font-weight: 700; color: var(--text-secondary); }
+.compare-table td:not(:first-child) { text-align: center; }
+.compare-col-ppa { background: var(--gold-soft) !important; }
+.compare-table th.compare-col-ppa { background: rgba(232,168,32,.18) !important; }
+
+/* ── SAVINGS VISUALIZATION ── */
+.savings-section { margin-top: 32px; }
+.savings-bar-group { margin-bottom: 20px; }
+.savings-bar-group h4 { font-size: 14px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; }
+.savings-bar {
+  height: 44px; border-radius: var(--radius-sm);
+  display: flex; align-items: center;
+  padding: 0 16px; font-weight: 800; font-size: 15px; color: white;
+  position: relative; min-width: 80px;
+  transition: width .6s ease;
+}
+.savings-bar.bar-pea { background: linear-gradient(90deg, #C0392B, #E74C3C); width: 100%; }
+.savings-bar.bar-solar { background: linear-gradient(90deg, var(--green), #2ECC71); }
+.savings-badge {
+  display: inline-block; margin-top: 10px;
+  background: var(--green); color: white;
+  font-size: 13px; font-weight: 800; padding: 6px 14px; border-radius: 8px;
+}
+
+/* ── ENV / STATS CARDS ── */
+.env-stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-top: 8px;
+}
+.env-stat {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 20px;
+  text-align: center; box-shadow: var(--shadow-sm);
+}
+.env-stat-value { font-size: clamp(22px, 3vw, 32px); font-weight: 900; color: var(--green); line-height: 1; margin-bottom: 8px; }
+.env-stat-value.gold { color: var(--gold); }
+.env-stat-label { font-size: 12px; color: var(--text-secondary); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+
+/* ── TIMELINE ── */
+.timeline-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-top: 16px; position: relative;
+}
+.timeline-grid::before {
+  content: ''; position: absolute; top: 36px; right: 10%; left: 10%;
+  height: 2px; background: linear-gradient(90deg, var(--gold), var(--green));
+  z-index: 0;
+}
+.timeline-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 18px;
+  text-align: center; position: relative; z-index: 1;
+  box-shadow: var(--shadow-sm);
+}
+.timeline-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--navy); color: var(--gold);
+  font-weight: 900; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+}
+.timeline-icon { font-size: 28px; margin-bottom: 10px; }
+.timeline-title { font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.timeline-period { font-size: 12px; color: var(--gold); font-weight: 700; }
+
+/* ── CONTRACT LINKS ── */
+.contract-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.contract-link-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 12px 22px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  transition: opacity .15s;
+}
+.contract-link-btn:hover { opacity: 0.85; }
+.contract-link-btn.epc {
+  background: var(--gold-soft); border: 1px solid var(--gold);
+  color: var(--navy);
+}
+.contract-link-btn.ppa {
+  background: var(--green-soft); border: 1px solid var(--green);
+  color: var(--navy);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  section { padding: 48px 0; }
+  .hero { padding: 110px 0 70px; }
+  .hero-meta { grid-template-columns: 1fr; gap: 16px; }
+  .hero-meta-item { border-right: none; border-bottom: 1px solid rgba(232,168,32,.2); padding: 0 0 12px 0; }
+  .hero-meta-item:last-child { border-bottom: none; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .visual-compare { grid-template-columns: 1fr; }
+  .roi-wrap { grid-template-columns: 1fr; }
+  .spec-row { grid-template-columns: 1fr; gap: 4px; padding: 14px 20px; }
+  .options-grid { grid-template-columns: 1fr; }
+  .env-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .timeline-grid { grid-template-columns: repeat(2, 1fr); }
+  .timeline-grid::before { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div>
+    <img class="nav-logo-img" src="{{logo_url}}" alt="TM Energy">
+    <span class="nav-brand">TM ENERGY · PHANGAN</span>
+  </div>
+  <div class="nav-ref">REF · {{ref}} · 2026</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container" style="position: relative; z-index: 2;">
+    <span class="hero-ref">הצעת מחיר · {{month_year_he}}</span>
+    <h1>מערכת סולארית<br><span>{{system_size_kwp}} kWp + סוללה</span></h1>
+    <p>מערכת היברידית מלאה Huawei לקופנגן — {{panel_count}} פאנלים Jinko N-Type + אינוורטר Huawei SUN2000 + סוללת {{battery_model}} {{battery_kwh}} kWh. עצמאות אנרגטית גם בהפסקות חשמל, חיסכון של 79,900 ฿ בשנה.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">לקוח</div>
+        <div class="hero-meta-value">{{client_name}}</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">מיקום</div>
+        <div class="hero-meta-value">{{location_short}}</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">תוקף</div>
+        <div class="hero-meta-value">30 יום</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISUAL MOCKUP -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">סימולציה ויזואלית</div>
+    <h2 class="section-heading">איך המערכת תיראה על הגג שלך</h2>
+    <p class="section-desc">דימוי AI מדויק המבוסס על תמונת הרחפן של הגג — מראה מדויק של מיקום ומספר הפאנלים.</p>
+    <div class="visual-compare">
+      <div class="visual-card">
+        <img src="{{roof_original_url}}" alt="גג מקורי" loading="lazy">
+        <div class="visual-caption">
+          <span>לפני</span>
+          <span class="visual-tag">תמונת רחפן</span>
+        </div>
+      </div>
+      <div class="visual-card">
+        <img src="{{roof_panels_url}}" alt="גג עם פאנלים" loading="lazy">
+        <div class="visual-caption">
+          <span>אחרי</span>
+          <span class="visual-tag green">{{panel_count}} פאנלים · {{system_size_kwp}} kWp</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROOF ANALYSIS -->
+<section>
+  <div class="container">
+    <div class="section-label">ניתוח הגג</div>
+    <h2 class="section-heading">מדידות ותכנון</h2>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-value">120</div>
+        <div class="stat-label">m² שטח גג</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">22</div>
+        <div class="stat-label">פאנלים פעילים</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">ציר N-S</div>
+        <div class="stat-label">אוריינטציה</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">רעפים</div>
+        <div class="stat-label">סוג גג</div>
+      </div>
+    </div>
+    <div class="spec-table" style="margin-top: 24px;">
+      <div class="spec-row">
+        <span class="spec-label">מדרון שמאל (מזרח)</span>
+        <span class="spec-value">~48 m² · 10 פאנלים (2×5)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">מדרון ימין (מערב)</span>
+        <span class="spec-value">~48 m² · 8 פאנלים (2×4)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">חלק עליון (clerestory)</span>
+        <span class="spec-value">~18 m² · 4 פאנלים נוספים (2×2)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">סה״כ פאנלים</span>
+        <span class="spec-value">{{panel_count}} × {{panel_watt}}W = {{system_size_kwp}} kWp</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">הצללה צפויה</span>
+        <span class="spec-value">5-8% בבוקר מעץ המנגו · זניח</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM SPECS -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">מפרט המערכת</div>
+    <h2 class="section-heading">רכיבים Tier-1 בלבד</h2>
+    <div class="spec-table">
+      <div class="spec-row">
+        <span class="spec-label">פאנלים</span>
+        <span class="spec-value">{{panel_count}}× {{panel_model}} (25 שנות אחריות ייצור)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">אינוורטר</span>
+        <span class="spec-value">{{inverter_model}} היברידי (10 שנות אחריות)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">סוללה</span>
+        <span class="spec-value">{{battery_model}} · {{battery_kwh}} kWh · LFP (10 שנות אחריות · 100% DoD)</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">הספק DC</span>
+        <span class="spec-value">{{system_size_kwp}} kWp</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">חיבור</span>
+        <span class="spec-value">PEA On-Grid Hybrid · גיבוי אוטומטי בהפסקות חשמל</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">עיגון</span>
+        <span class="spec-value">Tile hooks אלומיניום עם איטום EPDM</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">ניטור</span>
+        <span class="spec-value">FusionSolar App — ייצור בזמן אמת + התראות</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">הגנות</span>
+        <span class="spec-value">DC/AC isolator, SPD, RCD, mini-CB (תקן IEC 62446)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTION / PSH -->
+<section>
+  <div class="container">
+    <div class="section-label">תחזית ייצור</div>
+    <h2 class="section-heading">שעות שמש חודשיות · {{location_psh}}</h2>
+    <p class="section-desc">חישוב עצמאי לפי נתוני קרינה NASA SSE לאזור הספציפי, עם תיקון לחום טרופי (PR=0.78).</p>
+    <div class="psh-chart">
+      <div class="psh-bars">
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 86%;"><span class="psh-bar-value">5.7</span></div><span class="psh-bar-label">ינו</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 92%;"><span class="psh-bar-value">6.1</span></div><span class="psh-bar-label">פבר</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 95%;"><span class="psh-bar-value">6.3</span></div><span class="psh-bar-label">מרץ</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 90%;"><span class="psh-bar-value">6.0</span></div><span class="psh-bar-label">אפר</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">מאי</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 66%;"><span class="psh-bar-value">4.4</span></div><span class="psh-bar-label">יונ</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">יול</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 60%;"><span class="psh-bar-value">4.0</span></div><span class="psh-bar-label">אוג</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">ספט</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 57%;"><span class="psh-bar-value">3.8</span></div><span class="psh-bar-label">אוק</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">נוב</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 81%;"><span class="psh-bar-value">5.4</span></div><span class="psh-bar-label">דצמ</span></div>
+      </div>
+      <div class="psh-summary">
+        <div class="psh-summary-item">
+          <div class="psh-summary-label">ממוצע שנתי (PSH)</div>
+          <div class="psh-summary-value">5.0 שעות / יום</div>
+        </div>
+        <div class="psh-summary-item">
+          <div class="psh-summary-label">ייצור צפוי שנתי</div>
+          <div class="psh-summary-value">{{annual_kwh_fmt}} kWh</div>
+        </div>
+        <div class="psh-summary-item">
+          <div class="psh-summary-label">ייצור ממוצע חודשי</div>
+          <div class="psh-summary-value">~{{monthly_kwh_fmt}} kWh</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE OPTIONS -->
+<section>
+  <div class="container">
+    <div class="section-label">בחר את התוכנית שלך</div>
+    <h2 class="section-heading">שלוש אפשרויות, מטרה אחת: חשבון חשמל נמוך יותר</h2>
+    <p class="section-desc">בחר את התוכנית שמתאימה לתקציב שלך. כל האפשרויות משתמשות באותם רכיבים פרמיום בדיוק.</p>
+
+    <div class="options-grid">
+      <!-- OPTION A: EPC -->
+      <div class="option-card" id="optionCardA">
+        <div class="option-icon">⚡</div>
+        <div class="option-name">אופציה א: EPC</div>
+        <div class="option-desc">בעלות מלאה על המערכת</div>
+        <div class="option-price">฿{{price_fmt}}</div>
+        <div class="option-features">
+          <div class="option-feature"><span class="check-icon">✓</span> מערכת סולארית מותקנת במלואה</div>
+          <div class="option-feature"><span class="check-icon">✓</span> רישיון PEA וחיבור לרשת</div>
+          <div class="option-feature"><span class="check-icon">✓</span> אחריות פאנלים 25 שנה</div>
+          <div class="option-feature"><span class="check-icon">✓</span> אחריות אינוורטר 10 שנים</div>
+          <div class="option-feature"><span class="check-icon">✓</span> ניטור 24/7 (שנה ראשונה חינם)</div>
+          <div class="option-feature"><span class="check-icon">✓</span> בעלות שלך — כל החיסכון שלך</div>
+        </div>
+        <div class="option-bottom green">
+          <div class="option-bottom-label">חיסכון שנתי</div>
+          <div class="option-bottom-value green-text">~฿{{annual_savings_fmt}}</div>
+          <div class="option-bottom-sub">החזר השקעה: <strong>{{payback_no_tax}} שנים</strong></div>
+        </div>
+        <button class="option-choose-btn" onclick="selectOption('A')">בחר אפשרות זו</button>
+      </div>
+
+      <!-- OPTION B: PPA (RECOMMENDED) -->
+      <div class="option-card featured" id="optionCardB">
+        <div class="option-tag">★ מומלץ</div>
+        <div class="option-icon">☀️</div>
+        <div class="option-name">אופציה ב: PPA</div>
+        <div class="option-desc">אפס מקדמה — אנחנו מתקינים, אתה חוסך</div>
+        <div class="option-price" style="color:var(--green);">฿0 מקדמה<span class="option-price-note">תשלום ฿{{ppa_rate}}/kWh בלבד · {{ppa_years}} שנה</span></div>
+        <div class="option-features">
+          <div class="option-feature"><span class="check-icon">✓</span> ฿0 התקנה — אנחנו מממנים הכל</div>
+          <div class="option-feature"><span class="check-icon">✓</span> זול יותר מתעריף PEA מהיום הראשון</div>
+          <div class="option-feature"><span class="check-icon">✓</span> תחזוקה וניטור חינם {{ppa_years}} שנים</div>
+          <div class="option-feature"><span class="check-icon">✓</span> ניקוי פאנלים 2 פעמים בשנה</div>
+          <div class="option-feature"><span class="check-icon">✓</span> ערבות החלפת מערכת</div>
+          <div class="option-feature"><span class="check-icon">✓</span> חיסכון מיידי — אפס סיכון</div>
+        </div>
+        <div class="option-bottom gold">
+          <div class="option-bottom-label">חיסכון חודשי</div>
+          <div class="option-bottom-value gold-text">~฿{{monthly_savings_fmt}}</div>
+          <div class="option-bottom-sub">החיסכון מתחיל מיידית</div>
+        </div>
+        <button class="option-choose-btn" onclick="selectOption('B')">בחר אפשרות זו</button>
+      </div>
+
+      <!-- OPTION C: EPC + BATTERY -->
+      <div class="option-card" id="optionCardC">
+        <div class="option-icon">🔋</div>
+        <div class="option-name">אופציה ג: EPC + סוללה</div>
+        <div class="option-desc">עצמאות אנרגטית מקסימלית</div>
+        <div class="option-price">฿{{price_battery_fmt}}</div>
+        <div class="option-features">
+          <div class="option-feature"><span class="check-icon">✓</span> הכל כמו אופציה א, בנוסף:</div>
+          <div class="option-feature"><span class="check-icon">✓</span> סוללת {{battery_model}} {{battery_kwh_extra}} kWh</div>
+          <div class="option-feature"><span class="check-icon">✓</span> גיבוי בהפסקות חשמל</div>
+          <div class="option-feature"><span class="check-icon">✓</span> אחריות סוללה 10 שנים</div>
+          <div class="option-feature"><span class="check-icon">✓</span> ניהול אנרגיה חכם דרך אפליקציה</div>
+        </div>
+        <div class="option-bottom green">
+          <div class="option-bottom-label">חיסכון שנתי</div>
+          <div class="option-bottom-value green-text">~฿{{annual_savings_fmt}}</div>
+          <div class="option-bottom-sub">+ ביטחון אנרגטי מלא</div>
+        </div>
+        <button class="option-choose-btn" onclick="selectOption('C')">בחר אפשרות זו</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">השוואה מלאה</div>
+    <h2 class="section-heading">השוואה בין כל האפשרויות</h2>
+    <div style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr style="background:var(--navy);color:#fff;">
+            <th style="padding:16px 20px;text-align:right;font-weight:600;font-size:13px;min-width:160px;"></th>
+            <th style="padding:16px 20px;">⚡ אופציה א: EPC</th>
+            <th class="compare-col-ppa" style="padding:16px 20px;">☀️ אופציה ב: PPA ★</th>
+            <th style="padding:16px 20px;">🔋 אופציה ג: EPC+סוללה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>עלות מקדמה</td>
+            <td style="font-weight:700;">฿{{price_fmt}}</td>
+            <td class="compare-col-ppa" style="font-weight:700;color:var(--green);">฿0</td>
+            <td style="font-weight:700;">฿{{price_battery_fmt}}</td>
+          </tr>
+          <tr>
+            <td>תשלום חודשי</td>
+            <td>฿0 לאחר רכישה</td>
+            <td class="compare-col-ppa">฿{{ppa_rate}}/kWh</td>
+            <td>฿0 לאחר רכישה</td>
+          </tr>
+          <tr>
+            <td>חיסכון שנתי</td>
+            <td style="font-weight:700;color:var(--green);">~฿{{annual_savings_fmt}}</td>
+            <td class="compare-col-ppa" style="font-weight:700;color:var(--green);">~฿{{annual_savings_fmt}}</td>
+            <td style="font-weight:700;color:var(--green);">~฿{{annual_savings_fmt}}</td>
+          </tr>
+          <tr>
+            <td>החזר השקעה</td>
+            <td style="font-weight:700;">{{payback_no_tax}} שנים</td>
+            <td class="compare-col-ppa" style="font-weight:700;">מיידי</td>
+            <td style="font-weight:700;">{{payback_no_tax}}+ שנים</td>
+          </tr>
+          <tr>
+            <td>אחריות פאנלים</td>
+            <td>25 שנה</td>
+            <td class="compare-col-ppa">25 שנה</td>
+            <td>25 שנה</td>
+          </tr>
+          <tr>
+            <td>אחריות אינוורטר</td>
+            <td>10 שנים</td>
+            <td class="compare-col-ppa">10 שנים</td>
+            <td>10 שנים</td>
+          </tr>
+          <tr>
+            <td>גיבוי סוללה</td>
+            <td>❌ יום בלבד</td>
+            <td class="compare-col-ppa">❌ יום בלבד</td>
+            <td style="font-weight:700;color:var(--green);">✓ {{battery_kwh_extra}} kWh גיבוי</td>
+          </tr>
+          <tr>
+            <td>ניטור</td>
+            <td>FusionSolar App</td>
+            <td class="compare-col-ppa">FusionSolar App</td>
+            <td>FusionSolar App</td>
+          </tr>
+          <tr>
+            <td>בעלות</td>
+            <td>שלך ✓</td>
+            <td class="compare-col-ppa">TM Energy<br><span style="font-size:11px;">(ניתן לרכוש אחרי {{ppa_years}} שנה)</span></td>
+            <td>שלך ✓</td>
+          </tr>
+          <tr>
+            <td>תחזוקה</td>
+            <td>שנה ראשונה חינם</td>
+            <td class="compare-col-ppa">חינם {{ppa_years}} שנה</td>
+            <td>שנה ראשונה חינם</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SAVINGS VISUALIZATION + CO2 + 10YR -->
+<section>
+  <div class="container">
+    <div class="section-label">הסיפור שמאחורי המספרים</div>
+    <h2 class="section-heading">כמה תחסוך בפועל</h2>
+    <p class="section-desc">השוואה בין עלות החשמל הנוכחית שלך לאחר התקנת מערכת סולארית — המספרים מדברים בעד עצמם.</p>
+
+    <div class="savings-section">
+      <div class="savings-bar-group">
+        <h4>ללא סולאר — חשמל שנתי: ฿{{annual_bill_fmt}}</h4>
+        <div class="savings-bar bar-pea">฿{{annual_bill_fmt}}</div>
+      </div>
+      <div class="savings-bar-group">
+        <h4>עם סולאר (EPC) — עלות שנתית חדשה: ฿{{annual_bill_with_solar_fmt}}</h4>
+        <div class="savings-bar bar-solar" style="width:{{solar_bar_pct}}%;min-width:80px;">฿{{annual_bill_with_solar_fmt}}</div>
+        <div class="savings-badge">חיסכון: ฿{{annual_savings_fmt}} בשנה</div>
+      </div>
+    </div>
+
+    <div class="env-stats-grid" style="margin-top: 40px;">
+      <div class="env-stat">
+        <div class="env-stat-value green">฿{{annual_savings_fmt}}</div>
+        <div class="env-stat-label">חיסכון שנתי</div>
+      </div>
+      <div class="env-stat">
+        <div class="env-stat-value gold">฿{{savings_10yr_fmt}}</div>
+        <div class="env-stat-label">חיסכון ב-10 שנים</div>
+      </div>
+      <div class="env-stat">
+        <div class="env-stat-value gold">{{payback_no_tax}} שנים</div>
+        <div class="env-stat-label">החזר השקעה</div>
+      </div>
+      <div class="env-stat">
+        <div class="env-stat-value green">{{co2_saved_kg}} ק"ג</div>
+        <div class="env-stat-label">CO₂ נחסך בשנה</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALLATION TIMELINE -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">לוח זמנים</div>
+    <h2 class="section-heading">4 שלבים עד לחיבור לרשת</h2>
+    <p class="section-desc">מרגע אישור ההצעה ועד הדלקת המערכת — תהליך ברור ושקוף.</p>
+
+    <div class="timeline-grid">
+      <div class="timeline-card">
+        <div class="timeline-num">1</div>
+        <div class="timeline-icon">📐</div>
+        <div class="timeline-title">סקר ועיצוב</div>
+        <div class="timeline-period">שבוע 1</div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-num">2</div>
+        <div class="timeline-icon">📋</div>
+        <div class="timeline-title">היתרים ורכש</div>
+        <div class="timeline-period">שבועות 2–3</div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-num">3</div>
+        <div class="timeline-icon">🔧</div>
+        <div class="timeline-title">התקנה</div>
+        <div class="timeline-period">שבוע 4 · 3-4 ימים</div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-num">4</div>
+        <div class="timeline-icon">⚡</div>
+        <div class="timeline-title">חיבור לרשת</div>
+        <div class="timeline-period">שבועות 5–6</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTRACT DOCUMENTS -->
+<section>
+  <div class="container">
+    <div class="section-label">מסמכים חוקיים</div>
+    <h2 class="section-heading">קרא את החוזים המלאים</h2>
+    <p class="section-desc">שקיפות מלאה — כל תנאי ההסכם זמינים לקריאה לפני החתימה.</p>
+    <div class="contract-links">
+      <a class="contract-link-btn epc" href="/contracts/epc-{{language}}.html" target="_blank">📄 קרא חוזה EPC</a>
+      <a class="contract-link-btn ppa" href="/contracts/ppa-{{language}}.html" target="_blank">📄 קרא חוזה PPA</a>
+    </div>
+  </div>
+</section>
+
+<script>
+function selectOption(opt) {
+  // Highlight selected card
+  ['A','B','C'].forEach(function(o) {
+    var card = document.getElementById('optionCard' + o);
+    if (card) {
+      card.style.outline = o === opt ? '3px solid var(--gold)' : '';
+      card.style.outlineOffset = o === opt ? '2px' : '';
+    }
+  });
+  // Sync radio in contract snippet if present
+  var radio = document.querySelector('input[name="selected_option"][value="' + opt + '"]');
+  if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+}
+</script>
+
+<!-- FINANCIAL / ROI -->
+<section style="background: white;">
+  <div class="container">
+    <div class="section-label">השקעה והחזר</div>
+    <h2 class="section-heading">תחזית פיננסית</h2>
+    <div class="roi-wrap">
+      <div class="roi-price-card">
+        <span class="roi-tag">Turnkey — הכל כלול</span>
+        <div class="roi-price">{{price_fmt}}<span class="currency">฿</span></div>
+        <div class="roi-turnkey">מחיר קבוע · לא כולל VAT · תשלום: 50% התחלה + 50% סיום התקנה</div>
+        <ul class="roi-included">
+          <li>{{panel_count}} פאנלים Jinko N-Type 580W</li>
+          <li>{{inverter_model}} היברידי</li>
+          <li>סוללת {{battery_model}} {{battery_kwh}} kWh — כלולה</li>
+          <li>מבנה תומך, כבלים, הגנות IEC 62446</li>
+          <li>התקנה מקצועית (3-4 ימי עבודה)</li>
+          <li>לוגיסטיקה + שילוח לקופנגן</li>
+          <li>הגשה ואישור PEA</li>
+          <li>אחריות 2 שנים על התקנה</li>
+          <li>מוניטורינג FusionSolar + בדיקת שנה ראשונה</li>
+        </ul>
+      </div>
+      <div class="roi-savings">
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">תעריף PEA ממוצע</span>
+          <span class="roi-savings-value">4.40 ฿/kWh</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">חיסכון חודשי</span>
+          <span class="roi-savings-value">~{{monthly_savings_fmt}} ฿</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">חיסכון שנתי</span>
+          <span class="roi-savings-value">~{{annual_savings_fmt}} ฿</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">החזר השקעה (ללא מס)</span>
+          <span class="roi-savings-value">{{payback_no_tax}} שנים</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">החזר (עם ניכוי מס)</span>
+          <span class="roi-savings-value" style="color: var(--green);">{{payback_with_tax}} שנים</span>
+        </div>
+        <div class="roi-savings-row">
+          <span class="roi-savings-label">חיסכון מצטבר 25 שנה</span>
+          <span class="roi-savings-value big">~{{savings_25yr_fmt}} ฿</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAX INCENTIVE -->
+    <div class="incentive-card">
+      <div class="incentive-icon">🏛️</div>
+      <div>
+        <div class="incentive-title">תמריץ ממשלת תאילנד · 2026</div>
+        <div class="incentive-heading">ניכוי מס הכנסה עד ฿200,000</div>
+        <div class="incentive-desc">
+          על התקנות סולאריות Residential On-Grid עד 10 kWp, ממשלת תאילנד מעניקה
+          <strong>ניכוי מס הכנסה של עד ฿200,000</strong> בשנת המס של ההתקנה.
+          בפועל, ההשקעה נטו יורדת ל-<strong>~฿250,000</strong> והחזר ההשקעה מתקצר ל-<strong>~3.8 שנים</strong>.
+          ניתן לקזז עם חשבוניות רשמיות — TM Energy מספקת את כל המסמכים הנדרשים.
+        </div>
+      </div>
+    </div>
+
+    <!-- CUMULATIVE SAVINGS -->
+    <div class="cumulative-chart">
+      <div class="section-label" style="margin-bottom: 4px;">חיסכון מצטבר</div>
+      <h3 style="font-size: 20px; color: var(--navy);">ROI לאורך זמן (אחרי ניכוי מס)</h3>
+      <div class="cumulative-bars">
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 20%;"><span class="cum-bar-value">฿{{cum_5yr}}</span></div>
+          <span class="cum-bar-label">שנה 5</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 40%;"><span class="cum-bar-value">฿{{cum_10yr}}</span></div>
+          <span class="cum-bar-label">שנה 10</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 60%;"><span class="cum-bar-value">฿{{cum_15yr}}</span></div>
+          <span class="cum-bar-label">שנה 15</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill" style="height: 80%;"><span class="cum-bar-value">฿{{cum_20yr}}</span></div>
+          <span class="cum-bar-label">שנה 20</span>
+        </div>
+        <div class="cum-bar">
+          <div class="cum-bar-fill peak" style="height: 100%;"><span class="cum-bar-value">฿{{cum_25yr}}</span></div>
+          <span class="cum-bar-label">שנה 25</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PEA DOCUMENTS REQUIRED -->
+<section style="background: #FFF8EC;">
+  <div class="container">
+    <div class="section-label">✅ רשימת מסמכים לאישור PEA</div>
+    <h2 class="section-heading">מה נזדקק ממך לצורך אישור רשת החשמל</h2>
+    <p class="section-desc">כדי להגיש בקשה ל-PEA לחיבור המערכת הסולארית לרשת, אנחנו זקוקים למסמכים הבאים. ברגע שתשלח אותם — אנחנו מטפלים בכל שאר התהליך מול PEA, ללא מעורבות שלך.</p>
+
+    <div style="background:white;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);">
+      <div style="padding:20px 28px;background:linear-gradient(135deg,#FDF1D5,#F9E4B0);border-bottom:1px solid var(--border);">
+        <div style="font-weight:800;color:var(--navy);font-size:15px;">📋 מסמכים שצריך להביא</div>
+      </div>
+
+      <div style="padding:8px 0;">
+        <div class="spec-row"><span class="spec-label">1. תעודה מזהה</span><span class="spec-value">צילום ת.ז. תאית / דרכון (כולל הויזה בתוקף)</span></div>
+        <div class="spec-row"><span class="spec-label">2. תבעיין באן</span><span class="spec-value">ทะเบียนบ้าน · רישום הבית (אפשר עותק או תמונה)</span></div>
+        <div class="spec-row"><span class="spec-label">3. שטר קרקע</span><span class="spec-value">โฉนด Chanote · עותק מלא או Nor Sor 3 Kor</span></div>
+        <div class="spec-row"><span class="spec-label">4. חשבון חשמל</span><span class="spec-value">3 חשבונות PEA אחרונים (כולל מספר מונה + מספר לקוח CA)</span></div>
+        <div class="spec-row"><span class="spec-label">5. מספר טלפון</span><span class="spec-value">לצורך תיאום ביקור טכנאי PEA להחלפת מונה</span></div>
+      </div>
+
+      <div style="padding:20px 28px;background:rgba(26,122,90,.05);border-top:1px solid var(--border);">
+        <div style="font-weight:800;color:var(--green);font-size:14px;margin-bottom:6px;">🟢 רק אם הבעלים שונה מהגר בבית</div>
+        <div style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
+          6. ייפוי כוח חתום מהבעלים הרשום + צילום ת.ז./דרכון שלו<br>
+          7. חוזה שכירות / הסכם שימוש (אם רלוונטי)
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div style="background:white;padding:24px;border-radius:12px;border:1px solid var(--border);">
+        <div style="font-size:32px;margin-bottom:8px;">✅</div>
+        <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">מה TM Energy מטפלים עבורך</div>
+        <ul style="padding-right:18px;color:var(--text-secondary);font-size:14px;line-height:1.9;margin-top:8px;">
+          <li>טופס בקשה PV-01</li>
+          <li>Single Line Diagram (SLD)</li>
+          <li>תכנית פריסה (Site layout)</li>
+          <li>תעודות TIS/IEC של הציוד</li>
+          <li>הגשה למשרד PEA המקומי</li>
+          <li>תיאום בדיקות ומבחנים</li>
+          <li>תחזוקת תכתובת עם PEA עד אישור</li>
+          <li>החלפת מונה ל-smart meter</li>
+        </ul>
+      </div>
+      <div style="background:white;padding:24px;border-radius:12px;border:1px solid var(--border);">
+        <div style="font-size:32px;margin-bottom:8px;">⏱️</div>
+        <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">לוח זמנים של PEA</div>
+        <ul style="padding-right:18px;color:var(--text-secondary);font-size:14px;line-height:1.9;margin-top:8px;">
+          <li>הגשה תוך 3 ימים מקבלת מסמכים</li>
+          <li>בדיקה ראשונית של PEA: 7-14 ימים</li>
+          <li>ביקור טכנאי (אם נדרש): 2-4 שבועות</li>
+          <li>אישור סופי ו-COD: עד 6 שבועות מההגשה</li>
+          <li>התקנת smart meter: חינם, ע״י PEA</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;padding:20px 24px;background:#E8F5F0;border-radius:12px;border-right:4px solid var(--green);">
+      <div style="font-weight:800;color:var(--green);margin-bottom:6px;">💡 טיפ — שלח את המסמכים מיד</div>
+      <div style="color:var(--text);font-size:14px;line-height:1.7;">
+        ברגע שחתמת על ההצעה, שלח אלינו את 5 המסמכים דרך WhatsApp (<b>+66 94 669 2011</b>) או מייל (<b>erez@energy-tm.com</b>).
+        כך נוכל להתחיל את תהליך PEA במקביל להכנת הציוד — וחוסכים שבועיים מזמן ההתקנה הכולל.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section>
+  <div class="container">
+    <div class="section-label">לוחות זמנים</div>
+    <h2 class="section-heading">מאישור ההצעה ועד חיבור לרשת</h2>
+    <div class="spec-table" style="margin-top: 24px;">
+      <div class="spec-row">
+        <span class="spec-label">שבוע 1</span>
+        <span class="spec-value">חתימת חוזה · תשלום ראשון · הזמנת ציוד</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">שבוע 2-3</span>
+        <span class="spec-value">הכנת מסמכי PEA · הגשה · הגעת ציוד</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">שבוע 4</span>
+        <span class="spec-value">התקנה פיזית (3 ימים) · בדיקות</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-label">שבוע 5-6</span>
+        <span class="spec-value">אישור PEA · החלפת מונה · COD (commissioning)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="container">
+    <div class="cta">
+      <h2>מוכן להתחיל לחסוך?</h2>
+      <p>הזמן אותנו לביקור אתר בקופנגן — ללא עלות, ללא התחייבות.</p>
+      <a class="cta-btn" href="https://wa.me/66946692011?text=%D7%94%D7%99%D7%99%20TM%20Energy%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%94%D7%94%D7%A6%D7%A2%D7%94%20{{ref}}%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%AA%D7%90%D7%9D%20%D7%91%D7%99%D7%A7%D7%95%D7%A8">
+        WhatsApp · +66 94 669 2011 →
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><strong>TM Energy · Phangan</strong> · energy-tm.com · +66 94 669 2011</p>
+    <p style="margin-top: 8px; font-size: 12px;">הצעה זו תקפה 30 יום · REF {{ref}} · {{month_year_he}}</p>
+  </div>
+</footer>
+
+</body>
+</html>

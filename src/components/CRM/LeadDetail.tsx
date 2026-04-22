@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   ArrowLeft, ChevronRight, Map, Phone, Mail, MessageCircle,
   Edit3, Save, Sun, DollarSign, Zap, Building2,
-  Trash2, ClipboardCheck
+  Trash2, ClipboardCheck, FileText
 } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import {
@@ -469,6 +469,14 @@ export default function LeadDetail() {
             <h3 className="text-xs font-semibold text-white/70 uppercase tracking-wider mb-3">
               Quick Actions
             </h3>
+
+            <button
+              onClick={() => navigate(`/admin/proposals/new?lead_id=${project.id}`)}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-[#E8A820]/10 text-[#E8A820] text-xs font-semibold hover:bg-[#E8A820]/20 border border-[#E8A820]/20 transition-colors"
+            >
+              <FileText size={14} />
+              Create Proposal
+            </button>
 
             {project.building_id && (
               <Link
