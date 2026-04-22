@@ -1,9 +1,12 @@
 // ============================================================
 // /api/admin-analyze-roof
-// Takes roof image (base64) → analyzes with Gemini Vision
+// Takes roof image URL → analyzes with Gemini Vision
 // Returns suggested system size, panel count, annual kWh, etc.
+//
+// Runtime: nodejs with 60s timeout. Edge (25s) was too tight for
+// Gemini vision on large images — regularly hit FUNCTION_INVOCATION_TIMEOUT.
 // ============================================================
-export const config = { runtime: 'edge' }
+export const config = { runtime: 'nodejs', maxDuration: 60 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -117,13 +120,17 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ ok: false, error: 'missing_image_or_url' }, { status: 400 })
     }
 
-    // Call Gemini 2.5 Flash — fast vision model, usually responds in 3-8s
-    // (Pro takes 15-45s and hits Vercel edge 30s timeout)
+    // Call Gemini 2.5 Flash — fast vision model, usually 3-8s
+    const t0 = Date.now()
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 50_000)
+
     const geminiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           contents: [
             {
@@ -136,10 +143,15 @@ export default async function handler(req: Request): Promise<Response> {
           generationConfig: {
             temperature: 0.2,
             responseMimeType: 'application/json',
+            maxOutputTokens: 800,
           },
         }),
       }
-    )
+    ).catch((e) => {
+      throw new Error(`gemini_fetch_failed: ${e?.message || e}`)
+    })
+    clearTimeout(timeout)
+    console.log(`gemini call took ${Date.now() - t0}ms, status ${geminiRes.status}`)
 
     if (!geminiRes.ok) {
       const txt = await geminiRes.text()
