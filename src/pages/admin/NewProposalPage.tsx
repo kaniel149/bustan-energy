@@ -340,6 +340,12 @@ export default function NewProposalPage() {
             panelsUrl={form.roof_panels_url}
             onOriginalChange={(url) => update('roof_original_url', url)}
             onPanelsChange={(url) => update('roof_panels_url', url)}
+            onAnalysis={(a) => {
+              // Prefill system specs from AI roof analysis
+              update('panel_count', a.suggested_panel_count)
+              update('system_size_kwp', a.suggested_system_kwp)
+              update('annual_kwh', a.estimated_annual_kwh)
+            }}
           />
         </Section>
 

@@ -37,3 +37,7 @@ tools/proposal-builder/output/
 tools/proposal-builder/test/
 public/proposals/
 sales/proposals/
+
+# iCloud duplicates (happen automatically on macOS when files sync)
+**/* 2.*
+**/* 2
