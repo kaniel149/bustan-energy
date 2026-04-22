@@ -8,7 +8,7 @@
  *       โซลาร์เซลล์ ราคา, โซลาร์ฟาร์ม ไทย
  */
 
-const BASE_URL = 'https://energy-tm.com'
+export const BASE_URL = 'https://energy-tm.com'
 const BUSINESS_ID = `${BASE_URL}/#business`
 
 // ─── LocalBusiness ────────────────────────────────────────────────────────────
@@ -29,20 +29,20 @@ export function localBusinessSchema(lang: 'en' | 'th') {
         ? 'บริษัทติดตั้งโซลาร์เซลล์ชั้นนำในเกาะพะงัน สุราษฎร์ธานี — ระบบโซลาร์สำหรับบ้าน รีสอร์ท และโรงงาน ตั้งแต่ 3kW ถึง 100MW'
         : 'Premium solar energy solutions for Ko Phangan, Surat Thani, and all of Thailand — residential, commercial, and solar farm EPC & PPA.',
     url: BASE_URL,
-    telephone: '+66-77-000-000',
+    telephone: '+66-94-669-2011',
     email: 'info@energy-tm.com',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Thong Sala',
-      addressLocality: lang === 'th' ? 'เกาะพะงัน' : 'Ko Phangan',
+      streetAddress: 'PX7X+7X',
+      addressLocality: lang === 'th' ? 'เกาะพะงัน' : 'Ko Pha-ngan',
       addressRegion: lang === 'th' ? 'สุราษฎร์ธานี' : 'Surat Thani',
       postalCode: '84280',
       addressCountry: 'TH',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 9.7167,
-      longitude: 100.0333,
+      latitude: 9.7242,
+      longitude: 100.0614,
     },
     areaServed: [
       { '@type': 'City', name: lang === 'th' ? 'เกาะพะงัน' : 'Ko Phangan' },
@@ -68,8 +68,29 @@ export function localBusinessSchema(lang: 'en' | 'th') {
         ? 'โซลาร์เซลล์ เกาะพะงัน, ติดตั้งโซลาร์เซลล์, สุราษฎร์ธานี, โซลาร์ฟาร์ม'
         : 'solar koh phangan, solar surat thani, solar panel installation thailand, solar farm thailand',
     sameAs: [
-      // Add social profiles when available
+      'https://www.facebook.com/tmenergy.th',
+      'https://www.instagram.com/tmenergy.th',
     ],
+  }
+}
+
+// ─── WebSite ─────────────────────────────────────────────────────────────────
+// Top-level WebSite entity. Enables sitelinks search box in SERPs.
+
+export function websiteSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${BASE_URL}/#website`,
+    name: 'TM Energy',
+    url: BASE_URL,
+    publisher: { '@id': BUSINESS_ID },
+    inLanguage: ['en', 'th'],
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${BASE_URL}/blog?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
   }
 }
 
@@ -364,8 +385,8 @@ export function organizationSchema() {
     },
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Thong Sala',
-      addressLocality: 'Ko Phangan',
+      streetAddress: 'PX7X+7X',
+      addressLocality: 'Ko Pha-ngan',
       addressRegion: 'Surat Thani',
       postalCode: '84280',
       addressCountry: 'TH',
@@ -392,12 +413,13 @@ export function organizationSchema() {
         '@type': 'ContactPoint',
         contactType: 'sales',
         email: 'info@energy-tm.com',
-        telephone: '+66-77-000-000',
+        telephone: '+66-94-669-2011',
         availableLanguage: ['English', 'Thai'],
       },
     ],
     sameAs: [
-      // Add LinkedIn, Facebook, LINE OA when available
+      'https://www.facebook.com/tmenergy.th',
+      'https://www.instagram.com/tmenergy.th',
     ],
   }
 }

@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solar Farm + Storage Scout — Koh Phangan | TM Energy v4</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+    :root {
+      --sun: #E8A820;
+      --sun-glow: rgba(232, 168, 32, 0.4);
+      --bg: #0a1929;
+      --panel-bg: rgba(13, 33, 55, 0.95);
+      --border: rgba(232, 168, 32, 0.15);
+      --text: #ccc;
+      --white: #ffffff;
+      --green: #2ED89A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    #map {
+      width: 100%;
+      height: 100vh;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1001;
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .top-bar .logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--sun);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sun);
+      font-weight: 900;
+      font-size: 11px;
+      flex-shrink: 0;
+      background: rgba(232, 168, 32, 0.1);
+    }
+
+    .top-bar h1 {
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .top-bar .badge {
+      background: rgba(232, 168, 32, 0.15);
+      color: var(--sun);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .top-bar .right {
+      margin-left: auto;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* TOOLBAR */
+    .toolbar {
+      position: fixed;
+      top: 52px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(13, 33, 55, 0.9);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .toolbar button,
+    .toolbar select {
+      background: rgba(255, 255, 255, 0.06);
+      color: #aaa;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: inherit;
+    }
+
+    .toolbar button:hover {
+      background: rgba(232, 168, 32, 0.15);
+      color: var(--sun);
+      border-color: var(--sun);
+      transform: translateY(-1px);
+    }
+
+    .toolbar button.active {
+      background: var(--sun);
+      color: #0D2137;
+      border-color: var(--sun);
+      font-weight: 700;
+      box-shadow: 0 4px 12px var(--sun-glow);
+    }
+
+    .toolbar .sep {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 0 5px;
+    }
+
+    /* PANELS */
+    .panel {
+      position: fixed;
+      z-index: 999;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      font-size: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .panel h3 {
+      color: var(--sun);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 16px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .panel h3 .collapse-btn {
+      margin-left: auto;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .panel h3 .collapse-btn:hover {
+      color: var(--sun);
+    }
+
+    /* SIDE PANEL — Sites */
+    .side-panel {
+      top: 104px;
+      right: 16px;
+      width: 320px;
+      max-height: calc(100vh - 130px);
+      overflow-y: auto;
+    }
+
+    /* ASSUMPTIONS PANEL */
+    .assumptions-panel {
+      top: 104px;
+      right: 350px;
+      width: 280px;
+      display: none;
+    }
+
+    .assumptions-panel .row {
+      padding: 8px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .assumptions-panel label {
+      display: block;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .assumptions-panel input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--sun);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .side-panel .filters {
+      padding: 8px 16px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .side-panel .filters select {
+      font-size: 11px;
+      padding: 5px 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #aaa;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      flex: 1;
+    }
+
+    .site-card {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .site-card:hover {
+      background: rgba(232, 168, 32, 0.08);
+    }
+
+    .site-card.selected {
+      background: rgba(232, 168, 32, 0.15);
+      border-left: 4px solid var(--sun);
+    }
+
+    .site-card .hdr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .site-card .name {
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .site-card .score-badge {
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .site-card .meta {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 10px;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .site-card .quick-stats {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .site-card .qs {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .site-card .qs b {
+      color: var(--sun);
+    }
+
+    .site-card .compare-check {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      opacity: .3;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .site-card .compare-check:hover {
+      opacity: .8;
+    }
+
+    .site-card .compare-check.checked {
+      opacity: 1;
+      color: var(--sun);
+    }
+
+    /* DETAIL PANEL */
+    .detail-panel {
+      top: 104px;
+      left: 16px;
+      width: 380px;
+      max-height: calc(100vh - 130px);
+      overflow-y: auto;
+      display: none;
+    }
+
+    .detail-panel .section {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .detail-panel .section-title {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-panel .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .detail-panel .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      align-items: center;
+    }
+
+    .detail-panel .row .k {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11px;
+    }
+
+    .detail-panel .row .v {
+      color: var(--white);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .detail-panel .row.gold .v {
+      color: var(--sun);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    /* CHARTS */
+    .chart-container {
+      width: 100%;
+      height: 180px;
+      margin-top: 10px;
+    }
+
+    /* SCORE BREAKDOWN */
+    .score-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .score-item {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .score-item .label {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 10px;
+    }
+
+    .score-item .val {
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    .score-item .val.green {
+      color: #2ED89A;
+    }
+
+    .score-item .val.yellow {
+      color: var(--sun);
+    }
+
+    .score-item .val.red {
+      color: #FF5C5C;
+    }
+
+    /* STORAGE SECTION */
+    .storage-card {
+      background: rgba(46, 216, 154, 0.05);
+      border: 1px solid rgba(46, 216, 154, 0.1);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 8px;
+    }
+
+    .storage-card .title {
+      color: #2ED89A;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* COMPARE PANEL */
+    .compare-panel {
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 1200px;
+      display: none;
+      padding: 20px;
+    }
+
+    .compare-table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .compare-table th {
+      color: var(--sun);
+      font-weight: 800;
+      padding: 10px;
+      text-align: left;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+    }
+
+    .compare-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      font-size: 11px;
+      vertical-align: middle;
+    }
+
+    .compare-table .best {
+      color: #2ED89A;
+      font-weight: 800;
+      background: rgba(46, 216, 154, 0.05);
+    }
+
+    /* DISTANCE LINE LABEL */
+    .dist-label {
+      background: rgba(13, 33, 55, 0.95);
+      color: #FF8C00;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid rgba(255, 140, 0, 0.3);
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* LEGEND */
+    .legend-bar {
+      bottom: 20px;
+      right: 16px;
+      padding: 12px 16px;
+      width: 180px;
+    }
+
+    .legend-bar h4 {
+      color: var(--sun);
+      font-size: 11px;
+      margin-bottom: 8px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 4px 0;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      top: 104px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      background: var(--sun);
+      color: #0D2137;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      transform: translate(-50%, -20px);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* MOBILE */
+    @media(max-width:768px) {
+      .side-panel {
+        width: 100%;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        max-height: 35vh;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .detail-panel {
+        width: 100%;
+        left: 0;
+        top: 82px;
+        max-height: 50vh;
+        border-radius: 0 0 12px 12px;
+      }
+
+      .compare-panel {
+        width: 95vw;
+      }
+
+      .legend-bar {
+        display: none;
+      }
+    }
+
+    /* PRINT */
+    @media print {
+
+      .toolbar,
+      .top-bar,
+      .legend-bar {
+        display: none !important;
+      }
+
+      .side-panel,
+      .detail-panel {
+        position: static;
+        width: 100%;
+        max-height: none;
+        box-shadow: none;
+        border: 1px solid #ddd;
+        margin: 10px 0;
+        background: #fff;
+        color: #333;
+      }
+
+      #map {
+        height: 60vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-bar">
+    <div class="logo">TM</div>
+    <h1>Solar Farm + Storage Scout</h1>
+    <span class="badge">Koh Phangan · v4</span>
+    <div class="right">
+      <span style="color:rgba(255,255,255,.3);font-size:9px;">☀️ 1,600 kWh/m²/yr · 9.7°N</span>
+      <span style="color:rgba(255,100,0,.6);font-size:9px;margin-left:8px;">⚠️ 33kV lines = estimated along roads · GPS
+        pins = area center, not exact plots</span>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="setLayer('satellite')" class="active" id="btn-sat">🛰️ Satellite</button>
+    <button onclick="setLayer('topo')" id="btn-topo">🏔️ Topo</button>
+    <button onclick="setLayer('osm')" id="btn-osm">🗺️ Roads</button>
+    <div class="sep"></div>
+    <button onclick="togglePower()" id="btn-power">⚡ Grid</button>
+    <button onclick="toggleZones()" id="btn-zones">🟩 Zones</button>
+    <button onclick="toggleGrid()" id="btn-grid">⬜ Grid</button>
+    <div class="sep"></div>
+    <button onclick="addPin()">📌 Pin</button>
+    <button onclick="measureMode()">📐 Measure</button>
+    <button onclick="clearSelection()">✕ Clear</button>
+    <div class="sep"></div>
+    <button onclick="exportJSON()">💾 JSON</button>
+    <button onclick="window.print()">🖨️ Print</button>
+    <button onclick="toggleAssumptions()" id="btn-assump">📈 Assumptions</button>
+    <button onclick="window.open('solar-farm-guide.html','_blank')"
+      style="background:rgba(26,122,90,.2);color:#1A7A5A;border-color:rgba(26,122,90,.3);">📖 9MW Guide</button>
+    <button onclick="toggleCompare()" id="btn-compare" style="display:none;">⚖️ Compare (<span
+        id="compare-count">0</span>)</button>
+  </div>
+
+  <div id="map"></div>
+
+  <!-- SITE LIST -->
+  <div class="panel side-panel" id="sidePanel">
+    <h3>📍 Candidate Sites <span class="collapse-btn" onclick="togglePanel('sidePanel')">−</span></h3>
+    <div class="filters">
+      <select id="sortBy" onchange="sortSites()">
+        <option value="score">Sort: Score ↓</option>
+        <option value="size">Sort: Size ↓</option>
+        <option value="grid">Sort: Grid Distance ↑</option>
+        <option value="roi">Sort: ROI ↓</option>
+      </select>
+      <select id="filterMin" onchange="filterSites()">
+        <option value="0">Min: All</option>
+        <option value="7">Min Score: 7+</option>
+        <option value="8">Min Score: 8+</option>
+      </select>
+    </div>
+    <div id="siteList"></div>
+  </div>
+
+  <!-- ASSUMPTIONS PANEL -->
+  <div class="panel assumptions-panel" id="assumptionsPanel">
+    <h3>📈 ROI Assumptions <span class="collapse-btn" onclick="toggleAssumptions()">−</span></h3>
+    <div class="row">
+      <label>PPA Rate (THB/kWh)</label>
+      <input type="number" id="inp-ppa" value="4.5" step="0.1" onchange="applyAssumptions()">
+    </div>
+    <div class="row">
+      <label>EPC Revenue (THB/kWp)</label>
+      <input type="number" id="inp-epc" value="32500" step="500" onchange="applyAssumptions()">
+    </div>
+    <div class="row">
+      <label>Land Cost (THB/rai)</label>
+      <input type="number" id="inp-land" value="800000" step="50000" onchange="applyAssumptions()">
+    </div>
+    <div class="row">
+      <label>Battery Cost (THB/kWh)</label>
+      <input type="number" id="inp-batt" value="18000" step="1000" onchange="applyAssumptions()">
+    </div>
+    <div class="row">
+      <label>Discount Rate (%)</label>
+      <input type="number" id="inp-disc" value="8" step="0.5" onchange="applyAssumptions()">
+    </div>
+    <div style="padding: 12px; text-align: center;">
+      <button onclick="resetAssumptions()"
+        style="width: 100%; padding: 6px; font-size: 10px; border-radius: 4px; background: rgba(255,255,255,0.05); color: #888; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;">Reset
+        to Defaults</button>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="panel detail-panel" id="detailPanel">
+    <h3 id="detailTitle">— <span class="collapse-btn" onclick="hideDetail()">✕</span></h3>
+
+    <div class="section">
+      <div class="section-title">Score Breakdown</div>
+      <div class="score-grid" id="scoreGrid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Solar Capacity</div>
+      <div class="row"><span class="k">Land Area</span><span class="v" id="dArea">—</span></div>
+      <div class="row"><span class="k">Usable (70%)</span><span class="v" id="dUsable">—</span></div>
+      <div class="row"><span class="k">Panels (LONGi 580W)</span><span class="v" id="dPanels">—</span></div>
+      <div class="row"><span class="k">DC Capacity</span><span class="v" id="dKwp">—</span></div>
+      <div class="row"><span class="k">Annual Production</span><span class="v" id="dKwh">—</span></div>
+      <div class="row"><span class="k">Sun Hours</span><span class="v">~1,600 kWh/m²/yr</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">🔋 Battery Storage</div>
+      <div class="storage-card">
+        <div class="title">BESS Configuration</div>
+        <div class="row"><span class="k">Recommended Size</span><span class="v" id="dBattSize">—</span></div>
+        <div class="row"><span class="k">Battery Type</span><span class="v">Huawei LUNA2000</span></div>
+        <div class="row"><span class="k">Units Needed</span><span class="v" id="dBattUnits">—</span></div>
+        <div class="row"><span class="k">Backup Duration</span><span class="v" id="dBackup">—</span></div>
+        <div class="row"><span class="k">Battery Cost</span><span class="v" id="dBattCost">—</span></div>
+      </div>
+      <div style="margin-top:6px;">
+        <div class="row"><span class="k">Peak Shaving Value</span><span class="v" id="dPeakShave">—</span></div>
+        <div class="row"><span class="k">Arbitrage (day/night)</span><span class="v" id="dArbitrage">—</span></div>
+        <div class="row"><span class="k">Grid Stability Premium</span><span class="v" id="dGridPrem">—</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">💰 Financial Summary</div>
+      <div class="row gold"><span class="k">EPC Revenue</span><span class="v" id="dEpc">—</span></div>
+      <div class="row gold"><span class="k">PPA Annual Revenue</span><span class="v" id="dPpa">—</span></div>
+      <div class="row"><span class="k">Total CapEx (Solar+Storage)</span><span class="v" id="dCapex">—</span></div>
+      <div class="row"><span class="k">Est. Land Cost</span><span class="v" id="dLand">—</span></div>
+      <div class="row"><span class="k">Payback Period</span><span class="v" id="dPayback">—</span></div>
+      <div class="row"><span class="k">IRR (20yr)</span><span class="v" id="dIrr">—</span></div>
+      <div class="row"><span class="k">NPV (8% discount)</span><span class="v" id="dNpv">—</span></div>
+      <div class="row"><span class="k">20yr PPA Total Revenue</span><span class="v" id="d20yr">—</span></div>
+
+      <div class="chart-container">
+        <canvas id="cashflowChart"></canvas>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📊 Revenue Breakdown</div>
+      <div class="chart-container">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">⚡ Grid Connection</div>
+      <div class="row"><span class="k">Distance to 33kV</span><span class="v" id="dGridDist">—</span></div>
+      <div class="row"><span class="k">Connection Cost (est)</span><span class="v" id="dGridCost">—</span></div>
+      <div class="row"><span class="k">VSPP Limit</span><span class="v">10 MW</span></div>
+      <div class="row"><span class="k">PEA Office</span><span class="v">077-377072</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">⚠️ Risks & Notes</div>
+      <div id="dRisks" style="color:rgba(255,255,255,.4);font-size:11px;line-height:1.6;"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📋 Next Steps</div>
+      <div id="dNextSteps" style="color:rgba(255,255,255,.5);font-size:11px;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <!-- COMPARE PANEL -->
+  <div class="panel compare-panel" id="comparePanel">
+    <h3>⚖️ Site Comparison <span class="collapse-btn"
+        onclick="document.getElementById('comparePanel').style.display='none'">✕</span></h3>
+    <table class="compare-table" id="compareTable"></table>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="panel legend-bar" id="legendBar">
+    <h4>Layers</h4>
+    <div class="legend-row">
+      <div class="legend-swatch" style="background:rgba(0,200,50,.3);"></div> Suitable Zone
+    </div>
+    <div class="legend-row">
+      <div class="legend-swatch" style="background:rgba(255,100,0,.4);"></div> 33kV Line
+    </div>
+    <div class="legend-row">
+      <div class="legend-swatch" style="background:rgba(255,0,0,.4);"></div> 115kV / Submarine
+    </div>
+    <div class="legend-row">
+      <div class="legend-swatch" style="background:rgba(232,168,32,.6);"></div> Candidate Site
+    </div>
+    <div class="legend-row">
+      <div class="legend-swatch" style="background:rgba(26,122,90,.4);"></div> Storage Potential
+    </div>
+    <div class="legend-row">
+      <div class="legend-swatch" style="background:rgba(100,100,100,.3);"></div> National Park
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ═══════════════════════════════════════
+    // DATA
+    // ═══════════════════════════════════════
+    const PANEL_PER_KWP = 5.5; // m2 per kWp
+    const USABLE_RATIO = 0.7;
+    const SUN_HOURS = 1350; // effective kWh/kWp/yr
+
+    // These will be updated by applyAssumptions()
+    let SALE_PER_KWP = 32500; // EPC
+    let PPA_RATE = 4.5; // THB/kWh
+    let LAND_COST_PER_RAI = 800000;
+    let BATT_COST_PER_KWH = 18000; // THB
+    let DISCOUNT_RATE = 0.08;
+
+    const PPA_ESCALATION = 0.02; // 2%/yr
+    const LUNA_UNIT_KWH = 15; // per module
+    const GRID_CONN_PER_KM = 200000; // THB/km estimate
+    const PANEL_AREA = 2.28 * 1.13; // LONGi 580W
+    const PANEL_W = 580;
+
+    let cashflowChart = null;
+    let revenueChart = null;
+
+    const sites = [
+      {
+        id: 1, lat: 9.7085, lng: 100.0280, name: 'Ban Tai Coconut Flats', rai: 40, gridKm: 0.8,
+        scores: { terrain: 10, size: 10, grid: 9, road: 9, zoning: 9, shade: 9, flood: 7, env: 9 },
+        risks: ['Seasonal flooding near coast—verify drainage', 'Popular tourist area—land competition', 'May need LAO consent meeting'],
+        notes: 'Largest flat coconut plantation strip along Ban Tai coast. Route 4169 road access. South-facing, minimal shading.',
+        listings: 'islanders-properties.com/thailand/type-land/for-sale/koh-phangan/baan-tai/',
+        priceRange: '฿3.5M–130M (1–20 rai)', verified: 'area ✓ | GPS ~approx | listings ✓'
+      },
+      {
+        id: 2, lat: 9.7095, lng: 99.9965, name: 'Thongsala South (nr Substation)', rai: 25, gridKm: 0.3,
+        scores: { terrain: 9, size: 8, grid: 10, road: 10, zoning: 9, shade: 8, flood: 7, env: 8 },
+        risks: ['Close to town—visual impact concerns', 'Higher land prices near Thongsala', 'Underground cabling may be required'],
+        notes: '300m from 115kV substation. Best grid access on island. Flat cleared land south of main town. Near port.',
+        listings: 'kpnproperties.com/area/thongsala/',
+        priceRange: '฿1.9M–250M (flat+beachfront)', verified: 'area ✓ | GPS ~approx | listings ✓'
+      },
+      {
+        id: 3, lat: 9.7520, lng: 99.9880, name: 'Sri Thanu Inland', rai: 30, gridKm: 1.2,
+        scores: { terrain: 9, size: 9, grid: 8, road: 8, zoning: 9, shade: 9, flood: 8, env: 9 },
+        risks: ['Yoga/wellness community may resist', 'Slightly further from grid', 'Check chanot title status'],
+        notes: 'Inland from Sri Thanu beach. Coconut plantation plots, flat terrain. Quiet area, less tourist pressure.',
+        listings: 'islanders-properties.com/thailand/type-land/for-sale/koh-phangan/srithanu/',
+        priceRange: '฿2.8M–10M (550sqm–1.7rai)', verified: 'area ✓ | GPS ~approx | listings ✓'
+      },
+      {
+        id: 4, lat: 9.7940, lng: 100.0050, name: 'Chaloklum Valley', rai: 20, gridKm: 1.5,
+        scores: { terrain: 8, size: 7, grid: 7, road: 7, zoning: 9, shade: 8, flood: 9, env: 8 },
+        risks: ['Access road narrow in parts', 'Grid connection costs higher', 'Fishing village—community relations important'],
+        notes: 'Flat valley behind Chaloklum fishing village. Good for agrivoltaic. Lower tourist pressure. Co-op potential.',
+        listings: 'immolucky.com/en/property/for-sale-land-chaloklum-koh-phangan/',
+        priceRange: '฿10.5M/rai (2 rai flat beachfront chanote)', verified: 'area ✓ | GPS ~approx | listings ✓'
+      },
+      {
+        id: 5, lat: 9.7150, lng: 100.0100, name: 'Wok Tum Inland', rai: 15, gridKm: 0.5,
+        scores: { terrain: 7, size: 6, grid: 9, road: 9, zoning: 8, shade: 7, flood: 7, env: 8 },
+        risks: ['Gentle slope needs grading', 'Smaller parcel limits scale', 'Partial afternoon shading from hills'],
+        notes: 'Between Thongsala and Ban Tai. Near main road, good grid access. May combine with adjacent parcels.',
+        listings: 'conradproperties.asia/index.php/properties/land-for-sale-koh-phangan-wok-tum',
+        priceRange: '฿1.95M–12.68M (496sqm–2,740sqm)', verified: 'area ✓ | GPS ~approx | listings ✓'
+      },
+      {
+        id: 6, lat: 9.6980, lng: 100.0400, name: 'Ban Khai South', rai: 18, gridKm: 2.0,
+        scores: { terrain: 7, size: 7, grid: 6, road: 6, zoning: 8, shade: 7, flood: 8, env: 7 },
+        risks: ['Steep access road', 'Furthest from grid—high connection cost', 'Rubber plantation—landowner negotiation needed'],
+        notes: 'Rubber plantation inland from south coast. Lower land cost. Storage important here (far from grid).',
+        listings: 'hipflat.com/land-for-sale/surat-thani/ko-phangan',
+        priceRange: '฿2M–8M (est.)', verified: 'area ✓ | GPS ~approx | listings ~indirect'
+      },
+      {
+        id: 7, lat: 9.7600, lng: 99.9870, name: 'Hin Kong Elevated', rai: 12, gridKm: 1.0,
+        scores: { terrain: 8, size: 5, grid: 8, road: 8, zoning: 8, shade: 10, flood: 9, env: 8 },
+        risks: ['Smallest site—limited to ~1.5 MWp', 'Elevated—wind exposure for panels', 'May need retaining walls'],
+        notes: 'Elevated flat plateau above Hin Kong beach. Best sun exposure (no shading, south-facing). Natural wind cooling.',
+        listings: 'islanders-properties.com/realty/land-for-sale-hin-kong-koh-phangan-1-rai-8082',
+        priceRange: '฿5.5M–8.6M (0.5–1 rai)', verified: 'area ✓ | GPS ~approx | listings ✓'
+      },
+    ];
+
+    // Score calculation
+    function calcScore(s) {
+      const w = { terrain: 15, size: 12, grid: 15, road: 10, zoning: 10, shade: 12, flood: 10, env: 8 }; // weights out of ~92
+      let total = 0, max = 0;
+      for (const k in w) { total += (s.scores[k] || 0) * w[k]; max += 10 * w[k]; }
+      return Math.round(total / max * 100) / 10;
+    }
+    sites.forEach(s => { s.score = calcScore(s); });
+
+    // Financial calculations
+    function calcFinancials(s) {
+      const areaM2 = s.rai * 1600;
+      const usable = areaM2 * USABLE_RATIO;
+      const kwp = usable / PANEL_PER_KWP;
+      const panels = Math.floor(usable / PANEL_AREA);
+      const kwh = kwp * SUN_HOURS;
+      const battKwh = Math.round(kwp * 0.25); // 25% solar:storage ratio
+      const battUnits = Math.ceil(battKwh / LUNA_UNIT_KWH);
+      const battCost = battKwh * BATT_COST_PER_KWH;
+      const epc = kwp * SALE_PER_KWP;
+      const ppaAnnual = kwh * PPA_RATE;
+      const capex = kwp * 11800 + battCost; // cost basis + battery
+      const landCost = s.rai * LAND_COST_PER_RAI;
+      const gridCost = s.gridKm * GRID_CONN_PER_KM;
+      const totalInvest = capex + landCost + gridCost;
+
+      // PPA 20yr with 2% escalation
+      let ppa20 = 0, cumulativeCF = 0, paybackYr = 0;
+      let npv = -totalInvest;
+      const yearlyCashflows = [];
+
+      for (let y = 1; y <= 20; y++) {
+        const rev = ppaAnnual * Math.pow(1 + PPA_ESCALATION, y - 1);
+        const opex = capex * 0.015; // 1.5% maintenance
+        const cf = rev - opex;
+        ppa20 += rev;
+        cumulativeCF += cf;
+        npv += cf / Math.pow(1 + DISCOUNT_RATE, y);
+        if (paybackYr === 0 && cumulativeCF >= totalInvest) paybackYr = y;
+        yearlyCashflows.push(Math.round(cumulativeCF - totalInvest));
+      }
+      if (paybackYr === 0) paybackYr = '>20';
+
+      // Simple IRR approximation
+      const avgCF = (ppa20 - capex * 0.015 * 20) / 20;
+      const irr = avgCF / totalInvest;
+
+      // Storage economics
+      const peakShave = battKwh * 365 * 1.5; // peak shaving THB/yr (conservative)
+      const arbitrage = battKwh * 365 * 2.0; // day/night spread
+      const gridPrem = battKwh * 365 * 0.5; // grid stability
+
+      return {
+        areaM2, usable, kwp, panels, kwh, battKwh, battUnits, battCost,
+        epc, ppaAnnual, capex, landCost, gridCost, totalInvest,
+        ppa20, paybackYr, npv, irr, peakShave, arbitrage, gridPrem,
+        yearlyCashflows,
+        backupHrs: Math.round(battKwh / (kwp * 0.15) * 10) / 10
+      };
+    }
+
+    // ═══════════════════════════════════════
+    // MAP SETUP
+    // ═══════════════════════════════════════
+    const map = L.map('map', { zoomControl: false }).setView([9.745, 100.00], 13);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    const tiles = {
+      satellite: L.tileLayer('https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', { maxZoom: 22 }),
+      roads: L.tileLayer('https://mt0.google.com/vt/lyrs=h&hl=en&x={x}&y={y}&z={z}', { maxZoom: 22, opacity: 0.55 }),
+      topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17 }),
+      osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 })
+    };
+    tiles.satellite.addTo(map); tiles.roads.addTo(map);
+
+    function setLayer(name) {
+      [tiles.satellite, tiles.topo, tiles.osm, tiles.roads].forEach(t => map.removeLayer(t));
+      tiles[name].addTo(map);
+      if (name === 'satellite') tiles.roads.addTo(map);
+      document.querySelectorAll('.toolbar button').forEach(b => { if (b.id.startsWith('btn-')) b.classList.remove('active'); });
+      document.getElementById('btn-' + (name === 'satellite' ? 'sat' : name)).classList.add('active');
+    }
+
+    // ═══════════════════════════════════════
+    // POWER INFRASTRUCTURE
+    // ═══════════════════════════════════════
+    const powerGroup = L.layerGroup(); let powerOn = false;
+
+    L.polygon([[9.706905, 99.994643], [9.7062097, 99.9946189], [9.7062361, 99.9950775], [9.7069711, 99.995048]], {
+      color: '#ff0000', weight: 3, fillColor: '#ff0000', fillOpacity: 0.4
+    }).addTo(powerGroup).bindPopup('<b>⚡ 115kV Substation (PEA)</b><br>Main island substation<br>📞 077-377072');
+
+    L.polyline([[9.5672, 100.0032], [9.5691, 100.0034], [9.5733, 100.0035], [9.5885, 100.0036], [9.7056, 99.9949], [9.7063, 99.9948], [9.7065, 99.9948]], {
+      color: '#ff0000', weight: 4, dashArray: '10,8', opacity: 0.8
+    }).addTo(powerGroup).bindPopup('<b>115kV Submarine Cable</b><br>Koh Samui → Koh Phangan<br>Operator: PEA');
+
+    // 33kV lines (nearest points for distance calc)
+    const grid33kVPoints = [];
+    const dist33 = [
+      // West coast: Substation → north along Rt 4169 through Sri Thanu, Hin Kong, Mae Haad
+      [[9.7066, 99.9948], [9.712, 99.993], [9.718, 99.992], [9.725, 99.991], [9.735, 99.989], [9.745, 99.988], [9.752, 99.988], [9.760, 99.988], [9.770, 99.990], [9.780, 99.992], [9.790, 99.996], [9.798, 100.002]],
+      // East: Substation → Thongsala → Ban Tai coast road
+      [[9.7066, 99.9948], [9.708, 99.998], [9.710, 100.003], [9.712, 100.008], [9.713, 100.015], [9.712, 100.022], [9.710, 100.030], [9.708, 100.038], [9.706, 100.045]],
+      // South: Ban Tai → Haad Rin road
+      [[9.706, 100.045], [9.702, 100.052], [9.698, 100.058], [9.694, 100.063], [9.690, 100.068], [9.687, 100.073]],
+      // North: Mae Haad → Chaloklum
+      [[9.790, 99.996], [9.793, 100.000], [9.795, 100.003], [9.797, 100.005], [9.800, 100.008]],
+      // East coast: from Ban Tai inland → Thong Nai Pan direction
+      [[9.712, 100.022], [9.720, 100.030], [9.730, 100.038], [9.740, 100.043], [9.750, 100.045], [9.760, 100.043], [9.770, 100.038], [9.780, 100.030], [9.790, 100.018], [9.798, 100.008]]
+    ];
+    dist33.forEach(c => {
+      L.polyline(c, { color: '#ff6600', weight: 3, opacity: 0.65, dashArray: '8,5' }).addTo(powerGroup)
+        .bindPopup('<b>33kV Distribution (ESTIMATED)</b><br>Route estimated along main roads<br>Not mapped in OSM · Verify with PEA');
+      c.forEach(p => grid33kVPoints.push(p));
+    });
+
+    function togglePower() {
+      powerOn = !powerOn;
+      if (powerOn) { powerGroup.addTo(map); } else { map.removeLayer(powerGroup); }
+      document.getElementById('btn-power').classList.toggle('active', powerOn);
+    }
+
+    // ═══════════════════════════════════════
+    // SUITABLE ZONES + NATIONAL PARK
+    // ═══════════════════════════════════════
+    const zonesGroup = L.layerGroup(); let zonesOn = false;
+
+    sites.forEach(s => {
+      const color = s.score >= 8.5 ? '#00cc44' : s.score >= 7.5 ? '#88cc00' : '#ffaa00';
+      const d = Math.sqrt(s.rai * 1600) / 111320; // approx degrees for area
+      L.polygon([
+        [s.lat - d / 2, s.lng - d / 2], [s.lat - d / 2, s.lng + d / 2],
+        [s.lat + d / 2, s.lng + d / 2], [s.lat + d / 2, s.lng - d / 2]
+      ], { color, weight: 2, fillColor: color, fillOpacity: 0.2 }).addTo(zonesGroup);
+    });
+
+    L.polygon([
+      [9.74, 100.005], [9.745, 100.015], [9.755, 100.025], [9.77, 100.035], [9.785, 100.035],
+      [9.795, 100.02], [9.79, 100.005], [9.78, 99.995], [9.77, 99.99], [9.755, 99.99], [9.745, 99.995]
+    ], { color: '#666', weight: 1, fillColor: '#444', fillOpacity: 0.15, dashArray: '4,4' }).addTo(zonesGroup)
+      .bindPopup('<b>🌳 Than Sadet National Park</b><br>Protected — no development');
+
+    function toggleZones() {
+      zonesOn = !zonesOn;
+      if (zonesOn) zonesGroup.addTo(map); else map.removeLayer(zonesGroup);
+      document.getElementById('btn-zones').classList.toggle('active', zonesOn);
+    }
+
+    // ═══════════════════════════════════════
+    // SITE MARKERS
+    // ═══════════════════════════════════════
+    const siteMarkers = {};
+    sites.forEach((s, i) => {
+      const color = s.score >= 8.5 ? '#00cc44' : s.score >= 7.5 ? '#E8A820' : '#ff6600';
+      const cm = L.circleMarker([s.lat, s.lng], {
+        radius: 13, color: '#0D2137', weight: 3, fillColor: color, fillOpacity: 0.9
+      }).addTo(map).on('click', () => selectSite(s.id));
+
+      L.marker([s.lat, s.lng], {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="background:${color};color:#0D2137;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:800;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3);cursor:pointer;" onclick="selectSite(${s.id})">${i + 1}</div>`,
+          iconAnchor: [8, -10]
+        })
+      }).addTo(map);
+
+      siteMarkers[s.id] = cm;
+    });
+
+    // ═══════════════════════════════════════
+    // SITE SELECTION + DETAIL
+    // ═══════════════════════════════════════
+    let selectedSiteId = null;
+    let distLine = null;
+    let distLabel = null;
+
+    function selectSite(id) {
+      selectedSiteId = id;
+      const s = sites.find(x => x.id === id);
+      if (!s) return;
+
+      // Fly
+      map.flyTo([s.lat, s.lng], 15, { duration: 0.8 });
+
+      // Highlight card
+      document.querySelectorAll('.site-card').forEach(c => c.classList.remove('selected'));
+      const card = document.querySelector(`.site-card[data-id="${id}"]`);
+      if (card) card.classList.add('selected');
+
+      // Draw distance line to nearest 33kV
+      if (distLine) { map.removeLayer(distLine); distLine = null; }
+      if (distLabel) { map.removeLayer(distLabel); distLabel = null; }
+      let minDist = Infinity, nearest = null;
+      grid33kVPoints.forEach(p => {
+        const d = Math.sqrt(Math.pow((s.lat - p[0]) * 111320, 2) + Math.pow((s.lng - p[1]) * 111320 * Math.cos(s.lat * Math.PI / 180), 2));
+        if (d < minDist) { minDist = d; nearest = p; }
+      });
+      if (nearest) {
+        distLine = L.polyline([[s.lat, s.lng], nearest], {
+          color: '#ff6600', weight: 2, dashArray: '6,4', opacity: 0.8
+        }).addTo(map);
+        const mid = [(s.lat + nearest[0]) / 2, (s.lng + nearest[1]) / 2];
+        distLabel = L.marker(mid, {
+          icon: L.divIcon({ className: 'dist-label', html: `${(minDist / 1000).toFixed(1)} km`, iconAnchor: [20, 10] })
+        }).addTo(map);
+      }
+
+      // Show detail panel
+      showDetail(s);
+    }
+
+    function showDetail(s) {
+      const p = document.getElementById('detailPanel');
+      p.style.display = 'block';
+      document.getElementById('detailTitle').innerHTML = `☀️ ${s.name} <span class="collapse-btn" onclick="hideDetail()">✕</span>`;
+
+      // Score breakdown
+      const labels = { terrain: 'Terrain', size: 'Size', grid: 'Grid Access', road: 'Road', zoning: 'Zoning', shade: 'Sun/Shade', flood: 'Flood Risk', env: 'Environment' };
+      let gridHTML = '';
+      for (const k in s.scores) {
+        const v = s.scores[k];
+        const cls = v >= 8 ? 'green' : v >= 6 ? 'yellow' : 'red';
+        gridHTML += `<div class="score-item"><span class="label">${labels[k] || k}</span><span class="val ${cls}">${v}/10</span></div>`;
+      }
+      document.getElementById('scoreGrid').innerHTML = gridHTML;
+
+      // Financials
+      const f = calcFinancials(s);
+      document.getElementById('dArea').textContent = `${f.areaM2.toLocaleString()} m² (${s.rai} rai)`;
+      document.getElementById('dUsable').textContent = `${f.usable.toLocaleString()} m²`;
+      document.getElementById('dPanels').textContent = `${f.panels.toLocaleString()} panels`;
+      document.getElementById('dKwp').textContent = `${f.kwp.toFixed(0)} kWp (${(f.kwp / 1000).toFixed(2)} MWp)`;
+      document.getElementById('dKwh').textContent = `${f.kwh.toLocaleString(undefined, { maximumFractionDigits: 0 })} kWh/yr`;
+
+      // Storage
+      document.getElementById('dBattSize').textContent = `${f.battKwh} kWh`;
+      document.getElementById('dBattUnits').textContent = `${f.battUnits}× LUNA2000-15kWh`;
+      document.getElementById('dBackup').textContent = `~${f.backupHrs} hrs`;
+      document.getElementById('dBattCost').textContent = `฿${f.battCost.toLocaleString()}`;
+      document.getElementById('dPeakShave').textContent = `฿${f.peakShave.toLocaleString()}/yr`;
+      document.getElementById('dArbitrage').textContent = `฿${f.arbitrage.toLocaleString()}/yr`;
+      document.getElementById('dGridPrem').textContent = `฿${f.gridPrem.toLocaleString()}/yr`;
+
+      // Financial
+      document.getElementById('dEpc').textContent = `฿${f.epc.toLocaleString()}`;
+      document.getElementById('dPpa').textContent = `฿${f.ppaAnnual.toLocaleString()}/yr`;
+      document.getElementById('dCapex').textContent = `฿${f.totalInvest.toLocaleString()}`;
+      document.getElementById('dLand').textContent = `฿${f.landCost.toLocaleString()}`;
+      document.getElementById('dPayback').textContent = `${f.paybackYr} years`;
+      document.getElementById('dIrr').textContent = `${(f.irr * 100).toFixed(1)}%`;
+      document.getElementById('dNpv').textContent = `฿${f.npv.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      document.getElementById('d20yr').textContent = `฿${f.ppa20.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+      // Grid
+      document.getElementById('dGridDist').textContent = `${s.gridKm} km`;
+      document.getElementById('dGridCost').textContent = `฿${f.gridCost.toLocaleString()}`;
+
+      // Risks
+      document.getElementById('dRisks').innerHTML = s.risks.map(r => `⚠️ ${r}`).join('<br>');
+
+      // Next steps
+      document.getElementById('dNextSteps').innerHTML = `
+    1. 📞 Contact local land broker<br>
+    2. 🗺️ Verify chanot (title deed) status<br>
+    3. 📐 Commission topographic survey<br>
+    4. ⚡ Request PEA grid capacity assessment<br>
+    5. 🏛️ LAO consent application<br>
+    6. 📊 Full feasibility study<br>
+    7. 💼 Present to investor / TM Developers`;
+
+      // Listings link
+      if (s.listings) {
+        document.getElementById('dNextSteps').innerHTML += `<br><br>🔗 <a href="https://${s.listings}" target="_blank" style="color:#E8A820;">${s.listings.split('/')[0]}</a><br>💰 Price range: ${s.priceRange || '—'}<br>✅ ${s.verified || ''}`;
+      }
+
+      updateCharts(f);
+    }
+
+    function updateCharts(f) {
+      const ctxCash = document.getElementById('cashflowChart').getContext('2d');
+      if (cashflowChart) cashflowChart.destroy();
+
+      cashflowChart = new Chart(ctxCash, {
+        type: 'line',
+        data: {
+          labels: Array.from({ length: 20 }, (_, i) => i + 1),
+          datasets: [{
+            label: 'Cumulative Cash Flow (THB)',
+            data: f.yearlyCashflows,
+            borderColor: '#E8A820',
+            backgroundColor: 'rgba(232,168,32,0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', font: { size: 9 } } },
+            x: { grid: { display: false }, ticks: { color: '#888', font: { size: 9 } } }
+          }
+        }
+      });
+
+      const ctxRev = document.getElementById('revenueChart').getContext('2d');
+      if (revenueChart) revenueChart.destroy();
+
+      revenueChart = new Chart(ctxRev, {
+        type: 'doughnut',
+        data: {
+          labels: ['PPA Solar', 'Peak Shave', 'Arbitrage', 'Grid Serv'],
+          datasets: [{
+            data: [f.ppaAnnual, f.peakShave, f.arbitrage, f.gridPrem],
+            backgroundColor: ['#E8A820', '#2ED89A', '#6496FF', '#A855F7'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { color: '#ccc', font: { size: 9 }, boxWidth: 10 } }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    function toggleAssumptions() {
+      const p = document.getElementById('assumptionsPanel');
+      p.style.display = p.style.display === 'block' ? 'none' : 'block';
+      document.getElementById('btn-assump').classList.toggle('active', p.style.display === 'block');
+    }
+
+    function applyAssumptions() {
+      PPA_RATE = parseFloat(document.getElementById('inp-ppa').value);
+      SALE_PER_KWP = parseFloat(document.getElementById('inp-epc').value);
+      LAND_COST_PER_RAI = parseFloat(document.getElementById('inp-land').value);
+      BATT_COST_PER_KWH = parseFloat(document.getElementById('inp-batt').value);
+      DISCOUNT_RATE = parseFloat(document.getElementById('inp-disc').value) / 100;
+
+      sortSites();
+      if (selectedSiteId) {
+        const s = sites.find(x => x.id === selectedSiteId);
+        showDetail(s);
+      }
+      showToast('Assumptions Applied');
+    }
+
+    function resetAssumptions() {
+      document.getElementById('inp-ppa').value = 4.5;
+      document.getElementById('inp-epc').value = 32500;
+      document.getElementById('inp-land').value = 800000;
+      document.getElementById('inp-batt').value = 18000;
+      document.getElementById('inp-disc').value = 8;
+      applyAssumptions();
+    }
+
+    function hideDetail() {
+      document.getElementById('detailPanel').style.display = 'none';
+      if (distLine) { map.removeLayer(distLine); distLine = null; }
+      if (distLabel) { map.removeLayer(distLabel); distLabel = null; }
+      selectedSiteId = null;
+      document.querySelectorAll('.site-card').forEach(c => c.classList.remove('selected'));
+    }
+
+    // ═══════════════════════════════════════
+    // SITE LIST RENDERING
+    // ═══════════════════════════════════════
+    function renderSiteList(list) {
+      const container = document.getElementById('siteList');
+      container.innerHTML = '';
+      list.forEach((s, i) => {
+        const color = s.score >= 8.5 ? '#00cc44' : s.score >= 7.5 ? '#E8A820' : '#ff6600';
+        const f = calcFinancials(s);
+        const card = document.createElement('div');
+        card.className = 'site-card' + (s.id === selectedSiteId ? ' selected' : '');
+        card.dataset.id = s.id;
+        card.onclick = () => selectSite(s.id);
+        card.innerHTML = `
+      <span class="compare-check ${compareSet.has(s.id) ? 'checked' : ''}" onclick="event.stopPropagation();toggleCompareItem(${s.id})">☐</span>
+      <div class="hdr">
+        <div class="name">${i + 1}. ${s.name}</div>
+        <div class="score-badge" style="background:${color}">${s.score}</div>
+      </div>
+      <div class="meta">${s.rai} rai · ${s.gridKm}km to grid · ${s.notes.split('.')[0]}</div>
+      <div class="quick-stats">
+        <div class="qs"><b>${(f.kwp / 1000).toFixed(1)}</b> MWp</div>
+        <div class="qs"><b>฿${(f.ppaAnnual / 1e6).toFixed(1)}M</b>/yr</div>
+        <div class="qs"><b>${f.paybackYr}</b>yr</div>
+        <div class="qs">🔋<b>${f.battKwh}</b>kWh</div>
+        <div class="qs">${s.priceRange ? '💰' + s.priceRange.split('(')[0].trim() : ''}</div>
+      </div>`;
+        container.appendChild(card);
+      });
+    }
+
+    function sortSites() {
+      const by = document.getElementById('sortBy').value;
+      const list = [...sites];
+      if (by === 'score') list.sort((a, b) => b.score - a.score);
+      else if (by === 'size') list.sort((a, b) => b.rai - a.rai);
+      else if (by === 'grid') list.sort((a, b) => a.gridKm - b.gridKm);
+      else if (by === 'roi') list.sort((a, b) => calcFinancials(b).irr - calcFinancials(a).irr);
+      filterAndRender(list);
+    }
+
+    function filterSites() { sortSites(); }
+
+    function filterAndRender(list) {
+      const min = parseFloat(document.getElementById('filterMin').value);
+      renderSiteList(list.filter(s => s.score >= min));
+    }
+
+    // ═══════════════════════════════════════
+    // COMPARE MODE
+    // ═══════════════════════════════════════
+    const compareSet = new Set();
+
+    function toggleCompareItem(id) {
+      if (compareSet.has(id)) compareSet.delete(id); else compareSet.add(id);
+      document.getElementById('compare-count').textContent = compareSet.size;
+      document.getElementById('btn-compare').style.display = compareSet.size >= 2 ? '' : 'none';
+      sortSites(); // re-render to update checkboxes
+    }
+
+    function toggleCompare() {
+      const panel = document.getElementById('comparePanel');
+      if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+      panel.style.display = 'block';
+
+      const selected = sites.filter(s => compareSet.has(s.id));
+      const fins = selected.map(s => ({ s, f: calcFinancials(s) }));
+
+      // Find best values
+      const bestScore = Math.max(...fins.map(x => x.s.score));
+      const bestIrr = Math.max(...fins.map(x => x.f.irr));
+      const bestPayback = Math.min(...fins.map(x => typeof x.f.paybackYr === 'number' ? x.f.paybackYr : 99));
+
+      let html = '<tr><th></th>' + fins.map(x => `<th>${x.s.name}</th>`).join('') + '</tr>';
+      const rows = [
+        ['Score', fins.map(x => ({ v: x.s.score, best: x.s.score === bestScore }))],
+        ['Area (rai)', fins.map(x => ({ v: x.s.rai }))],
+        ['Capacity', fins.map(x => ({ v: `${(x.f.kwp / 1000).toFixed(1)} MWp` }))],
+        ['Grid Distance', fins.map(x => ({ v: `${x.s.gridKm} km` }))],
+        ['Battery', fins.map(x => ({ v: `${x.f.battKwh} kWh` }))],
+        ['PPA Revenue/yr', fins.map(x => ({ v: `฿${(x.f.ppaAnnual / 1e6).toFixed(1)}M` }))],
+        ['EPC Revenue', fins.map(x => ({ v: `฿${(x.f.epc / 1e6).toFixed(1)}M` }))],
+        ['Total Investment', fins.map(x => ({ v: `฿${(x.f.totalInvest / 1e6).toFixed(1)}M` }))],
+        ['Payback', fins.map(x => ({ v: `${x.f.paybackYr} yr`, best: x.f.paybackYr === bestPayback }))],
+        ['IRR', fins.map(x => ({ v: `${(x.f.irr * 100).toFixed(1)}%`, best: x.f.irr === bestIrr }))],
+        ['NPV', fins.map(x => ({ v: `฿${(x.f.npv / 1e6).toFixed(1)}M` }))],
+      ];
+      rows.forEach(([label, cells]) => {
+        html += `<tr><td style="color:rgba(255,255,255,.5)">${label}</td>`;
+        cells.forEach(c => { html += `<td class="${c.best ? 'best' : ''}">${c.v}</td>`; });
+        html += '</tr>';
+      });
+      document.getElementById('compareTable').innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // DRAW + MEASURE
+    // ═══════════════════════════════════════
+    const drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    map.on(L.Draw.Event.CREATED, function (e) {
+      drawnItems.addLayer(e.layer);
+      if (e.layer.getLatLngs) {
+        const lls = e.layer.getLatLngs()[0];
+        let area = 0;
+        for (let i = 0; i < lls.length; i++) {
+          const j = (i + 1) % lls.length;
+          area += lls[i].lng * lls[j].lat - lls[j].lng * lls[i].lat;
+        }
+        area = Math.abs(area) / 2 * 111320 * 111320 * Math.cos(lls[0].lat * Math.PI / 180);
+        const f = { rai: area / 1600, kwp: area * USABLE_RATIO / PANEL_PER_KWP };
+        e.layer.bindPopup(`<b>📐 Custom Area</b><br>${area.toLocaleString(undefined, { maximumFractionDigits: 0 })} m² (${f.rai.toFixed(1)} rai)<br>${f.kwp.toFixed(0)} kWp | ${(f.kwp * SUN_HOURS).toLocaleString(undefined, { maximumFractionDigits: 0 })} kWh/yr<br>EPC: ฿${(f.kwp * SALE_PER_KWP).toLocaleString()}`).openPopup();
+      }
+    });
+
+    function addPin() {
+      showToast('Click map to drop pin');
+      map.once('click', e => {
+        L.marker(e.latlng, { draggable: true }).addTo(drawnItems)
+          .bindPopup(`<b>📌 Pin</b><br>${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`).openPopup();
+      });
+    }
+
+    function measureMode() {
+      showToast('Click to draw polygon, double-click to finish');
+      new L.Draw.Polygon(map, {}).enable();
+    }
+
+    function clearSelection() {
+      hideDetail();
+      drawnItems.clearLayers();
+      showToast('Cleared');
+    }
+
+    let gridVisible = false;
+    const gridGroup = L.layerGroup();
+    function toggleGrid() {
+      gridVisible = !gridVisible;
+      if (gridVisible) {
+        for (let lat = 9.68; lat <= 9.82; lat += 0.01) L.polyline([[lat, 99.95], [lat, 100.08]], { color: 'rgba(255,255,255,.12)', weight: .5 }).addTo(gridGroup);
+        for (let lng = 99.95; lng <= 100.08; lng += 0.01) L.polyline([[9.68, lng], [9.82, lng]], { color: 'rgba(255,255,255,.12)', weight: .5 }).addTo(gridGroup);
+        gridGroup.addTo(map);
+      } else { map.removeLayer(gridGroup); }
+      document.getElementById('btn-grid').classList.toggle('active', gridVisible);
+    }
+
+    function exportJSON() {
+      const data = { exported: new Date().toISOString(), sites: sites.map(s => ({ ...s, financials: calcFinancials(s) })), drawn: [] };
+      drawnItems.eachLayer(l => {
+        if (l.getLatLng) data.drawn.push({ type: 'marker', latlng: l.getLatLng() });
+        else if (l.getLatLngs) data.drawn.push({ type: 'polygon', latlngs: l.getLatLngs() });
+      });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'solar-farm-scout-kp.json'; a.click();
+      showToast('Exported JSON');
+    }
+
+    function togglePanel(id) {
+      const el = document.getElementById(id);
+      const content = el.querySelector('.site-card, .filters, .section, #siteList');
+      // Simple toggle
+      if (el.dataset.collapsed === 'true') {
+        el.style.maxHeight = ''; el.dataset.collapsed = 'false';
+      } else {
+        el.style.maxHeight = '40px'; el.dataset.collapsed = 'true';
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // ═══════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════
+    togglePower();
+    toggleZones();
+    sortSites();
+
+    // Deep-link check
+    const urlParams = new URLSearchParams(window.location.search);
+    const siteId = parseInt(urlParams.get('site'));
+    if (siteId) {
+      setTimeout(() => selectSite(siteId), 800);
+    }
+  </script>
+</body>
+
+</html>

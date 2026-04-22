@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, lazy, Suspense } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { getSession, isAdmin } from '../lib/admin-auth'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import {
   Sun,
@@ -168,7 +169,7 @@ function HeroSection() {
             </motion.span>
           </Link>
 
-          <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/66946692011" target="_blank" rel="noopener noreferrer">
             <motion.span
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
               style={{
@@ -318,6 +319,7 @@ function ServicesSection() {
       cta: t.home.services.residential.cta,
       href: langPath('/services#residential'),
       image: villaImg,
+      altText: 'Residential solar panel installation on a villa roof in Ko Phangan',
       bullets: ['Save 40-70% on electricity', 'Increase property value', 'Battery backup available'],
     },
     {
@@ -327,6 +329,7 @@ function ServicesSection() {
       cta: t.home.services.commercial.cta,
       href: langPath('/services#commercial'),
       image: resortImg,
+      altText: 'Commercial solar system installed on a resort rooftop in Ko Phangan',
       bullets: ['PPA — zero upfront cost', 'Maximize ROI', 'Reduce operating costs'],
     },
     {
@@ -336,6 +339,7 @@ function ServicesSection() {
       cta: t.home.services.solarFarm.cta,
       href: langPath('/services#farm'),
       image: aerialImg,
+      altText: 'Aerial view of a solar farm installation on Ko Phangan island',
       bullets: ['VSPP licensing', 'Grid connection', '1 MW to 100 MW'],
     },
     {
@@ -347,6 +351,7 @@ function ServicesSection() {
       cta: (t.home.services as any).batteryStorage?.cta ?? 'Learn More',
       href: langPath('/services#battery'),
       image: huaweiImg,
+      altText: 'Huawei battery storage system for off-grid solar power on Ko Phangan',
       bullets: ['Blackout protection', '24/7 power', 'Peak shaving'],
     },
   ]
@@ -396,7 +401,7 @@ function ServicesSection() {
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={svc.image}
-                  alt={svc.title}
+                  alt={svc.altText}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -1193,7 +1198,7 @@ function CTASection() {
             </Link>
 
             {/* WhatsApp */}
-            <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/66946692011" target="_blank" rel="noopener noreferrer">
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
                 style={{
@@ -1214,7 +1219,7 @@ function CTASection() {
             </a>
 
             {/* Call */}
-            <a href="tel:+66000000000">
+            <a href="tel:+66946692011">
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
                 style={{
@@ -1276,7 +1281,7 @@ function PartnersBar() {
               {partnerImages[i] ? (
                 <img
                   src={partnerImages[i]!}
-                  alt={p.name}
+                  alt={`${p.name} — official solar equipment partner of TM Energy`}
                   loading="lazy"
                   className="h-10 w-auto object-contain grayscale brightness-200"
                 />
@@ -1364,6 +1369,27 @@ function aggregateRatingSchema() {
 export default function HomePage() {
   const { t, lang } = useTranslation()
   const faqData = (t.home as any).faq
+  const navigate = useNavigate()
+  const [showAdminBanner, setShowAdminBanner] = useState(false)
+
+  // If admin is logged in, auto-redirect to /admin (once)
+  useEffect(() => {
+    let cancelled = false
+    getSession().then((session) => {
+      if (cancelled || !session?.user?.email) return
+      if (!isAdmin(session.user.email)) return
+      // Don't auto-redirect if user explicitly came to home (e.g. via nav click)
+      if (sessionStorage.getItem('tm_admin_skip_redirect') === '1') {
+        setShowAdminBanner(true)
+        return
+      }
+      sessionStorage.setItem('tm_admin_skip_redirect', '1')
+      navigate('/admin', { replace: true })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [navigate])
 
   // Build FAQ schema from translation data
   const faqItems = faqData?.items ?? []
@@ -1376,6 +1402,11 @@ export default function HomePage() {
 
   return (
     <>
+      {showAdminBanner && (
+        <div style={{position:'fixed',top:0,left:0,right:0,zIndex:10000,background:'linear-gradient(135deg,#E8A820,#E85D3A)',color:'#0D2137',padding:'12px 20px',textAlign:'center',fontWeight:700,fontFamily:'Heebo,sans-serif'}}>
+          🎯 אתה מחובר כאדמין · <a href="/admin" style={{color:'#0D2137',textDecoration:'underline',fontWeight:900}}>לחץ כאן לעבור לדשבורד האדמין ←</a>
+        </div>
+      )}
       <SEOHead
         title={
           lang === 'th'

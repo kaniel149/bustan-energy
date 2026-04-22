@@ -304,7 +304,7 @@ export default function ContactPage() {
               {/* WhatsApp */}
               <motion.a
                 variants={fadeUp}
-                href="https://wa.me/6600000000"
+                href="https://wa.me/66946692011"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-4 bg-green-500/10 border border-green-500/25 rounded-2xl p-5 hover:border-green-500/50 transition-colors duration-300 group"

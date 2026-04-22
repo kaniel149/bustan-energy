@@ -19,6 +19,21 @@ const CRMDashboard = lazy(() => import('./components/CRM/Dashboard'))
 const CRMPipeline = lazy(() => import('./components/CRM/Pipeline'))
 const LeadDetail = lazy(() => import('./components/CRM/LeadDetail'))
 const PreviewScroll = lazy(() => import('./pages/PreviewScroll'))
+const ResidentialSolarPage = lazy(() => import('./pages/services/ResidentialSolarPage'))
+const CommercialSolarPage = lazy(() => import('./pages/services/CommercialSolarPage'))
+const OffGridSolarPage = lazy(() => import('./pages/services/OffGridSolarPage'))
+const MaintenancePage = lazy(() => import('./pages/services/MaintenancePage'))
+const BlogPostPage = lazy(() => import('./pages/BlogPostPage'))
+const ToolsPage = lazy(() => import('./pages/ToolsPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+
+// Admin pages — lazy loaded, separate auth context
+const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'))
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'))
+const NewProposalPage = lazy(() => import('./pages/admin/NewProposalPage'))
+const ProposalsListPage = lazy(() => import('./pages/admin/ProposalsListPage'))
+const ProposalDetailPage = lazy(() => import('./pages/admin/ProposalDetailPage'))
 
 function LoadingScreen() {
   return (
@@ -37,12 +52,19 @@ function PageRoutes() {
     <>
       <Route index element={<HomePage />} />
       <Route path="services" element={<ServicesPage />} />
+      <Route path="services/residential" element={<ResidentialSolarPage />} />
+      <Route path="services/commercial" element={<CommercialSolarPage />} />
+      <Route path="services/off-grid" element={<OffGridSolarPage />} />
+      <Route path="services/maintenance" element={<MaintenancePage />} />
       <Route path="how-it-works" element={<HowItWorksPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route path="projects" element={<ProjectsPage />} />
       <Route path="about" element={<AboutPage />} />
       <Route path="blog" element={<BlogPage />} />
+      <Route path="blog/:slug" element={<BlogPostPage />} />
       <Route path="contact" element={<ContactPage />} />
+      <Route path="tools" element={<ToolsPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </>
   )
 }
@@ -59,6 +81,13 @@ export default function App() {
           <LanguageProvider>
             <Suspense fallback={<LoadingScreen />}>
               <Routes>
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboardPage />} />
+                  <Route path="proposals" element={<ProposalsListPage />} />
+                  <Route path="proposals/new" element={<NewProposalPage />} />
+                  <Route path="proposals/:ref" element={<ProposalDetailPage />} />
+                </Route>
                 <Route path="/crm" element={<ErrorBoundary><CRMPage /></ErrorBoundary>}>
                   <Route index element={<CRMDashboard />} />
                   <Route path="pipeline" element={<CRMPipeline />} />
@@ -80,6 +109,15 @@ export default function App() {
         <LanguageProvider>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
+              {/* Admin routes */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
+                <Route path="proposals" element={<ProposalsListPage />} />
+                <Route path="proposals/new" element={<NewProposalPage />} />
+                <Route path="proposals/:ref" element={<ProposalDetailPage />} />
+              </Route>
+
               {/* CRM routes (also accessible via /crm on main domain) */}
               <Route path="/crm" element={<ErrorBoundary><CRMPage /></ErrorBoundary>}>
                 <Route index element={<CRMDashboard />} />

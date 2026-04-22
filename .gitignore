@@ -31,3 +31,9 @@ public/data/buildings_all_original.json
 public/data/overture_buildings.geojson
 .vercel
 .env
+
+# Proposal builder generated outputs (large — don't commit)
+tools/proposal-builder/output/
+tools/proposal-builder/test/
+public/proposals/
+sales/proposals/

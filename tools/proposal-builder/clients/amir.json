@@ -1,0 +1,37 @@
+{
+  "ref": "AMIR-001",
+  "password": "603485",
+  "client_name": "אמיר מזרחי",
+  "client_phone": "+66...",
+  "client_email": "",
+  "location": "Koh Phangan, Thailand",
+  "language": "he",
+  "system_size_kwp": 12.76,
+  "panel_count": 22,
+  "panel_model": "Jinko N-Type 580W",
+  "inverter_model": "Huawei SUN2000-12KTL-M2",
+  "battery_model": "Huawei LUNA2000-10-S0",
+  "battery_kwh": 10,
+  "annual_kwh": 18171,
+  "monthly_kwh": 1514,
+  "psh_avg": 5.0,
+  "tariff_thb_per_kwh": 4.4,
+  "monthly_savings_thb": 6660,
+  "annual_savings_thb": 79900,
+  "price_thb": 450000,
+  "tax_deduction_thb": 200000,
+  "payback_years_no_tax": 5.6,
+  "payback_years_with_tax": 3.1,
+  "savings_25yr_thb": 2000000,
+  "images": [
+    "amir-mizrahi-001-roof-original.jpeg",
+    "amir-mizrahi-001-roof-with-panels.png"
+  ],
+  "valid_days": 30,
+  "metadata": {
+    "roof_type": "red_ceramic_tile",
+    "roof_area_m2": 120,
+    "orientation": "N-S",
+    "shading": "5-8% morning from mango tree"
+  }
+}

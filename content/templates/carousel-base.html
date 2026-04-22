@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1080">
+<title>TM Energy — Carousel Slide</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  /* ── Reset ─────────────────────────────────────────────────── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── Brand Tokens ──────────────────────────────────────────── */
+  :root {
+    --bg:       #0A1628;
+    --bg-card:  rgba(255, 255, 255, 0.04);
+    --border:   rgba(255, 255, 255, 0.08);
+    --gold:     #E8A820;
+    --green:    #1A7A5A;
+    --green-lt: #22C97A;
+    --red:      #E85A4F;
+    --navy:     #0D2137;
+    --white:    #FFFFFF;
+    --muted:    rgba(255, 255, 255, 0.55);
+    --font-heading: 'Space Grotesk', system-ui, sans-serif;
+    --font-body:    'DM Sans', system-ui, sans-serif;
+  }
+
+  /* ── Canvas ────────────────────────────────────────────────── */
+  html, body {
+    width:  1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: var(--font-body);
+    color: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 48px 64px 44px;
+    position: relative;
+  }
+
+  /* ── Subtle grid + radial glow ─────────────────────────────── */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 40%, rgba(232, 168, 32, 0.06) 0%, transparent 70%),
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 100% 100%, 60px 60px, 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Slide dots (top center) ───────────────────────────────── */
+  .slide-dots {
+    display: flex;
+    gap: 10px;
+    z-index: 1;
+  }
+  .slide-dots .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    transition: all 0.3s ease;
+  }
+  .slide-dots .dot.active {
+    background: var(--gold);
+    box-shadow: 0 0 10px rgba(232, 168, 32, 0.5);
+    width: 28px;
+    border-radius: 5px;
+  }
+
+  /* ── Glassmorphism Card ────────────────────────────────────── */
+  .card {
+    flex: 1;
+    width: 100%;
+    max-width: 920px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 56px 48px;
+    margin: 32px 0;
+    border-radius: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* Card inner glow */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232, 168, 32, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ── Typography ────────────────────────────────────────────── */
+  .card h1 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  .card h2 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+
+  .card p {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 700px;
+  }
+
+  .card .stat {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 96px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 16px 0;
+  }
+
+  /* ── Brand footer (bottom right) ───────────────────────────── */
+  .brand-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-end;
+    z-index: 1;
+  }
+
+  .brand-footer .sun-icon {
+    width: 22px;
+    height: 22px;
+    position: relative;
+  }
+
+  .brand-footer .sun-icon::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .brand-footer .sun-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    opacity: 0.4;
+  }
+
+  .brand-footer span {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+  }
+
+  /* ── Utility colors ────────────────────────────────────────── */
+  .text-gold   { color: var(--gold); }
+  .text-green  { color: var(--green-lt); }
+  .text-red    { color: var(--red); }
+  .text-muted  { color: var(--muted); }
+  .text-white  { color: var(--white); }
+</style>
+</head>
+
+<body>
+
+  <!-- Slide dots — driven by JS from URL params -->
+  <div class="slide-dots" id="dots"></div>
+
+  <!-- Main content card — filled by URL params or manually -->
+  <div class="card" id="card">
+    <h2 id="card-title">Slide Title</h2>
+    <p  id="card-body">Slide body text goes here.</p>
+  </div>
+
+  <!-- Brand footer -->
+  <div class="brand-footer">
+    <div class="sun-icon"></div>
+    <span>TM Energy</span>
+  </div>
+
+<script>
+  // ── URL param reader ──────────────────────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  const slideNum  = parseInt(params.get('slide') || '1', 10);
+  const totalDots = parseInt(params.get('total') || '6', 10);
+  const title     = params.get('title');
+  const body      = params.get('body');
+  const stat      = params.get('stat');
+  const statColor = params.get('statColor') || 'gold'; // gold | green | red | white
+
+  // Build dots
+  const dotsEl = document.getElementById('dots');
+  for (let i = 1; i <= totalDots; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === slideNum ? ' active' : '');
+    dotsEl.appendChild(d);
+  }
+
+  // Fill card content from params (if provided)
+  if (title) document.getElementById('card-title').textContent = title;
+  if (body)  document.getElementById('card-body').textContent  = body;
+
+  if (stat) {
+    const s = document.createElement('div');
+    s.className = 'stat text-' + statColor;
+    s.textContent = stat;
+    const cardEl = document.getElementById('card');
+    const bodyEl = document.getElementById('card-body');
+    cardEl.insertBefore(s, bodyEl);
+  }
+</script>
+
+</body>
+</html>

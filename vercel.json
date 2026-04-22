@@ -9,6 +9,17 @@
     }
   },
   "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/p/:ref", "destination": "/api/proposal-serve?ref=:ref" },
+    { "source": "/proposal-templates/:path*", "destination": "/proposal-templates/:path*" },
+    { "source": "/proposals/:path*", "destination": "/proposals/:path*" },
+    { "source": "/tools/:path*", "destination": "/tools/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron-followups",
+      "schedule": "0 10 * * *"
+    }
   ]
 }

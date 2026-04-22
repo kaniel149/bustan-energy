@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, RefreshCw } from 'lucide-react'
+import { Plus, RefreshCw, FileText, LayoutDashboard } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { getCrmProjects } from '../../lib/crm-service'
 import { KPICards } from './KPICards'
@@ -102,6 +102,21 @@ export default function Dashboard() {
             title="Refresh"
           >
             <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+          </button>
+          <button
+            onClick={() => navigate('/admin')}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition-all font-semibold text-sm"
+            title="Proposals Admin"
+          >
+            <LayoutDashboard size={16} />
+            Proposals
+          </button>
+          <button
+            onClick={() => navigate('/admin/proposals/new')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1A7A5A] text-white font-semibold text-sm hover:bg-[#11604B] transition-all"
+          >
+            <FileText size={16} />
+            New Proposal
           </button>
           <button
             onClick={() => navigate('/crm/pipeline')}

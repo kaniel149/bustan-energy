@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAppStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
 import { getCrmProjects } from '../lib/crm-service'
+import { identifyUser, resetAnalytics } from '../lib/analytics'
 import CRMLayout from '../components/CRM/CRMLayout'
 
 function CRMLoginScreen() {
@@ -98,7 +99,13 @@ export default function CRMPage() {
   useEffect(() => {
     if (!supabase) return
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+      const u = session?.user ?? null
+      setUser(u)
+      if (u) {
+        identifyUser(u.id, { email: u.email })
+      } else {
+        resetAnalytics()
+      }
     })
     return () => subscription.unsubscribe()
   }, [setUser])
