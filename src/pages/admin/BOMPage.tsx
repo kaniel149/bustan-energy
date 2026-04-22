@@ -60,7 +60,7 @@ export default function BOMPage() {
   const [result, setResult] = useState<BOMResponse | null>(null)
   const [tab, setTab] = useState<'bom' | 'supplier' | 'markdown'>('bom')
   const [copied, setCopied] = useState('')
-  const [leadId, setLeadId] = useState(params.get('lead_id') || '')
+  const [leadId] = useState(params.get('lead_id') || '')
 
   const run = async () => {
     setLoading(true)
