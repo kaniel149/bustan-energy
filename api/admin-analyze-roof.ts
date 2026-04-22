@@ -3,7 +3,7 @@
 // Takes roof image (base64) → analyzes with Gemini Vision
 // Returns suggested system size, panel count, annual kWh, etc.
 // ============================================================
-export const config = { runtime: 'edge', maxDuration: 30 }
+export const config = { runtime: 'edge' }
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -117,9 +117,10 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ ok: false, error: 'missing_image_or_url' }, { status: 400 })
     }
 
-    // Call Gemini 2.5 Pro (text + vision, cheaper + faster than image-gen model)
+    // Call Gemini 2.5 Flash — fast vision model, usually responds in 3-8s
+    // (Pro takes 15-45s and hits Vercel edge 30s timeout)
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
