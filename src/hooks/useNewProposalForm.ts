@@ -78,14 +78,65 @@ function calcDerived(form: NewProposalForm): Partial<NewProposalForm> {
   }
 }
 
+const DRAFT_KEY = 'tm-proposal-draft-v1'
+
+function loadDraft(): Partial<NewProposalForm> | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    // Expire drafts older than 24 hours
+    if (parsed._ts && Date.now() - parsed._ts > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(DRAFT_KEY)
+      return null
+    }
+    delete parsed._ts
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+function saveDraft(form: NewProposalForm) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...form, _ts: Date.now() }))
+  } catch {
+    // quota exceeded — silently drop
+  }
+}
+
+export function clearProposalDraft() {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem(DRAFT_KEY)
+}
+
 export function useNewProposalForm() {
   const [form, setForm] = useState<NewProposalForm>({ ref: '', ...DEFAULTS })
   const [errors, setErrors] = useState<Partial<Record<keyof NewProposalForm, string>>>({})
+  const [draftRestored, setDraftRestored] = useState(false)
 
-  // Generate ref on mount
+  // Generate ref on mount + restore draft if available
   useEffect(() => {
-    generateRef().then((ref) => setForm((f) => ({ ...f, ref })))
+    const draft = loadDraft()
+    generateRef().then((ref) => {
+      if (draft && draft.client_name) {
+        // Restore draft but keep a fresh ref number
+        setForm({ ...DEFAULTS, ...draft, ref: draft.ref || ref } as NewProposalForm)
+        setDraftRestored(true)
+      } else {
+        setForm((f) => ({ ...f, ref }))
+      }
+    })
   }, [])
+
+  // Auto-save draft whenever form changes (debounced via effect cycle)
+  useEffect(() => {
+    if (form.client_name || form.total_price_thb > 0) {
+      saveDraft(form)
+    }
+  }, [form])
 
   // Auto-recalculate derived fields whenever inputs change
   useEffect(() => {
@@ -123,9 +174,11 @@ export function useNewProposalForm() {
   }, [form])
 
   const reset = useCallback(() => {
+    clearProposalDraft()
     generateRef().then((ref) => setForm({ ref, ...DEFAULTS }))
     setErrors({})
+    setDraftRestored(false)
   }, [])
 
-  return { form, update, validate, errors, reset }
+  return { form, update, validate, errors, reset, draftRestored }
 }

@@ -1,10 +1,12 @@
-import { Copy, ExternalLink, MessageCircle, FilePlus, Check } from 'lucide-react'
+import { Copy, ExternalLink, MessageCircle, FilePlus, Check, Mail } from 'lucide-react'
 import { useState } from 'react'
 
 interface ProposalSuccessModalProps {
   ref: string
   password: string
   clientName: string
+  clientPhone?: string
+  clientEmail?: string
   onCreateAnother: () => void
   onClose: () => void
 }
@@ -34,6 +36,8 @@ export function ProposalSuccessModal({
   ref,
   password,
   clientName,
+  clientPhone,
+  clientEmail,
   onCreateAnother,
   onClose,
 }: ProposalSuccessModalProps) {
@@ -41,9 +45,19 @@ export function ProposalSuccessModal({
   const firstName = clientName.split(' ')[0] ?? clientName
 
   const waMessage = `היי ${firstName}, הצעת המחיר שלך מ-TM Energy:\n${url}\nסיסמה: ${password}`
+  // wa.me needs E.164 without + / spaces / dashes
+  const waPhoneDigits = (clientPhone || '').replace(/[^\d]/g, '')
+  const waUrl = waPhoneDigits
+    ? `https://wa.me/${waPhoneDigits}?text=${encodeURIComponent(waMessage)}`
+    : `https://wa.me/?text=${encodeURIComponent(waMessage)}`
 
-  const copyWa = async () => {
-    await navigator.clipboard.writeText(waMessage)
+  const openWa = () => window.open(waUrl, '_blank')
+
+  const openMail = () => {
+    if (!clientEmail) return
+    const subj = `Your Solar Proposal from TM Energy · ${ref}`
+    const body = `Hi ${firstName},\n\nYour personalized solar proposal is ready:\n${url}\n\nPassword: ${password}\n\nReply or WhatsApp +66 94 669 2011 with any questions.\n\nBest,\nTM Energy`
+    window.open(`mailto:${clientEmail}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`)
   }
 
   return (
@@ -92,12 +106,22 @@ export function ProposalSuccessModal({
         {/* Actions */}
         <div className="flex flex-col gap-2.5">
           <button
-            onClick={copyWa}
+            onClick={openWa}
             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 font-semibold text-sm hover:bg-emerald-600/30 transition-colors"
           >
             <MessageCircle size={16} />
-            העתק הודעת WhatsApp
+            {clientPhone ? `שלח בוואטסאפ ל-${clientPhone}` : 'פתח WhatsApp עם הודעה מוכנה'}
           </button>
+
+          {clientEmail && (
+            <button
+              onClick={openMail}
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 font-semibold text-sm hover:bg-blue-500/20 transition-colors"
+            >
+              <Mail size={16} />
+              שלח במייל ל-{clientEmail}
+            </button>
+          )}
 
           <button
             onClick={() => window.open(url, '_blank')}

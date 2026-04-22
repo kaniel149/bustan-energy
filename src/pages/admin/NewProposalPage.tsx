@@ -56,11 +56,24 @@ export default function NewProposalPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const showToast = useAdminStore((s) => s.showToast)
-  const { form, update, validate, errors, reset } = useNewProposalForm()
+  const { form, update, validate, errors, reset, draftRestored } = useNewProposalForm()
 
   const [submitting, setSubmitting] = useState(false)
   const [successResult, setSuccessResult] = useState<SuccessResult | null>(null)
   const [prefillLead, setPrefillLead] = useState<CrmProject | null>(null)
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null)
+
+  // Warn user before leaving with unsaved work
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (form.client_name || form.total_price_thb > 0) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [form.client_name, form.total_price_thb])
 
   // Pre-fill from CRM lead when lead_id is in URL
   useEffect(() => {
@@ -184,6 +197,8 @@ export default function NewProposalPage() {
         battery_kwh_extra: form.battery_kwh_extra,
         co2_factor: form.co2_factor,
         monthly_bill_thb: form.monthly_bill_thb,
+        // AI roof analysis (if available)
+        ai_analysis: aiAnalysis || undefined,
       }
 
       const res = await fetch('/api/admin-create-proposal', {
@@ -218,8 +233,10 @@ export default function NewProposalPage() {
         ref={successResult.ref}
         password={successResult.password}
         clientName={form.client_name}
+        clientPhone={form.client_phone || undefined}
+        clientEmail={form.client_email || undefined}
         onCreateAnother={() => { setSuccessResult(null); reset() }}
-        onClose={() => navigate('/admin/proposals')}
+        onClose={() => { reset(); navigate('/admin/proposals') }}
       />
     )
   }
@@ -249,6 +266,24 @@ export default function NewProposalPage() {
             מולא אוטומטית מלid ה-CRM של {prefillLead.client_name}
             {prefillLead.business_type ? ` (${prefillLead.business_type})` : ''}
           </p>
+        </div>
+      )}
+
+      {/* Draft restored banner */}
+      {draftRestored && !prefillLead && (
+        <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 mb-6">
+          <div className="flex items-center gap-3">
+            <Info size={15} className="text-emerald-400 shrink-0" />
+            <p className="text-sm text-emerald-300">
+              שוחזרה טיוטה אוטומטית (נשמר ב-24ה׳ האחרונות)
+            </p>
+          </div>
+          <button
+            onClick={reset}
+            className="text-xs px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            התחל חדש
+          </button>
         </div>
       )}
 
@@ -345,6 +380,8 @@ export default function NewProposalPage() {
               update('panel_count', a.suggested_panel_count)
               update('system_size_kwp', a.suggested_system_kwp)
               update('annual_kwh', a.estimated_annual_kwh)
+              // Keep full analysis for metadata on submit
+              setAiAnalysis(a)
             }}
           />
         </Section>

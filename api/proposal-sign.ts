@@ -14,7 +14,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
-const FROM = 'TM Energy Contracts <onboarding@resend.dev>'
+const FROM = process.env.RESEND_FROM || 'TM Energy Contracts <contracts@energy-tm.com>'
 
 async function supaGet(path: string) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -37,6 +37,19 @@ async function supaPost(table: string, body: any) {
     body: JSON.stringify(body),
   })
   return r.ok ? r.json() : null
+}
+
+async function supaPatch(path: string, body: any) {
+  return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: 'PATCH',
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify(body),
+  })
 }
 
 async function sendEmail(to: string[], subject: string, html: string) {
@@ -149,6 +162,25 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     const s = Array.isArray(saved) ? saved[0] : saved
+
+    // ── FLIP proposal status to 'signed' (this was the bug) ──
+    supaPatch(`proposals?ref_number=eq.${encodeURIComponent(ref)}`, {
+      status: 'signed',
+      signed_at: signature.signed_at,
+    }).catch(() => {})
+
+    // Analytics event
+    supaPost('proposal_events', {
+      proposal_ref: ref,
+      event_type: 'signed',
+      event_data: {
+        signer_name,
+        signer_email: signer_email || null,
+        hash: hash.slice(0, 16),
+        ip,
+      },
+    }).catch(() => {})
+
     const teamSubject = `🎉 חתימה התקבלה · ${proposal.client_name || proposal.ref_number} · ${ref}`
     sendEmail(NOTIFY, teamSubject, teamEmail(proposal, s)).catch(() => {})
     if (signer_email) {

@@ -33,16 +33,51 @@ export default async function handler(req: Request): Promise<Response> {
     if (!email) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
 
     const body = await req.json()
-    const { image_base64, panel_count = 18, notes = '' } = body
-
-    if (!image_base64) {
-      return Response.json({ ok: false, error: 'missing_image' }, { status: 400 })
+    const { image_url, image_base64, panel_count = 18, notes = '' } = body as {
+      image_url?: string
+      image_base64?: string
+      panel_count?: number
+      notes?: string
     }
 
-    // Strip data URL prefix if present
-    const b64 = image_base64.replace(/^data:image\/\w+;base64,/, '')
-    const mimeMatch = image_base64.match(/^data:(image\/\w+);/)
-    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg'
+    let b64: string
+    let mime: string
+
+    if (image_url) {
+      // Preferred — server fetches (avoids 4.5MB client body limit on edge)
+      try {
+        const imgRes = await fetch(image_url)
+        if (!imgRes.ok) {
+          return Response.json(
+            { ok: false, error: 'image_fetch_failed', status: imgRes.status },
+            { status: 400 }
+          )
+        }
+        mime = imgRes.headers.get('content-type') || 'image/jpeg'
+        const buf = await imgRes.arrayBuffer()
+        if (buf.byteLength > 8 * 1024 * 1024) {
+          return Response.json(
+            { ok: false, error: 'image_too_large', size_mb: (buf.byteLength / 1024 / 1024).toFixed(1) },
+            { status: 400 }
+          )
+        }
+        const bytes = new Uint8Array(buf)
+        let binary = ''
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+        b64 = btoa(binary)
+      } catch (e: any) {
+        return Response.json(
+          { ok: false, error: 'image_fetch_error', detail: String(e?.message || e) },
+          { status: 400 }
+        )
+      }
+    } else if (image_base64) {
+      b64 = image_base64.replace(/^data:image\/\w+;base64,/, '')
+      const mimeMatch = image_base64.match(/^data:(image\/\w+);/)
+      mime = mimeMatch ? mimeMatch[1] : 'image/jpeg'
+    } else {
+      return Response.json({ ok: false, error: 'missing_image_or_url' }, { status: 400 })
+    }
 
     const prompt = `Add exactly ${panel_count} black monocrystalline solar panels to the sloped roof sections of this building (drone top-down view).
 

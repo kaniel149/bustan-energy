@@ -133,6 +133,7 @@ export default async function handler(req: Request): Promise<Response> {
       battery_kwh_extra = 10,
       co2_factor = 0.5,
       monthly_bill_thb = 0,
+      ai_analysis = null,
     } = body
 
     if (!ref || !client_name || !system_size_kwp || !total_price_thb) {
@@ -225,50 +226,92 @@ export default async function handler(req: Request): Promise<Response> {
 
     const finalHtml = rendered.replace('</body>', `${contract}\n${gate}\n</body>`)
 
-    // Upsert proposal
-    await supaUpsert(
-      'proposals',
-      {
-        ref_number: ref,
-        client_name,
-        client_phone: client_phone || null,
-        client_email: client_email || null,
-        location: location_en,
-        system_size_kwp,
-        panel_count,
-        panel_watt,
-        panel_model,
-        inverter_model,
-        battery_kwh,
-        total_price_thb,
-        monthly_savings_thb,
-        annual_savings_thb,
-        payback_years: payback_with_tax || payback_no_tax,
-        monthly_production_kwh: monthly_kwh,
-        annual_production_kwh: annual_kwh,
-        password_hash,
-        language,
-        html_url: `https://energy-tm.com/p/${ref}`,
-        status: 'sent',
-        sent_at: new Date().toISOString(),
-        metadata: {
-          rendered_html: finalHtml,
-          created_by: admin.email,
-          tax_deduction_thb,
-          location_he,
-          location_short,
-          location_psh,
-          // v3
-          ppa_rate_thb_per_kwh,
-          ppa_years,
-          battery_price_thb,
-          battery_kwh_extra,
-          co2_factor,
-          monthly_bill_thb,
-        },
-      },
-      'ref_number'
+    // Check if this proposal already exists — preserves sent_at on edit
+    const existingRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/proposals?ref_number=eq.${encodeURIComponent(ref)}&select=sent_at,status,view_count,first_viewed_at,signed_at`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
     )
+    const existing = existingRes.ok ? (await existingRes.json())[0] : null
+    const isNewProposal = !existing
+
+    const nowIso = new Date().toISOString()
+    // 30-day expiry (needed by schedule_followups_on_send trigger)
+    const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+
+    // Build upsert payload — only set sent_at on first send
+    const upsertBody: Record<string, any> = {
+      ref_number: ref,
+      client_name,
+      client_phone: client_phone || null,
+      client_email: client_email || null,
+      location: location_en,
+      system_size_kwp,
+      panel_count,
+      panel_watt,
+      panel_model,
+      inverter_model,
+      battery_kwh,
+      total_price_thb,
+      monthly_savings_thb,
+      annual_savings_thb,
+      payback_years: payback_with_tax || payback_no_tax,
+      monthly_production_kwh: monthly_kwh,
+      annual_production_kwh: annual_kwh,
+      password_hash,
+      language,
+      html_url: `https://energy-tm.com/p/${ref}`,
+      expires_at,
+      metadata: {
+        rendered_html: finalHtml,
+        created_by: admin.email,
+        tax_deduction_thb,
+        location_he,
+        location_short,
+        location_psh,
+        last_edited_at: nowIso,
+        last_edited_by: admin.email,
+        // v3
+        ppa_rate_thb_per_kwh,
+        ppa_years,
+        battery_price_thb,
+        battery_kwh_extra,
+        co2_factor,
+        monthly_bill_thb,
+        // AI roof analysis (if ran)
+        ai_analysis: ai_analysis || undefined,
+      },
+    }
+
+    if (isNewProposal) {
+      // First time — mark as sent now
+      upsertBody.status = 'sent'
+      upsertBody.sent_at = nowIso
+    } else {
+      // Edit — preserve existing lifecycle state
+      upsertBody.sent_at = existing.sent_at || nowIso
+      // Don't downgrade status (viewed/signed should stay)
+      if (!existing.status || existing.status === 'draft') {
+        upsertBody.status = 'sent'
+      }
+    }
+
+    await supaUpsert('proposals', upsertBody, 'ref_number')
+
+    // Emit analytics event
+    fetch(`${SUPABASE_URL}/rest/v1/proposal_events`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({
+        proposal_ref: ref,
+        event_type: isNewProposal ? 'sent' : 'edited',
+        event_data: { by: admin.email },
+      }),
+    }).catch(() => {})
 
     return Response.json({
       ok: true,
@@ -276,6 +319,7 @@ export default async function handler(req: Request): Promise<Response> {
       password: pw,
       url: `https://energy-tm.com/p/${ref}`,
       created_by: admin.email,
+      is_new: isNewProposal,
     })
   } catch (e: any) {
     console.error('create error:', e)

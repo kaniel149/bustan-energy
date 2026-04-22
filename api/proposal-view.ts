@@ -1,5 +1,7 @@
 // ============================================================
 // /api/proposal-view — Edge runtime, direct fetch (no SDK)
+// Logs a view, updates proposal counters/status/first_viewed_at,
+// and emits a proposal_events row for analytics.
 // ============================================================
 export const config = { runtime: 'edge' }
 
@@ -14,7 +16,8 @@ const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
-const FROM = 'TM Energy <onboarding@resend.dev>'
+// Prefer verified domain sender — fall back to Resend sandbox if not configured.
+const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
 
 async function supaGet(path: string) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -36,6 +39,19 @@ async function supaPost(table: string, body: any) {
     },
     body: JSON.stringify(body),
   }).then((r) => r.json())
+}
+
+async function supaPatch(path: string, body: any) {
+  return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: 'PATCH',
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify(body),
+  })
 }
 
 async function sendEmail(to: string[], subject: string, html: string) {
@@ -88,8 +104,9 @@ export default async function handler(req: Request): Promise<Response> {
     const correct = (await sha256(String(password).trim())) === proposal.password_hash
     const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
     const ua = req.headers.get('user-agent') || null
+    const now = new Date().toISOString()
 
-    // Log view (fire-and-forget)
+    // Log view attempt (correct or not) — fire-and-forget
     supaPost('proposal_views', {
       proposal_ref: ref,
       ip,
@@ -98,12 +115,44 @@ export default async function handler(req: Request): Promise<Response> {
     }).catch(() => {})
 
     if (!correct) {
+      // Record failed access attempt for analytics
+      supaPost('proposal_events', {
+        proposal_ref: ref,
+        event_type: 'access_denied',
+        event_data: { ip, ua },
+      }).catch(() => {})
       return Response.json({ ok: false, error: 'wrong_password' }, { status: 401 })
     }
 
-    // Send email (fire-and-forget)
+    // ── PERSIST view state (this was the bug — never written before) ──
     const isFirst = !proposal.first_viewed_at
     const viewCount = (proposal.view_count || 0) + 1
+
+    const updates: Record<string, any> = {
+      view_count: viewCount,
+    }
+    if (isFirst) {
+      updates.first_viewed_at = now
+      // Only flip to 'viewed' if still in 'sent' state (don't overwrite 'signed')
+      if (proposal.status === 'sent' || proposal.status === 'draft') {
+        updates.status = 'viewed'
+      }
+    }
+
+    // Fire-and-forget so we don't block the client response
+    supaPatch(
+      `proposals?ref_number=eq.${encodeURIComponent(ref)}`,
+      updates
+    ).catch(() => {})
+
+    // Emit analytics event
+    supaPost('proposal_events', {
+      proposal_ref: ref,
+      event_type: isFirst ? 'viewed_first' : 'viewed_return',
+      event_data: { ip, ua, view_count: viewCount },
+    }).catch(() => {})
+
+    // Send notification email (fire-and-forget)
     const subject = isFirst
       ? `🎯 ${proposal.client_name || proposal.ref_number} פתח את ההצעה!`
       : `👁️ ${proposal.client_name || proposal.ref_number} צופה שוב (${ref})`

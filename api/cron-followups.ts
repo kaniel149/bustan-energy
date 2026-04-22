@@ -9,7 +9,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const CRON_SECRET = process.env.CRON_SECRET || 'tm-cron-secret'
-const FROM = 'TM Energy <onboarding@resend.dev>'
+const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
 
 async function supaGet(path: string) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {

@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { Upload, Sparkles, Loader2, Image as ImageIcon, X, Wand2 } from 'lucide-react'
-import { uploadProposalImage, proposalImagePath, fileToBase64, resizeImage } from '../../lib/storage'
+import { uploadProposalImage, proposalImagePath, resizeImage } from '../../lib/storage'
 import { useAdminStore } from '../../lib/admin-store'
 
 export interface RoofAnalysisResult {
@@ -143,35 +143,36 @@ export function RoofImageUploader({
 
     setGeneratingPanels(true)
     try {
-      // Fetch original image and convert to base64
-      const response = await fetch(originalUrl)
-      const blob = await response.blob()
-      const file = new File([blob], 'roof.jpg', { type: 'image/jpeg' })
-      const image_base64 = await fileToBase64(file)
-
       const session = await import('../../lib/admin-auth').then((m) => m.getSession())
       const token = session?.access_token
+      if (!token) {
+        throw new Error('לא מחובר — התחבר מחדש לאדמין')
+      }
 
       const res = await fetch('/api/admin-overlay-panels', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          image_base64,
+          image_url: originalUrl,
           panel_count: panelCount,
           notes: aiNotes,
         }),
       })
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({})) as { error?: string }
-        throw new Error(errData.error ?? `HTTP ${res.status}`)
+      // Handle non-JSON responses (e.g. 413)
+      const rawText = await res.text()
+      let data: { ok: boolean; image_base64?: string; error?: string; detail?: string }
+      try {
+        data = JSON.parse(rawText)
+      } catch {
+        throw new Error(`HTTP ${res.status}: ${rawText.slice(0, 120)}`)
       }
-
-      const data = await res.json() as { ok: boolean; image_base64: string }
-      if (!data.ok) throw new Error('API returned not ok')
+      if (!data.ok || !data.image_base64) {
+        throw new Error(data.error || data.detail || `נכשל (HTTP ${res.status})`)
+      }
 
       // Convert base64 to blob and upload
       const byteChars = atob(data.image_base64)
