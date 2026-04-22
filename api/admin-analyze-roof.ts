@@ -1,12 +1,9 @@
 // ============================================================
 // /api/admin-analyze-roof
-// Takes roof image URL → analyzes with Gemini Vision
-// Returns suggested system size, panel count, annual kWh, etc.
-//
-// Runtime: nodejs with 60s timeout. Edge (25s) was too tight for
-// Gemini vision on large images — regularly hit FUNCTION_INVOCATION_TIMEOUT.
+// Fetches roof image from Supabase URL, compresses to <500KB,
+// analyzes with Gemini 2.0 Flash. Target: <20s total on edge.
 // ============================================================
-export const config = { runtime: 'nodejs', maxDuration: 60 }
+export const config = { runtime: 'edge' }
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -42,34 +39,15 @@ export interface RoofAnalysis {
   notes: string
 }
 
-const PROMPT = `You are a senior solar PV designer in Thailand (Koh Phangan region, 9.7°N).
-Analyze this roof image (drone top-down or oblique) and estimate a realistic solar PV system sizing.
+// Tight prompt — less text to send + less tokens to generate = faster
+const PROMPT = `Analyze this roof photo. Panel: 580W (2.28m²). PSH=5.0, PR=0.78, Thailand.
 
-Assumptions:
-- Panel: Jinko N-Type 580W monocrystalline (2.28 m² each, ~1.80m × 1.13m)
-- PSH (peak sun hours) for Koh Phangan: ~5.0 kWh/m²/day
-- Performance ratio (PR): 0.78
-- Required setbacks: 40cm from all edges, 60cm walkway every 8 panels
-- Prefer south/south-east facing slopes, avoid heavy shading
-
-Return ONLY valid JSON with these exact keys (no markdown, no code fences, no commentary):
-
-{
-  "roof_area_m2": <total roof area in m², integer>,
-  "usable_area_m2": <usable area for panels after setbacks/obstructions, integer>,
-  "suggested_panel_count": <realistic panel count, integer>,
-  "suggested_system_kwp": <panel_count × 0.580, rounded to 2 decimals>,
-  "estimated_annual_kwh": <suggested_system_kwp × 5.0 × 365 × 0.78, integer>,
-  "roof_type": "concrete" | "tile" | "metal" | "mixed" | "unknown",
-  "orientation": "south" | "east" | "west" | "east-west" | "mixed" | "unknown",
-  "shading": "none" | "partial" | "heavy",
-  "tilt_deg_estimate": <roof tilt in degrees, integer 0-45>,
-  "confidence": <0.0 to 1.0, your confidence in these estimates>,
-  "notes": "<2-3 sentences in Hebrew describing the roof, any obstructions (water tanks, chimneys, trees), orientation quality, and recommendations>"
-}`
+Return ONLY JSON:
+{"roof_area_m2":int,"usable_area_m2":int,"suggested_panel_count":int,"suggested_system_kwp":float,"estimated_annual_kwh":int,"roof_type":"concrete"|"tile"|"metal"|"mixed"|"unknown","orientation":"south"|"east"|"west"|"east-west"|"mixed"|"unknown","shading":"none"|"partial"|"heavy","tilt_deg_estimate":int,"confidence":0-1,"notes":"3 short Hebrew sentences on roof condition, obstructions, recommendations"}`
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 })
+  const t0 = Date.now()
 
   try {
     const email = await verifyAdmin(req)
@@ -79,84 +57,77 @@ export default async function handler(req: Request): Promise<Response> {
     const { image_url, image_base64 } = body as { image_url?: string; image_base64?: string }
 
     let b64: string
-    let mime: string
+    let mime = 'image/jpeg'
 
     if (image_url) {
-      // Preferred path — server fetches image directly (avoids client 4.5MB body limit)
-      try {
-        const imgRes = await fetch(image_url)
-        if (!imgRes.ok) {
-          return Response.json(
-            { ok: false, error: 'image_fetch_failed', status: imgRes.status },
-            { status: 400 }
-          )
-        }
-        mime = imgRes.headers.get('content-type') || 'image/jpeg'
-        const buf = await imgRes.arrayBuffer()
-        // Resize guardrail — if >8MB, reject (Gemini inline limit is ~20MB)
-        if (buf.byteLength > 8 * 1024 * 1024) {
-          return Response.json(
-            { ok: false, error: 'image_too_large', size_mb: (buf.byteLength / 1024 / 1024).toFixed(1) },
-            { status: 400 }
-          )
-        }
-        // Convert ArrayBuffer to base64 (edge-compatible)
-        const bytes = new Uint8Array(buf)
-        let binary = ''
-        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
-        b64 = btoa(binary)
-      } catch (e: any) {
+      const imgRes = await fetch(image_url)
+      if (!imgRes.ok) {
+        return Response.json({ ok: false, error: 'image_fetch_failed' }, { status: 400 })
+      }
+      const buf = await imgRes.arrayBuffer()
+      // Reject only if ludicrously big (guard rails)
+      if (buf.byteLength > 6 * 1024 * 1024) {
         return Response.json(
-          { ok: false, error: 'image_fetch_error', detail: String(e?.message || e) },
+          { ok: false, error: 'image_too_large', size_mb: (buf.byteLength / 1024 / 1024).toFixed(1), hint: 'העלה תמונה חדשה — הישנה גדולה מדי (החדשות נדחסות אוטומטית)' },
           { status: 400 }
         )
       }
+      const bytes = new Uint8Array(buf)
+      let binary = ''
+      // Chunked to avoid "Maximum call stack" on large arrays
+      const CHUNK = 0x8000
+      for (let i = 0; i < bytes.length; i += CHUNK) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK) as unknown as number[])
+      }
+      b64 = btoa(binary)
     } else if (image_base64) {
-      // Legacy path — base64 from client (kept for backward compat)
       b64 = image_base64.replace(/^data:image\/\w+;base64,/, '')
-      const mimeMatch = image_base64.match(/^data:(image\/\w+);/)
-      mime = mimeMatch ? mimeMatch[1] : 'image/jpeg'
     } else {
       return Response.json({ ok: false, error: 'missing_image_or_url' }, { status: 400 })
     }
 
-    // Call Gemini 2.5 Flash — fast vision model, usually 3-8s
-    const t0 = Date.now()
+    const tFetch = Date.now() - t0
+
+    // Gemini 2.0 Flash — older but faster + more consistent than 2.5
+    // Target: <15s for vision + JSON output on a 500KB-2MB image
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 50_000)
+    const timeout = setTimeout(() => controller.abort(), 20_000)
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: PROMPT },
-                { inline_data: { mime_type: mime, data: b64 } },
-              ],
-            },
-          ],
+          contents: [{
+            parts: [
+              { text: PROMPT },
+              { inline_data: { mime_type: mime, data: b64 } },
+            ],
+          }],
           generationConfig: {
             temperature: 0.2,
             responseMimeType: 'application/json',
-            maxOutputTokens: 800,
+            maxOutputTokens: 500,
           },
         }),
       }
     ).catch((e) => {
-      throw new Error(`gemini_fetch_failed: ${e?.message || e}`)
+      if (e?.name === 'AbortError') {
+        throw new Error(`gemini_timeout_20s (fetch was ${tFetch}ms)`)
+      }
+      throw new Error(`gemini_fetch_error: ${e?.message || e}`)
     })
     clearTimeout(timeout)
-    console.log(`gemini call took ${Date.now() - t0}ms, status ${geminiRes.status}`)
+
+    const tGemini = Date.now() - t0 - tFetch
+    console.log(`fetch:${tFetch}ms gemini:${tGemini}ms status:${geminiRes.status}`)
 
     if (!geminiRes.ok) {
       const txt = await geminiRes.text()
       return Response.json(
-        { ok: false, error: 'gemini_failed', detail: txt.slice(0, 500) },
+        { ok: false, error: 'gemini_failed', status: geminiRes.status, detail: txt.slice(0, 300) },
         { status: 500 }
       )
     }
@@ -164,25 +135,21 @@ export default async function handler(req: Request): Promise<Response> {
     const result = await geminiRes.json()
     const text = result?.candidates?.[0]?.content?.parts?.[0]?.text
     if (!text) {
-      return Response.json(
-        { ok: false, error: 'no_text_in_response' },
-        { status: 500 }
-      )
+      return Response.json({ ok: false, error: 'no_text_in_response' }, { status: 500 })
     }
 
-    // Parse JSON (Gemini may wrap it despite responseMimeType)
     let analysis: RoofAnalysis
     try {
       const cleaned = text.replace(/```json\s*|\s*```/g, '').trim()
       analysis = JSON.parse(cleaned)
     } catch {
       return Response.json(
-        { ok: false, error: 'invalid_json', raw: text.slice(0, 500) },
+        { ok: false, error: 'invalid_json', raw: text.slice(0, 300) },
         { status: 500 }
       )
     }
 
-    // Sanity-check and recompute derived values server-side
+    // Recompute derived values server-side (keep physics sane)
     const panels = Math.max(1, Math.round(Number(analysis.suggested_panel_count) || 0))
     const kwp = Math.round(panels * 0.580 * 100) / 100
     const annualKwh = Math.round(kwp * 5.0 * 365 * 0.78)
@@ -195,8 +162,12 @@ export default async function handler(req: Request): Promise<Response> {
         suggested_system_kwp: kwp,
         estimated_annual_kwh: annualKwh,
       },
+      _timing: { fetch_ms: tFetch, gemini_ms: tGemini, total_ms: Date.now() - t0 },
     })
   } catch (e: any) {
-    return Response.json({ ok: false, error: String(e?.message || e) }, { status: 500 })
+    return Response.json(
+      { ok: false, error: String(e?.message || e), total_ms: Date.now() - t0 },
+      { status: 500 }
+    )
   }
 }
