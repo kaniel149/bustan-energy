@@ -122,6 +122,9 @@ export default function App() {
                 <Route path="proposals" element={<ProposalsListPage />} />
                 <Route path="proposals/new" element={<NewProposalPage />} />
                 <Route path="proposals/:ref" element={<ProposalDetailPage />} />
+                <Route path="bom" element={<BOMPage />} />
+                <Route path="procurement" element={<ProcurementPage />} />
+                <Route path="pea" element={<PEADrawingsPage />} />
               </Route>
 
               {/* CRM routes (also accessible via /crm on main domain) */}
