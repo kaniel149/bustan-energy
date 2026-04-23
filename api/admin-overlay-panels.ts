@@ -77,26 +77,17 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ ok: false, error: 'missing_image_or_url' }, { status: 400 })
     }
 
-    const prompt = `Add exactly ${panel_count} black monocrystalline solar panels to the sloped roof sections of this building (drone top-down view).
-
-Layout rules:
-- Distribute panels evenly across the MAIN roof slopes
-- Arrange panels in neat rows parallel to roof ridges
-- Keep 40cm setback from all roof edges
-- Panels are sleek solid black with thin silver aluminum frames
-- Cast realistic soft shadows on the roof surface
-- Slight glossy reflection indicating glass
-
-${notes ? 'Additional notes: ' + notes : ''}
-
-CRITICAL PRESERVATION: Keep exactly the original colors, trees, vehicles, surroundings, drone angle, and lighting. Only ADD the panels. Photorealistic output, same camera framing.`
+    // Short prompt = faster generation on Flash 2.0
+    const prompt = `Add ${panel_count} black monocrystalline solar panels on the sloped roofs of this building. Arrange in neat parallel rows with 40cm edge setbacks. Keep everything else identical — same lighting, colors, angle, surroundings. Panels should be solid black with thin aluminum frames, realistic shadows, photorealistic.${notes ? ' ' + notes : ''}`
 
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 22_000)
     const t0 = Date.now()
 
+    // Gemini 2.0 Flash image generation — ~3-5x faster than 3 Pro, typically 8-15s
+    // Requires responseModalities: ['TEXT','IMAGE'] for image-in-image-out
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -106,16 +97,20 @@ CRITICAL PRESERVATION: Keep exactly the original colors, trees, vehicles, surrou
             { text: prompt },
             { inline_data: { mime_type: mime, data: b64 } },
           ]}],
+          generationConfig: {
+            responseModalities: ['TEXT', 'IMAGE'],
+            temperature: 0.4,
+          },
         }),
       }
     ).catch((e) => {
       if (e?.name === 'AbortError') {
-        throw new Error(`gemini_image_gen_timeout_22s — image generation is slow, try a smaller / simpler image`)
+        throw new Error(`gemini_image_gen_timeout_22s — image gen too slow. העלה תמונה קטנה יותר (עד 2MB) ונסה שוב.`)
       }
       throw new Error(`gemini_fetch_error: ${e?.message || e}`)
     })
     clearTimeout(timeout)
-    console.log(`overlay-panels gemini call: ${Date.now() - t0}ms status ${geminiRes.status}`)
+    console.log(`overlay-panels gemini (flash-2.0): ${Date.now() - t0}ms status ${geminiRes.status}`)
 
     if (!geminiRes.ok) {
       const txt = await geminiRes.text()

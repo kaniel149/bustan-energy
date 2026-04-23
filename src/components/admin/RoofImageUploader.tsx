@@ -155,6 +155,15 @@ export function RoofImageUploader({
         throw new Error('לא מחובר — התחבר מחדש לאדמין')
       }
 
+      // Fetch the original, resize to 768px (aggressive — speed > quality for AI)
+      // and re-upload as a "small" variant just for AI use
+      const response = await fetch(originalUrl)
+      const origBlob = await response.blob()
+      const origFile = new File([origBlob], 'roof.jpg', { type: origBlob.type || 'image/jpeg' })
+      const smallFile = await resizeImage(origFile, 768, 0.80)
+      const smallPath = proposalImagePath(proposalRef || 'draft', 'original') + '-ai-small'
+      const smallUrl = await uploadProposalImage(smallFile, smallPath)
+
       const res = await fetch('/api/admin-overlay-panels', {
         method: 'POST',
         headers: {
@@ -162,7 +171,7 @@ export function RoofImageUploader({
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          image_url: originalUrl,
+          image_url: smallUrl,
           panel_count: panelCount,
           notes: aiNotes,
         }),
