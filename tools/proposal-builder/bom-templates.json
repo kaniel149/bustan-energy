@@ -90,10 +90,32 @@
     },
 
     "batteries": {
-      "Huawei_LUNA2000_5_S0":  { "price": 72000, "kwh": 5,  "dod_pct": 100, "cycles": 6000 },
-      "Huawei_LUNA2000_10_S0": { "price": 138000, "kwh": 10, "dod_pct": 100, "cycles": 6000 },
-      "Huawei_LUNA2000_15_S0": { "price": 198000, "kwh": 15, "dod_pct": 100, "cycles": 6000 },
-      "Huawei_LUNA2000_power_module": { "price": 15000, "kw": 5, "role": "addon_for_5kw_output_boost" }
+      "Huawei_LUNA2000_5_S0":  { "brand": "Huawei", "price": 72000, "kwh": 5, "voltage_class": "HV", "dod_pct": 100, "cycles": 6000, "compatible": ["Huawei"] },
+      "Huawei_LUNA2000_7_S1":  { "brand": "Huawei", "price": 98000, "kwh": 7, "voltage_class": "HV", "dod_pct": 100, "cycles": 6000, "compatible": ["Huawei"] },
+      "Huawei_LUNA2000_10_S0": { "brand": "Huawei", "price": 138000, "kwh": 10, "voltage_class": "HV", "dod_pct": 100, "cycles": 6000, "compatible": ["Huawei"] },
+      "Huawei_LUNA2000_15_S0": { "brand": "Huawei", "price": 198000, "kwh": 15, "voltage_class": "HV", "dod_pct": 100, "cycles": 6000, "compatible": ["Huawei"] },
+      "Huawei_LUNA2000_200kwh_CI": { "brand": "Huawei", "price": 2450000, "kwh": 200, "voltage_class": "HV", "dod_pct": 95, "cycles": 8000, "compatible": ["Huawei"] },
+      "Huawei_LUNA2000_power_module": { "brand": "Huawei", "price": 15000, "kw": 5, "role": "addon_for_5kw_output_boost" },
+
+      "Pylontech_US3000C": { "brand": "Pylontech", "price": 48000, "kwh": 3.5, "voltage_class": "LV", "dod_pct": 95, "cycles": 6000, "compatible": ["DAYE","Sungrow","Victron"] },
+      "Pylontech_US5000":  { "brand": "Pylontech", "price": 62000, "kwh": 4.8, "voltage_class": "LV", "dod_pct": 95, "cycles": 6000, "compatible": ["DAYE","Sungrow","Victron"] },
+      "Pylontech_Force_L2": { "brand": "Pylontech", "price": 52000, "kwh": 3.6, "voltage_class": "LV", "dod_pct": 90, "cycles": 6000, "compatible": ["DAYE","Sungrow"] },
+      "Pylontech_Force_H2": { "brand": "Pylontech", "price": 180000, "kwh": 14, "voltage_class": "HV", "dod_pct": 90, "cycles": 6000, "compatible": ["Sungrow","DAYE"] },
+
+      "BYD_BBox_LVS_4":  { "brand": "BYD", "price": 72000, "kwh": 4, "voltage_class": "LV", "dod_pct": 96, "cycles": 8000, "compatible": ["Sungrow","DAYE","SMA"] },
+      "BYD_BBox_LVS_8":  { "brand": "BYD", "price": 135000, "kwh": 8, "voltage_class": "LV", "dod_pct": 96, "cycles": 8000, "compatible": ["Sungrow","DAYE","SMA"] },
+      "BYD_BBox_HVM_11": { "brand": "BYD", "price": 185000, "kwh": 11, "voltage_class": "HV", "dod_pct": 96, "cycles": 8000, "compatible": ["Sungrow","SMA","Fronius"] },
+      "BYD_BBox_HVM_22": { "brand": "BYD", "price": 365000, "kwh": 22.1, "voltage_class": "HV", "dod_pct": 96, "cycles": 8000, "compatible": ["Sungrow","SMA","Fronius"] },
+
+      "DAYE_BOS_A51.2":    { "brand": "DAYE", "price": 55000, "kwh": 5.12, "voltage_class": "LV", "dod_pct": 90, "cycles": 6000, "compatible": ["DAYE","Sungrow"] },
+      "DAYE_BOS_GM5.1":    { "brand": "DAYE", "price": 58000, "kwh": 5.12, "voltage_class": "HV", "dod_pct": 90, "cycles": 6000, "compatible": ["DAYE"] },
+      "DAYE_SE_G5.1Pro_B": { "brand": "DAYE", "price": 102000, "kwh": 10.24, "voltage_class": "LV", "dod_pct": 95, "cycles": 6000, "compatible": ["DAYE"] },
+
+      "Sungrow_SBR096":  { "brand": "Sungrow", "price": 138000, "kwh": 9.6, "voltage_class": "HV", "dod_pct": 100, "cycles": 8000, "compatible": ["Sungrow"] },
+      "Sungrow_SBR128":  { "brand": "Sungrow", "price": 175000, "kwh": 12.8, "voltage_class": "HV", "dod_pct": 100, "cycles": 8000, "compatible": ["Sungrow"] },
+      "Sungrow_SBR160":  { "brand": "Sungrow", "price": 215000, "kwh": 16, "voltage_class": "HV", "dod_pct": 100, "cycles": 8000, "compatible": ["Sungrow"] },
+      "Sungrow_SBR256":  { "brand": "Sungrow", "price": 340000, "kwh": 25.6, "voltage_class": "HV", "dod_pct": 100, "cycles": 8000, "compatible": ["Sungrow"] },
+      "Sungrow_SBH040":  { "brand": "Sungrow", "price": 520000, "kwh": 40, "voltage_class": "HV", "dod_pct": 95, "cycles": 8000, "compatible": ["Sungrow"] }
     },
 
     "mounting": {

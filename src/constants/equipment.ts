@@ -27,22 +27,64 @@ export interface InverterModel {
   price_thb?: number
 }
 
+export interface BatteryModel {
+  id: string
+  brand: string
+  model: string
+  kwh: number               // nominal usable capacity
+  voltage_class: 'LV' | 'HV'
+  chemistry: string         // 'LiFePO4' | 'NMC'
+  cycles: number
+  dod_pct: number
+  stackable?: boolean
+  max_stack_kwh?: number
+  compatible_inverters?: string[]  // brand names
+  price_thb?: number
+}
+
 // ── PANELS ───────────────────────────────────────────────
 
 export const PANEL_MODELS: PanelModel[] = [
-  // JA Solar
-  { id: 'ja_555', brand: 'JA Solar', model: 'JAM72S30-555/MR', watt: 555, type: 'mono', area_m2: 2.42, price_thb: 1665 },
-  { id: 'ja_580', brand: 'JA Solar', model: 'JAM72S40-580/MB', watt: 580, type: 'n-type', area_m2: 2.42, price_thb: 1750 },
-  { id: 'ja_600', brand: 'JA Solar', model: 'JAM72D40-600/MB', watt: 600, type: 'bifacial', area_m2: 2.42, price_thb: 1820 },
-  // Jinko
+  // ─── JA Solar (7 models) ───
+  { id: 'ja_410', brand: 'JA Solar', model: 'JAM54S30-410/GR 410W Half-cell', watt: 410, type: 'mono', area_m2: 1.94, price_thb: 1280 },
+  { id: 'ja_460', brand: 'JA Solar', model: 'JAM60S30-460/MR 460W', watt: 460, type: 'mono', area_m2: 2.08, price_thb: 1380 },
+  { id: 'ja_555', brand: 'JA Solar', model: 'JAM72S30-555/MR 555W', watt: 555, type: 'mono', area_m2: 2.42, price_thb: 1665 },
+  { id: 'ja_580', brand: 'JA Solar', model: 'JAM72S40-580/MB 580W N-type', watt: 580, type: 'n-type', area_m2: 2.42, price_thb: 1750 },
+  { id: 'ja_600_bi', brand: 'JA Solar', model: 'JAM72D40-600/MB 600W Bifacial', watt: 600, type: 'bifacial', area_m2: 2.42, price_thb: 1820 },
+  { id: 'ja_620_bi', brand: 'JA Solar', model: 'JAM66D45-620/LB 620W Bifacial', watt: 620, type: 'bifacial', area_m2: 2.53, price_thb: 1920 },
+  { id: 'ja_680_bi', brand: 'JA Solar', model: 'JAM78D45-680/LB 680W N-type Bifacial', watt: 680, type: 'bifacial', area_m2: 2.98, price_thb: 2180 },
+
+  // ─── Jinko (7 models) ───
+  { id: 'jinko_410', brand: 'Jinko', model: 'Cheetah JKM410M-6RL3 410W', watt: 410, type: 'mono', area_m2: 1.94, price_thb: 1260 },
+  { id: 'jinko_440', brand: 'Jinko', model: 'Tiger Neo JKM440N-54HL4R-V 440W', watt: 440, type: 'n-type', area_m2: 2.02, price_thb: 1380 },
   { id: 'jinko_550', brand: 'Jinko', model: 'Tiger Pro 72HC-BDVP 550W', watt: 550, type: 'mono', area_m2: 2.18, price_thb: 1650 },
-  { id: 'jinko_580', brand: 'Jinko', model: 'Tiger Neo N-Type 580W', watt: 580, type: 'n-type', area_m2: 2.28, price_thb: 1720 },
+  { id: 'jinko_580', brand: 'Jinko', model: 'Tiger Neo JKM580N-72HL4R 580W', watt: 580, type: 'n-type', area_m2: 2.28, price_thb: 1720 },
   { id: 'jinko_600', brand: 'Jinko', model: 'Tiger Neo 600W', watt: 600, type: 'n-type', area_m2: 2.38, price_thb: 1790 },
-  { id: 'jinko_620', brand: 'Jinko', model: 'Tiger Neo 78HL4-BDV 620W', watt: 620, type: 'n-type', area_m2: 2.42, price_thb: 1850 },
-  // Trina
+  { id: 'jinko_620', brand: 'Jinko', model: 'Tiger Neo 78HL4-BDV 620W Bifacial', watt: 620, type: 'n-type', area_m2: 2.42, price_thb: 1850 },
+  { id: 'jinko_635', brand: 'Jinko', model: 'Tiger Neo JKM635N-72HL4-BDV 635W', watt: 635, type: 'n-type', area_m2: 2.52, price_thb: 1980 },
+
+  // ─── Trina (5 models) ───
+  { id: 'trina_405', brand: 'Trina', model: 'Vertex S TSM-405DE09.08 405W', watt: 405, type: 'mono', area_m2: 1.80, price_thb: 1240 },
+  { id: 'trina_555_n', brand: 'Trina', model: 'Vertex S+ TSM-555DE19.20 555W N-type', watt: 555, type: 'n-type', area_m2: 2.42, price_thb: 1680 },
   { id: 'trina_555', brand: 'Trina', model: 'Vertex S+ TSM-555NEG19RC.20 555W', watt: 555, type: 'mono', area_m2: 2.42, price_thb: 1640 },
   { id: 'trina_600', brand: 'Trina', model: 'Vertex S+ TSM-600NEG21C 600W', watt: 600, type: 'mono', area_m2: 2.56, price_thb: 1800 },
   { id: 'trina_700', brand: 'Trina', model: 'Vertex N TSM-NEG21C.20 700W', watt: 700, type: 'n-type', area_m2: 3.11, price_thb: 2150 },
+
+  // ─── LONGi (4 models) ─── popular in Thailand
+  { id: 'longi_460', brand: 'LONGi', model: 'Hi-MO 6 LR6-66HPH-460M 460W', watt: 460, type: 'mono', area_m2: 2.08, price_thb: 1360 },
+  { id: 'longi_555', brand: 'LONGi', model: 'Hi-MO 5m LR5-72HPH-555M 555W', watt: 555, type: 'mono', area_m2: 2.42, price_thb: 1620 },
+  { id: 'longi_590', brand: 'LONGi', model: 'Hi-MO 7 LR7-54HGD-590M 590W N-type', watt: 590, type: 'n-type', area_m2: 2.42, price_thb: 1780 },
+  { id: 'longi_615', brand: 'LONGi', model: 'Hi-MO 7 LR7-72HGD-615M 615W N-type Bifacial', watt: 615, type: 'bifacial', area_m2: 2.52, price_thb: 1920 },
+
+  // ─── Canadian Solar (3 models) ───
+  { id: 'cs_610', brand: 'Canadian Solar', model: 'TOPHiKu7 CS7N-610N 610W N-type TOPCon', watt: 610, type: 'n-type', area_m2: 2.50, price_thb: 1790 },
+  { id: 'cs_640', brand: 'Canadian Solar', model: 'BiKu7 CS7N-640MB-AG 640W Bifacial', watt: 640, type: 'bifacial', area_m2: 2.67, price_thb: 1950 },
+  { id: 'cs_665', brand: 'Canadian Solar', model: 'HiKu7 CS7N-665MS 665W', watt: 665, type: 'mono', area_m2: 2.67, price_thb: 2020 },
+
+  // ─── Risen (3 models) ─── very common in Thailand
+  { id: 'risen_400', brand: 'Risen', model: 'RSM156-7-400W 400W', watt: 400, type: 'mono', area_m2: 1.96, price_thb: 1180 },
+  { id: 'risen_555', brand: 'Risen', model: 'RSM144-7-555W 555W', watt: 555, type: 'mono', area_m2: 2.42, price_thb: 1580 },
+  { id: 'risen_600', brand: 'Risen', model: 'RSM156N-8-600W 600W N-type', watt: 600, type: 'n-type', area_m2: 2.52, price_thb: 1740 },
 ]
 
 // ── INVERTERS ────────────────────────────────────────────
@@ -122,6 +164,41 @@ export const INVERTER_MODELS: InverterModel[] = [
   { id: 'sg_25rt', brand: 'Sungrow', model: 'SH25T', kw: 25, type: 'hybrid', phases: 3, mppt_count: 3, max_dc_kw: 32, battery_capable: true, price_thb: 138000 },
 ]
 
+// ── BATTERIES ────────────────────────────────────────────
+
+export const BATTERY_MODELS: BatteryModel[] = [
+  // ─── Huawei LUNA2000 series (residential + C&I) ───
+  { id: 'huawei_luna_5', brand: 'Huawei', model: 'LUNA2000-5-S0', kwh: 5, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 100, stackable: true, max_stack_kwh: 30, compatible_inverters: ['Huawei'], price_thb: 72000 },
+  { id: 'huawei_luna_7', brand: 'Huawei', model: 'LUNA2000-7-S1', kwh: 7, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 100, stackable: true, max_stack_kwh: 42, compatible_inverters: ['Huawei'], price_thb: 98000 },
+  { id: 'huawei_luna_10', brand: 'Huawei', model: 'LUNA2000-10-S0', kwh: 10, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 100, stackable: true, max_stack_kwh: 30, compatible_inverters: ['Huawei'], price_thb: 138000 },
+  { id: 'huawei_luna_15', brand: 'Huawei', model: 'LUNA2000-15-S0', kwh: 15, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 100, stackable: true, max_stack_kwh: 30, compatible_inverters: ['Huawei'], price_thb: 198000 },
+  { id: 'huawei_luna_200', brand: 'Huawei', model: 'LUNA2000-200KWH (Commercial ESS)', kwh: 200, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 95, stackable: false, compatible_inverters: ['Huawei'], price_thb: 2450000 },
+
+  // ─── Pylontech (popular mid-range) ───
+  { id: 'pylon_us3000c', brand: 'Pylontech', model: 'US3000C 48V 3.5kWh', kwh: 3.5, voltage_class: 'LV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 95, stackable: true, max_stack_kwh: 56, compatible_inverters: ['DAYE', 'Sungrow', 'Victron'], price_thb: 48000 },
+  { id: 'pylon_us5000', brand: 'Pylontech', model: 'US5000 48V 4.8kWh', kwh: 4.8, voltage_class: 'LV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 95, stackable: true, max_stack_kwh: 77, compatible_inverters: ['DAYE', 'Sungrow', 'Victron'], price_thb: 62000 },
+  { id: 'pylon_force_l2', brand: 'Pylontech', model: 'Force L2 48V 3.6kWh', kwh: 3.6, voltage_class: 'LV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 90, stackable: true, max_stack_kwh: 28.8, compatible_inverters: ['DAYE', 'Sungrow'], price_thb: 52000 },
+  { id: 'pylon_force_h2', brand: 'Pylontech', model: 'Force H2 HV 7-22kWh', kwh: 14, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 90, stackable: true, max_stack_kwh: 22, compatible_inverters: ['Sungrow', 'DAYE'], price_thb: 180000 },
+
+  // ─── BYD Battery-Box ───
+  { id: 'byd_lvs_4', brand: 'BYD', model: 'Battery-Box Premium LVS 4.0', kwh: 4, voltage_class: 'LV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 96, stackable: true, max_stack_kwh: 24, compatible_inverters: ['Sungrow', 'DAYE', 'SMA'], price_thb: 72000 },
+  { id: 'byd_lvs_8', brand: 'BYD', model: 'Battery-Box Premium LVS 8.0', kwh: 8, voltage_class: 'LV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 96, stackable: true, max_stack_kwh: 24, compatible_inverters: ['Sungrow', 'DAYE', 'SMA'], price_thb: 135000 },
+  { id: 'byd_hvm_11', brand: 'BYD', model: 'Battery-Box Premium HVM 11.0', kwh: 11, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 96, stackable: true, max_stack_kwh: 22.1, compatible_inverters: ['Sungrow', 'SMA', 'Fronius'], price_thb: 185000 },
+  { id: 'byd_hvm_22', brand: 'BYD', model: 'Battery-Box Premium HVM 22.1', kwh: 22.1, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 96, stackable: false, compatible_inverters: ['Sungrow', 'SMA', 'Fronius'], price_thb: 365000 },
+
+  // ─── DAYE (Deye) BOS series ───
+  { id: 'daye_bos_5.1', brand: 'DAYE', model: 'BOS-A51.2 5.12kWh 51.2V', kwh: 5.12, voltage_class: 'LV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 90, stackable: true, max_stack_kwh: 30.72, compatible_inverters: ['DAYE', 'Sungrow'], price_thb: 55000 },
+  { id: 'daye_bos_gm5', brand: 'DAYE', model: 'BOS-GM5.1 5.12kWh HV', kwh: 5.12, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 90, stackable: true, max_stack_kwh: 30.72, compatible_inverters: ['DAYE'], price_thb: 58000 },
+  { id: 'daye_bos_10', brand: 'DAYE', model: 'SE-G5.1Pro-B 10.24kWh', kwh: 10.24, voltage_class: 'LV', chemistry: 'LiFePO4', cycles: 6000, dod_pct: 95, stackable: true, max_stack_kwh: 40.96, compatible_inverters: ['DAYE'], price_thb: 102000 },
+
+  // ─── Sungrow (SBR + SBH series) ───
+  { id: 'sg_sbr_9.6', brand: 'Sungrow', model: 'SBR096 9.6kWh HV', kwh: 9.6, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 100, stackable: true, max_stack_kwh: 25.6, compatible_inverters: ['Sungrow'], price_thb: 138000 },
+  { id: 'sg_sbr_12.8', brand: 'Sungrow', model: 'SBR128 12.8kWh HV', kwh: 12.8, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 100, stackable: true, max_stack_kwh: 25.6, compatible_inverters: ['Sungrow'], price_thb: 175000 },
+  { id: 'sg_sbr_16', brand: 'Sungrow', model: 'SBR160 16kWh HV', kwh: 16, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 100, stackable: true, max_stack_kwh: 25.6, compatible_inverters: ['Sungrow'], price_thb: 215000 },
+  { id: 'sg_sbr_25.6', brand: 'Sungrow', model: 'SBR256 25.6kWh HV', kwh: 25.6, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 100, stackable: false, compatible_inverters: ['Sungrow'], price_thb: 340000 },
+  { id: 'sg_sbh_40', brand: 'Sungrow', model: 'SBH040 40kWh HV (C&I)', kwh: 40, voltage_class: 'HV', chemistry: 'LiFePO4', cycles: 8000, dod_pct: 95, stackable: true, max_stack_kwh: 70, compatible_inverters: ['Sungrow'], price_thb: 520000 },
+]
+
 // Helper: group inverters by brand + type for optgroup UI
 export function groupInverters(): Record<string, InverterModel[]> {
   const groups: Record<string, InverterModel[]> = {}
@@ -142,6 +219,26 @@ export function groupPanels(): Record<string, PanelModel[]> {
     groups[p.brand].push(p)
   }
   return groups
+}
+
+export function groupBatteries(): Record<string, BatteryModel[]> {
+  const groups: Record<string, BatteryModel[]> = {}
+  for (const b of BATTERY_MODELS) {
+    const key = `${b.brand} (${b.voltage_class})`
+    groups[key] ??= []
+    groups[key].push(b)
+  }
+  return groups
+}
+
+// Pick battery that matches inverter brand + target kWh
+export function pickBattery(targetKwh: number, inverterBrand?: string) {
+  const compatible = BATTERY_MODELS.filter((b) =>
+    !inverterBrand || (b.compatible_inverters?.includes(inverterBrand) ?? false)
+  )
+  // Find single module closest to target
+  const sorted = [...compatible].sort((a, b) => Math.abs(a.kwh - targetKwh) - Math.abs(b.kwh - targetKwh))
+  return sorted[0] ?? null
 }
 
 // Helper: auto-pick best inverter for a given kwp + optional type preference

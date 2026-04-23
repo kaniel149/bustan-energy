@@ -5,7 +5,7 @@ import { useNewProposalForm } from '../../hooks/useNewProposalForm'
 import { useAdminStore } from '../../lib/admin-store'
 import { getSession } from '../../lib/admin-auth'
 import { LOCATION_PRESETS } from '../../types/proposals'
-import { PANEL_MODELS, INVERTER_MODELS, groupInverters, groupPanels } from '../../constants/equipment'
+import { PANEL_MODELS, INVERTER_MODELS, BATTERY_MODELS, groupInverters, groupPanels, groupBatteries } from '../../constants/equipment'
 import { FormField, Input, Select } from '../../components/admin/FormField'
 import { RoofImageUploader } from '../../components/admin/RoofImageUploader'
 import { ProposalSuccessModal } from '../../components/admin/ProposalSuccessModal'
@@ -509,20 +509,46 @@ export default function NewProposalPage() {
               />
             </FormField>
 
-            <FormField label="סוללה kWh">
+            <FormField label="סוללה kWh" hint="0 = ללא סוללה">
               <Input
                 type="number"
                 value={form.battery_kwh}
                 onChange={(e) => update('battery_kwh', parseFloat(e.target.value) || 0)}
                 dir="ltr"
+                step="0.1"
               />
             </FormField>
 
-            <FormField label="דגם סוללה" className="sm:col-span-2">
+            <FormField label="דגם סוללה" className="sm:col-span-3" hint="Huawei · Pylontech · BYD · DAYE · Sungrow · LV+HV">
+              <Select
+                value={(() => {
+                  const match = BATTERY_MODELS.find((b) => b.model === form.battery_model)
+                  return match?.id || ''
+                })()}
+                onChange={(e) => {
+                  const bat = BATTERY_MODELS.find((b) => b.id === e.target.value)
+                  if (bat) {
+                    update('battery_model', bat.model)
+                    update('battery_kwh', bat.kwh)
+                  }
+                }}
+              >
+                <option value="">— בחר סוללה (או השאר ריק) —</option>
+                {Object.entries(groupBatteries()).map(([group, bats]) => (
+                  <optgroup key={group} label={group}>
+                    {bats.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.kwh} kWh · {b.model} · {b.cycles.toLocaleString()} cyc
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </Select>
               <Input
+                className="mt-2"
                 value={form.battery_model}
                 onChange={(e) => update('battery_model', e.target.value)}
-                placeholder="Huawei LUNA2000-10-S0"
+                placeholder="או ערוך ידנית"
                 dir="ltr"
               />
             </FormField>
