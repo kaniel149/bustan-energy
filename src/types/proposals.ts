@@ -84,6 +84,9 @@ export interface NewProposalForm {
   // price & ROI
   total_price_thb: number
   tax_deduction_thb: number
+  // pricing auto-calc
+  price_markup: number         // client price = bom_cost × markup (default 3.0)
+  bom_cost_thb: number         // populated from /api/admin-bom
   payback_no_tax: number
   payback_with_tax: number
   savings_25yr_thb: number

@@ -41,14 +41,24 @@ const DEFAULTS: Omit<NewProposalForm, 'ref'> = {
   annual_bill_with_solar_thb: 0,
   co2_saved_kg: 0,
   savings_10yr_thb: 0,
+  // Pricing auto-calc
+  price_markup: 3.0,        // client price = BOM cost × 3
+  bom_cost_thb: 0,          // auto-populated from BOM calc
   language: 'he' as ProposalLanguage,
 }
 
 function calcDerived(form: NewProposalForm): Partial<NewProposalForm> {
-  const annual_kwh = Math.round(form.system_size_kwp * form.psh * 365 * form.pr)
+  // FIX: system_size_kwp is ALWAYS derived from panels × watt — was being
+  // treated as independent input so 157 panels × 620W showed 12.76 kWp.
+  const system_size_kwp = Math.round((form.panel_count * form.panel_watt) / 1000 * 100) / 100
+
+  // Correct physics: annual_kwh = kWp × PSH × 365 × PR
+  const annual_kwh = Math.round(system_size_kwp * form.psh * 365 * form.pr)
   const monthly_kwh = Math.round(annual_kwh / 12)
-  const monthly_savings_thb = Math.round(monthly_kwh * form.tariff_thb)
-  const annual_savings_thb = monthly_savings_thb * 12
+  // Use annual_kwh × tariff directly (avoids monthly-rounding cascade error)
+  const annual_savings_thb = Math.round(annual_kwh * form.tariff_thb)
+  const monthly_savings_thb = Math.round(annual_savings_thb / 12)
+
   const payback_no_tax = annual_savings_thb > 0
     ? Math.round((form.total_price_thb / annual_savings_thb) * 10) / 10
     : 0
@@ -64,6 +74,7 @@ function calcDerived(form: NewProposalForm): Partial<NewProposalForm> {
   const savings_10yr_thb = annual_savings_thb * 10
 
   return {
+    system_size_kwp,
     annual_kwh,
     monthly_kwh,
     monthly_savings_thb,
@@ -144,7 +155,8 @@ export function useNewProposalForm() {
     setForm((f) => ({ ...f, ...derived }))
   // Only recalculate when these specific inputs change — not on every form change
   }, [ // eslint-disable-line react-hooks/exhaustive-deps
-    form.system_size_kwp,
+    form.panel_count,      // kWp now derives from panels × watt
+    form.panel_watt,
     form.psh,
     form.pr,
     form.tariff_thb,

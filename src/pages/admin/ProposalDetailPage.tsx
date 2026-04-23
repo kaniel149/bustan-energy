@@ -10,6 +10,7 @@ import {
   Clock,
   Loader2,
   Package,
+  FileCheck,
 } from 'lucide-react'
 import { fetchProposal, buildTimeline, downloadProposalPDF, downloadSignedPDF } from '../../lib/admin-service'
 import { useAdminStore } from '../../lib/admin-store'
@@ -168,6 +169,34 @@ export default function ProposalDetailPage() {
               PDF חתום
             </button>
           )}
+
+          {/* Internal PEA drawings — always visible */}
+          <button
+            onClick={() => {
+              const params = new URLSearchParams({
+                ref: proposal.ref_number,
+                client_name: proposal.client_name ?? '',
+                client_site: proposal.location ?? 'Koh Phangan, Surat Thani 84280',
+                kwp: String(proposal.system_size_kwp ?? 87),
+                panels: String(proposal.panel_count ?? 157),
+                watt: String(proposal.panel_watt ?? 555),
+                panel_model: proposal.panel_model ?? 'JA Solar JAM72S30-555/MR',
+                inverter_model: proposal.inverter_model ?? 'Huawei SUN2000-100KTL-M1',
+                inverter_kw: '100',
+                battery_kwh: String(proposal.battery_kwh ?? 0),
+                strings: String(Math.ceil((proposal.panel_count ?? 157) / 13)),
+                ac_run_m: '15',
+                ac_current_a: String(Math.round((proposal.system_size_kwp ?? 87) * 1000 / (1.732 * 400 * 0.95))),
+              })
+              navigate(`/admin/pea?${params}`)
+            }}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-sm hover:bg-blue-500/20 transition-all"
+            aria-label="תכניות PEA"
+            title="הפק תכניות להעברה למהנדס + PEA"
+          >
+            <FileCheck size={15} />
+            תכניות PEA
+          </button>
 
           {/* Internal BOM / Supplier order — shown for any proposal, highlighted after signature */}
           <button

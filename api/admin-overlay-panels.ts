@@ -3,7 +3,9 @@
 // Takes drone image (base64) + panel count → returns overlaid image
 // Uses Gemini 3 Pro Image (Nano Banana Pro)
 // ============================================================
-export const config = { runtime: 'edge', maxDuration: 60 }
+// Image generation typically takes 20-40s. Edge 25s ceiling on Hobby
+// is tight — keep it on edge but with aggressive client-side pre-resize.
+export const config = { runtime: 'edge' }
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -44,32 +46,28 @@ export default async function handler(req: Request): Promise<Response> {
     let mime: string
 
     if (image_url) {
-      // Preferred — server fetches (avoids 4.5MB client body limit on edge)
       try {
         const imgRes = await fetch(image_url)
         if (!imgRes.ok) {
-          return Response.json(
-            { ok: false, error: 'image_fetch_failed', status: imgRes.status },
-            { status: 400 }
-          )
+          return Response.json({ ok: false, error: 'image_fetch_failed', status: imgRes.status }, { status: 400 })
         }
         mime = imgRes.headers.get('content-type') || 'image/jpeg'
         const buf = await imgRes.arrayBuffer()
-        if (buf.byteLength > 8 * 1024 * 1024) {
+        if (buf.byteLength > 6 * 1024 * 1024) {
           return Response.json(
-            { ok: false, error: 'image_too_large', size_mb: (buf.byteLength / 1024 / 1024).toFixed(1) },
+            { ok: false, error: 'image_too_large', size_mb: (buf.byteLength / 1024 / 1024).toFixed(1), hint: 'העלה תמונה חדשה — הישנה גדולה מדי' },
             { status: 400 }
           )
         }
         const bytes = new Uint8Array(buf)
         let binary = ''
-        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+        const CHUNK = 0x8000
+        for (let i = 0; i < bytes.length; i += CHUNK) {
+          binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK) as unknown as number[])
+        }
         b64 = btoa(binary)
       } catch (e: any) {
-        return Response.json(
-          { ok: false, error: 'image_fetch_error', detail: String(e?.message || e) },
-          { status: 400 }
-        )
+        return Response.json({ ok: false, error: 'image_fetch_error', detail: String(e?.message || e) }, { status: 400 })
       }
     } else if (image_base64) {
       b64 = image_base64.replace(/^data:image\/\w+;base64,/, '')
@@ -93,23 +91,31 @@ ${notes ? 'Additional notes: ' + notes : ''}
 
 CRITICAL PRESERVATION: Keep exactly the original colors, trees, vehicles, surroundings, drone angle, and lighting. Only ADD the panels. Photorealistic output, same camera framing.`
 
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 22_000)
+    const t0 = Date.now()
+
     const geminiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: prompt },
-                { inline_data: { mime_type: mime, data: b64 } },
-              ],
-            },
-          ],
+          contents: [{ parts: [
+            { text: prompt },
+            { inline_data: { mime_type: mime, data: b64 } },
+          ]}],
         }),
       }
-    )
+    ).catch((e) => {
+      if (e?.name === 'AbortError') {
+        throw new Error(`gemini_image_gen_timeout_22s — image generation is slow, try a smaller / simpler image`)
+      }
+      throw new Error(`gemini_fetch_error: ${e?.message || e}`)
+    })
+    clearTimeout(timeout)
+    console.log(`overlay-panels gemini call: ${Date.now() - t0}ms status ${geminiRes.status}`)
 
     if (!geminiRes.ok) {
       const txt = await geminiRes.text()

@@ -529,8 +529,76 @@ export default function NewProposalPage() {
         {/* Section E — Price & ROI */}
         <Section>
           <SectionTitle number="ה" title="מחיר ורוווחיות" />
+
+          {/* Auto-price calculator */}
+          <div className="mb-5 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-emerald-300/80 uppercase tracking-wider">💰 חישוב מחיר אוטומטי</p>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const session = await getSession()
+                    const token = session?.access_token
+                    if (!token) { showToast('לא מחובר', 'error'); return }
+                    const res = await fetch('/api/admin-bom', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                      body: JSON.stringify({ panels: form.panel_count, watt: form.panel_watt, template: 'grid-tied-commercial-metal-roof' }),
+                    })
+                    const data = await res.json()
+                    if (!data.ok) throw new Error(data.error)
+                    const bomCost = data.bom.totals.total_with_vat_thb
+                    const clientPrice = Math.round(bomCost * form.price_markup)
+                    update('bom_cost_thb', bomCost)
+                    update('total_price_thb', clientPrice)
+                    showToast(`עלות BOM: ฿${bomCost.toLocaleString()} · מחיר לקוח: ฿${clientPrice.toLocaleString()}`, 'success')
+                  } catch (e) {
+                    showToast(e instanceof Error ? e.message : 'שגיאה', 'error')
+                  }
+                }}
+                className="px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-medium hover:bg-emerald-500/30"
+              >
+                🧮 חשב מ-BOM
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <FormField label="עלות BOM (THB)" hint="אוטומטי">
+                <Input
+                  type="number"
+                  value={form.bom_cost_thb || ''}
+                  onChange={(e) => update('bom_cost_thb', parseFloat(e.target.value) || 0)}
+                  dir="ltr"
+                />
+              </FormField>
+              <FormField label="מקדם רווח (×)" hint="ברירת מחדל: 3.0">
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={form.price_markup}
+                  onChange={(e) => {
+                    const m = parseFloat(e.target.value) || 0
+                    update('price_markup', m)
+                    if (form.bom_cost_thb > 0) {
+                      update('total_price_thb', Math.round(form.bom_cost_thb * m))
+                    }
+                  }}
+                  dir="ltr"
+                />
+              </FormField>
+              <div className="flex flex-col justify-end">
+                <p className="text-[11px] text-white/40 uppercase tracking-wider mb-1.5">רווח גולמי</p>
+                <div className="px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm font-semibold" dir="ltr">
+                  {form.bom_cost_thb > 0
+                    ? `${Math.round((1 - 1 / form.price_markup) * 100)}% · ฿${(form.total_price_thb - form.bom_cost_thb).toLocaleString()}`
+                    : '—'}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <FormField label="מחיר כולל (THB)" required>
+            <FormField label="מחיר כולל ללקוח (THB)" required hint="מחושב אוטו׳ · ניתן לערוך">
               <Input
                 type="number"
                 value={form.total_price_thb || ''}
