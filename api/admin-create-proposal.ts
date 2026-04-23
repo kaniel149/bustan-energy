@@ -4,10 +4,10 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-import { escapeHtml } from './_lib/html'
-import { fmt } from './_lib/fmt'
-import { sha256hex, random6 } from './_lib/crypto'
-import { supaUpsert } from './_lib/supa'
+import { escapeHtml } from './_lib/html.js'
+import { fmt } from './_lib/fmt.js'
+import { sha256hex, random6 } from './_lib/crypto.js'
+import { supaUpsert } from './_lib/supa.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!

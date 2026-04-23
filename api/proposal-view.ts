@@ -7,10 +7,10 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-import { sha256hex } from './_lib/crypto'
-import { escapeHtml } from './_lib/html'
-import { fmt } from './_lib/fmt'
-import { supaGet, supaPost, supaPatch } from './_lib/supa'
+import { sha256hex } from './_lib/crypto.js'
+import { escapeHtml } from './_lib/html.js'
+import { fmt } from './_lib/fmt.js'
+import { supaGet, supaPost, supaPatch } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']

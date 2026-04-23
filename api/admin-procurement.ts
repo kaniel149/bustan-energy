@@ -12,7 +12,7 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-import { sha256hex } from './_lib/crypto'
+import { sha256hex } from './_lib/crypto.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!

@@ -6,7 +6,7 @@
 // Pro image gen takes 30-60s → Node runtime with 60s maxDuration.
 // (Edge caps at 25s on Hobby, too tight for Pro.)
 export const config = {
-  runtime: 'nodejs20.x',
+  runtime: 'nodejs',
   maxDuration: 60,
 }
 

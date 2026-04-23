@@ -5,7 +5,7 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-import templatesJson from '../tools/proposal-builder/bom-templates.json' assert { type: 'json' }
+import templatesJson from '../tools/proposal-builder/bom-templates.json' with { type: 'json' }
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
