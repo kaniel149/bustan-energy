@@ -17,24 +17,76 @@
     "_last_quote_source": "Integra Renewable Energy · solarshop.integra-re.co.th · 2026-04-22",
 
     "modules": {
-      "JA_JAM72S30_555": { "price": 1665, "watt": 555, "area_m2": 2.42 },
-      "Jinko_TigerNeo_620": { "price": 1850, "watt": 620, "area_m2": 2.42 },
-      "Jinko_NType_580": { "price": 1720, "watt": 580, "area_m2": 2.28 },
-      "Jinko_TigerPro_550": { "price": 1650, "watt": 550, "area_m2": 2.18 }
+      "JA_JAM72S30_555": { "brand": "JA Solar", "price": 1665, "watt": 555, "area_m2": 2.42 },
+      "JA_JAM72S40_580": { "brand": "JA Solar", "price": 1750, "watt": 580, "area_m2": 2.42 },
+      "JA_JAM72D40_600": { "brand": "JA Solar", "price": 1820, "watt": 600, "area_m2": 2.42 },
+      "Jinko_TigerPro_550": { "brand": "Jinko", "price": 1650, "watt": 550, "area_m2": 2.18 },
+      "Jinko_TigerNeo_580": { "brand": "Jinko", "price": 1720, "watt": 580, "area_m2": 2.28 },
+      "Jinko_TigerNeo_600": { "brand": "Jinko", "price": 1790, "watt": 600, "area_m2": 2.38 },
+      "Jinko_TigerNeo_620": { "brand": "Jinko", "price": 1850, "watt": 620, "area_m2": 2.42 },
+      "Trina_Vertex_555": { "brand": "Trina", "price": 1640, "watt": 555, "area_m2": 2.42 },
+      "Trina_Vertex_600": { "brand": "Trina", "price": 1800, "watt": 600, "area_m2": 2.56 },
+      "Trina_Vertex_N_700": { "brand": "Trina", "price": 2150, "watt": 700, "area_m2": 3.11 }
     },
 
     "inverters_grid_tied": {
-      "Huawei_SUN2000_50K_MC0": { "price": 83200, "kw": 50, "mppt": 6, "max_dc_kw": 65 },
-      "Huawei_SUN2000_60K_MB0": { "price": 98000, "kw": 60, "mppt": 8, "max_dc_kw": 78 },
-      "Huawei_SUN2000_75KTL_M0": { "price": 122000, "kw": 75, "mppt": 10, "max_dc_kw": 97 },
-      "Huawei_SUN2000_100KTL_M1": { "price": 168000, "kw": 100, "mppt": 10, "max_dc_kw": 130 },
-      "Huawei_SUN2000_185KTL_H1": { "price": 245000, "kw": 185, "mppt": 12, "max_dc_kw": 240 }
+      "Huawei_SUN2000_10KTL_M1": { "brand": "Huawei", "price": 46000, "kw": 10, "mppt": 2, "max_dc_kw": 13, "phases": 3 },
+      "Huawei_SUN2000_15KTL_M0": { "brand": "Huawei", "price": 58000, "kw": 15, "mppt": 2, "max_dc_kw": 20, "phases": 3 },
+      "Huawei_SUN2000_20KTL_M0": { "brand": "Huawei", "price": 68000, "kw": 20, "mppt": 2, "max_dc_kw": 26, "phases": 3 },
+      "Huawei_SUN2000_30KTL_M3": { "brand": "Huawei", "price": 78000, "kw": 30, "mppt": 3, "max_dc_kw": 39, "phases": 3 },
+      "Huawei_SUN2000_50K_MC0": { "brand": "Huawei", "price": 83200, "kw": 50, "mppt": 6, "max_dc_kw": 65, "phases": 3 },
+      "Huawei_SUN2000_60K_MB0": { "brand": "Huawei", "price": 98000, "kw": 60, "mppt": 8, "max_dc_kw": 78, "phases": 3 },
+      "Huawei_SUN2000_75KTL_M0": { "brand": "Huawei", "price": 122000, "kw": 75, "mppt": 10, "max_dc_kw": 97, "phases": 3 },
+      "Huawei_SUN2000_100KTL_M1": { "brand": "Huawei", "price": 168000, "kw": 100, "mppt": 10, "max_dc_kw": 130, "phases": 3 },
+      "Huawei_SUN2000_125KTL_M0": { "brand": "Huawei", "price": 198000, "kw": 125, "mppt": 10, "max_dc_kw": 162, "phases": 3 },
+      "Huawei_SUN2000_185KTL_H1": { "brand": "Huawei", "price": 245000, "kw": 185, "mppt": 12, "max_dc_kw": 240, "phases": 3 },
+
+      "DAYE_D_G3_3K_1p": { "brand": "DAYE", "price": 22000, "kw": 3, "mppt": 2, "max_dc_kw": 4, "phases": 1 },
+      "DAYE_D_G3_5K_1p": { "brand": "DAYE", "price": 28000, "kw": 5, "mppt": 2, "max_dc_kw": 6.5, "phases": 1 },
+      "DAYE_D_G3_6K_1p": { "brand": "DAYE", "price": 32000, "kw": 6, "mppt": 2, "max_dc_kw": 8, "phases": 1 },
+      "DAYE_D_G3_10K": { "brand": "DAYE", "price": 42000, "kw": 10, "mppt": 2, "max_dc_kw": 13, "phases": 3 },
+      "DAYE_D_G3_15K": { "brand": "DAYE", "price": 52000, "kw": 15, "mppt": 2, "max_dc_kw": 20, "phases": 3 },
+      "DAYE_D_G3_20K": { "brand": "DAYE", "price": 62000, "kw": 20, "mppt": 2, "max_dc_kw": 26, "phases": 3 },
+      "DAYE_D_G3_30K": { "brand": "DAYE", "price": 78000, "kw": 30, "mppt": 3, "max_dc_kw": 39, "phases": 3 },
+      "DAYE_D_G3_50K": { "brand": "DAYE", "price": 98000, "kw": 50, "mppt": 4, "max_dc_kw": 65, "phases": 3 },
+
+      "Sungrow_SG3RS_1p": { "brand": "Sungrow", "price": 22000, "kw": 3, "mppt": 1, "max_dc_kw": 4.5, "phases": 1 },
+      "Sungrow_SG5RS_1p": { "brand": "Sungrow", "price": 28000, "kw": 5, "mppt": 2, "max_dc_kw": 7.5, "phases": 1 },
+      "Sungrow_SG6RS_1p": { "brand": "Sungrow", "price": 32000, "kw": 6, "mppt": 2, "max_dc_kw": 9, "phases": 1 },
+      "Sungrow_SG10KTL_M": { "brand": "Sungrow", "price": 42000, "kw": 10, "mppt": 2, "max_dc_kw": 13, "phases": 3 },
+      "Sungrow_SG15KTL_M": { "brand": "Sungrow", "price": 52000, "kw": 15, "mppt": 2, "max_dc_kw": 20, "phases": 3 },
+      "Sungrow_SG20KTL_M": { "brand": "Sungrow", "price": 62000, "kw": 20, "mppt": 2, "max_dc_kw": 26, "phases": 3 },
+      "Sungrow_SG30KTL_M": { "brand": "Sungrow", "price": 78000, "kw": 30, "mppt": 3, "max_dc_kw": 39, "phases": 3 },
+      "Sungrow_SG50CX": { "brand": "Sungrow", "price": 98000, "kw": 50, "mppt": 5, "max_dc_kw": 65, "phases": 3 },
+      "Sungrow_SG110CX": { "brand": "Sungrow", "price": 175000, "kw": 110, "mppt": 9, "max_dc_kw": 140, "phases": 3 },
+      "Sungrow_SG125CX_P2": { "brand": "Sungrow", "price": 195000, "kw": 125, "mppt": 12, "max_dc_kw": 165, "phases": 3 }
     },
 
     "inverters_hybrid": {
-      "Huawei_SUN2000_12KTL_M2": { "price": 98000, "kw": 12, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true },
-      "Huawei_SUN2000_20KTL_M5": { "price": 125000, "kw": 20, "mppt": 3, "battery_max_kwh": 40, "backup_capable": true },
-      "Huawei_SUN2000_50KTL_NHM1": { "price": 198000, "kw": 50, "mppt": 6, "battery_max_kwh": 60, "backup_capable": true, "three_phase": true }
+      "Huawei_SUN2000_8KTL_M2": { "brand": "Huawei", "price": 78000, "kw": 8, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true, "phases": 3 },
+      "Huawei_SUN2000_10KTL_M2": { "brand": "Huawei", "price": 88000, "kw": 10, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true, "phases": 3 },
+      "Huawei_SUN2000_12KTL_M2": { "brand": "Huawei", "price": 98000, "kw": 12, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true, "phases": 3 },
+      "Huawei_SUN2000_15KTL_M2": { "brand": "Huawei", "price": 112000, "kw": 15, "mppt": 3, "battery_max_kwh": 40, "backup_capable": true, "phases": 3 },
+      "Huawei_SUN2000_17KTL_M2": { "brand": "Huawei", "price": 118000, "kw": 17, "mppt": 3, "battery_max_kwh": 40, "backup_capable": true, "phases": 3 },
+      "Huawei_SUN2000_20KTL_M5": { "brand": "Huawei", "price": 125000, "kw": 20, "mppt": 3, "battery_max_kwh": 40, "backup_capable": true, "phases": 3 },
+      "Huawei_SUN2000_30KTL_NHM0": { "brand": "Huawei", "price": 148000, "kw": 30, "mppt": 4, "battery_max_kwh": 60, "backup_capable": true, "phases": 3 },
+      "Huawei_SUN2000_50KTL_NHM1": { "brand": "Huawei", "price": 198000, "kw": 50, "mppt": 6, "battery_max_kwh": 60, "backup_capable": true, "phases": 3 },
+
+      "DAYE_D_H3_5K_1p": { "brand": "DAYE", "price": 52000, "kw": 5, "mppt": 2, "battery_max_kwh": 15, "backup_capable": true, "phases": 1 },
+      "DAYE_D_H3_8K_1p": { "brand": "DAYE", "price": 64000, "kw": 8, "mppt": 2, "battery_max_kwh": 20, "backup_capable": true, "phases": 1 },
+      "DAYE_D_H3_10K": { "brand": "DAYE", "price": 78000, "kw": 10, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true, "phases": 3 },
+      "DAYE_D_H3_12K": { "brand": "DAYE", "price": 88000, "kw": 12, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true, "phases": 3 },
+      "DAYE_D_H3_15K": { "brand": "DAYE", "price": 102000, "kw": 15, "mppt": 3, "battery_max_kwh": 40, "backup_capable": true, "phases": 3 },
+      "DAYE_D_H3_20K": { "brand": "DAYE", "price": 118000, "kw": 20, "mppt": 3, "battery_max_kwh": 50, "backup_capable": true, "phases": 3 },
+      "DAYE_D_H3_30K": { "brand": "DAYE", "price": 145000, "kw": 30, "mppt": 3, "battery_max_kwh": 60, "backup_capable": true, "phases": 3 },
+      "DAYE_D_H3_50K": { "brand": "DAYE", "price": 198000, "kw": 50, "mppt": 4, "battery_max_kwh": 80, "backup_capable": true, "phases": 3 },
+
+      "Sungrow_SH5RT_1p": { "brand": "Sungrow", "price": 62000, "kw": 5, "mppt": 2, "battery_max_kwh": 15, "backup_capable": true, "phases": 1 },
+      "Sungrow_SH6RT_1p": { "brand": "Sungrow", "price": 68000, "kw": 6, "mppt": 2, "battery_max_kwh": 20, "backup_capable": true, "phases": 1 },
+      "Sungrow_SH10RT": { "brand": "Sungrow", "price": 85000, "kw": 10, "mppt": 2, "battery_max_kwh": 30, "backup_capable": true, "phases": 3 },
+      "Sungrow_SH15T": { "brand": "Sungrow", "price": 105000, "kw": 15, "mppt": 3, "battery_max_kwh": 40, "backup_capable": true, "phases": 3 },
+      "Sungrow_SH20T": { "brand": "Sungrow", "price": 122000, "kw": 20, "mppt": 3, "battery_max_kwh": 50, "backup_capable": true, "phases": 3 },
+      "Sungrow_SH25T": { "brand": "Sungrow", "price": 138000, "kw": 25, "mppt": 3, "battery_max_kwh": 50, "backup_capable": true, "phases": 3 }
     },
 
     "batteries": {

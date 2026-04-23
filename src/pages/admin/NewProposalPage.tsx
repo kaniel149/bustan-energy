@@ -5,6 +5,7 @@ import { useNewProposalForm } from '../../hooks/useNewProposalForm'
 import { useAdminStore } from '../../lib/admin-store'
 import { getSession } from '../../lib/admin-auth'
 import { LOCATION_PRESETS } from '../../types/proposals'
+import { PANEL_MODELS, INVERTER_MODELS, groupInverters, groupPanels } from '../../constants/equipment'
 import { FormField, Input, Select } from '../../components/admin/FormField'
 import { RoofImageUploader } from '../../components/admin/RoofImageUploader'
 import { ProposalSuccessModal } from '../../components/admin/ProposalSuccessModal'
@@ -357,27 +358,31 @@ export default function NewProposalPage() {
         {/* Section B — Roof Images */}
         <Section>
           <SectionTitle number="ב" title="תמונות גג + ניתוח AI" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
-            <FormField label="הספק פאנל (W)" hint="ל-AI ולחישוב">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <FormField label="דגם פאנל" hint="בחר מהקטלוג או ערוך ידנית בסעיף ג">
               <Select
-                value={String(form.panel_watt)}
+                value={(() => {
+                  const match = PANEL_MODELS.find((p) => p.model === form.panel_model)
+                  return match?.id || ''
+                })()}
                 onChange={(e) => {
-                  const w = parseInt(e.target.value, 10)
-                  update('panel_watt', w)
-                  // Auto-update panel model name
-                  const models: Record<number, string> = {
-                    550: 'Jinko Tiger Pro 550W',
-                    580: 'Jinko N-Type 580W',
-                    600: 'Jinko Tiger Neo 600W',
-                    620: 'Jinko Tiger Neo 620W',
+                  const panel = PANEL_MODELS.find((p) => p.id === e.target.value)
+                  if (panel) {
+                    update('panel_model', panel.model)
+                    update('panel_watt', panel.watt)
                   }
-                  if (models[w]) update('panel_model', models[w])
                 }}
               >
-                <option value="550">550W</option>
-                <option value="580">580W</option>
-                <option value="600">600W</option>
-                <option value="620">620W (Tiger Neo)</option>
+                <option value="">— בחר דגם —</option>
+                {Object.entries(groupPanels()).map(([brand, models]) => (
+                  <optgroup key={brand} label={brand}>
+                    {models.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.watt}W · {p.model.replace(`${p.watt}W`, '').trim()}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
               </Select>
             </FormField>
             <FormField label="מספר פאנלים">
@@ -441,20 +446,65 @@ export default function NewProposalPage() {
               />
             </FormField>
 
-            <FormField label="דגם פאנל" className="sm:col-span-2">
+            <FormField label="דגם פאנל" className="sm:col-span-3" hint="בחר מהקטלוג או ערוך ידנית למטה">
+              <Select
+                value={(() => {
+                  const match = PANEL_MODELS.find((p) => p.model === form.panel_model)
+                  return match?.id || ''
+                })()}
+                onChange={(e) => {
+                  const panel = PANEL_MODELS.find((p) => p.id === e.target.value)
+                  if (panel) {
+                    update('panel_model', panel.model)
+                    update('panel_watt', panel.watt)
+                  }
+                }}
+              >
+                <option value="">— בחר דגם —</option>
+                {Object.entries(groupPanels()).map(([brand, models]) => (
+                  <optgroup key={brand} label={brand}>
+                    {models.map((p) => (
+                      <option key={p.id} value={p.id}>{p.watt}W · {p.model}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </Select>
               <Input
+                className="mt-2"
                 value={form.panel_model}
                 onChange={(e) => update('panel_model', e.target.value)}
-                placeholder="Jinko N-Type 580W"
+                placeholder="או ערוך ידנית"
                 dir="ltr"
               />
             </FormField>
 
-            <FormField label="דגם אינוורטר" className="sm:col-span-2">
+            <FormField label="דגם אינוורטר" className="sm:col-span-3" hint="Huawei · DAYE · Sungrow · grid-tied + hybrid · 1φ + 3φ">
+              <Select
+                value={(() => {
+                  const match = INVERTER_MODELS.find((i) => i.model === form.inverter_model)
+                  return match?.id || ''
+                })()}
+                onChange={(e) => {
+                  const inv = INVERTER_MODELS.find((i) => i.id === e.target.value)
+                  if (inv) update('inverter_model', inv.model)
+                }}
+              >
+                <option value="">— בחר אינוורטר —</option>
+                {Object.entries(groupInverters()).map(([group, invs]) => (
+                  <optgroup key={group} label={group}>
+                    {invs.map((inv) => (
+                      <option key={inv.id} value={inv.id}>
+                        {inv.kw} kW · {inv.model}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </Select>
               <Input
+                className="mt-2"
                 value={form.inverter_model}
                 onChange={(e) => update('inverter_model', e.target.value)}
-                placeholder="Huawei SUN2000-12KTL-M2"
+                placeholder="או ערוך ידנית"
                 dir="ltr"
               />
             </FormField>
