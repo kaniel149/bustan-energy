@@ -3,54 +3,14 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-async function sha256hex(s: string): Promise<string> {
-  const data = new TextEncoder().encode(s)
-  const hash = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, '0')).join('')
-}
+import { sha256hex } from './_lib/crypto'
+import { escapeHtml } from './_lib/html'
+import { fmt } from './_lib/fmt'
+import { supaGet, supaPost, supaPatch } from './_lib/supa'
 
-const SUPABASE_URL = process.env.SUPABASE_URL!
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
 const FROM = process.env.RESEND_FROM || 'TM Energy Contracts <contracts@energy-tm.com>'
-
-async function supaGet(path: string) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
-  })
-  if (!r.ok) return null
-  const arr = await r.json()
-  return Array.isArray(arr) && arr.length ? arr[0] : null
-}
-
-async function supaPost(table: string, body: any) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-    method: 'POST',
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=representation',
-    },
-    body: JSON.stringify(body),
-  })
-  return r.ok ? r.json() : null
-}
-
-async function supaPatch(path: string, body: any) {
-  return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method: 'PATCH',
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=minimal',
-    },
-    body: JSON.stringify(body),
-  })
-}
 
 async function sendEmail(to: string[], subject: string, html: string) {
   if (!RESEND_KEY) return null
@@ -60,7 +20,13 @@ async function sendEmail(to: string[], subject: string, html: string) {
       Authorization: `Bearer ${RESEND_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ from: FROM, to, subject, html }),
+    body: JSON.stringify({
+      from: FROM,
+      to,
+      reply_to: ['erez@energy-tm.com'],
+      subject,
+      html,
+    }),
   }).then((r) => r.json()).catch((e) => ({ error: String(e) }))
 }
 
@@ -70,22 +36,22 @@ function teamEmail(p: any, s: any) {
 <div style="font-family:system-ui;max-width:620px;direction:rtl;">
   <div style="background:linear-gradient(135deg,#1A7A5A,#11604B);padding:28px;border-radius:16px 16px 0 0;color:white;">
     <h1 style="margin:0;font-size:22px;">🎉 דיל נסגר!</h1>
-    <p style="margin:6px 0 0 0;opacity:.85;">הצעה ${p.ref_number} · ${p.client_name}</p>
+    <p style="margin:6px 0 0 0;opacity:.85;">הצעה ${escapeHtml(p.ref_number)} · ${escapeHtml(p.client_name)}</p>
   </div>
   <div style="background:white;padding:24px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
     <table style="width:100%;border-collapse:collapse;font-size:14px;">
-      <tr><td style="padding:8px 0;color:#666;"><b>חתם</b></td><td>${s.signer_name}</td></tr>
-      <tr><td style="padding:8px 0;color:#666;"><b>ת.ז./דרכון</b></td><td>${s.signer_id || '—'}</td></tr>
-      <tr><td style="padding:8px 0;color:#666;"><b>טלפון</b></td><td>${s.signer_phone || '—'}</td></tr>
-      <tr><td style="padding:8px 0;color:#666;"><b>אימייל</b></td><td>${s.signer_email || '—'}</td></tr>
-      <tr><td style="padding:8px 0;color:#666;"><b>מערכת</b></td><td>${p.system_size_kwp} kWp · ฿${Number(p.total_price_thb).toLocaleString()}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;"><b>חתם</b></td><td>${escapeHtml(s.signer_name)}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;"><b>ת.ז./דרכון</b></td><td>${escapeHtml(s.signer_id) || '—'}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;"><b>טלפון</b></td><td>${escapeHtml(s.signer_phone) || '—'}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;"><b>אימייל</b></td><td>${escapeHtml(s.signer_email) || '—'}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;"><b>מערכת</b></td><td>${escapeHtml(p.system_size_kwp)} kWp · ฿${fmt(p.total_price_thb)}</td></tr>
       <tr><td style="padding:8px 0;color:#666;"><b>זמן</b></td><td>${when}</td></tr>
-      <tr><td style="padding:8px 0;color:#666;"><b>IP</b></td><td>${s.ip || '—'}</td></tr>
-      <tr><td style="padding:8px 0;color:#666;"><b>Hash</b></td><td style="font-family:monospace;font-size:11px;">${s.hash_sha256}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;"><b>IP</b></td><td>${escapeHtml(s.ip) || '—'}</td></tr>
+      <tr><td style="padding:8px 0;color:#666;"><b>Hash</b></td><td style="font-family:monospace;font-size:11px;">${escapeHtml(s.hash_sha256)}</td></tr>
     </table>
     <div style="margin-top:16px;padding:14px;background:#f7f8fa;border-radius:12px;">
       <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">חתימה</div>
-      <img src="${s.signature_base64}" style="max-width:300px;max-height:120px;background:white;padding:8px;border-radius:8px;border:1px solid #ddd;">
+      <img src="${escapeHtml(s.signature_base64)}" style="max-width:300px;max-height:120px;background:white;padding:8px;border-radius:8px;border:1px solid #ddd;">
     </div>
     <p style="margin-top:16px;font-size:13px;color:#888;">🎯 שלב הבא: לקבוע התקנה + לשלוח חשבון 50%.</p>
   </div>
@@ -96,17 +62,17 @@ function clientEmail(p: any, s: any) {
   return `
 <div style="font-family:system-ui;max-width:620px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:32px;border-radius:16px 16px 0 0;color:white;text-align:center;">
-    <h1 style="margin:0;font-size:26px;color:#E8A820;">✓ Agreement Signed</h1>
+    <h1 style="margin:0;font-size:26px;color:#E8A820;">&#x2713; Agreement Signed</h1>
     <p style="margin:8px 0 0 0;opacity:.8;">TM Energy · Phangan</p>
   </div>
   <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
-    <p>Dear ${s.signer_name},</p>
-    <p>Thank you for choosing TM Energy. This confirms your signed agreement for proposal <b>${p.ref_number}</b>.</p>
+    <p>Dear ${escapeHtml(s.signer_name)},</p>
+    <p>Thank you for choosing TM Energy. This confirms your signed agreement for proposal <b>${escapeHtml(p.ref_number)}</b>.</p>
     <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-      <tr><td style="padding:6px 0;color:#666;">System</td><td><b>${p.system_size_kwp} kWp</b></td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Total</td><td><b>฿${Number(p.total_price_thb).toLocaleString()}</b></td></tr>
+      <tr><td style="padding:6px 0;color:#666;">System</td><td><b>${escapeHtml(p.system_size_kwp)} kWp</b></td></tr>
+      <tr><td style="padding:6px 0;color:#666;">Total</td><td><b>฿${fmt(p.total_price_thb)}</b></td></tr>
       <tr><td style="padding:6px 0;color:#666;">Signed</td><td>${new Date(s.signed_at).toLocaleDateString('en-GB')}</td></tr>
-      <tr><td style="padding:6px 0;color:#666;">Reference</td><td style="font-family:monospace;">${p.ref_number}</td></tr>
+      <tr><td style="padding:6px 0;color:#666;">Reference</td><td style="font-family:monospace;">${escapeHtml(p.ref_number)}</td></tr>
     </table>
     <p><b>Next steps:</b></p>
     <ol style="padding-left:20px;">
@@ -137,6 +103,14 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ ok: false, error: 'not_found' }, { status: 404 })
     }
 
+    // Reject duplicate signing and expired proposals
+    if (proposal.status === 'signed') {
+      return Response.json({ ok: false, error: 'already_signed' }, { status: 409 })
+    }
+    if (proposal.expires_at && new Date(proposal.expires_at) < new Date()) {
+      return Response.json({ ok: false, error: 'proposal_expired' }, { status: 409 })
+    }
+
     const hashInput = JSON.stringify({ ref, signer_name, signer_id, signature_base64, t: Date.now() })
     const hash = await sha256hex(hashInput)
     const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
@@ -163,7 +137,8 @@ export default async function handler(req: Request): Promise<Response> {
 
     const s = Array.isArray(saved) ? saved[0] : saved
 
-    // ── FLIP proposal status to 'signed' (this was the bug) ──
+    // Flip proposal status to 'signed' (trigger in migration 010 also does this,
+    // but the explicit PATCH ensures it even if the trigger is disabled)
     supaPatch(`proposals?ref_number=eq.${encodeURIComponent(ref)}`, {
       status: 'signed',
       signed_at: signature.signed_at,
@@ -184,7 +159,7 @@ export default async function handler(req: Request): Promise<Response> {
     const teamSubject = `🎉 חתימה התקבלה · ${proposal.client_name || proposal.ref_number} · ${ref}`
     sendEmail(NOTIFY, teamSubject, teamEmail(proposal, s)).catch(() => {})
     if (signer_email) {
-      sendEmail([signer_email], `✓ Agreement signed · TM Energy · ${ref}`, clientEmail(proposal, s)).catch(() => {})
+      sendEmail([signer_email], `&#x2713; Agreement signed · TM Energy · ${ref}`, clientEmail(proposal, s)).catch(() => {})
     }
 
     return Response.json({ ok: true, signature_id: s.id, hash })

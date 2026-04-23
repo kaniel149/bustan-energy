@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ============================================================
-// TM Energy — Proposal Generator
+// TM Energy -- Proposal Generator
 // Usage:
 //   node generate.mjs --data clients/amir.json
 // Output:
@@ -16,12 +16,121 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// ── ENV ──
+// -- LOCATION CONFIG (from bom-templates.json) ------------------------------------------
+const BOM_TEMPLATES = JSON.parse(readFileSync(join(__dirname, 'bom-templates.json'), 'utf8'))
+const LOCATIONS = BOM_TEMPLATES.locations || {}
+const DEFAULT_LOCATION_ID = 'koh_phangan'
+
+function getLocationConfig(locationId) {
+  return LOCATIONS[locationId] || LOCATIONS[DEFAULT_LOCATION_ID] || {
+    performance_ratio: 0.77,
+    soiling_factor: 0.97,
+    tariff_retail_thb: 4.4,
+    tariff_export_thb: 3.1,
+    self_consumption_pct_grid_tied: 0.60,
+    self_consumption_pct_with_battery: 0.85,
+    co2_kg_per_kwh: 0.477,
+    discount_rate: 0.08,
+    tariff_escalation: 0.03,
+    psh_annual: 5.0,
+  }
+}
+
+// -- PROPOSAL FINANCIAL CALCULATIONS ----------------------------------------------------
+// Corrected formulas v1.1 (2026-04-23):
+//   1. Discounted payback (8% discount rate, find year cumulative NPV >= 0, interpolate)
+//   2. Net-metering blended rate: 60% self-consume @ retail + 40% export @ 70% retail
+//   3. First-year LID degradation: 2% year-1, then 0.5%/yr (IEC 61215 / Jordan & Kurtz 2013)
+//   4. Performance Ratio: 0.77 (tropical, IEC 61724) * 0.97 (soiling, IEA PVPS T13-10:2018)
+//      = 0.7469 effective
+//   5. CO2: EGAT 2023 official grid mix = 0.477 kg CO2/kWh
+// Any field can be overridden in client JSON (e.g. set payback_years_no_tax explicitly).
+
+function calcProposalFinancials(data) {
+  const kwp = data.system_size_kwp
+  if (!kwp) return {}
+
+  const locId = data.location_id || DEFAULT_LOCATION_ID
+  const loc = getLocationConfig(locId)
+
+  const psh = data.psh_avg || loc.psh_annual
+  const effectivePR = (data.performance_ratio || loc.performance_ratio) *
+                      (data.soiling_factor || loc.soiling_factor)
+  const retailRate = data.tariff_thb_per_kwh || loc.tariff_retail_thb
+  const exportRate = data.tariff_export_thb || loc.tariff_export_thb
+  const withBattery = !!(data.battery_kwh)
+  const selfPct = data.self_consumption_pct ||
+    (withBattery ? loc.self_consumption_pct_with_battery : loc.self_consumption_pct_grid_tied)
+  const blendedRate = selfPct * retailRate + (1 - selfPct) * exportRate
+
+  const discountRate = data.discount_rate || loc.discount_rate
+  const tariffEscalation = data.tariff_escalation || loc.tariff_escalation
+  const annualDegradRate = 0.005
+  const omCostPct = 0.01
+  const systemLifeYears = 25
+  const co2Factor = loc.co2_kg_per_kwh
+
+  const epcCost = data.price_thb || (kwp * 32000)
+  const annualOMCost = epcCost * omCostPct
+
+  // Baseline kWh (pre-LID, full effective PR applied to raw irradiance)
+  const baselineKwhPerYear = kwp * psh * 365 * effectivePR
+
+  // Year-1 output: apply 2% LID (IEC 61215)
+  const annualKwhYear1 = baselineKwhPerYear * 0.98
+  const annualSavingsYear1 = annualKwhYear1 * blendedRate
+
+  // 25-year cashflow: [t=0: -epcCost, t=1..25: netCF]
+  const cashflows = [-epcCost]
+  let lifetimeKwh = 0
+  let lifetimeSavings = 0
+  for (let year = 1; year <= systemLifeYears; year++) {
+    // year=1 -> 0.98 (LID); year=2+ -> 0.98 * (1-0.005)^(year-2)
+    const degFactor = year === 1 ? 0.98 : 0.98 * Math.pow(1 - annualDegradRate, year - 2)
+    const yearlyKwh = baselineKwhPerYear * degFactor
+    const tariffFactor = Math.pow(1 + tariffEscalation, year - 1)
+    const yearlySavings = yearlyKwh * blendedRate * tariffFactor
+    cashflows.push(yearlySavings - annualOMCost)
+    lifetimeKwh += yearlyKwh
+    lifetimeSavings += yearlySavings
+  }
+
+  // Discounted payback: find year where cumulative discounted NPV >= 0, interpolate
+  let cumulativeNPV = cashflows[0]
+  let paybackYears = systemLifeYears
+  for (let year = 1; year <= systemLifeYears; year++) {
+    const discountedCF = cashflows[year] / Math.pow(1 + discountRate, year)
+    const prevNPV = cumulativeNPV
+    cumulativeNPV += discountedCF
+    if (cumulativeNPV >= 0) {
+      paybackYears = year - 1 + Math.abs(prevNPV) / discountedCF
+      break
+    }
+  }
+
+  const co2TonsAvoided = (lifetimeKwh * co2Factor) / 1000
+
+  return {
+    _calc_version: '1.1',
+    _location_id: locId,
+    _effective_pr: +effectivePR.toFixed(4),
+    _blended_rate_thb: +blendedRate.toFixed(3),
+    annual_kwh_calc: Math.round(annualKwhYear1),
+    annual_savings_calc_thb: Math.round(annualSavingsYear1),
+    monthly_kwh_calc: Math.round(annualKwhYear1 / 12),
+    monthly_savings_calc_thb: Math.round(annualSavingsYear1 / 12),
+    payback_discounted_years: Math.round(paybackYears * 10) / 10,
+    savings_25yr_calc_thb: Math.round(lifetimeSavings),
+    co2_tons_avoided: Math.round(co2TonsAvoided * 10) / 10,
+  }
+}
+
+// -- ENV ----------------------------------------------------------------------------------
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const PUBLIC_BASE_URL = process.env.PROPOSAL_BASE_URL || 'https://energy-tm.com/p'
 
-// ── ARGS ──
+// -- ARGS ---------------------------------------------------------------------------------
 function parseArgs() {
   const args = {}
   for (let i = 2; i < process.argv.length; i += 2) {
@@ -31,20 +140,28 @@ function parseArgs() {
   return args
 }
 
-// ── HELPERS ──
+// -- HELPERS ------------------------------------------------------------------------------
 const sha256 = (input) =>
   createHash('sha256').update(input).digest('hex')
 
 const random6 = () => String(randomInt(100000, 999999))
 
 function fmt(num) {
-  return Number(num).toLocaleString('en-US')
+  if (num == null) return '--'
+  const n = Number(num)
+  return isNaN(n) ? '--' : n.toLocaleString('en-US')
 }
 
-// ── PASSWORD GATE SNIPPET (injected into HTML) ──
+const HTML_ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }
+function escapeHtml(s) {
+  if (s == null) return ''
+  return String(s).replace(/[&<>"']/g, (c) => HTML_ESC[c] ?? c)
+}
+
+// -- PASSWORD GATE SNIPPET (injected into HTML) -------------------------------------------
 function passwordGateHTML(ref, passwordHash) {
   return `
-<!-- ═══ PASSWORD GATE ═══ -->
+<!-- PASS GATE -->
 <style id="gate-style">
   body { overflow: hidden !important; }
   .pg-overlay {
@@ -88,10 +205,10 @@ function passwordGateHTML(ref, passwordHash) {
     <h1 class="pg-title">הצעת מחיר אישית</h1>
     <p class="pg-desc">הכנס את הסיסמה שנשלחה אליך ב-WhatsApp כדי לצפות בהצעה.</p>
     <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
-           class="pg-input" id="pgInput" placeholder="● ● ● ● ● ●" autocomplete="off" autofocus>
+           class="pg-input" id="pgInput" placeholder="* * * * * *" autocomplete="off" autofocus>
     <button class="pg-btn" id="pgBtn">פתח הצעה</button>
     <div class="pg-error" id="pgError"></div>
-    <div class="pg-ref">REF · ${ref}</div>
+    <div class="pg-ref">REF * ${ref}</div>
   </div>
 </div>
 <script>
@@ -100,7 +217,6 @@ function passwordGateHTML(ref, passwordHash) {
   const HASH = "${passwordHash}";
   const API = "/api/proposal-view";
 
-  // Already unlocked? (localStorage)
   const unlockedKey = 'tm_unlocked_' + REF;
   const isUnlocked = () => localStorage.getItem(unlockedKey) === '1';
 
@@ -151,7 +267,6 @@ function passwordGateHTML(ref, passwordHash) {
       err.textContent = 'סיסמה שגויה. נסה שוב.';
       btn.disabled = false;
       btn.textContent = 'פתח הצעה';
-      // Log failed attempt too
       fetch(API, { method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ ref: REF, password: pw }) }).catch(()=>{});
       input.value = '';
@@ -161,28 +276,25 @@ function passwordGateHTML(ref, passwordHash) {
   btn.addEventListener('click', handle);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') handle(); });
 
-  // Auto-unlock if localStorage says so (but still log the view)
   if (isUnlocked()) {
     unlock();
-    // Silent log: send with special flag so we know it's re-visit
     fetch(API, { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ ref: REF, password: '__localStorage__' }) }).catch(()=>{});
   }
 })();
 </script>
-<!-- ═══ END PASSWORD GATE ═══ -->
+<!-- END PASS GATE -->
 `
 }
 
-// ── TEMPLATE RENDERING ──
+// -- TEMPLATE RENDERING ------------------------------------------------------------------
 function render(template, data) {
-  // Simple {{var}} replacement
   return template.replace(/\{\{(\w+)\}\}/g, (_, k) => {
-    return data[k] !== undefined ? String(data[k]) : `{{${k}}}`
+    return data[k] !== undefined ? escapeHtml(String(data[k])) : `{{${k}}}`
   })
 }
 
-// ── SUPABASE (REST, no SDK to keep it light) ──
+// -- SUPABASE (REST, no SDK) -------------------------------------------------------------
 async function supaPost(table, body) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
     method: 'POST',
@@ -201,14 +313,13 @@ async function supaPost(table, body) {
   return res.json()
 }
 
-// ── PDF GENERATION (via Playwright, optional) ──
+// -- PDF GENERATION (via Playwright, optional) -------------------------------------------
 async function generatePDF(htmlPath, pdfPath) {
   try {
     const { chromium } = await import('playwright')
     const browser = await chromium.launch()
     const page = await browser.newPage()
     await page.goto(`file://${resolve(htmlPath)}`)
-    // Hide password gate for PDF (skip gate by setting localStorage)
     await page.evaluate(() => {
       document.getElementById('gate-style')?.remove()
       document.getElementById('pgOverlay')?.remove()
@@ -224,13 +335,13 @@ async function generatePDF(htmlPath, pdfPath) {
     await browser.close()
     return true
   } catch (e) {
-    console.warn('⚠️  Playwright not available — skipping PDF generation')
+    console.warn('Playwright not available -- skipping PDF generation')
     console.warn('   Install: npm i -D playwright && npx playwright install chromium')
     return false
   }
 }
 
-// ── MAIN ──
+// -- MAIN --------------------------------------------------------------------------------
 async function main() {
   const args = parseArgs()
   const dataPath = args.data
@@ -238,7 +349,7 @@ async function main() {
   const skipSupa = args['skip-supa']
 
   if (!dataPath) {
-    console.error('❌ Usage: node generate.mjs --data clients/amir.json [--skip-pdf] [--skip-supa]')
+    console.error('ERROR: Usage: node generate.mjs --data clients/amir.json [--skip-pdf] [--skip-supa]')
     process.exit(1)
   }
 
@@ -246,8 +357,33 @@ async function main() {
   const data = JSON.parse(readFileSync(dataPath, 'utf8'))
   const ref = data.ref
   if (!ref) {
-    console.error('❌ JSON must include "ref" (e.g. AMIR-001)')
+    console.error('ERROR: JSON must include "ref" (e.g. AMIR-001)')
     process.exit(1)
+  }
+
+  // Run financial calculations and merge into data
+  // Calc results go into data._calc_* fields + print to console.
+  // Client-JSON fields (annual_kwh, monthly_savings_thb, etc.) are NOT overwritten --
+  // they remain authoritative for template rendering so existing proposals are unchanged.
+  const calc = calcProposalFinancials(data)
+  if (calc._calc_version) {
+    console.log('\n-- CALCULATED FINANCIALS (v1.1) --')
+    console.log(`  Location:           ${calc._location_id}`)
+    console.log(`  Effective PR:       ${calc._effective_pr} (PR * soiling)`)
+    console.log(`  Blended rate:       ${calc._blended_rate_thb} THB/kWh (net-metering)`)
+    console.log(`  Annual kWh (calc):  ${fmt(calc.annual_kwh_calc)} kWh`)
+    console.log(`  Annual savings:     ${fmt(calc.annual_savings_calc_thb)} THB`)
+    console.log(`  Payback (discntd):  ${calc.payback_discounted_years} yrs @ 8% discount`)
+    console.log(`  25yr savings:       ${fmt(calc.savings_25yr_calc_thb)} THB`)
+    console.log(`  CO2 avoided:        ${calc.co2_tons_avoided} tons (EGAT 2023)`)
+    // Warn if client JSON has different payback from calculated
+    const jsonPayback = data.payback_years_no_tax || data.payback_years_with_tax
+    if (jsonPayback && Math.abs(jsonPayback - calc.payback_discounted_years) > 1.5) {
+      console.warn(`  WARNING: JSON payback (${jsonPayback}) differs by >1.5yr from calc (${calc.payback_discounted_years}).`)
+      console.warn(`           Update client JSON or verify assumptions.`)
+    }
+    // Merge calc metadata into data for Supabase storage
+    Object.assign(data, { _financials: calc })
   }
 
   // Generate password
@@ -300,12 +436,12 @@ async function main() {
   }
 
   writeFileSync(htmlPath, finalHTML)
-  console.log(`✅ HTML saved: ${htmlPath}`)
+  console.log(`\nHTML saved: ${htmlPath}`)
 
   // PDF
   if (!skipPDF) {
     const ok = await generatePDF(htmlPath, pdfPath)
-    if (ok) console.log(`✅ PDF saved:  ${pdfPath}`)
+    if (ok) console.log(`PDF saved:  ${pdfPath}`)
   }
 
   // Register in Supabase
@@ -326,7 +462,9 @@ async function main() {
         total_price_thb: data.price_thb || null,
         monthly_savings_thb: data.monthly_savings_thb || null,
         annual_savings_thb: data.annual_savings_thb || null,
-        payback_years: data.payback_years_with_tax || data.payback_years_no_tax || null,
+        // Use discounted payback from calc if no explicit override in JSON
+        payback_years: data.payback_years_no_tax
+          || (calc.payback_discounted_years || null),
         monthly_production_kwh: data.monthly_kwh || null,
         annual_production_kwh: data.annual_kwh || null,
         password_hash: passwordHash,
@@ -335,30 +473,30 @@ async function main() {
         pdf_url: `${ref}-${data.language || 'he'}.pdf`,
         status: 'sent',
         sent_at: new Date().toISOString(),
-        metadata: data.metadata || {},
+        metadata: { ...(data.metadata || {}), _financials: calc },
       })
-      console.log(`✅ Registered in Supabase`)
+      console.log('Registered in Supabase')
     } catch (e) {
-      console.warn(`⚠️  Supabase register failed: ${e.message}`)
+      console.warn(`Supabase register failed: ${e.message}`)
     }
   } else {
-    console.log(`⏭️  Skipped Supabase (no env vars or --skip-supa)`)
+    console.log('Skipped Supabase (no env vars or --skip-supa)')
   }
 
   // Summary
-  console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-  console.log(`📋 Proposal: ${ref}`)
-  console.log(`👤 Client:   ${data.client_name}`)
-  console.log(`🔑 Password: ${password}`)
-  console.log(`🔗 URL:      ${PUBLIC_BASE_URL}/${ref}`)
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-  console.log(`\nSend the client this message:\n`)
-  console.log(`היי ${data.client_name.split(' ')[0]}, הנה הצעת המחיר שלך מ-TM Energy:`)
+  console.log('\n-------------------------------')
+  console.log(`Proposal: ${ref}`)
+  console.log(`Client:   ${data.client_name}`)
+  console.log(`Password: ${password}`)
+  console.log(`URL:      ${PUBLIC_BASE_URL}/${ref}`)
+  console.log('-------------------------------')
+  console.log(`\nSend the client:\n`)
+  console.log(`${data.client_name.split(' ')[0]}, הנה הצעת המחיר שלך מ-TM Energy:`)
   console.log(`${PUBLIC_BASE_URL}/${ref}`)
   console.log(`סיסמה: ${password}\n`)
 }
 
 main().catch((err) => {
-  console.error('❌ Fatal:', err)
+  console.error('Fatal:', err)
   process.exit(1)
 })

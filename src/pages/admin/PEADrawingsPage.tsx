@@ -123,8 +123,8 @@ export default function PEADrawingsPage() {
   const active = result?.drawings[activeTab]
 
   return (
-    <div dir="rtl" className="p-6 max-w-[1400px] mx-auto pb-16">
-      <div className="flex items-center justify-between mb-6">
+    <div dir="rtl" className="p-3 sm:p-6 max-w-[1400px] mx-auto pb-24 sm:pb-16">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
@@ -235,7 +235,7 @@ export default function PEADrawingsPage() {
               <iframe
                 srcDoc={active.html}
                 title={active.title}
-                className="w-full h-[85vh] rounded-2xl border border-white/10 bg-white"
+                className="w-full h-[60vh] sm:h-[85vh] rounded-2xl border border-white/10 bg-white"
               />
             </>
           )}

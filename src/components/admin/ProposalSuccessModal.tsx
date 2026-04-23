@@ -69,7 +69,7 @@ export function ProposalSuccessModal({
     >
       <div
         dir="rtl"
-        className="w-full max-w-md bg-[#0D2137] border border-white/10 rounded-2xl p-6 shadow-2xl"
+        className="w-full max-w-md bg-[#0D2137] border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl max-h-[95dvh] overflow-y-auto"
       >
         {/* Header */}
         <div className="text-center mb-6">
@@ -107,7 +107,7 @@ export function ProposalSuccessModal({
         <div className="flex flex-col gap-2.5">
           <button
             onClick={openWa}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 font-semibold text-sm hover:bg-emerald-600/30 transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl min-h-[48px] bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 font-semibold text-sm hover:bg-emerald-600/30 transition-colors"
           >
             <MessageCircle size={16} />
             {clientPhone ? `שלח בוואטסאפ ל-${clientPhone}` : 'פתח WhatsApp עם הודעה מוכנה'}
@@ -116,7 +116,7 @@ export function ProposalSuccessModal({
           {clientEmail && (
             <button
               onClick={openMail}
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 font-semibold text-sm hover:bg-blue-500/20 transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl min-h-[48px] bg-blue-500/10 border border-blue-500/30 text-blue-300 font-semibold text-sm hover:bg-blue-500/20 transition-colors"
             >
               <Mail size={16} />
               שלח במייל ל-{clientEmail}
@@ -125,7 +125,7 @@ export function ProposalSuccessModal({
 
           <button
             onClick={() => window.open(url, '_blank')}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/70 font-semibold text-sm hover:bg-white/10 transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl min-h-[48px] bg-white/5 border border-white/10 text-white/70 font-semibold text-sm hover:bg-white/10 transition-colors"
           >
             <ExternalLink size={16} />
             פתח בחלון חדש

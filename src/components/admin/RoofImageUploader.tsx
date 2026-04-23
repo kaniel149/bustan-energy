@@ -217,28 +217,28 @@ export function RoofImageUploader({
           <p className="text-[11px] text-white/40 uppercase tracking-wider mb-2">תמונת גג מקורית</p>
 
           {originalUrl ? (
-            <div className="relative group rounded-xl overflow-hidden border border-white/10">
-              <img src={originalUrl} alt="גג מקורי" className="w-full h-36 object-cover" />
+            <div className="relative rounded-xl overflow-hidden border border-white/10">
+              <img src={originalUrl} alt="גג מקורי" className="w-full h-40 object-cover" />
               <button
                 onClick={() => { onOriginalChange(''); onPanelsChange('') }}
-                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center text-white/60 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 w-10 h-10 rounded-full bg-black/70 flex items-center justify-center text-white/70 hover:text-white transition-colors"
                 aria-label="הסר תמונה"
               >
-                <X size={12} />
+                <X size={16} />
               </button>
             </div>
           ) : (
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingOriginal}
-              className="w-full h-36 rounded-xl border-2 border-dashed border-white/15 bg-white/3 hover:border-[#E8A820]/40 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 text-white/30 hover:text-white/50"
+              className="w-full h-40 rounded-xl border-2 border-dashed border-white/15 bg-white/3 active:bg-white/8 hover:border-[#E8A820]/40 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-2 text-white/30 hover:text-white/50"
             >
               {uploadingOriginal ? (
-                <Loader2 size={20} className="animate-spin" />
+                <Loader2 size={24} className="animate-spin" />
               ) : (
                 <>
-                  <Upload size={20} />
-                  <span className="text-xs">לחץ להעלאת תמונה</span>
+                  <Upload size={24} />
+                  <span className="text-sm">צלם גג או העלה תמונה</span>
                 </>
               )}
             </button>
@@ -248,6 +248,7 @@ export function RoofImageUploader({
             ref={fileInputRef}
             type="file"
             accept="image/*"
+            capture="environment"
             onChange={handleFileChange}
             className="hidden"
             aria-label="העלה תמונת גג"
@@ -259,19 +260,19 @@ export function RoofImageUploader({
           <p className="text-[11px] text-white/40 uppercase tracking-wider mb-2">גג עם פאנלים (AI)</p>
 
           {panelsUrl ? (
-            <div className="relative group rounded-xl overflow-hidden border border-white/10">
-              <img src={panelsUrl} alt="גג עם פאנלים" className="w-full h-36 object-cover" />
+            <div className="relative rounded-xl overflow-hidden border border-white/10">
+              <img src={panelsUrl} alt="גג עם פאנלים" className="w-full h-40 object-cover" />
               <button
                 onClick={() => onPanelsChange('')}
-                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center text-white/60 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 w-10 h-10 rounded-full bg-black/70 flex items-center justify-center text-white/70 hover:text-white transition-colors"
                 aria-label="הסר תמונה"
               >
-                <X size={12} />
+                <X size={16} />
               </button>
             </div>
           ) : (
-            <div className="w-full h-36 rounded-xl border border-dashed border-white/10 bg-white/3 flex items-center justify-center">
-              <ImageIcon size={20} className="text-white/20" />
+            <div className="w-full h-40 rounded-xl border border-dashed border-white/10 bg-white/3 flex items-center justify-center">
+              <ImageIcon size={24} className="text-white/20" />
             </div>
           )}
         </div>
@@ -311,18 +312,18 @@ export function RoofImageUploader({
           )}
 
           {/* Panel overlay controls */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <input
               type="text"
               value={aiNotes}
               onChange={(e) => setAiNotes(e.target.value)}
               placeholder="הוראות לאיי (אופציונלי)..."
-              className="flex-1 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#E8A820]/50 transition-colors"
+              className="flex-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-[#E8A820]/50 transition-colors min-h-[44px]"
             />
             <button
               onClick={handleGeneratePanels}
               disabled={generatingPanels}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E8A820]/10 border border-[#E8A820]/20 text-[#E8A820] text-sm font-medium hover:bg-[#E8A820]/15 transition-colors disabled:opacity-50 whitespace-nowrap"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#E8A820]/10 border border-[#E8A820]/20 text-[#E8A820] text-sm font-medium hover:bg-[#E8A820]/15 active:bg-[#E8A820]/20 transition-colors disabled:opacity-50 whitespace-nowrap min-h-[44px]"
             >
               {generatingPanels ? (
                 <Loader2 size={14} className="animate-spin" />

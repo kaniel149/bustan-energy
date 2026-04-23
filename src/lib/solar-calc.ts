@@ -2,8 +2,18 @@ import type { SolarCalc, GridProximity, GridGrade } from '../types'
 
 const PANEL_AREA_M2 = 2.0
 const PANEL_WATT = 550
-const PERFORMANCE_RATIO = 0.80
+// PR 0.77 for Ko Phangan tropical+coastal (IEC 61724 / Skoplaki & Palyvos 2009)
+const PERFORMANCE_RATIO = 0.77
+// 3% soiling loss from salt-spray + monsoon dust (IEA PVPS T13-10:2018)
+const SOILING_FACTOR = 0.97
 const EPC_COST_PER_KWP = 32000 // THB
+const DISCOUNT_RATE = 0.08     // 8% for discounted payback
+
+// Thailand PEA net-metering defaults (PEA tariff schedule B.E. 2566)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const RETAIL_RATE_DEFAULT = 4.4    // THB/kWh
+export const EXPORT_RATE_DEFAULT = 3.1    // THB/kWh (~70% of retail)
+export const SELF_CONSUMPTION_PCT = 0.60  // grid-tied default
 
 export function calculateSolar(
   areaM2: number,
@@ -15,10 +25,38 @@ export function calculateSolar(
   const usableArea = areaM2 * usablePct
   const panelCount = Math.floor(usableArea / PANEL_AREA_M2)
   const capacityKwp = (panelCount * PANEL_WATT) / 1000
-  const annualKwh = capacityKwp * irradiance * 365 * PERFORMANCE_RATIO
-  const annualSavingsTHB = annualKwh * tariff
+  const effectivePR = PERFORMANCE_RATIO * SOILING_FACTOR
+
+  // Year-1 degradation: 2% LID for mono-PERC/TOPCon (Jordan & Kurtz 2013)
+  const annualKwh = capacityKwp * irradiance * 365 * effectivePR * (1 - 0.02)
+
+  // Blended effective rate (net-metering model)
+  const exportRate = Math.min(tariff * 0.70, EXPORT_RATE_DEFAULT)
+  const blendedRate = SELF_CONSUMPTION_PCT * tariff + (1 - SELF_CONSUMPTION_PCT) * exportRate
+  const annualSavingsTHB = annualKwh * blendedRate
+
   const epcCost = capacityKwp * EPC_COST_PER_KWP
-  const paybackYears = epcCost / annualSavingsTHB
+
+  // Discounted payback: find year where cumulative NPV >= 0 (8% discount)
+  const OM_COST_PCT = 0.01
+  const annualOMCost = epcCost * OM_COST_PCT
+  const ANNUAL_DEGRAD = 0.005
+  let cumulativeNPV = -epcCost
+  let paybackYears = 25
+  const baselineKwh = capacityKwp * irradiance * 365 * effectivePR
+  for (let year = 1; year <= 25; year++) {
+    // degradationFactor: year=1 -> 0.98; year=2+ -> 0.98 * (1-0.005)^(year-2)
+    const degFactor = year === 1 ? 0.98 : 0.98 * Math.pow(1 - ANNUAL_DEGRAD, year - 2)
+    const yearlySavings = baselineKwh * degFactor * blendedRate
+    const netCF = yearlySavings - annualOMCost
+    const discountedCF = netCF / Math.pow(1 + DISCOUNT_RATE, year)
+    const prevNPV = cumulativeNPV
+    cumulativeNPV += discountedCF
+    if (cumulativeNPV >= 0) {
+      paybackYears = year - 1 + Math.abs(prevNPV) / discountedCF
+      break
+    }
+  }
 
   return {
     usableArea,

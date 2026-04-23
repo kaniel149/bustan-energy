@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { ChevronLeft, Loader2, Copy, Check, Download, Mail, Package, Save, ExternalLink } from 'lucide-react'
+import { ChevronLeft, Loader2, Copy, Check, Download, Mail, Package, Save, ExternalLink, Layers, Send } from 'lucide-react'
 import { getSession } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 
@@ -40,6 +40,17 @@ interface BOMResponse {
 
 const thb = (n: number) => '฿' + n.toLocaleString('en-US')
 
+// Heuristic: map BOM category names to TM Energy supplier names
+const CATEGORY_SUPPLIER: Record<string, string> = {
+  'Solar Panels':  'Integra Renewable Energy',
+  Panels:          'Integra Renewable Energy',
+  Inverters:       'Huawei Authorized Distributor Thailand',
+  Mounting:        'Antal Solar Mounting',
+  Cables:          'Pro Cable Thailand',
+  Battery:         'LUNA Energy Storage Thailand',
+  Accessories:     'Solar Accessories Bangkok',
+}
+
 export default function BOMPage() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
@@ -61,6 +72,8 @@ export default function BOMPage() {
   const [tab, setTab] = useState<'bom' | 'supplier' | 'markdown'>('bom')
   const [copied, setCopied] = useState('')
   const [leadId] = useState(params.get('lead_id') || '')
+  const [groupBySupplier, setGroupBySupplier] = useState(false)
+  const [sendingRfq, setSendingRfq] = useState(false)
 
   const run = async () => {
     setLoading(true)
@@ -95,7 +108,6 @@ export default function BOMPage() {
     }
   }
 
-  // Auto-run if params present
   useEffect(() => {
     if (params.get('panels')) run()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -146,7 +158,8 @@ export default function BOMPage() {
       if (!data.ok) throw new Error(data.error || 'שמירה נכשלה')
 
       setSavedOrderId(data.order.id)
-      showToast(`✅ נשמר · הזמנה #${data.order.id.slice(0, 8)}`, 'success')
+      const label = data.idempotent ? 'עודכן' : 'נוצר'
+      showToast('✅ ' + label + ' · הזמנה #' + (data.order.po_number || data.order.id.slice(0, 8)), 'success')
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'שגיאה', 'error')
     } finally {
@@ -154,7 +167,7 @@ export default function BOMPage() {
     }
   }
 
-  const sendEmail = () => {
+  const sendEmailClient = () => {
     if (!result) return
     const subject = `Quotation Request — ${result.bom.summary.kwp} kWp PV System${proposalRef ? ` · ${proposalRef}` : ''}`
     const body = result.supplier_email_text
@@ -167,9 +180,45 @@ export default function BOMPage() {
     )
   }
 
+  const sendRfqServer = async () => {
+    if (!savedOrderId) {
+      showToast('שמור קודם את ה-BOM כהזמנת רכש', 'error')
+      return
+    }
+    setSendingRfq(true)
+    try {
+      const session = await getSession()
+      const token = session?.access_token
+      if (!token) throw new Error('לא מחובר')
+      const res = await fetch('/api/admin-procurement-send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ order_id: savedOrderId }),
+      })
+      const data = await res.json()
+      if (!data.ok) throw new Error(data.error || 'שליחה נכשלה')
+      showToast('RFQ נשלח (' + data.sent + ' מייל)', 'success')
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'שגיאה', 'error')
+    } finally {
+      setSendingRfq(false)
+    }
+  }
+
+  const supplierGroups = result
+    ? Object.entries(result.bom.categories).reduce<Record<string, { items: { cat: string; row: BOMRow }[]; subtotal: number }>>((acc, [cat, data]) => {
+        const supplierName = CATEGORY_SUPPLIER[cat] || 'Other Suppliers'
+        if (!acc[supplierName]) acc[supplierName] = { items: [], subtotal: 0 }
+        for (const row of data.items) {
+          acc[supplierName].items.push({ cat, row })
+          acc[supplierName].subtotal += row.subtotal_thb
+        }
+        return acc
+      }, {})
+    : {}
+
   return (
-    <div dir="rtl" className="p-6 max-w-[1100px] mx-auto pb-16">
-      {/* Header */}
+    <div dir="rtl" className="p-3 sm:p-6 max-w-[1100px] mx-auto pb-24 sm:pb-16">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <button
@@ -191,15 +240,14 @@ export default function BOMPage() {
         </div>
       </div>
 
-      {/* Input form */}
-      <div className="bg-white/5 rounded-2xl border border-white/10 p-6 mb-6">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="bg-white/5 rounded-2xl border border-white/10 p-4 sm:p-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="text-[11px] text-white/40 uppercase tracking-wider mb-1.5 block">Template</label>
             <select
               value={template}
               onChange={(e) => setTemplate(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
               dir="ltr"
             >
               <option value="grid-tied-commercial-metal-roof">Grid-Tied Commercial (metal roof, PEA)</option>
@@ -212,7 +260,7 @@ export default function BOMPage() {
               type="number"
               value={panels}
               onChange={(e) => setPanels(parseInt(e.target.value, 10) || 0)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
               dir="ltr"
             />
           </div>
@@ -221,7 +269,7 @@ export default function BOMPage() {
             <select
               value={watt}
               onChange={(e) => setWatt(parseInt(e.target.value, 10))}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
               dir="ltr"
             >
               <option value="550">550W</option>
@@ -237,7 +285,7 @@ export default function BOMPage() {
               type="number"
               value={acRunM}
               onChange={(e) => setAcRunM(parseInt(e.target.value, 10) || 0)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
               dir="ltr"
             />
           </div>
@@ -249,7 +297,7 @@ export default function BOMPage() {
                 type="number"
                 value={batteryKwh}
                 onChange={(e) => setBatteryKwh(parseInt(e.target.value, 10) || 0)}
-                className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+                className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
                 dir="ltr"
               />
             </div>
@@ -260,7 +308,7 @@ export default function BOMPage() {
             <input
               value={proposalRef}
               onChange={(e) => setProposalRef(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
               dir="ltr"
               placeholder="TM-2026-XXXX"
             />
@@ -270,7 +318,7 @@ export default function BOMPage() {
             <input
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
             />
           </div>
           <div>
@@ -278,7 +326,7 @@ export default function BOMPage() {
             <input
               value={clientSite}
               onChange={(e) => setClientSite(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
             />
           </div>
         </div>
@@ -295,16 +343,14 @@ export default function BOMPage() {
 
       {result && (
         <>
-          {/* Summary */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
             <StatCard label="גודל" value={`${result.bom.summary.kwp} kWp`} />
             <StatCard label="פאנלים" value={`${result.bom.summary.panels}× ${result.bom.summary.watt}W`} />
             <StatCard label="Strings" value={`${result.bom.summary.strings}`} />
             <StatCard label="חומרים" value={thb(result.bom.totals.materials_thb)} highlight />
-            <StatCard label="סה״כ עם VAT" value={thb(result.bom.totals.total_with_vat_thb)} highlight />
+            <StatCard label='סה"כ עם VAT' value={thb(result.bom.totals.total_with_vat_thb)} highlight />
           </div>
 
-          {/* Save banner — shown BEFORE saving */}
           {!savedOrderId && (
             <div className="flex items-center justify-between gap-3 mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
               <div className="flex items-start gap-3">
@@ -327,48 +373,71 @@ export default function BOMPage() {
             </div>
           )}
 
-          {/* Success banner — shown AFTER saving */}
           {savedOrderId && (
-            <div className="flex items-center justify-between gap-3 mb-6 p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40">
               <div className="flex items-center gap-3">
                 <Check size={18} className="text-emerald-300" />
                 <div>
                   <p className="text-sm font-semibold text-emerald-200">
-                    ✅ הזמנת רכש נוצרה · #{savedOrderId.slice(0, 8)}
+                    ✅ הזמנת רכש נשמרה · #{savedOrderId.slice(0, 8)}
                   </p>
                   <p className="text-xs text-emerald-200/70 mt-0.5">
                     CRM עודכן אוטומטית · תוכל לעקוב בעמוד "רכש"
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => navigate('/admin/procurement')}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 text-white text-sm hover:bg-white/20"
-              >
-                <ExternalLink size={14} />
-                לרשימת הזמנות
-              </button>
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={sendRfqServer}
+                  disabled={sendingRfq}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/40 text-blue-300 text-sm font-semibold hover:bg-blue-500/30 disabled:opacity-40"
+                >
+                  {sendingRfq ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                  {sendingRfq ? 'שולח...' : 'שלח RFQ לספקים'}
+                </button>
+                <button
+                  onClick={() => navigate('/admin/procurement')}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 text-white text-sm hover:bg-white/20"
+                >
+                  <ExternalLink size={14} />
+                  לרשימת הזמנות
+                </button>
+              </div>
             </div>
           )}
 
-          {/* Tabs */}
-          <div className="flex gap-2 mb-4">
-            {(['bom', 'supplier', 'markdown'] as const).map((t) => (
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div className="flex gap-2">
+              {(['bom', 'supplier', 'markdown'] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                    tab === t ? 'bg-[#E8A820] text-[#0D2137]' : 'bg-white/5 text-white/60 hover:bg-white/10'
+                  }`}
+                >
+                  {t === 'bom' ? 'טבלת BOM' : t === 'supplier' ? 'מייל לספק' : 'Markdown'}
+                </button>
+              ))}
+            </div>
+
+            {tab === 'bom' && (
               <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  tab === t ? 'bg-[#E8A820] text-[#0D2137]' : 'bg-white/5 text-white/60 hover:bg-white/10'
+                onClick={() => setGroupBySupplier((v) => !v)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition-colors ${
+                  groupBySupplier
+                    ? 'bg-[#E8A820]/15 border-[#E8A820]/40 text-[#E8A820]'
+                    : 'bg-white/5 border-white/10 text-white/50 hover:text-white'
                 }`}
               >
-                {t === 'bom' ? 'טבלת BOM' : t === 'supplier' ? 'מייל לספק' : 'Markdown'}
+                <Layers size={13} />
+                קבץ לפי ספק
               </button>
-            ))}
+            )}
           </div>
 
-          {/* Content */}
-          {tab === 'bom' && (
-            <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
+          {tab === 'bom' && !groupBySupplier && (
+            <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden overflow-x-auto">
               {Object.entries(result.bom.categories).map(([cat, data]) => (
                 <div key={cat} className="border-b border-white/5 last:border-0">
                   <div className="px-5 py-3 bg-white/5 text-sm font-semibold text-[#E8A820]">{cat}</div>
@@ -403,6 +472,65 @@ export default function BOMPage() {
             </div>
           )}
 
+          {tab === 'bom' && groupBySupplier && (
+            <div className="space-y-4">
+              {Object.entries(supplierGroups).map(([supplierName, group]) => (
+                <div key={supplierName} className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-3 bg-white/5 border-b border-white/10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-[#E8A820]" />
+                      <span className="text-sm font-semibold text-white">{supplierName}</span>
+                      <span className="text-xs text-white/40">{group.items.length} items</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-mono text-[#E8A820]" dir="ltr">
+                        {thb(Math.round(group.subtotal))}
+                      </span>
+                      {savedOrderId && (
+                        <button
+                          onClick={sendRfqServer}
+                          disabled={sendingRfq}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-300 text-xs font-medium hover:bg-blue-500/25 disabled:opacity-40"
+                        >
+                          {sendingRfq ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                          שלח RFQ
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <table className="w-full text-sm overflow-x-auto">
+                    <thead className="text-[11px] text-white/40 uppercase">
+                      <tr>
+                        <th className="text-right px-5 py-2 font-normal">קטגוריה</th>
+                        <th className="text-right px-5 py-2 font-normal">SKU</th>
+                        <th className="text-center px-3 py-2 font-normal">Qty</th>
+                        <th className="text-left px-3 py-2 font-normal">Unit</th>
+                        <th className="text-left px-5 py-2 font-normal">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {group.items.map(({ cat, row }, i) => (
+                        <tr key={i} className="border-t border-white/5">
+                          <td className="px-5 py-2 text-white/50 text-xs">{cat}</td>
+                          <td className="px-5 py-2 text-white" dir="ltr">{row.sku}</td>
+                          <td className="text-center px-3 py-2 text-white/80 font-mono">{row.qty}</td>
+                          <td className="text-left px-3 py-2 text-white/60 font-mono" dir="ltr">{thb(row.unit_price_thb)}</td>
+                          <td className="text-left px-5 py-2 text-white font-mono" dir="ltr">{thb(row.subtotal_thb)}</td>
+                        </tr>
+                      ))}
+                      <tr className="border-t border-white/10 bg-[#E8A820]/5">
+                        <td colSpan={4} className="px-5 py-2 text-white/60 text-xs">Supplier subtotal</td>
+                        <td className="text-left px-5 py-2 text-[#E8A820] font-mono font-semibold" dir="ltr">
+                          {thb(Math.round(group.subtotal))}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          )}
+
           {tab === 'supplier' && (
             <div className="bg-white/5 rounded-2xl border border-white/10 p-5">
               <div className="flex items-center justify-between mb-3">
@@ -416,7 +544,7 @@ export default function BOMPage() {
                     {copied === 'email' ? 'הועתק!' : 'העתק'}
                   </button>
                   <button
-                    onClick={sendEmail}
+                    onClick={sendEmailClient}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-xs text-blue-300"
                   >
                     <Mail size={13} />

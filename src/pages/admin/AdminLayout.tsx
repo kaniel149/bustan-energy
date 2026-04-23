@@ -85,10 +85,10 @@ export default function AdminLayout() {
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-white/30 hover:text-white/60 transition-colors"
+            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-white/30 hover:text-white/60 hover:bg-white/5 transition-colors"
             aria-label="סגור תפריט"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
@@ -101,7 +101,7 @@ export default function AdminLayout() {
               end={end}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                `flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all min-h-[44px] ${
                   isActive
                     ? 'bg-[#E8A820]/10 text-[#E8A820] font-medium border border-[#E8A820]/20'
                     : 'text-white/50 hover:text-white hover:bg-white/5'
@@ -125,7 +125,7 @@ export default function AdminLayout() {
                 end={end}
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                  `flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all min-h-[44px] ${
                     isActive
                       ? 'bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/20'
                       : 'text-white/50 hover:text-white hover:bg-white/5'
@@ -167,7 +167,7 @@ export default function AdminLayout() {
         <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0A1929]/80 backdrop-blur-xl shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-white/50 hover:text-white transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-colors"
             aria-label="פתח תפריט"
           >
             <Menu size={20} />

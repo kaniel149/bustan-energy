@@ -63,24 +63,45 @@ function evalFormula(formula, ctx) {
   }
 }
 
+// ── DC/AC RATIO VALIDATION ────────────────────────────────────────────────────
+// IEC 62548 / NREL best-practice: DC/AC ratio 1.05-1.35.
+// Below 1.05: inverter undersized (clipping risk at low irradiance).
+// Above 1.35: excessive DC clipping losses (>5% annual energy loss typical).
+function validateDcAcRatio(kwp, inverterAcKw) {
+  const ratio = kwp / inverterAcKw
+  if (ratio < 1.05) {
+    console.warn(`WARNING: DC/AC ratio ${ratio.toFixed(2)} < 1.05 (kwp=${kwp}, inverter=${inverterAcKw}kW). Inverter is oversized for this array — consider a smaller inverter.`)
+  } else if (ratio > 1.35) {
+    console.warn(`WARNING: DC/AC ratio ${ratio.toFixed(2)} > 1.35 (kwp=${kwp}, inverter=${inverterAcKw}kW). Excessive DC clipping expected (>5% annual loss). Increase inverter capacity or reduce array size.`)
+  }
+  return ratio
+}
+
 function pickInverterGridTied(kwp, db) {
   const inverters = db.price_database_thb.inverters_grid_tied
-  // Find smallest inverter where max_dc_kw >= kwp * 1.1 (oversizing margin)
+  // Find smallest inverter where max_dc_kw >= kwp * 1.05 (IEC 62548 min DC/AC ratio)
   const sorted = Object.entries(inverters).sort(([, a], [, b]) => a.max_dc_kw - b.max_dc_kw)
   for (const [sku, info] of sorted) {
-    if (info.max_dc_kw >= kwp * 1.05) return { sku, ...info, dbPath: `inverters_grid_tied.${sku}` }
+    if (info.max_dc_kw >= kwp * 1.05) {
+      validateDcAcRatio(kwp, info.kw)
+      return { sku, ...info, dbPath: `inverters_grid_tied.${sku}` }
+    }
   }
   // No single inverter fits — recommend doubling largest
   const [largestSku, largest] = sorted[sorted.length - 1]
+  validateDcAcRatio(kwp, largest.kw)
   return { sku: largestSku, ...largest, dbPath: `inverters_grid_tied.${largestSku}`, warning: 'system size exceeds largest single inverter — consider splitting into 2 units' }
 }
 
 function pickInverterHybrid(kwp, db) {
   const inverters = db.price_database_thb.inverters_hybrid
-  if (kwp <= 18) return { sku: 'Huawei_SUN2000_12KTL_M2', ...inverters.Huawei_SUN2000_12KTL_M2, dbPath: 'inverters_hybrid.Huawei_SUN2000_12KTL_M2' }
-  if (kwp <= 30) return { sku: 'Huawei_SUN2000_20KTL_M5', ...inverters.Huawei_SUN2000_20KTL_M5, dbPath: 'inverters_hybrid.Huawei_SUN2000_20KTL_M5' }
-  if (kwp <= 80) return { sku: 'Huawei_SUN2000_50KTL_NHM1', ...inverters.Huawei_SUN2000_50KTL_NHM1, dbPath: 'inverters_hybrid.Huawei_SUN2000_50KTL_NHM1' }
-  return { sku: 'Huawei_SUN2000_50KTL_NHM1', ...inverters.Huawei_SUN2000_50KTL_NHM1, warning: `kwp ${kwp} exceeds largest hybrid inverter — recommend grid-tied + separate battery system instead` }
+  let result
+  if (kwp <= 18) result = { sku: 'Huawei_SUN2000_12KTL_M2', ...inverters.Huawei_SUN2000_12KTL_M2, dbPath: 'inverters_hybrid.Huawei_SUN2000_12KTL_M2' }
+  else if (kwp <= 30) result = { sku: 'Huawei_SUN2000_20KTL_M5', ...inverters.Huawei_SUN2000_20KTL_M5, dbPath: 'inverters_hybrid.Huawei_SUN2000_20KTL_M5' }
+  else if (kwp <= 80) result = { sku: 'Huawei_SUN2000_50KTL_NHM1', ...inverters.Huawei_SUN2000_50KTL_NHM1, dbPath: 'inverters_hybrid.Huawei_SUN2000_50KTL_NHM1' }
+  else result = { sku: 'Huawei_SUN2000_50KTL_NHM1', ...inverters.Huawei_SUN2000_50KTL_NHM1, warning: `kwp ${kwp} exceeds largest hybrid inverter — recommend grid-tied + separate battery system instead` }
+  if (result.kw) validateDcAcRatio(kwp, result.kw)
+  return result
 }
 
 function calcBOM(opts) {

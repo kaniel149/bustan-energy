@@ -5,43 +5,37 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { escapeHtml } from './_lib/html'
+import { fmt } from './_lib/fmt'
+import { supaGetAll, supaPatch } from './_lib/supa'
+
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
-const CRON_SECRET = process.env.CRON_SECRET || 'tm-cron-secret'
 const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
 
-async function supaGet(path: string) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
-  })
-  return r.ok ? r.json() : []
-}
-
-async function supaPatch(path: string, body: any) {
-  return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method: 'PATCH',
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=minimal',
-    },
-    body: JSON.stringify(body),
-  })
-}
+// CRON_SECRET must be set — no fallback to prevent unauthenticated execution
+const CRON_SECRET = process.env.CRON_SECRET
 
 async function sendEmail(to: string, subject: string, html: string) {
   return fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: FROM, to: [to], subject, html }),
+    body: JSON.stringify({
+      from: FROM,
+      to: [to],
+      reply_to: ['erez@energy-tm.com'],
+      subject,
+      html,
+    }),
   }).then((r) => r.json()).catch((e) => ({ error: String(e) }))
 }
 
 function buildFollowupEmail(type: string, proposal: any): { subject: string; html: string } {
-  const url = `https://energy-tm.com/p/${proposal.ref_number}`
-  const firstName = (proposal.client_name || 'valued customer').split(' ')[0]
+  const url = `https://energy-tm.com/p/${encodeURIComponent(proposal.ref_number)}`
+  const firstName = escapeHtml((proposal.client_name || 'valued customer').split(' ')[0])
+  const systemLine = `${escapeHtml(proposal.system_size_kwp)} kWp · <b>Total:</b> ฿${fmt(proposal.total_price_thb)}`
+  const refEsc = escapeHtml(proposal.ref_number)
 
   if (type === 'not_viewed_3d' || type === 'not_viewed_7d') {
     return {
@@ -55,13 +49,13 @@ function buildFollowupEmail(type: string, proposal: any): { subject: string; htm
   <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
     <p>Hi ${firstName},</p>
     <p>Just a friendly reminder that your personalized solar proposal is waiting for you.</p>
-    <p><b>System:</b> ${proposal.system_size_kwp} kWp · <b>Total:</b> ฿${Number(proposal.total_price_thb).toLocaleString()}</p>
+    <p><b>System:</b> ${systemLine}</p>
     <p style="margin:24px 0;">
       <a href="${url}" style="background:#E8A820;color:#0D2137;padding:14px 28px;border-radius:100px;text-decoration:none;font-weight:800;">View Proposal →</a>
     </p>
     <p style="color:#666;font-size:13px;">Questions? WhatsApp us at +66 94 669 2011 or reply to this email.</p>
   </div>
-</div>`
+</div>`,
     }
   }
 
@@ -75,20 +69,26 @@ function buildFollowupEmail(type: string, proposal: any): { subject: string; htm
   </div>
   <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
     <p>Hi ${firstName},</p>
-    <p>Your solar proposal <b>${proposal.ref_number}</b> expires in 3 days. Component prices may change after expiration.</p>
+    <p>Your solar proposal <b>${refEsc}</b> expires in 3 days. Component prices may change after expiration.</p>
     <p>Lock in today's price — sign digitally in 2 minutes:</p>
     <p style="margin:24px 0;">
-      <a href="${url}" style="background:#E8A820;color:#0D2137;padding:14px 28px;border-radius:100px;text-decoration:none;font-weight:800;">Review & Sign →</a>
+      <a href="${url}" style="background:#E8A820;color:#0D2137;padding:14px 28px;border-radius:100px;text-decoration:none;font-weight:800;">Review &amp; Sign →</a>
     </p>
   </div>
-</div>`
+</div>`,
     }
   }
 
-  return { subject: 'Follow-up from TM Energy', html: `<p>View your proposal: ${url}</p>` }
+  return { subject: 'Follow-up from TM Energy', html: `<p>View your proposal: <a href="${url}">${refEsc}</a></p>` }
 }
 
 export default async function handler(req: Request): Promise<Response> {
+  // Require CRON_SECRET env var — fail hard if not configured
+  if (!CRON_SECRET) {
+    console.error('CRON_SECRET env var not set')
+    return Response.json({ ok: false, error: 'server_misconfigured' }, { status: 500 })
+  }
+
   // Auth via cron secret
   const secret = req.headers.get('authorization')?.replace('Bearer ', '')
   if (secret !== CRON_SECRET) {
@@ -96,8 +96,8 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const now = new Date().toISOString()
-  const pendings = await supaGet(
-    `proposal_followups?status=eq.pending&scheduled_for=lte.${encodeURIComponent(now)}&select=*&limit=50`
+  const pendings = await supaGetAll(
+    `proposal_followups?status=eq.pending&scheduled_for=lte.${encodeURIComponent(now)}&select=*&limit=50`,
   )
 
   if (!pendings.length) {
@@ -117,17 +117,17 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     // Fetch proposal
-    const proposals = await supaGet(
-      `proposals?ref_number=eq.${encodeURIComponent(fu.proposal_ref)}&select=*`
+    const proposalRows = await supaGetAll(
+      `proposals?ref_number=eq.${encodeURIComponent(fu.proposal_ref)}&select=*`,
     )
-    const proposal = proposals[0]
+    const proposal = proposalRows[0]
     if (!proposal) {
       await supaPatch(`proposal_followups?id=eq.${fu.id}`, { status: 'cancelled' })
       results.push({ id: fu.id, result: 'proposal_not_found' })
       continue
     }
 
-    // Check if still applicable (e.g. not signed already)
+    // Check if still applicable (not signed / rejected)
     if (proposal.status === 'signed' || proposal.status === 'rejected') {
       await supaPatch(`proposal_followups?id=eq.${fu.id}`, {
         status: 'cancelled',
@@ -157,7 +157,12 @@ export default async function handler(req: Request): Promise<Response> {
       metadata: { ...fu.metadata, resend_id: emailRes?.id, error: emailRes?.error },
     })
 
-    results.push({ id: fu.id, type: fu.followup_type, recipient: fu.recipient, result: emailRes?.id ? 'sent' : 'failed' })
+    results.push({
+      id: fu.id,
+      type: fu.followup_type,
+      recipient: fu.recipient,
+      result: emailRes?.id ? 'sent' : 'failed',
+    })
   }
 
   return Response.json({ ok: true, processed: results.length, results })

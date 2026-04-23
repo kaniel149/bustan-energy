@@ -4,6 +4,11 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { escapeHtml } from './_lib/html'
+import { fmt } from './_lib/fmt'
+import { sha256hex, random6 } from './_lib/crypto'
+import { supaUpsert } from './_lib/supa'
+
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const ADMIN_DOMAIN = '@energy-tm.com'
@@ -11,43 +16,6 @@ const EXTRA_ADMINS = ['k@kanielt.com']
 const isAllowed = (email: string) => {
   const e = email.toLowerCase()
   return e.endsWith(ADMIN_DOMAIN) || EXTRA_ADMINS.includes(e)
-}
-
-// ── HELPERS ──
-async function sha256hex(s: string): Promise<string> {
-  const data = new TextEncoder().encode(s)
-  const hash = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-}
-
-function random6() {
-  return String(Math.floor(100000 + Math.random() * 900000))
-}
-
-function fmt(n: number | string | null | undefined) {
-  if (n == null) return '—'
-  return Number(n).toLocaleString('en-US')
-}
-
-async function supaUpsert(table: string, body: any, onConflict = '') {
-  const url = `${SUPABASE_URL}/rest/v1/${table}${onConflict ? '?on_conflict=' + onConflict : ''}`
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=representation,resolution=merge-duplicates',
-    },
-    body: JSON.stringify(body),
-  })
-  if (!r.ok) {
-    const txt = await r.text()
-    throw new Error(`supa ${table}: ${r.status} ${txt}`)
-  }
-  return r.json()
 }
 
 async function verifyAdmin(req: Request): Promise<{ email: string } | null> {
@@ -83,7 +51,7 @@ async function loadTemplate(origin: string): Promise<string> {
 function render(template: string, data: Record<string, any>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, k) => {
     const v = data[k]
-    return v === undefined || v === null ? '' : String(v)
+    return v === undefined || v === null ? '' : escapeHtml(String(v))
   })
 }
 

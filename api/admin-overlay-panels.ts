@@ -1,11 +1,14 @@
 // ============================================================
 // /api/admin-overlay-panels
 // Takes drone image (base64) + panel count → returns overlaid image
-// Uses Gemini 3 Pro Image (Nano Banana Pro)
+// Uses Gemini 3 Pro Image (Nano Banana Pro) — model: gemini-3-pro-image-preview
 // ============================================================
-// Image generation typically takes 20-40s. Edge 25s ceiling on Hobby
-// is tight — keep it on edge but with aggressive client-side pre-resize.
-export const config = { runtime: 'edge' }
+// Pro image gen takes 30-60s → Node runtime with 60s maxDuration.
+// (Edge caps at 25s on Hobby, too tight for Pro.)
+export const config = {
+  runtime: 'nodejs20.x',
+  maxDuration: 60,
+}
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -77,17 +80,17 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ ok: false, error: 'missing_image_or_url' }, { status: 400 })
     }
 
-    // Short prompt = faster generation on Flash 2.0
     const prompt = `Add ${panel_count} black monocrystalline solar panels on the sloped roofs of this building. Arrange in neat parallel rows with 40cm edge setbacks. Keep everything else identical — same lighting, colors, angle, surroundings. Panels should be solid black with thin aluminum frames, realistic shadows, photorealistic.${notes ? ' ' + notes : ''}`
 
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 22_000)
+    const timeout = setTimeout(() => controller.abort(), 55_000)
     const t0 = Date.now()
 
-    // Gemini 2.0 Flash image generation — ~3-5x faster than 3 Pro, typically 8-15s
-    // Requires responseModalities: ['TEXT','IMAGE'] for image-in-image-out
+    // Nano Banana Pro (Gemini 3 Pro Image) — higher quality than Flash
+    // Typically 30-60s on REST. Requires responseModalities: ['TEXT','IMAGE'].
+    // imageConfig.imageSize: '1K' | '2K' | '4K' (1K = fastest, good for overlays).
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -100,17 +103,18 @@ export default async function handler(req: Request): Promise<Response> {
           generationConfig: {
             responseModalities: ['TEXT', 'IMAGE'],
             temperature: 0.4,
+            imageConfig: { imageSize: '1K' },
           },
         }),
       }
     ).catch((e) => {
       if (e?.name === 'AbortError') {
-        throw new Error(`gemini_image_gen_timeout_22s — image gen too slow. העלה תמונה קטנה יותר (עד 2MB) ונסה שוב.`)
+        throw new Error(`gemini_image_gen_timeout_55s — Nano Banana Pro לא הגיב. נסה תמונה קטנה יותר (עד 2MB) או חזור על הפעולה.`)
       }
       throw new Error(`gemini_fetch_error: ${e?.message || e}`)
     })
     clearTimeout(timeout)
-    console.log(`overlay-panels gemini (flash-2.0): ${Date.now() - t0}ms status ${geminiRes.status}`)
+    console.log(`overlay-panels gemini (3-pro-image): ${Date.now() - t0}ms status ${geminiRes.status}`)
 
     if (!geminiRes.ok) {
       const txt = await geminiRes.text()

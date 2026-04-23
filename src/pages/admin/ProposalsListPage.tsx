@@ -85,7 +85,7 @@ export default function ProposalsListPage() {
   }, [proposals, statusFilter, search])
 
   return (
-    <div dir="rtl" className="p-6 max-w-[1200px] mx-auto">
+    <div dir="rtl" className="p-3 sm:p-6 max-w-[1200px] mx-auto pb-24 sm:pb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -119,7 +119,7 @@ export default function ProposalsListPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="חיפוש לפי מספר הצעה או שם..."
-            className="w-full pr-9 pl-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#E8A820]/50 transition-colors"
+            className="w-full pr-9 pl-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-[#E8A820]/50 transition-colors min-h-[44px]"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -127,7 +127,7 @@ export default function ProposalsListPage() {
             <button
               key={value}
               onClick={() => setStatusFilter(value)}
-              className={`px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all min-h-[44px] ${
                 statusFilter === value
                   ? 'bg-[#E8A820]/10 border border-[#E8A820]/30 text-[#E8A820]'
                   : 'bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10'

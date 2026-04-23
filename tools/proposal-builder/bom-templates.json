@@ -1,7 +1,7 @@
 {
-  "$schema_version": "1.0",
+  "$schema_version": "1.1",
   "description": "BOM (Bill of Materials) templates for TM Energy proposals. Quantities use formulas — see tools/proposal-builder/bom-calc.mjs.",
-  "last_updated": "2026-04-22",
+  "last_updated": "2026-04-23",
   "author": "TM Energy",
 
   "_formulas": {
@@ -9,6 +9,30 @@
     "kwp": "panels × panel_watt / 1000",
     "strings": "ceil(panels / panels_per_string), default panels_per_string=13",
     "ac_current_a": "kwp × 1000 / (1.732 × 400 × 0.95)"
+  },
+
+  "locations": {
+    "_note": "Per-location solar + tariff parameters. Used by generate.mjs and bom-calc.mjs. Set 'location_id' in client JSON to override defaults.",
+    "koh_phangan": {
+      "_description": "Ko Phangan, Thailand — tropical + coastal + monsoon",
+      "psh_monthly": [5.7, 6.1, 6.3, 6.0, 4.8, 4.4, 4.2, 4.0, 4.2, 3.8, 4.8, 5.4],
+      "psh_annual": 5.0,
+      "psh_source": "NASA POWER 1984-2005, 8.1N 100.1E",
+      "performance_ratio": 0.77,
+      "soiling_factor": 0.97,
+      "effective_pr": 0.7469,
+      "pr_source": "IEC 61724 tropical adjustment + IEA PVPS T13-10:2018 coastal soiling",
+      "tariff_retail_thb": 4.4,
+      "tariff_export_thb": 3.1,
+      "tariff_export_pct_of_retail": 0.70,
+      "tariff_source": "PEA tariff schedule B.E. 2566 + SPP/VSPP net-metering notice 2023",
+      "self_consumption_pct_grid_tied": 0.60,
+      "self_consumption_pct_with_battery": 0.85,
+      "co2_kg_per_kwh": 0.477,
+      "co2_source": "EGAT 2023 official grid emission factor",
+      "discount_rate": 0.08,
+      "tariff_escalation": 0.03
+    }
   },
 
   "price_database_thb": {

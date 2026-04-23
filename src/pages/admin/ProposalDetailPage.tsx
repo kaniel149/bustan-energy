@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ChevronLeft,
@@ -11,17 +11,24 @@ import {
   Loader2,
   Package,
   FileCheck,
+  AlertTriangle,
+  Download,
+  PenLine,
 } from 'lucide-react'
 import { fetchProposal, buildTimeline, downloadProposalPDF, downloadSignedPDF } from '../../lib/admin-service'
 import { useAdminStore } from '../../lib/admin-store'
 import { STATUS_BADGE } from '../../types/proposals'
 import type { Proposal } from '../../types/proposals'
+import { getSession } from '../../lib/admin-auth'
+import { PEA_BRANCHES, PEA_STATUS_LABELS, PEA_STATUS_COLORS } from '../../lib/pea-branches'
+import PEASignaturePad from '../../components/admin/PEASignaturePad'
+import { supabase } from '../../lib/supabase'
 
 function InfoRow({ label, value }: { label: string; value: string | number | null | undefined }) {
   if (value === null || value === undefined || value === '') return null
   return (
     <div className="flex items-start gap-3 py-2.5 border-b border-white/5 last:border-0">
-      <span className="text-sm text-white/40 w-36 shrink-0">{label}</span>
+      <span className="text-sm text-white/40 w-28 sm:w-36 shrink-0">{label}</span>
       <span className="text-sm text-white break-all">{String(value)}</span>
     </div>
   )
@@ -45,6 +52,40 @@ function CopyInlineButton({ text }: { text: string }) {
   )
 }
 
+// ── PEA status types ────────────────────────────────────────
+const PEA_STATUSES = [
+  'not_started', 'package_ready', 'submitted', 'under_review',
+  'approved', 'objected', 'resubmit_needed', 'meter_installed', 'commercial_operation',
+] as const
+type PEAStatus = typeof PEA_STATUSES[number]
+
+interface PEAState {
+  project_id: string | null
+  pea_branch: string
+  pea_authority: 'PEA' | 'MEA'
+  pea_status: PEAStatus
+  pea_reference_number: string
+  pea_application_date: string
+  pea_meter_inspection_date: string
+  pea_approval_date: string
+  pea_rejection_reason: string
+  // docs from pea_documents table
+  documents: { id: string; document_type: string; file_url: string | null; signed_by_owner: boolean; signed_by_engineer: boolean }[]
+}
+
+const PEA_DEFAULT: PEAState = {
+  project_id: null,
+  pea_branch: 'surat_thani',
+  pea_authority: 'PEA',
+  pea_status: 'not_started',
+  pea_reference_number: '',
+  pea_application_date: '',
+  pea_meter_inspection_date: '',
+  pea_approval_date: '',
+  pea_rejection_reason: '',
+  documents: [],
+}
+
 export default function ProposalDetailPage() {
   const { ref } = useParams<{ ref: string }>()
   const navigate = useNavigate()
@@ -56,12 +97,57 @@ export default function ProposalDetailPage() {
   const [downloadingPDF, setDownloadingPDF] = useState(false)
   const [downloadingSignedPDF, setDownloadingSignedPDF] = useState(false)
 
+  // PEA section state
+  const [pea, setPea] = useState<PEAState>(PEA_DEFAULT)
+  const [peaSaving, setPeaSaving] = useState(false)
+  const [peaPackageLoading, setPeaPackageLoading] = useState(false)
+  const [showSignPad, setShowSignPad] = useState<{ documentId: string; role: 'owner' | 'engineer' } | null>(null)
+
+  const loadPeaData = useCallback(async (proposalRef: string) => {
+    if (!supabase) return
+    // Try to find a project linked to this proposal
+    const { data: projects } = await supabase
+      .from('projects')
+      .select('id,pea_branch,pea_authority,pea_status,pea_reference_number,pea_application_date,pea_meter_inspection_date,pea_approval_date,pea_rejection_reason')
+      .eq('proposal_ref', proposalRef)
+      .limit(1)
+
+    const proj = projects?.[0] ?? null
+
+    // Also load pea_documents
+    let docs: PEAState['documents'] = []
+    if (proj?.id) {
+      const { data: docRows } = await supabase
+        .from('pea_documents')
+        .select('id,document_type,file_url,signed_by_owner,signed_by_engineer')
+        .eq('project_id', proj.id)
+        .order('created_at', { ascending: false })
+      docs = (docRows ?? []) as PEAState['documents']
+    }
+
+    setPea({
+      project_id: proj?.id ?? null,
+      pea_branch: proj?.pea_branch ?? 'surat_thani',
+      pea_authority: proj?.pea_authority ?? 'PEA',
+      pea_status: proj?.pea_status ?? 'not_started',
+      pea_reference_number: proj?.pea_reference_number ?? '',
+      pea_application_date: proj?.pea_application_date ? proj.pea_application_date.slice(0, 10) : '',
+      pea_meter_inspection_date: proj?.pea_meter_inspection_date ? proj.pea_meter_inspection_date.slice(0, 10) : '',
+      pea_approval_date: proj?.pea_approval_date ? proj.pea_approval_date.slice(0, 10) : '',
+      pea_rejection_reason: proj?.pea_rejection_reason ?? '',
+      documents: docs,
+    })
+  }, [])
+
   useEffect(() => {
     if (!ref) return
     fetchProposal(ref)
-      .then(setProposal)
+      .then((p) => {
+        setProposal(p)
+        if (p) loadPeaData(p.ref_number)
+      })
       .finally(() => setLoading(false))
-  }, [ref])
+  }, [ref, loadPeaData])
 
   if (loading) {
     return (
@@ -118,35 +204,102 @@ export default function ProposalDetailPage() {
     }
   }
 
+  // ── PEA handlers ───────────────────────────────────────────
+  const handlePeaSave = async () => {
+    if (!pea.project_id || !supabase) {
+      showToast('No project linked — create a project first', 'error')
+      return
+    }
+    setPeaSaving(true)
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          pea_branch: pea.pea_branch,
+          pea_authority: pea.pea_authority,
+          pea_status: pea.pea_status,
+          pea_reference_number: pea.pea_reference_number || null,
+          pea_application_date: pea.pea_application_date || null,
+          pea_meter_inspection_date: pea.pea_meter_inspection_date || null,
+          pea_approval_date: pea.pea_approval_date || null,
+          pea_rejection_reason: pea.pea_rejection_reason || null,
+        })
+        .eq('id', pea.project_id)
+      if (error) throw new Error(error.message)
+      showToast('PEA status saved', 'success')
+    } catch (e: any) {
+      showToast(e.message || 'Save failed', 'error')
+    } finally {
+      setPeaSaving(false)
+    }
+  }
+
+  const handlePeaPackage = async () => {
+    if (!proposal) return
+    setPeaPackageLoading(true)
+    try {
+      const session = await getSession()
+      const token = session?.access_token
+      if (!token) throw new Error('Not authenticated')
+
+      const res = await fetch('/api/admin-pea-package', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          project_id: pea.project_id || undefined,
+          proposal_ref: proposal.ref_number,
+        }),
+      })
+      const data = await res.json()
+      if (!data.ok) throw new Error(data.error || 'Package generation failed')
+
+      showToast(`Package ready: ${data.document_count} documents`, 'success')
+      // Update local status
+      setPea((prev) => ({ ...prev, pea_status: 'package_ready' }))
+      // Refresh PEA data to show new documents
+      await loadPeaData(proposal.ref_number)
+
+      // Open first document URL in new tab
+      const firstDoc = data.documents?.find((d: any) => d.url)
+      if (firstDoc?.url) window.open(firstDoc.url, '_blank')
+    } catch (e: any) {
+      showToast(e.message || 'Package generation failed', 'error')
+    } finally {
+      setPeaPackageLoading(false)
+    }
+  }
+
   return (
-    <div dir="rtl" className="p-6 max-w-[1100px] mx-auto pb-16">
+    <div dir="rtl" className="p-3 sm:p-6 max-w-[1100px] mx-auto pb-24">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <button
-          onClick={() => navigate('/admin/proposals')}
-          className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all"
-          aria-label="חזור"
-        >
-          <ChevronLeft size={16} />
-        </button>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-white">{proposal.client_name ?? '—'}</h1>
-            <span
-              className="text-xs px-2.5 py-1 rounded-full font-medium"
-              style={{ color: badge.color, backgroundColor: badge.bg }}
-            >
-              {badge.label}
-            </span>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/admin/proposals')}
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all min-w-[40px] min-h-[40px] flex items-center justify-center"
+            aria-label="חזור"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-xl font-bold text-white">{proposal.client_name ?? '—'}</h1>
+              <span
+                className="text-xs px-2.5 py-1 rounded-full font-medium"
+                style={{ color: badge.color, backgroundColor: badge.bg }}
+              >
+                {badge.label}
+              </span>
+            </div>
+            <p className="text-sm text-white/40 mt-0.5 font-mono">{proposal.ref_number}</p>
           </div>
-          <p className="text-sm text-white/40 mt-0.5 font-mono">{proposal.ref_number}</p>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap sm:mr-auto sm:ml-0">
           <button
             onClick={handleDownloadPDF}
             disabled={downloadingPDF}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#E8A820]/10 border border-[#E8A820]/30 text-[#E8A820] text-sm hover:bg-[#E8A820]/20 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#E8A820]/10 border border-[#E8A820]/30 text-[#E8A820] text-sm hover:bg-[#E8A820]/20 transition-all disabled:opacity-50 min-h-[40px]"
             aria-label="הורד PDF"
           >
             {downloadingPDF
@@ -232,7 +385,7 @@ export default function ProposalDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Main info */}
         <div className="lg:col-span-2 space-y-6">
           {/* URL + Password */}
@@ -302,6 +455,250 @@ export default function ProposalDetailPage() {
                 />
               </div>
             )}
+          </div>
+
+          {/* ── PEA Submission Panel ────────────────────────── */}
+          <div className="bg-white/5 rounded-2xl border border-white/10 p-5" dir="ltr">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-[11px] text-white/40 uppercase tracking-wider">PEA Submission</p>
+                <p className="text-xs text-white/25 mt-0.5">Provincial Electricity Authority · Grid Connection</p>
+              </div>
+              <span
+                className="text-xs px-2.5 py-1 rounded-full font-semibold"
+                style={{
+                  color: PEA_STATUS_COLORS[pea.pea_status] || '#6b7280',
+                  background: `${PEA_STATUS_COLORS[pea.pea_status] || '#6b7280'}20`,
+                }}
+              >
+                {PEA_STATUS_LABELS[pea.pea_status] || pea.pea_status}
+              </span>
+            </div>
+
+            {!pea.project_id && (
+              <div className="mb-4 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 text-amber-400 text-xs">
+                <AlertTriangle size={13} />
+                No project linked to this proposal. PEA fields are read-only until a project is created.
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Branch selector */}
+              <div>
+                <label className="block text-xs text-white/40 mb-1">PEA / MEA Branch</label>
+                <select
+                  value={pea.pea_branch}
+                  onChange={(e) => setPea((p) => ({ ...p, pea_branch: e.target.value }))}
+                  disabled={!pea.project_id}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#E8A820]/50 disabled:opacity-40 min-h-[44px]"
+                >
+                  {PEA_BRANCHES.map((b) => (
+                    <option key={b.id} value={b.id} style={{ background: '#0f1923' }}>
+                      {b.authority} — {b.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status dropdown */}
+              <div>
+                <label className="block text-xs text-white/40 mb-1">Application Status</label>
+                <select
+                  value={pea.pea_status}
+                  onChange={(e) => setPea((p) => ({ ...p, pea_status: e.target.value as PEAStatus }))}
+                  disabled={!pea.project_id}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#E8A820]/50 disabled:opacity-40 min-h-[44px]"
+                >
+                  {PEA_STATUSES.map((s) => (
+                    <option key={s} value={s} style={{ background: '#0f1923' }}>
+                      {PEA_STATUS_LABELS[s]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* PEA Reference Number */}
+              <div>
+                <label className="block text-xs text-white/40 mb-1">PEA Reference No.</label>
+                <input
+                  type="text"
+                  value={pea.pea_reference_number}
+                  onChange={(e) => setPea((p) => ({ ...p, pea_reference_number: e.target.value }))}
+                  disabled={!pea.project_id}
+                  placeholder="e.g. PEA-ST-2026-1234"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#E8A820]/50 disabled:opacity-40 min-h-[44px]"
+                />
+              </div>
+
+              {/* Application Date */}
+              <div>
+                <label className="block text-xs text-white/40 mb-1">Application Date</label>
+                <input
+                  type="date"
+                  value={pea.pea_application_date}
+                  onChange={(e) => setPea((p) => ({ ...p, pea_application_date: e.target.value }))}
+                  disabled={!pea.project_id}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#E8A820]/50 disabled:opacity-40 min-h-[44px]"
+                />
+              </div>
+
+              {/* Meter Inspection Date */}
+              <div>
+                <label className="block text-xs text-white/40 mb-1">Meter Inspection Date</label>
+                <input
+                  type="date"
+                  value={pea.pea_meter_inspection_date}
+                  onChange={(e) => setPea((p) => ({ ...p, pea_meter_inspection_date: e.target.value }))}
+                  disabled={!pea.project_id}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#E8A820]/50 disabled:opacity-40 min-h-[44px]"
+                />
+              </div>
+
+              {/* Approval Date */}
+              <div>
+                <label className="block text-xs text-white/40 mb-1">Approval Date</label>
+                <input
+                  type="date"
+                  value={pea.pea_approval_date}
+                  onChange={(e) => setPea((p) => ({ ...p, pea_approval_date: e.target.value }))}
+                  disabled={!pea.project_id}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#E8A820]/50 disabled:opacity-40 min-h-[44px]"
+                />
+              </div>
+            </div>
+
+            {/* Rejection reason — only shown when status is objected */}
+            {(pea.pea_status === 'objected' || pea.pea_status === 'resubmit_needed') && (
+              <div className="mt-3">
+                <label className="block text-xs text-white/40 mb-1">Rejection / Objection Reason</label>
+                <textarea
+                  value={pea.pea_rejection_reason}
+                  onChange={(e) => setPea((p) => ({ ...p, pea_rejection_reason: e.target.value }))}
+                  disabled={!pea.project_id}
+                  rows={3}
+                  placeholder="Describe the PEA objection or required changes..."
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 disabled:opacity-40 resize-none"
+                />
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className="flex flex-wrap gap-2 mt-4">
+              {/* Save status */}
+              <button
+                onClick={handlePeaSave}
+                disabled={peaSaving || !pea.project_id}
+                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#E8A820]/10 border border-[#E8A820]/30 text-[#E8A820] text-sm hover:bg-[#E8A820]/20 transition-all disabled:opacity-50 min-h-[44px]"
+              >
+                {peaSaving
+                  ? <Loader2 size={14} className="animate-spin" />
+                  : <Check size={14} />}
+                Save Status
+              </button>
+
+              {/* Download Package */}
+              <button
+                onClick={handlePeaPackage}
+                disabled={peaPackageLoading}
+                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-sm hover:bg-blue-500/20 transition-all disabled:opacity-50 min-h-[44px]"
+              >
+                {peaPackageLoading
+                  ? <Loader2 size={14} className="animate-spin" />
+                  : <Download size={14} />}
+                Generate Package
+              </button>
+
+              {/* Sign as Owner */}
+              {pea.documents.length > 0 && (
+                <>
+                  <button
+                    onClick={() => {
+                      const doc = pea.documents.find((d) => d.document_type === 'application_letter') || pea.documents[0]
+                      if (doc) setShowSignPad({ documentId: doc.id, role: 'owner' })
+                    }}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm hover:bg-amber-500/20 transition-all min-h-[44px]"
+                  >
+                    <PenLine size={14} />
+                    Sign as Owner
+                  </button>
+                  <button
+                    onClick={() => {
+                      const doc = pea.documents.find((d) => d.document_type === 'application_letter') || pea.documents[0]
+                      if (doc) setShowSignPad({ documentId: doc.id, role: 'engineer' })
+                    }}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-sm hover:bg-purple-500/20 transition-all min-h-[44px]"
+                  >
+                    <PenLine size={14} />
+                    Sign as Engineer
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Document list */}
+            {pea.documents.length > 0 && (
+              <div className="mt-4 border-t border-white/10 pt-4">
+                <p className="text-xs text-white/40 uppercase tracking-wider mb-2">Generated Documents</p>
+                <div className="space-y-1.5">
+                  {pea.documents.map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06]"
+                    >
+                      <span className="text-xs text-white/60 capitalize">{doc.document_type.replace(/_/g, ' ')}</span>
+                      <div className="flex items-center gap-2">
+                        {doc.signed_by_owner && (
+                          <span className="text-[10px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded">Owner signed</span>
+                        )}
+                        {doc.signed_by_engineer && (
+                          <span className="text-[10px] text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded">PE signed</span>
+                        )}
+                        {doc.file_url && (
+                          <a
+                            href={doc.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
+                          >
+                            <ExternalLink size={12} />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* PEA Timeline */}
+            <div className="mt-4 border-t border-white/10 pt-4">
+              <p className="text-xs text-white/40 uppercase tracking-wider mb-3">PEA Timeline</p>
+              <ol className="relative border-l border-white/10 pl-4 space-y-3">
+                {[
+                  { label: 'Package Ready', date: pea.pea_status !== 'not_started' ? 'done' : null },
+                  { label: 'Submitted to PEA', date: pea.pea_application_date || null },
+                  { label: 'Under Review', date: pea.pea_status === 'under_review' || pea.pea_status === 'approved' || pea.pea_status === 'objected' ? 'done' : null },
+                  { label: 'Approved', date: pea.pea_approval_date || null },
+                  { label: 'Meter Installed', date: pea.pea_meter_inspection_date || null },
+                  { label: 'Commercial Operation', date: pea.pea_status === 'commercial_operation' ? 'done' : null },
+                ].map((e, i) => {
+                  const done = !!e.date
+                  return (
+                    <li key={String(i)} className="relative">
+                      <span
+                        className={`absolute -left-[18px] top-0.5 w-3 h-3 rounded-full border-2 ${
+                          done ? 'bg-[#E8A820] border-[#E8A820]' : 'bg-transparent border-white/20'
+                        }`}
+                      />
+                      <p className={`text-xs ${done ? 'text-white' : 'text-white/30'}`}>{e.label}</p>
+                      {e.date && e.date !== 'done' && (
+                        <p className="text-[10px] text-white/30">{new Date(e.date).toLocaleDateString('en-GB')}</p>
+                      )}
+                    </li>
+                  )
+                })}
+              </ol>
+            </div>
           </div>
         </div>
 
@@ -395,6 +792,20 @@ export default function ProposalDetailPage() {
           })()}
         </div>
       </div>
+
+      {/* PEA Signature Pad Modal */}
+      {showSignPad && (
+        <PEASignaturePad
+          documentId={showSignPad.documentId}
+          signerRole={showSignPad.role}
+          onClose={() => setShowSignPad(null)}
+          onSigned={(sigId) => {
+            showToast(`Signature saved (${sigId.slice(0, 8)}...)`, 'success')
+            setShowSignPad(null)
+            if (proposal) loadPeaData(proposal.ref_number)
+          }}
+        />
+      )}
     </div>
   )
 }

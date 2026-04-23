@@ -519,6 +519,15 @@ function renderEquipmentSpecs(p: PEAParams): string {
 ` + baseFoot(p)
 }
 
+// ── Branch label helper ──────────────────────────────
+const BRANCH_LABELS: Record<string, string> = {
+  surat_thani: 'PEA Surat Thani (Ko Phangan)',
+  phuket: 'PEA Phuket',
+  chiang_mai: 'PEA Chiang Mai',
+  chonburi: 'PEA Chonburi',
+  bangkok_mea: 'MEA Bangkok',
+}
+
 // ========== HANDLER ==========
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 })
@@ -527,7 +536,27 @@ export default async function handler(req: Request): Promise<Response> {
     const email = await verifyAdmin(req)
     if (!email) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
 
-    const params = (await req.json()) as PEAParams
+    const body = (await req.json()) as PEAParams & { project_id?: string; pea_branch?: string }
+
+    // If project_id provided, fetch pea_branch from DB
+    let peaBranchLabel = 'PEA Surat Thani (Ko Phangan)'
+    if (body.project_id) {
+      const r = await fetch(
+        `${SUPABASE_URL}/rest/v1/projects?id=eq.${encodeURIComponent(body.project_id)}&select=pea_branch&limit=1`,
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } },
+      )
+      if (r.ok) {
+        const rows = await r.json()
+        const branch = rows?.[0]?.pea_branch
+        if (branch && BRANCH_LABELS[branch]) peaBranchLabel = BRANCH_LABELS[branch]
+      }
+    } else if (body.pea_branch && BRANCH_LABELS[body.pea_branch]) {
+      peaBranchLabel = BRANCH_LABELS[body.pea_branch]
+    }
+
+    // Inject branch into params for any future use
+    const params: PEAParams = { ...body, client_site: body.client_site || `Koh Phangan · ${peaBranchLabel}` }
+
     if (!params.ref || !params.system_size_kwp) {
       return Response.json({ ok: false, error: 'missing_required' }, { status: 400 })
     }

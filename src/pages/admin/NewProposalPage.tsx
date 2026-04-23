@@ -25,7 +25,7 @@ function SectionTitle({ number, title }: { number: string; title: string }) {
 
 function Section({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
+    <div className="bg-white/5 rounded-2xl border border-white/10 p-4 sm:p-6">
       {children}
     </div>
   )
@@ -243,7 +243,7 @@ export default function NewProposalPage() {
   }
 
   return (
-    <div dir="rtl" className="p-6 max-w-[860px] mx-auto pb-16">
+    <div dir="rtl" className="p-3 sm:p-6 max-w-[860px] mx-auto pb-24">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <button
@@ -416,7 +416,7 @@ export default function NewProposalPage() {
         {/* Section C — System Specs */}
         <Section>
           <SectionTitle number="ג" title="מפרט מערכת" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <FormField label="גודל מערכת (kWp)" required>
               <Input
                 type="number"
@@ -558,7 +558,7 @@ export default function NewProposalPage() {
         {/* Section D — Production & Savings */}
         <Section>
           <SectionTitle number="ד" title="ייצור וחיסכון" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
             <FormField label="PSH (שעות שיא)" hint="ברירת מחדל: 5.0 לתאילנד">
               <Input
                 type="number"
@@ -638,7 +638,7 @@ export default function NewProposalPage() {
                 🧮 חשב מ-BOM
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <FormField label="עלות BOM (THB)" hint="אוטומטי">
                 <Input
                   type="number"
@@ -707,7 +707,7 @@ export default function NewProposalPage() {
         {/* Section F — Deal Options (v3) */}
         <Section>
           <SectionTitle number="ו" title="אפשרויות עסקה (v3)" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
             <FormField label="תעריף PPA (฿/kWh)" hint="ברירת מחדל: 4.50">
               <Input
                 type="number"
@@ -784,7 +784,7 @@ export default function NewProposalPage() {
 
           <div className="mb-6">
             <p className="text-[11px] text-white/40 uppercase tracking-wider mb-3">שפת ההצעה</p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               {([
                 { value: 'he', label: 'עברית', flag: '🇮🇱' },
                 { value: 'en', label: 'English', flag: '🇺🇸' },
@@ -794,7 +794,7 @@ export default function NewProposalPage() {
                   key={value}
                   type="button"
                   onClick={() => update('language', value)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                  className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-4 py-3 rounded-xl border text-sm font-medium transition-all min-h-[44px] ${
                     form.language === value
                       ? 'bg-[#E8A820]/10 border-[#E8A820]/30 text-[#E8A820]'
                       : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10'
