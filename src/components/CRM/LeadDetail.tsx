@@ -8,7 +8,7 @@ import {
 import { useAppStore } from '../../lib/store'
 import {
   getCrmProject, updateProjectStatus, updateProject,
-  getProjectActivity, logActivity, deleteProject, getCrmProjects
+  getProjectActivity, logActivity, deleteProject, getCrmProjects, getStatusGateBlockers
 } from '../../lib/crm-service'
 import { CRM_STATUSES, STATUS_MAP } from '../../types/crm'
 import type { CrmProject, CrmProjectInsert, ProjectStatus, ActivityEntry } from '../../types/crm'
@@ -36,35 +36,46 @@ export default function LeadDetail() {
   useEffect(() => {
     if (!id) return
     let stale = false
-    setLoading(true)
 
-    const fromStore = crmProjects.find((p) => p.id === id)
-    if (fromStore) {
-      setProject(fromStore)
-      setNotes(fromStore.notes || '')
-    }
-
-    Promise.all([
-      getCrmProject(id),
-      getProjectActivity(id),
-    ]).then(([p, acts]) => {
+    queueMicrotask(() => {
       if (stale) return
-      if (p) {
-        setProject(p)
-        setNotes(p.notes || '')
+      setLoading(true)
+
+      const fromStore = crmProjects.find((p) => p.id === id)
+      if (fromStore) {
+        setProject(fromStore)
+        setNotes(fromStore.notes || '')
       }
-      setActivities(acts)
-    }).finally(() => {
-      if (!stale) setLoading(false)
+
+      Promise.all([
+        getCrmProject(id),
+        getProjectActivity(id),
+      ]).then(([p, acts]) => {
+        if (stale) return
+        if (p) {
+          setProject(p)
+          setNotes(p.notes || '')
+        }
+        setActivities(acts)
+      }).finally(() => {
+        if (!stale) setLoading(false)
+      })
     })
 
     return () => { stale = true }
-  }, [id])
+  }, [crmProjects, id])
 
   const handleStatusChange = async (status: ProjectStatus) => {
     if (!project) return
     const step = STATUS_MAP[status].step
-    await updateProjectStatus(project.id, status, step)
+    const blockers = await getStatusGateBlockers(project.id, status)
+    if (blockers.length) {
+      window.alert(`Cannot move forward yet:\n\n${blockers.slice(0, 8).join('\n')}`)
+      setShowStatusMenu(false)
+      return
+    }
+    const success = await updateProjectStatus(project.id, status, step)
+    if (!success) return
     setProject({ ...project, status, step_number: step })
     setShowStatusMenu(false)
     getProjectActivity(project.id).then(setActivities)

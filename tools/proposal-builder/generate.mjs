@@ -39,12 +39,13 @@ function getLocationConfig(locationId) {
 // -- PROPOSAL FINANCIAL CALCULATIONS ----------------------------------------------------
 // Corrected formulas v1.1 (2026-04-23):
 //   1. Discounted payback (8% discount rate, find year cumulative NPV >= 0, interpolate)
-//   2. Net-metering blended rate: 60% self-consume @ retail + 40% export @ 70% retail
+//   2. Net-billing blended rate: self-consumed power @ retail + exported power @ export rate
 //   3. First-year LID degradation: 2% year-1, then 0.5%/yr (IEC 61215 / Jordan & Kurtz 2013)
 //   4. Performance Ratio: 0.77 (tropical, IEC 61724) * 0.97 (soiling, IEA PVPS T13-10:2018)
 //      = 0.7469 effective
 //   5. CO2: EGAT 2023 official grid mix = 0.477 kg CO2/kWh
-// Any field can be overridden in client JSON (e.g. set payback_years_no_tax explicitly).
+// Client JSON can opt out with "manual_financial_override": true, but calculated values
+// are the default source of truth for rendered proposals and Supabase storage.
 
 function calcProposalFinancials(data) {
   const kwp = data.system_size_kwp
@@ -361,10 +362,9 @@ async function main() {
     process.exit(1)
   }
 
-  // Run financial calculations and merge into data
-  // Calc results go into data._calc_* fields + print to console.
-  // Client-JSON fields (annual_kwh, monthly_savings_thb, etc.) are NOT overwritten --
-  // they remain authoritative for template rendering so existing proposals are unchanged.
+  // Run financial calculations and merge into data.
+  // Calculated values are authoritative by default. A proposal can opt out only with
+  // manual_financial_override=true, which keeps the old JSON fields for legacy cases.
   const calc = calcProposalFinancials(data)
   if (calc._calc_version) {
     console.log('\n-- CALCULATED FINANCIALS (v1.1) --')
@@ -382,9 +382,25 @@ async function main() {
       console.warn(`  WARNING: JSON payback (${jsonPayback}) differs by >1.5yr from calc (${calc.payback_discounted_years}).`)
       console.warn(`           Update client JSON or verify assumptions.`)
     }
-    // Merge calc metadata into data for Supabase storage
+    if (!data.manual_financial_override) {
+      Object.assign(data, {
+        annual_kwh: calc.annual_kwh_calc,
+        monthly_kwh: calc.monthly_kwh_calc,
+        annual_savings_thb: calc.annual_savings_calc_thb,
+        monthly_savings_thb: calc.monthly_savings_calc_thb,
+        payback_years_no_tax: calc.payback_discounted_years,
+        payback_years_discounted: calc.payback_discounted_years,
+        savings_25yr_thb: calc.savings_25yr_calc_thb,
+        metadata: {
+          ...(data.metadata || {}),
+          co2_tons_avoided_25yr: calc.co2_tons_avoided,
+        },
+      })
+    }
     Object.assign(data, { _financials: calc })
   }
+  const validityDays = Number(data.valid_days || 30)
+  const expiresAt = data.expires_at || new Date(Date.now() + validityDays * 24 * 60 * 60 * 1000).toISOString()
 
   // Generate password
   const password = data.password || random6()
@@ -473,6 +489,7 @@ async function main() {
         pdf_url: `${ref}-${data.language || 'he'}.pdf`,
         status: 'sent',
         sent_at: new Date().toISOString(),
+        expires_at: expiresAt,
         metadata: { ...(data.metadata || {}), _financials: calc },
       })
       console.log('Registered in Supabase')

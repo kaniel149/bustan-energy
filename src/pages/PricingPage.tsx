@@ -12,7 +12,7 @@ import {
   Factory,
 } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { faqSchema, breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
 

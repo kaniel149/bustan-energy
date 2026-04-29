@@ -474,7 +474,7 @@ export default async function handler(req: Request): Promise<Response> {
       html,
       filename: `${params.proposal_ref || params.project_id || 'letter'}-PEA-LETTER-${params.language.toUpperCase()}.html`,
     })
-  } catch (e: any) {
-    return Response.json({ ok: false, error: String(e?.message || e) }, { status: 500 })
+  } catch (e: unknown) {
+    return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 })
   }
 }

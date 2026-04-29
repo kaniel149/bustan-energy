@@ -57,7 +57,7 @@ yearlyKwh(N) = kwp * psh * 365 * effectivePR * degradationFactor(N)
 
 ---
 
-## 3. Net Metering / Tariff Model
+## 3. Net Billing / Tariff Model
 
 **Thailand PEA (Provincial Electricity Authority) -- B.E. 2566 (2023)**
 
@@ -77,7 +77,7 @@ effectiveRate = selfConsumptionPct * retailRate + (1 - selfConsumptionPct) * exp
 **Previous (wrong):** Used retail rate (4.4) for 100% of production -- ignored export penalty.
 This overstated savings by ~3-5% for grid-tied systems.
 
-**Source:** PEA Feed-in Tariff Notification, Royal Gazette Vol. 140, Part 55g (2023).
+**Source:** PEA tariff schedule + current TM Energy export-rate assumption. Treat the export rate as a proposal assumption until the specific PEA approval/export arrangement is confirmed.
 
 ---
 
@@ -201,15 +201,15 @@ Set `location_id` to any key in `bom-templates.json` -> `locations` for full per
 
 ---
 
-## Calculated vs Manual Fields
+## Calculated Fields Are Authoritative
 
-`generate.mjs` calculates financial metrics automatically and prints them.
-It does NOT overwrite existing client JSON fields -- those are authoritative for rendering.
+`generate.mjs` calculates financial metrics automatically and uses them for rendering and Supabase storage.
+Manual financial fields are allowed only when `manual_financial_override: true` is set in the client JSON and the reason is documented in `metadata.manual_override_reason`.
 
-To use calculated values in a proposal:
+Before sending a proposal:
 1. Run `node generate.mjs --data clients/X.json --skip-pdf --skip-supa`
 2. Check the printed `-- CALCULATED FINANCIALS (v1.1) --` section
-3. If numbers look correct, copy them into the client JSON as explicit fields
+3. If a manual override is required, set `manual_financial_override: true` and document the commercial reason
 
 ---
 

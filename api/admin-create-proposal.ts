@@ -8,6 +8,7 @@ import { escapeHtml } from './_lib/html.js'
 import { fmt } from './_lib/fmt.js'
 import { sha256hex, random6 } from './_lib/crypto.js'
 import { supaUpsert } from './_lib/supa.js'
+import { calculateSolarFinancials, TM_SOLAR_ASSUMPTIONS } from '../src/lib/solar-financials'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -80,26 +81,26 @@ export default async function handler(req: Request): Promise<Response> {
       inverter_model = 'Huawei SUN2000-12KTL-M2',
       battery_model = 'Huawei LUNA2000-10-S0',
       battery_kwh = 10,
-      annual_kwh,
-      monthly_kwh,
-      monthly_savings_thb,
-      annual_savings_thb,
+      annual_kwh: annual_kwh_submitted,
+      monthly_kwh: monthly_kwh_submitted,
+      monthly_savings_thb: monthly_savings_thb_submitted,
+      annual_savings_thb: annual_savings_thb_submitted,
       total_price_thb,
-      payback_no_tax,
-      payback_with_tax,
-      savings_25yr_thb,
+      payback_no_tax: payback_no_tax_submitted,
+      payback_with_tax: payback_with_tax_submitted,
+      savings_25yr_thb: savings_25yr_thb_submitted,
       roof_original_url,
       roof_panels_url,
       logo_url = 'https://energy-tm.com/proposals/tm-energy-logo.png',
       language = 'he',
       password,
-      tax_deduction_thb = 200000,
+      tax_deduction_thb = 0,
       // v3 deal options
-      ppa_rate_thb_per_kwh = 4.50,
+      ppa_rate_thb_per_kwh = 4.20,
       ppa_years = 15,
       battery_price_thb = 150000,
       battery_kwh_extra = 10,
-      co2_factor = 0.5,
+      co2_factor = TM_SOLAR_ASSUMPTIONS.co2KgPerKwh,
       monthly_bill_thb = 0,
       ai_analysis = null,
     } = body
@@ -107,6 +108,22 @@ export default async function handler(req: Request): Promise<Response> {
     if (!ref || !client_name || !system_size_kwp || !total_price_thb) {
       return Response.json({ ok: false, error: 'missing_required' }, { status: 400 })
     }
+
+    const financials = calculateSolarFinancials({
+      systemSizeKwp: Number(system_size_kwp),
+      panelCount: Number(panel_count || 0),
+      panelWatt: Number(panel_watt || 580),
+      batteryKwh: Number(battery_kwh || 0),
+      totalPriceThb: Number(total_price_thb || 0),
+      taxDeductionThb: Number(tax_deduction_thb || 0),
+    })
+    const annual_kwh = financials.annual_kwh || annual_kwh_submitted
+    const monthly_kwh = financials.monthly_kwh || monthly_kwh_submitted
+    const monthly_savings_thb = financials.monthly_savings_thb || monthly_savings_thb_submitted
+    const annual_savings_thb = financials.annual_savings_thb || annual_savings_thb_submitted
+    const payback_no_tax = financials.payback_discounted_years || payback_no_tax_submitted
+    const payback_with_tax = financials.payback_with_tax_years || payback_with_tax_submitted || 0
+    const savings_25yr_thb = financials.savings_25yr_thb || savings_25yr_thb_submitted
 
     const pw = password || random6()
     const password_hash = await sha256hex(pw)
@@ -222,7 +239,7 @@ export default async function handler(req: Request): Promise<Response> {
       total_price_thb,
       monthly_savings_thb,
       annual_savings_thb,
-      payback_years: payback_with_tax || payback_no_tax,
+      payback_years: payback_no_tax,
       monthly_production_kwh: monthly_kwh,
       annual_production_kwh: annual_kwh,
       password_hash,
@@ -233,6 +250,7 @@ export default async function handler(req: Request): Promise<Response> {
         rendered_html: finalHtml,
         created_by: admin.email,
         tax_deduction_thb,
+        financial_assumptions: financials,
         location_he,
         location_short,
         location_psh,

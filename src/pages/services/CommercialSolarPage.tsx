@@ -12,7 +12,7 @@ import {
   BarChart3,
   Handshake,
 } from 'lucide-react'
-import { useLanguage } from '../../i18n/LanguageContext'
+import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
 
@@ -32,7 +32,7 @@ const sectors = [
   {
     icon: Hotel,
     title: 'Hotels & Resorts',
-    description: 'Resorts on Ko Phangan face some of the highest electricity costs in Thailand due to island tariffs. Solar systems offset daytime cooling, pool pumps, and common area loads. Many of our resort clients see payback in under 5 years.',
+    description: 'Resorts on Ko Phangan often carry large daytime loads from cooling, pool pumps, kitchens, and common areas. Solar can offset those daytime loads, with payback depending on the actual PEA tariff, self-consumption, roof layout, and financing structure.',
     size: '30 kW – 200 kW',
   },
   {
@@ -73,15 +73,15 @@ const advantages = [
 ]
 
 const included = [
-  'LONGi Hi-MO 6 commercial-grade panels (440W, Tier-1)',
-  'Huawei SUN2000 commercial inverters (scalable string design)',
+  'Tier-1 solar modules selected per project availability and warranty',
+  'Huawei, Sungrow, or equivalent bankable commercial inverters',
   'Optional Huawei LUNA2000 battery storage for backup power',
   'Heavy-duty mounting systems rated for tropical weather',
   'Full PEA permitting and grid connection',
-  'Net metering or net billing configuration',
+  'PEA-compliant self-consumption and net-billing/export configuration where approved',
   'Huawei FusionSolar commercial monitoring platform',
-  'BOI tax incentive guidance for qualifying businesses',
-  'Comprehensive 25-year performance warranty',
+  'Tax and BOI documentation support for qualifying businesses, coordinated with your accountant',
+  'Manufacturer performance warranties plus TM Energy workmanship warranty',
   'Ongoing O&M support and annual inspections',
 ]
 

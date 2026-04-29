@@ -426,20 +426,20 @@ var sampleRoofs = [
 function calcSolar(area) {
   var usable = area * 0.7;
   var kwp = usable / 5.5;
-  var annual_kwh = kwp * 1350;
-  var rate = 5.5; // THB per kWh
+  var annual_kwh = kwp * 1336; // 5.0 PSH × 365 × 0.7469 PR × 0.98 LID
+  var rate = 3.88; // blended grid-tied value: 60% retail + 40% export
   var annual_savings = annual_kwh * rate;
-  var epc_cost = kwp * 32500;
+  var epc_cost = kwp * 32000;
   var panels = Math.ceil(kwp / 0.58);
   var payback = epc_cost / annual_savings;
-  var co2_tons = (annual_kwh * 0.5) / 1000; // ~0.5 kg CO2/kWh Thailand grid
+  var co2_tons = (annual_kwh * 0.477) / 1000; // EGAT 2023 grid factor
   var monthly_bill_before = (annual_kwh / 12) * rate;
   var monthly_bill_after = monthly_bill_before * 0.25; // 75% offset typical
   return {
     usable: Math.round(usable), kwp: Math.round(kwp * 10) / 10,
     annual_kwh: Math.round(annual_kwh), annual_savings: Math.round(annual_savings),
     monthly_savings: Math.round(annual_savings / 12), epc_cost: Math.round(epc_cost),
-    ppa_savings: Math.round(annual_kwh * (5.5 - 4.5)), panels: panels,
+    ppa_savings: Math.round(annual_kwh * (4.4 - 4.2)), panels: panels,
     payback: Math.round(payback * 10) / 10, co2_tons: Math.round(co2_tons * 10) / 10,
     trees: Math.round(co2_tons * 16.5), // ~16.5 trees per ton CO2/yr
     bill_before: Math.round(monthly_bill_before), bill_after: Math.round(monthly_bill_after)

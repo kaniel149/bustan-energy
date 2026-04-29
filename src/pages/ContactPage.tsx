@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { MessageCircle, Mail, MapPin, Clock, Send, Phone } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
+import { trackEvent } from '../lib/analytics'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -35,6 +36,7 @@ const emptyForm: FormState = {
 }
 
 function InputField({
+  id,
   label,
   type = 'text',
   value,
@@ -42,6 +44,7 @@ function InputField({
   placeholder,
   required,
 }: {
+  id: string
   label: string
   type?: string
   value: string
@@ -51,10 +54,11 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="block text-white/60 text-sm mb-1.5">
+      <label htmlFor={id} className="block text-white/60 text-sm mb-1.5">
         {label}{required && <span className="text-[var(--color-gold)] ml-1">*</span>}
       </label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -67,12 +71,14 @@ function InputField({
 }
 
 function SelectField({
+  id,
   label,
   value,
   onChange,
   options,
   placeholder,
 }: {
+  id: string
   label: string
   value: string
   onChange: (v: string) => void
@@ -81,8 +87,9 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-white/60 text-sm mb-1.5">{label}</label>
+      <label htmlFor={id} className="block text-white/60 text-sm mb-1.5">{label}</label>
       <select
+        id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[var(--color-gold)]/50 transition-all duration-200 appearance-none cursor-pointer"
@@ -106,19 +113,39 @@ export default function ContactPage() {
   const [form, setForm] = useState<FormState>(emptyForm)
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   function update(field: keyof FormState) {
     return (value: string) => setForm((f) => ({ ...f, [field]: value }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setSubmitError('')
     setSending(true)
-    // Simulate submission — no backend wired yet
-    setTimeout(() => {
+
+    try {
+      const res = await fetch('/api/contact-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const json = await res.json().catch(() => null)
+      if (!res.ok || !json?.ok) {
+        throw new Error(json?.error || 'submit_failed')
+      }
+      trackEvent('contact_form_submit', {
+        property_type: form.propertyType || undefined,
+        system_interest: form.systemInterest || undefined,
+      })
       setSending(false)
       setSubmitted(true)
-    }, 1200)
+    } catch {
+      setSending(false)
+      setSubmitError(lang === 'th'
+        ? 'ส่งไม่ได้ในขณะนี้ กรุณาติดต่อทาง WhatsApp'
+        : 'Could not send right now. Please contact us on WhatsApp.')
+    }
   }
 
   const hero = t.contact.hero
@@ -217,8 +244,15 @@ export default function ContactPage() {
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
+                    {submitError && (
+                      <div className="rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                        {submitError}
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <InputField
+                        id="contact-name"
                         label={form_.name}
                         value={form.name}
                         onChange={update('name')}
@@ -226,6 +260,7 @@ export default function ContactPage() {
                         required
                       />
                       <InputField
+                        id="contact-email"
                         label={form_.email}
                         type="email"
                         value={form.email}
@@ -236,6 +271,7 @@ export default function ContactPage() {
                     </div>
 
                     <InputField
+                      id="contact-phone"
                       label={form_.phone}
                       type="tel"
                       value={form.phone}
@@ -245,6 +281,7 @@ export default function ContactPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <SelectField
+                        id="contact-property-type"
                         label={form_.propertyType.label}
                         value={form.propertyType}
                         onChange={update('propertyType')}
@@ -252,6 +289,7 @@ export default function ContactPage() {
                         placeholder={form_.propertyType.placeholder}
                       />
                       <SelectField
+                        id="contact-system-interest"
                         label={form_.systemInterest.label}
                         value={form.systemInterest}
                         onChange={update('systemInterest')}
@@ -261,8 +299,9 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-white/60 text-sm mb-1.5">{form_.message}</label>
+                      <label htmlFor="contact-message" className="block text-white/60 text-sm mb-1.5">{form_.message}</label>
                       <textarea
+                        id="contact-message"
                         value={form.message}
                         onChange={(e) => update('message')(e.target.value)}
                         placeholder={form_.messagePlaceholder}

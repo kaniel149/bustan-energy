@@ -590,7 +590,7 @@ export default async function handler(req: Request): Promise<Response> {
       generated_at: new Date().toISOString(),
       drawings,
     })
-  } catch (e: any) {
-    return Response.json({ ok: false, error: String(e?.message || e) }, { status: 500 })
+  } catch (e: unknown) {
+    return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 })
   }
 }

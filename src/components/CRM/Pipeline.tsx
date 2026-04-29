@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/core'
 import { Plus, Search, RefreshCw, X, Filter, ChevronDown } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
-import { getCrmProjects, createLead, updateProjectStatus, filterProjects } from '../../lib/crm-service'
+import { getCrmProjects, createLead, updateProjectStatus, filterProjects, getStatusGateBlockers } from '../../lib/crm-service'
 import { CRM_STATUSES, LEAD_SOURCES, BUSINESS_TYPES, DEFAULT_FILTERS } from '../../types/crm'
 import type { CrmProject, CrmProjectInsert, PipelineFilters } from '../../types/crm'
 import { PipelineColumn } from './PipelineColumn'
@@ -98,6 +98,12 @@ export default function Pipeline() {
     setCrmProjects(updated as CrmProject[])
 
     try {
+      const blockers = await getStatusGateBlockers(projectId, statusInfo.id)
+      if (blockers.length) {
+        setCrmProjects(originalProjects)
+        window.alert(`Cannot move forward yet:\n\n${blockers.slice(0, 6).join('\n')}`)
+        return
+      }
       const success = await updateProjectStatus(projectId, statusInfo.id, statusInfo.step)
       if (!success) setCrmProjects(originalProjects)
     } catch {

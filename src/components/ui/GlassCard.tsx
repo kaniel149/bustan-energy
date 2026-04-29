@@ -9,6 +9,13 @@ interface GlassCardProps {
   as?: 'div' | 'article' | 'section' | 'li'
 }
 
+const motionTags = {
+  div: motion.div,
+  article: motion.article,
+  section: motion.section,
+  li: motion.li,
+}
+
 export function GlassCard({
   children,
   className = '',
@@ -16,7 +23,7 @@ export function GlassCard({
   onClick,
   as: Tag = 'div',
 }: GlassCardProps) {
-  const MotionTag = motion.create(Tag)
+  const MotionTag = motionTags[Tag]
 
   const baseClasses = [
     'bg-white/5',

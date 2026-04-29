@@ -2,12 +2,12 @@
 
 export type ProjectStatus =
   | 'lead'
-  | 'evaluation'
+  | 'survey'
+  | 'electricity_analysis'
+  | 'design'
   | 'proposal'
   | 'contract'
-  | 'design'
-  | 'survey'
-  | 'survey_approval'
+  | 'procurement'
   | 'pea'
   | 'installation'
   | 'om'
@@ -118,7 +118,7 @@ export interface ProjectChecklist {
   completed_by: string | null
 }
 
-// ── Thailand-adapted 10-step pipeline with checklists ──
+// ── Thailand-adapted EPC/PPA pipeline with checklists ──
 export const CRM_STATUSES: StatusInfo[] = [
   {
     id: 'lead', label: 'Lead Capture', labelTh: 'รับลูกค้า', labelShort: 'Lead',
@@ -126,62 +126,67 @@ export const CRM_STATUSES: StatusInfo[] = [
     checklist: [
       { id: 'lead_contact', label: 'Contact info collected', labelTh: 'เก็บข้อมูลติดต่อ', required: true },
       { id: 'lead_source', label: 'Lead source identified', labelTh: 'ระบุแหล่งที่มา', required: false },
-      { id: 'lead_visit', label: 'Site visit scheduled', labelTh: 'นัดดูหน้างาน', required: false },
-    ],
-  },
-  {
-    id: 'evaluation', label: 'Site Evaluation', labelTh: 'สำรวจพื้นที่', labelShort: 'Eval',
-    color: '#8B5CF6', step: 2,
-    checklist: [
-      { id: 'eval_bill', label: 'Electricity bill collected', labelTh: 'เก็บบิลค่าไฟ', required: true },
-      { id: 'eval_roof', label: 'Roof inspection done', labelTh: 'ตรวจสอบหลังคา', required: true },
-      { id: 'eval_shade', label: 'Shading analysis', labelTh: 'วิเคราะห์เงา', required: false },
-      { id: 'eval_phase', label: 'Electrical phase confirmed', labelTh: 'ยืนยันเฟสไฟฟ้า', required: true },
-    ],
-  },
-  {
-    id: 'proposal', label: 'Proposal', labelTh: 'เสนอราคา', labelShort: 'Proposal',
-    color: '#F59E0B', step: 3,
-    checklist: [
-      { id: 'prop_design', label: 'System design complete', labelTh: 'ออกแบบระบบเสร็จ', required: true },
-      { id: 'prop_finance', label: 'Financial model ready', labelTh: 'คำนวณการเงินเสร็จ', required: true },
-      { id: 'prop_sent', label: 'Proposal sent to client', labelTh: 'ส่งใบเสนอราคา', required: true },
-      { id: 'prop_followup', label: 'Follow-up call done', labelTh: 'โทรติดตาม', required: false },
-    ],
-  },
-  {
-    id: 'contract', label: 'Contract', labelTh: 'สัญญา', labelShort: 'Contract',
-    color: '#10B981', step: 4,
-    checklist: [
-      { id: 'con_signed', label: 'Contract signed', labelTh: 'เซ็นสัญญา', required: true },
-      { id: 'con_deposit', label: 'Deposit received', labelTh: 'รับเงินมัดจำ', required: true },
-      { id: 'con_id', label: 'Client ID/passport copy', labelTh: 'สำเนาบัตรประชาชน/พาสปอร์ต', required: true },
-    ],
-  },
-  {
-    id: 'design', label: 'Detailed Design', labelTh: 'ออกแบบรายละเอียด', labelShort: 'Design',
-    color: '#06B6D4', step: 5,
-    checklist: [
-      { id: 'des_eng', label: 'Engineering drawings', labelTh: 'แบบวิศวกรรม', required: true },
-      { id: 'des_order', label: 'Equipment ordered', labelTh: 'สั่งอุปกรณ์', required: true },
-      { id: 'des_permit', label: 'Building permit (if needed)', labelTh: 'ใบอนุญาตก่อสร้าง (ถ้าจำเป็น)', required: false },
+      { id: 'lead_next_action', label: 'Next action scheduled', labelTh: 'นัดหมายขั้นตอนถัดไป', required: true },
     ],
   },
   {
     id: 'survey', label: 'Site Survey', labelTh: 'สำรวจหน้างาน', labelShort: 'Survey',
-    color: '#EC4899', step: 6,
+    color: '#8B5CF6', step: 2,
     checklist: [
-      { id: 'sur_done', label: 'Survey completed', labelTh: 'สำรวจเสร็จ', required: true },
-      { id: 'sur_photo', label: 'Site photos taken', labelTh: 'ถ่ายรูปหน้างาน', required: true },
-      { id: 'sur_measure', label: 'Measurements recorded', labelTh: 'บันทึกการวัด', required: true },
+      { id: 'sur_visit_done', label: 'Site visit completed', labelTh: 'สำรวจหน้างานเสร็จ', required: true },
+      { id: 'sur_roof_photos', label: 'Roof and meter photos uploaded', labelTh: 'อัปโหลดรูปหลังคาและมิเตอร์', required: true },
+      { id: 'sur_roof_measurements', label: 'Roof measurements recorded', labelTh: 'บันทึกขนาดหลังคา', required: true },
+      { id: 'sur_shading', label: 'Shading notes recorded', labelTh: 'บันทึกเงาบัง', required: false },
     ],
   },
   {
-    id: 'survey_approval', label: 'Design Approval', labelTh: 'อนุมัติแบบ', labelShort: 'Approval',
+    id: 'electricity_analysis', label: 'Electricity Analysis', labelTh: 'วิเคราะห์ค่าไฟ', labelShort: 'Bill',
+    color: '#F59E0B', step: 3,
+    checklist: [
+      { id: 'bill_collected', label: 'Latest PEA bill collected', labelTh: 'เก็บบิล กฟภ. ล่าสุด', required: true },
+      { id: 'bill_tariff_class', label: 'Tariff class and meter number confirmed', labelTh: 'ยืนยันประเภทค่าไฟและเลขมิเตอร์', required: true },
+      { id: 'bill_12mo_usage', label: 'Usage profile estimated or imported', labelTh: 'ประเมิน/นำเข้าการใช้ไฟ', required: true },
+      { id: 'bill_loads', label: 'Day/night load split noted', labelTh: 'แยกโหลดกลางวัน/กลางคืน', required: false },
+    ],
+  },
+  {
+    id: 'design', label: 'System Design', labelTh: 'ออกแบบระบบ', labelShort: 'Design',
+    color: '#06B6D4', step: 4,
+    checklist: [
+      { id: 'des_layout', label: 'Panel layout and kWp finalized', labelTh: 'สรุปผังแผงและขนาดระบบ', required: true },
+      { id: 'des_inverter', label: 'Inverter/battery configuration selected', labelTh: 'เลือกอินเวอร์เตอร์/แบตเตอรี่', required: true },
+      { id: 'des_sld', label: 'Preliminary SLD ready', labelTh: 'เตรียม SLD เบื้องต้น', required: true },
+      { id: 'des_structural', label: 'Roof/structure risk reviewed', labelTh: 'ตรวจความเสี่ยงโครงสร้างหลังคา', required: false },
+    ],
+  },
+  {
+    id: 'proposal', label: 'Proposal', labelTh: 'เสนอราคา', labelShort: 'Proposal',
+    color: '#EC4899', step: 5,
+    checklist: [
+      { id: 'prop_calc', label: 'Financial model QA passed', labelTh: 'ตรวจโมเดลการเงินแล้ว', required: true },
+      { id: 'prop_terms', label: 'VAT, warranty, payment terms confirmed', labelTh: 'ยืนยัน VAT/รับประกัน/การชำระเงิน', required: true },
+      { id: 'prop_sent', label: 'Proposal sent to client', labelTh: 'ส่งใบเสนอราคา', required: true },
+      { id: 'prop_followup', label: 'Follow-up scheduled', labelTh: 'นัดติดตามผล', required: true },
+    ],
+  },
+  {
+    id: 'contract', label: 'Contract', labelTh: 'สัญญา', labelShort: 'Contract',
+    color: '#10B981', step: 6,
+    checklist: [
+      { id: 'con_signed', label: 'Contract signed', labelTh: 'เซ็นสัญญา', required: true },
+      { id: 'con_deposit', label: 'Deposit received', labelTh: 'รับเงินมัดจำ', required: true },
+      { id: 'con_id', label: 'Client ID/passport/company docs collected', labelTh: 'เก็บเอกสารลูกค้า/บริษัท', required: true },
+      { id: 'con_scope', label: 'Signed scope matches proposal version', labelTh: 'ขอบเขตตรงกับข้อเสนอที่เซ็น', required: true },
+    ],
+  },
+  {
+    id: 'procurement', label: 'Procurement', labelTh: 'จัดซื้อ', labelShort: 'Buy',
     color: '#F97316', step: 7,
     checklist: [
-      { id: 'app_client', label: 'Client approved design', labelTh: 'ลูกค้าอนุมัติแบบ', required: true },
-      { id: 'app_revisions', label: 'Revisions completed (if any)', labelTh: 'แก้ไขเสร็จ (ถ้ามี)', required: false },
+      { id: 'proc_bom', label: 'BOM generated from signed scope', labelTh: 'สร้าง BOM จากสัญญา', required: true },
+      { id: 'proc_supplier_quote', label: 'Supplier quote approved', labelTh: 'อนุมัติใบเสนอราคาซัพพลายเออร์', required: true },
+      { id: 'proc_ordered', label: 'Equipment ordered', labelTh: 'สั่งอุปกรณ์แล้ว', required: true },
+      { id: 'proc_eta', label: 'Delivery ETA confirmed', labelTh: 'ยืนยันกำหนดส่งของ', required: true },
     ],
   },
   {
@@ -189,9 +194,10 @@ export const CRM_STATUSES: StatusInfo[] = [
     color: '#6366F1', step: 8,
     checklist: [
       { id: 'pea_app', label: 'PEA application submitted', labelTh: 'ยื่นคำร้อง กฟภ.', required: true },
+      { id: 'pea_tracking', label: 'PEA reference number recorded', labelTh: 'บันทึกเลขอ้างอิง กฟภ.', required: true },
       { id: 'pea_meter', label: 'Meter inspection scheduled', labelTh: 'นัดตรวจมิเตอร์', required: true },
       { id: 'pea_approve', label: 'PEA approval received', labelTh: 'ได้รับอนุมัติ กฟภ.', required: true },
-      { id: 'pea_net_meter', label: 'Net metering agreement', labelTh: 'สัญญา Net Metering', required: false },
+      { id: 'pea_export', label: 'Net-billing/export terms confirmed if applicable', labelTh: 'ยืนยันเงื่อนไขขายไฟส่วนเกิน', required: false },
     ],
   },
   {

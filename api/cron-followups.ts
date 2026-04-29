@@ -9,13 +9,30 @@ import { escapeHtml } from './_lib/html.js'
 import { fmt } from './_lib/fmt.js'
 import { supaGetAll, supaPatch } from './_lib/supa.js'
 
-const SUPABASE_URL = process.env.SUPABASE_URL!
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
 
 // CRON_SECRET must be set — no fallback to prevent unauthenticated execution
 const CRON_SECRET = process.env.CRON_SECRET
+
+interface ProposalFollowupRow {
+  id: string
+  proposal_ref: string
+  followup_type: string
+  recipient?: string | null
+  metadata?: Record<string, unknown>
+}
+
+interface FollowupProposalRow {
+  ref_number: string
+  client_name?: string | null
+  system_size_kwp?: number | string | null
+  total_price_thb?: number | string | null
+  status?: string | null
+  view_count?: number | null
+}
+
+type FollowupResult = Record<string, string | number | null | undefined>
 
 async function sendEmail(to: string, subject: string, html: string) {
   return fetch('https://api.resend.com/emails', {
@@ -31,7 +48,7 @@ async function sendEmail(to: string, subject: string, html: string) {
   }).then((r) => r.json()).catch((e) => ({ error: String(e) }))
 }
 
-function buildFollowupEmail(type: string, proposal: any): { subject: string; html: string } {
+function buildFollowupEmail(type: string, proposal: FollowupProposalRow): { subject: string; html: string } {
   const url = `https://energy-tm.com/p/${encodeURIComponent(proposal.ref_number)}`
   const firstName = escapeHtml((proposal.client_name || 'valued customer').split(' ')[0])
   const systemLine = `${escapeHtml(proposal.system_size_kwp)} kWp · <b>Total:</b> ฿${fmt(proposal.total_price_thb)}`
@@ -79,6 +96,28 @@ function buildFollowupEmail(type: string, proposal: any): { subject: string; htm
     }
   }
 
+  if (type === 'not_signed_after_view_5d') {
+    return {
+      subject: `${firstName}, questions before you approve the solar proposal?`,
+      html: `
+<div style="font-family:system-ui;max-width:600px;">
+  <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:28px;border-radius:16px 16px 0 0;color:white;">
+    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:12px;margin-bottom:6px;">TM ENERGY</div>
+    <h1 style="margin:0;font-size:22px;">Next step for proposal ${refEsc}</h1>
+  </div>
+  <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
+    <p>Hi ${firstName},</p>
+    <p>You viewed the proposal a few days ago. If the system size, payment schedule, or PEA timeline needs adjustment, reply here and we will revise it before signing.</p>
+    <p><b>System:</b> ${systemLine}</p>
+    <p style="margin:24px 0;">
+      <a href="${url}" style="background:#E8A820;color:#0D2137;padding:14px 28px;border-radius:100px;text-decoration:none;font-weight:800;">Review Proposal</a>
+    </p>
+    <p style="color:#666;font-size:13px;">For a faster answer, WhatsApp us at +66 94 669 2011.</p>
+  </div>
+</div>`,
+    }
+  }
+
   return { subject: 'Follow-up from TM Energy', html: `<p>View your proposal: <a href="${url}">${refEsc}</a></p>` }
 }
 
@@ -96,7 +135,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const now = new Date().toISOString()
-  const pendings = await supaGetAll(
+  const pendings = await supaGetAll<ProposalFollowupRow>(
     `proposal_followups?status=eq.pending&scheduled_for=lte.${encodeURIComponent(now)}&select=*&limit=50`,
   )
 
@@ -104,7 +143,7 @@ export default async function handler(req: Request): Promise<Response> {
     return Response.json({ ok: true, processed: 0, message: 'no pending follow-ups' })
   }
 
-  const results: any[] = []
+  const results: FollowupResult[] = []
   for (const fu of pendings) {
     // Skip if no recipient
     if (!fu.recipient) {
@@ -117,7 +156,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     // Fetch proposal
-    const proposalRows = await supaGetAll(
+    const proposalRows = await supaGetAll<FollowupProposalRow>(
       `proposals?ref_number=eq.${encodeURIComponent(fu.proposal_ref)}&select=*`,
     )
     const proposal = proposalRows[0]

@@ -69,8 +69,8 @@ export default async function handler(req: Request): Promise<Response> {
           binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK) as unknown as number[])
         }
         b64 = btoa(binary)
-      } catch (e: any) {
-        return Response.json({ ok: false, error: 'image_fetch_error', detail: String(e?.message || e) }, { status: 400 })
+      } catch (e: unknown) {
+        return Response.json({ ok: false, error: 'image_fetch_error', detail: e instanceof Error ? e.message : String(e) }, { status: 400 })
       }
     } else if (image_base64) {
       b64 = image_base64.replace(/^data:image\/\w+;base64,/, '')
@@ -124,9 +124,11 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
 
-    const result = await geminiRes.json()
+    const result = await geminiRes.json() as {
+      candidates?: Array<{ content?: { parts?: Array<{ inline_data?: { data: string; mime_type?: string }; inlineData?: { data: string; mimeType?: string } }> } }>
+    }
     const parts = result?.candidates?.[0]?.content?.parts || []
-    const imagePart = parts.find((p: any) => p.inline_data || p.inlineData)
+    const imagePart = parts.find((p) => p.inline_data || p.inlineData)
     if (!imagePart) {
       return Response.json(
         { ok: false, error: 'no_image_in_response', parts_count: parts.length },
@@ -142,7 +144,7 @@ export default async function handler(req: Request): Promise<Response> {
       image_base64: `data:${outMime};base64,${outBase64}`,
       size_bytes: outBase64.length,
     })
-  } catch (e: any) {
-    return Response.json({ ok: false, error: String(e?.message || e) }, { status: 500 })
+  } catch (e: unknown) {
+    return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 })
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Package, Plus, Loader2, Eye, RefreshCw } from 'lucide-react'
 import { getSession } from '../../lib/admin-auth'
@@ -50,7 +50,7 @@ export default function ProcurementPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | ProcurementOrder['status']>('all')
   const [updatingId, setUpdatingId] = useState<string | null>(null)
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     try {
       const session = await getSession()
@@ -67,9 +67,13 @@ export default function ProcurementPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [showToast])
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    queueMicrotask(() => {
+      void load()
+    })
+  }, [load])
 
   const updateStatus = async (id: string, status: ProcurementOrder['status']) => {
     setUpdatingId(id)

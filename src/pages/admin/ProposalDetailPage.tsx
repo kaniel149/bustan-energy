@@ -227,8 +227,8 @@ export default function ProposalDetailPage() {
         .eq('id', pea.project_id)
       if (error) throw new Error(error.message)
       showToast('PEA status saved', 'success')
-    } catch (e: any) {
-      showToast(e.message || 'Save failed', 'error')
+    } catch (e: unknown) {
+      showToast(e instanceof Error ? e.message : 'Save failed', 'error')
     } finally {
       setPeaSaving(false)
     }
@@ -260,10 +260,10 @@ export default function ProposalDetailPage() {
       await loadPeaData(proposal.ref_number)
 
       // Open first document URL in new tab
-      const firstDoc = data.documents?.find((d: any) => d.url)
+      const firstDoc = data.documents?.find((d: { url?: string }) => d.url)
       if (firstDoc?.url) window.open(firstDoc.url, '_blank')
-    } catch (e: any) {
-      showToast(e.message || 'Package generation failed', 'error')
+    } catch (e: unknown) {
+      showToast(e instanceof Error ? e.message : 'Package generation failed', 'error')
     } finally {
       setPeaPackageLoading(false)
     }

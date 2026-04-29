@@ -12,7 +12,7 @@ import {
   AlertTriangle,
   BarChart3,
 } from 'lucide-react'
-import { useLanguage } from '../../i18n/LanguageContext'
+import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
 
@@ -42,12 +42,12 @@ const services = [
   {
     icon: Wrench,
     title: 'Repairs & Troubleshooting',
-    text: 'From inverter faults to wiring issues after storms, our technicians diagnose and resolve problems quickly. We carry common replacement parts for Huawei inverters and LONGi panels, minimizing downtime for your system.',
+    text: 'From inverter faults to wiring issues after storms, our technicians diagnose and resolve problems quickly. We keep common service parts for the equipment families we install and document any manufacturer warranty claim.',
   },
   {
     icon: ShieldCheck,
     title: 'Warranty Support',
-    text: 'All our installations come with manufacturer warranties: 25 years on LONGi panels and 10 years on Huawei inverters. We handle all warranty claims directly with manufacturers, so you never have to chase paperwork.',
+    text: 'Installations include manufacturer warranty documentation for the selected panels, inverters, and batteries. We help prepare and manage warranty claims so you are not chasing paperwork alone.',
   },
   {
     icon: Calendar,
@@ -67,7 +67,7 @@ const annualChecklistItems = [
   'DC and AC wiring connection torque checks',
   'Mounting hardware inspection for corrosion (critical in tropical island climate)',
   'Battery state-of-health check and calibration cycle',
-  'Net metering meter reading verification with PEA records',
+  'PEA meter/export reading verification where the system is approved for export',
   'Cleaning of panels and ventilation around inverter',
   'Monitoring system connectivity and data accuracy check',
   'Written report with photos and recommendations',

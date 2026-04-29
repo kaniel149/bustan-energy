@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { MapPin, Zap, TrendingUp, ArrowRight, Award } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
 

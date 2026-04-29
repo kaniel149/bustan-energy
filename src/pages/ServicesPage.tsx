@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { CheckCircle2, ArrowRight, Sun, Home, Building2, BatteryFull, Wrench } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { serviceSchema, breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
 

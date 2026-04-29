@@ -8,6 +8,7 @@ import { LOCATION_PRESETS } from '../../types/proposals'
 import { PANEL_MODELS, INVERTER_MODELS, BATTERY_MODELS, groupInverters, groupPanels, groupBatteries } from '../../constants/equipment'
 import { FormField, Input, Select } from '../../components/admin/FormField'
 import { RoofImageUploader } from '../../components/admin/RoofImageUploader'
+import type { RoofAnalysisResult } from '../../components/admin/RoofImageUploader'
 import { ProposalSuccessModal } from '../../components/admin/ProposalSuccessModal'
 import { supabase } from '../../lib/supabase'
 import type { CrmProject } from '../../types/crm'
@@ -62,7 +63,7 @@ export default function NewProposalPage() {
   const [submitting, setSubmitting] = useState(false)
   const [successResult, setSuccessResult] = useState<SuccessResult | null>(null)
   const [prefillLead, setPrefillLead] = useState<CrmProject | null>(null)
-  const [aiAnalysis, setAiAnalysis] = useState<any>(null)
+  const [aiAnalysis, setAiAnalysis] = useState<RoofAnalysisResult | null>(null)
 
   // Warn user before leaving with unsaved work
   useEffect(() => {
@@ -569,7 +570,7 @@ export default function NewProposalPage() {
               />
             </FormField>
 
-            <FormField label="PR (יחס ביצועים)" hint="ברירת מחדל: 0.78">
+            <FormField label="PR אפקטיבי" hint="ברירת מחדל: 0.747 כולל soiling">
               <Input
                 type="number"
                 step="0.01"
@@ -647,7 +648,7 @@ export default function NewProposalPage() {
                   dir="ltr"
                 />
               </FormField>
-              <FormField label="מקדם רווח (×)" hint="ברירת מחדל: 3.0">
+              <FormField label="מקדם מחיר (×)" hint="ברירת מחדל: 1.35 מעל BOM כולל VAT">
                 <Input
                   type="number"
                   step="0.1"
@@ -685,7 +686,7 @@ export default function NewProposalPage() {
               />
             </FormField>
 
-            <FormField label="ניכוי מס (THB)" hint="ברירת מחדל: ฿200,000">
+            <FormField label="ניכוי מס מאושר (THB)" hint="0 כברירת מחדל; להזין רק אם רו״ח/BOI אישרו">
               <Input
                 type="number"
                 value={form.tax_deduction_thb}
@@ -698,8 +699,8 @@ export default function NewProposalPage() {
           {/* ROI Results */}
           <div className="rounded-xl bg-[#E8A820]/5 border border-[#E8A820]/15 p-4">
             <p className="text-xs text-[#E8A820]/60 uppercase tracking-wider mb-3">ROI אוטומטי</p>
-            <CalcRow label="החזר השקעה (ללא מס)" value={`${form.payback_no_tax} שנים`} />
-            <CalcRow label="החזר השקעה (עם ניכוי מס)" value={`${form.payback_with_tax} שנים`} highlight />
+            <CalcRow label="החזר השקעה מהוון" value={`${form.payback_no_tax} שנים`} />
+            <CalcRow label="החזר עם הטבת מס מאושרת" value={form.payback_with_tax > 0 ? `${form.payback_with_tax} שנים` : 'לא חושב'} highlight />
             <CalcRow label="חיסכון ב-25 שנה" value={`฿${form.savings_25yr_thb.toLocaleString()}`} highlight />
           </div>
         </Section>
@@ -708,7 +709,7 @@ export default function NewProposalPage() {
         <Section>
           <SectionTitle number="ו" title="אפשרויות עסקה (v3)" />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-            <FormField label="תעריף PPA (฿/kWh)" hint="ברירת מחדל: 4.50">
+            <FormField label="תעריף PPA (฿/kWh)" hint="ברירת מחדל: 4.20; לעדכן לפי חוזה">
               <Input
                 type="number"
                 step="0.01"

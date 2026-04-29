@@ -55,7 +55,6 @@ function evalFormula(formula, ctx) {
     return '0'
   })
   try {
-    // eslint-disable-next-line no-new-func
     const fn = new Function('funcs', `return (${safe})`)
     return Math.max(0, Math.round(fn(funcs)))
   } catch {

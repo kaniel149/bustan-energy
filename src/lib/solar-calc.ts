@@ -10,7 +10,6 @@ const EPC_COST_PER_KWP = 32000 // THB
 const DISCOUNT_RATE = 0.08     // 8% for discounted payback
 
 // Thailand PEA net-metering defaults (PEA tariff schedule B.E. 2566)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const RETAIL_RATE_DEFAULT = 4.4    // THB/kWh
 export const EXPORT_RATE_DEFAULT = 3.1    // THB/kWh (~70% of retail)
 export const SELF_CONSUMPTION_PCT = 0.60  // grid-tied default
