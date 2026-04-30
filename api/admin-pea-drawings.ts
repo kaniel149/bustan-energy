@@ -10,6 +10,8 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { calculatePeaReadiness } from '../src/lib/pea-readiness.js'
+
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const ADMIN_DOMAIN = '@energy-tm.com'
@@ -44,6 +46,10 @@ interface PEAParams {
   ac_cable_run_m: number
   ac_current_a: number
   roof_image_url?: string
+  roof_area_m2?: number
+  roof_load_kg_m2?: number
+  phase?: 'single' | 'three' | 'unknown'
+  export_program?: 'self_consumption' | 'residential_buyback' | 'unknown'
 }
 
 // ========== COMMON HEADER ==========
@@ -80,7 +86,7 @@ function baseHead(title: string, drawingNo: string): string {
 <div class="title-block">
   <div>
     <div class="logo"><span class="amber">TM</span> ENERGY</div>
-    <div style="font-size:8pt;color:#666;margin-top:2mm">Koh Phangan Solar · PEA Certified</div>
+    <div style="font-size:8pt;color:#666;margin-top:2mm">Koh Phangan Solar · For PE Review</div>
   </div>
   <div>
     <label>Drawing Title</label>
@@ -117,7 +123,7 @@ function baseFoot(params: PEAParams): string {
 </div>
 <div class="footer">
   <span>Proposal Ref: ${params.ref} · Client: ${params.client_name}</span>
-  <span>TM Energy Co., Ltd. · energy-tm.com · contracts@energy-tm.com</span>
+  <span>Preliminary package · Requires licensed PE review/stamp before PEA submission</span>
 </div>
 </body></html>`
 }
@@ -169,7 +175,7 @@ function renderSLD(p: PEAParams): string {
     <text x="605" y="165" text-anchor="middle" font-size="11">${p.inverter_kw} kW</text>
     <text x="605" y="185" text-anchor="middle" font-size="9" fill="#666">${p.inverter_model}</text>
     <text x="605" y="210" text-anchor="middle" font-size="9">3φ 400V · 50Hz</text>
-    <text x="605" y="228" text-anchor="middle" font-size="9">MPPT × 10</text>
+    <text x="605" y="228" text-anchor="middle" font-size="9">MPPT per datasheet</text>
     <text x="605" y="246" text-anchor="middle" font-size="9" font-weight="600">η ≥ 98.5%</text>
 
     <!-- Arrow to AC panel -->
@@ -182,8 +188,8 @@ function renderSLD(p: PEAParams): string {
     <text x="850" y="140" text-anchor="middle" font-weight="700" font-size="12">MAIN AC PANEL</text>
     <text x="850" y="165" text-anchor="middle" font-size="10">MCCB ${p.ac_current_a < 200 ? '200A' : '250A'} 3P</text>
     <text x="850" y="185" text-anchor="middle" font-size="10">AC SPD Type II</text>
-    <text x="850" y="205" text-anchor="middle" font-size="10">Smart Meter</text>
-    <text x="850" y="225" text-anchor="middle" font-size="10">Huawei DDSU666-H</text>
+    <text x="850" y="205" text-anchor="middle" font-size="10">PEA-approved meter / CT</text>
+    <text x="850" y="225" text-anchor="middle" font-size="10">Model to be confirmed</text>
     <text x="850" y="250" text-anchor="middle" font-size="9" fill="#666">CT × 3 (250A)</text>
 
     <!-- Line to grid -->
@@ -209,8 +215,8 @@ function renderSLD(p: PEAParams): string {
   </svg>
 
   <div class="note">
-    <strong>System:</strong> ${p.system_size_kwp} kWp grid-tied, self-consumption with export to PEA grid.<br>
-    <strong>Code compliance:</strong> PEA TS-15:2558 · IEC 62446 · IEC 61730-1/2 · NEC Article 690
+    <strong>System:</strong> ${p.system_size_kwp} kWp grid-tied photovoltaic system for self-consumption. Export/buyback is subject to PEA/ERC program approval.<br>
+    <strong>Submission note:</strong> Preliminary engineering package. Final cable sizing, protection coordination, roof loading, and anti-islanding settings must be verified and stamped by a licensed engineer before PEA submission.
   </div>
 </div>
 ` + baseFoot(p)
@@ -328,7 +334,7 @@ function renderElectricalPlan(p: PEAParams): string {
   </div>
 
   <div class="note">
-    All cable sizes per PEA Cable Sizing Guide TS-15:2558. DC cables are H1Z2Z2-K double-insulated, UV &amp; sunlight rated per IEC 62930. All insulation class 0.6/1 kV minimum on AC side.
+    Cable schedule is preliminary for procurement/PEA review. Final conductor sizing, voltage drop, short-circuit rating, earthing, and protection coordination must be recalculated from actual route lengths and equipment datasheets by the certifying engineer.
   </div>
 </div>
 ` + baseFoot(p)
@@ -411,7 +417,7 @@ function renderLayoutPlan(p: PEAParams): string {
   </div>
 
   <div class="note" style="margin-top:5mm">
-    Layout subject to field verification. Roof structural capacity must be verified ≥ 25 kg/m² live load + panel dead load (~12 kg/m²). Shading analysis assumes no obstacles within 2× object height.
+    Layout subject to field verification. Roof structural capacity, local building notification/permit handling, setbacks, access paths, and wind uplift design must be confirmed before PEA submission.
   </div>
 </div>
 ` + baseFoot(p)
@@ -451,18 +457,18 @@ function renderEquipmentSpecs(p: PEAParams): string {
         <tr><td>Model</td><td>${p.inverter_model}</td></tr>
         <tr><td>Rated AC Output</td><td>${p.inverter_kw} kW</td></tr>
         <tr><td>Max DC Input</td><td>${Math.round(p.inverter_kw * 1.3)} kW</td></tr>
-        <tr><td>Number of MPPTs</td><td>10</td></tr>
-        <tr><td>Max Input Voltage</td><td>1100 VDC</td></tr>
-        <tr><td>MPPT Range</td><td>200-1000 VDC</td></tr>
-        <tr><td>Start-up Voltage</td><td>200 VDC</td></tr>
+        <tr><td>Number of MPPTs</td><td>Refer to selected inverter datasheet</td></tr>
+        <tr><td>Max Input Voltage</td><td>Refer to selected inverter datasheet</td></tr>
+        <tr><td>MPPT Range</td><td>Refer to selected inverter datasheet</td></tr>
+        <tr><td>Start-up Voltage</td><td>Refer to selected inverter datasheet</td></tr>
         <tr><td>Output Voltage</td><td>400 V / 3 phase / 50 Hz</td></tr>
-        <tr><td>Max Efficiency</td><td>98.6%</td></tr>
-        <tr><td>European Efficiency</td><td>98.4%</td></tr>
+        <tr><td>Max Efficiency</td><td>Refer to selected inverter datasheet</td></tr>
+        <tr><td>European Efficiency</td><td>Refer to selected inverter datasheet</td></tr>
         <tr><td>Protection Degree</td><td>IP66</td></tr>
         <tr><td>Cooling</td><td>Smart temperature-controlled fan</td></tr>
         <tr><td>Protection Features</td><td>DC SPD, AC SPD, AFCI, GFDI, DC Isolator</td></tr>
         <tr><td>Warranty</td><td>5 years standard (extendable 10/15/25y)</td></tr>
-        <tr><td>Certifications</td><td>IEC 62109, IEC 61727, CE, G99</td></tr>
+        <tr><td>Certifications</td><td>Attach manufacturer certificates and PEA/authority acceptance evidence</td></tr>
       </table>
     </div>
 
@@ -513,7 +519,7 @@ function renderEquipmentSpecs(p: PEAParams): string {
   </div>
 
   <div class="note">
-    All equipment to be installed by licensed electricians per PEA regulations. Pre-commissioning tests per IEC 62446: insulation resistance, polarity, continuity, open-circuit voltage, short-circuit current under stable irradiance ≥ 500 W/m².
+    Specifications are an engineering cover sheet, not a manufacturer datasheet replacement. Attach final datasheets, certificates, inverter grid-code/anti-islanding settings, and licensed engineer stamp before submission.
   </div>
 </div>
 ` + baseFoot(p)
@@ -583,12 +589,24 @@ export default async function handler(req: Request): Promise<Response> {
         html: renderEquipmentSpecs(params),
       },
     }
+    const readiness = calculatePeaReadiness({
+      authority: params.client_site?.toLowerCase().includes('bangkok') ? 'MEA' : 'PEA',
+      system_size_kwp: Number(params.system_size_kwp),
+      inverter_kw: Number(params.inverter_kw || params.system_size_kwp),
+      panel_count: Number(params.panels),
+      panel_watt: Number(params.panel_watt),
+      roof_area_m2: params.roof_area_m2,
+      roof_load_kg_m2: params.roof_load_kg_m2,
+      phase: params.phase || 'unknown',
+      export_program: params.export_program || 'self_consumption',
+    })
 
     return Response.json({
       ok: true,
       ref: params.ref,
       generated_at: new Date().toISOString(),
       drawings,
+      readiness,
     })
   } catch (e: unknown) {
     return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 })

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom'
 import { Loader2, ChevronLeft, Info } from 'lucide-react'
 import { useNewProposalForm } from '../../hooks/useNewProposalForm'
 import { useAdminStore } from '../../lib/admin-store'
 import { getSession } from '../../lib/admin-auth'
-import { LOCATION_PRESETS } from '../../types/proposals'
+import { LOCATION_PRESETS, type NewProposalForm } from '../../types/proposals'
 import { PANEL_MODELS, INVERTER_MODELS, BATTERY_MODELS, groupInverters, groupPanels, groupBatteries } from '../../constants/equipment'
 import { FormField, Input, Select } from '../../components/admin/FormField'
 import { RoofImageUploader } from '../../components/admin/RoofImageUploader'
@@ -12,6 +12,7 @@ import type { RoofAnalysisResult } from '../../components/admin/RoofImageUploade
 import { ProposalSuccessModal } from '../../components/admin/ProposalSuccessModal'
 import { supabase } from '../../lib/supabase'
 import type { CrmProject } from '../../types/crm'
+import { fetchProposal } from '../../lib/admin-service'
 
 function SectionTitle({ number, title }: { number: string; title: string }) {
   return (
@@ -54,16 +55,66 @@ interface SuccessResult {
   password: string
 }
 
+interface BomSupplierSummary {
+  catalog_captured_at?: string
+  catalog_total_items?: number
+  supplier_matched_rows: number
+  live_rows: number
+  expired_rows: number
+  benchmark_rows: number
+  supplier_materials_thb?: number
+  benchmark_materials_thb?: number
+}
+
+function inferLocationFields(location: string | null | undefined): Pick<NewProposalForm, 'location_preset' | 'location_custom'> {
+  const value = location || ''
+  const lc = value.toLowerCase()
+  if (lc.includes('phangan') || lc.includes('pha ngan') || value.includes('פנגאן')) {
+    return { location_preset: 'koh_phangan', location_custom: '' }
+  }
+  if (lc.includes('samui') || value.includes('סמוי')) {
+    return { location_preset: 'koh_samui', location_custom: '' }
+  }
+  if (lc.includes('bangkok') || lc.includes('bkk') || value.includes('בנגקוק')) {
+    return { location_preset: 'bangkok', location_custom: '' }
+  }
+  return { location_preset: 'custom', location_custom: value }
+}
+
+function numberFromMetadata(metadata: Record<string, unknown> | null, key: string, fallback = 0): number {
+  const value = metadata?.[key]
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+}
+
+function boolFromMetadata(metadata: Record<string, unknown> | null, key: string, fallback = false): boolean {
+  const value = metadata?.[key]
+  return typeof value === 'boolean' ? value : fallback
+}
+
+function monthlyLoanPayment(principal: number, annualInterestPct: number, years: number): number {
+  const months = Math.max(1, Math.round(years * 12))
+  const monthlyRate = Math.max(0, annualInterestPct) / 100 / 12
+  if (principal <= 0) return 0
+  if (monthlyRate === 0) return principal / months
+  const factor = (1 + monthlyRate) ** months
+  return principal * monthlyRate * factor / (factor - 1)
+}
+
 export default function NewProposalPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { ref: editRef } = useParams<{ ref?: string }>()
+  const isEditMode = Boolean(editRef)
   const showToast = useAdminStore((s) => s.showToast)
-  const { form, update, validate, errors, reset, draftRestored } = useNewProposalForm()
+  const { form, update, replaceForm, validate, errors, reset, draftRestored } = useNewProposalForm({ draftEnabled: !isEditMode })
 
   const [submitting, setSubmitting] = useState(false)
   const [successResult, setSuccessResult] = useState<SuccessResult | null>(null)
   const [prefillLead, setPrefillLead] = useState<CrmProject | null>(null)
   const [aiAnalysis, setAiAnalysis] = useState<RoofAnalysisResult | null>(null)
+  const [bomPriceBasis, setBomPriceBasis] = useState<BomSupplierSummary | null>(null)
+  const [bomPriceSnapshot, setBomPriceSnapshot] = useState<Record<string, unknown> | null>(null)
+  const [editLoading, setEditLoading] = useState(isEditMode)
 
   // Warn user before leaving with unsaved work
   useEffect(() => {
@@ -77,8 +128,84 @@ export default function NewProposalPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
   }, [form.client_name, form.total_price_thb])
 
+  // Load an existing proposal when opened via /admin/proposals/:ref/edit.
+  useEffect(() => {
+    if (!editRef) return
+    let cancelled = false
+    setEditLoading(true)
+    fetchProposal(editRef)
+      .then((proposal) => {
+        if (cancelled) return
+        if (!proposal) {
+          showToast('הצעה לא נמצאה לעריכה', 'error')
+          navigate('/admin/proposals')
+          return
+        }
+
+        const metadata = proposal.metadata || {}
+        const pricing = typeof metadata.pricing === 'object' && metadata.pricing !== null
+          ? metadata.pricing as Record<string, unknown>
+          : {}
+        const priceSnapshot = typeof pricing.bom_price_snapshot === 'object' && pricing.bom_price_snapshot !== null
+          ? pricing.bom_price_snapshot as Record<string, unknown>
+          : null
+        const supplierSummary = typeof priceSnapshot?.supplier_summary === 'object' && priceSnapshot.supplier_summary !== null
+          ? priceSnapshot.supplier_summary as BomSupplierSummary
+          : null
+        const financing = typeof metadata.financing === 'object' && metadata.financing !== null
+          ? metadata.financing as Record<string, unknown>
+          : {}
+
+        replaceForm({
+          ref: proposal.ref_number,
+          client_name: proposal.client_name || '',
+          client_phone: proposal.client_phone || '',
+          client_email: proposal.client_email || '',
+          ...inferLocationFields(proposal.location),
+          roof_original_url: typeof metadata.roof_original_url === 'string' ? metadata.roof_original_url : '',
+          roof_panels_url: typeof metadata.roof_panels_url === 'string' ? metadata.roof_panels_url : '',
+          panel_count: proposal.panel_count || 0,
+          panel_model: proposal.panel_model || '',
+          panel_watt: proposal.panel_watt || 580,
+          inverter_model: proposal.inverter_model || '',
+          battery_model: proposal.battery_model || '',
+          battery_kwh: proposal.battery_kwh || 0,
+          total_price_thb: proposal.total_price_thb || 0,
+          psh: numberFromMetadata(metadata, 'psh', 5),
+          pr: numberFromMetadata(metadata, 'pr', 0.747),
+          tariff_thb: numberFromMetadata(metadata, 'tariff_thb', 4.4),
+          tax_deduction_thb: numberFromMetadata(metadata, 'tax_deduction_thb', 0),
+          price_markup: typeof pricing.price_markup === 'number' ? pricing.price_markup : 1.35,
+          bom_cost_thb: typeof pricing.bom_cost_thb === 'number' ? pricing.bom_cost_thb : 0,
+          ppa_rate_thb_per_kwh: numberFromMetadata(metadata, 'ppa_rate_thb_per_kwh', 4.2),
+          ppa_years: numberFromMetadata(metadata, 'ppa_years', 15),
+          battery_price_thb: numberFromMetadata(metadata, 'battery_price_thb', 150000),
+          battery_kwh_extra: numberFromMetadata(metadata, 'battery_kwh_extra', 10),
+          co2_factor: numberFromMetadata(metadata, 'co2_factor', 0.486),
+          monthly_bill_thb: numberFromMetadata(metadata, 'monthly_bill_thb', 0),
+          financing_enabled: boolFromMetadata(financing, 'enabled', true),
+          financing_ltv_pct: typeof financing.ltv_pct === 'number' ? financing.ltv_pct : 70,
+          financing_interest_pct: typeof financing.interest_pct === 'number' ? financing.interest_pct : 6.5,
+          financing_years: typeof financing.years === 'number' ? financing.years : 10,
+          financing_om_pct: typeof financing.om_pct === 'number' ? financing.om_pct : 1,
+          language: proposal.language || 'he',
+        })
+        setBomPriceSnapshot(priceSnapshot)
+        setBomPriceBasis(supplierSummary)
+      })
+      .catch((err) => {
+        showToast(err instanceof Error ? err.message : 'שגיאה בטעינת הצעה לעריכה', 'error')
+      })
+      .finally(() => {
+        if (!cancelled) setEditLoading(false)
+      })
+
+    return () => { cancelled = true }
+  }, [editRef, navigate, replaceForm, showToast])
+
   // Pre-fill from CRM lead when lead_id is in URL
   useEffect(() => {
+    if (isEditMode) return
     const leadId = searchParams.get('lead_id')
     if (!leadId || !supabase) return
 
@@ -122,10 +249,11 @@ export default function NewProposalPage() {
           }
         }
       })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isEditMode]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pre-fill from URL query params (used by PropertySidebar, Tools, etc.)
   useEffect(() => {
+    if (isEditMode) return
     const fields: Array<keyof typeof form> = [
       'client_name', 'client_phone', 'client_email',
       'system_size_kwp', 'panel_count', 'total_price_thb',
@@ -143,7 +271,7 @@ export default function NewProposalPage() {
       else if (lc.includes('bangkok')) update('location_preset', 'bangkok')
       else { update('location_preset', 'custom'); update('location_custom', loc) }
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isEditMode]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const resolvedLocation = () => {
     if (form.location_preset === 'custom') return form.location_custom
@@ -151,10 +279,47 @@ export default function NewProposalPage() {
     return preset?.en ?? form.location_preset
   }
 
+  const financingPreview = useMemo(() => {
+    const loanAmount = Math.round(form.total_price_thb * (form.financing_ltv_pct / 100))
+    const equity = Math.max(0, form.total_price_thb - loanAmount)
+    const monthlyDebtService = monthlyLoanPayment(loanAmount, form.financing_interest_pct, form.financing_years)
+    const annualDebtService = Math.round(monthlyDebtService * 12)
+    const annualOm = Math.round(form.total_price_thb * (form.financing_om_pct / 100))
+    const netOperatingBenefit = Math.max(0, form.annual_savings_thb - annualOm)
+    const netAfterDebt = Math.round(netOperatingBenefit - annualDebtService)
+    const dscr = annualDebtService > 0 ? netOperatingBenefit / annualDebtService : 0
+    const equityPaybackYears = netAfterDebt > 0 ? equity / netAfterDebt : 0
+
+    return {
+      loanAmount,
+      equity,
+      annualDebtService,
+      annualOm,
+      netOperatingBenefit,
+      netAfterDebt,
+      dscr,
+      equityPaybackYears,
+    }
+  }, [
+    form.annual_savings_thb,
+    form.financing_interest_pct,
+    form.financing_ltv_pct,
+    form.financing_om_pct,
+    form.financing_years,
+    form.total_price_thb,
+  ])
+
   const handleSubmit = async () => {
     if (!validate()) {
       showToast('יש למלא את כל השדות החובה', 'error')
       return
+    }
+
+    if (form.bom_cost_thb > 0 && bomPriceBasis && (bomPriceBasis.expired_rows > 0 || bomPriceBasis.benchmark_rows > 0)) {
+      const proceed = window.confirm(
+        `BOM כולל ${bomPriceBasis.expired_rows} שורות עם מחיר שפג תוקף ו-${bomPriceBasis.benchmark_rows} שורות benchmark. להמשיך ליצור הצעה?`,
+      )
+      if (!proceed) return
     }
 
     setSubmitting(true)
@@ -192,6 +357,10 @@ export default function NewProposalPage() {
         roof_original_url: form.roof_original_url || undefined,
         roof_panels_url: form.roof_panels_url || undefined,
         language: form.language,
+        psh: form.psh,
+        pr: form.pr,
+        tariff_thb: form.tariff_thb,
+        tax_deduction_thb: form.tax_deduction_thb,
         // v3 deal options
         ppa_rate_thb_per_kwh: form.ppa_rate_thb_per_kwh,
         ppa_years: form.ppa_years,
@@ -199,6 +368,16 @@ export default function NewProposalPage() {
         battery_kwh_extra: form.battery_kwh_extra,
         co2_factor: form.co2_factor,
         monthly_bill_thb: form.monthly_bill_thb,
+        // Bank financing model
+        financing_enabled: form.financing_enabled,
+        financing_ltv_pct: form.financing_ltv_pct,
+        financing_interest_pct: form.financing_interest_pct,
+        financing_years: form.financing_years,
+        financing_om_pct: form.financing_om_pct,
+        // Internal pricing snapshot for margin/audit. Not rendered to the client.
+        bom_cost_thb: form.bom_cost_thb || undefined,
+        price_markup: form.price_markup || undefined,
+        bom_price_snapshot: bomPriceSnapshot || undefined,
         // AI roof analysis (if available)
         ai_analysis: aiAnalysis || undefined,
       }
@@ -220,6 +399,12 @@ export default function NewProposalPage() {
       const data = await res.json() as { ok: boolean; ref: string; password: string }
       if (!data.ok) throw new Error('API returned not ok')
 
+      if (isEditMode) {
+        showToast('ההצעה עודכנה ונוצר HTML חדש', 'success')
+        navigate(`/admin/proposals/${data.ref}`)
+        return
+      }
+
       setSuccessResult({ ref: data.ref, password: data.password })
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'שגיאה ביצירת הצעה'
@@ -229,7 +414,7 @@ export default function NewProposalPage() {
     }
   }
 
-  if (successResult) {
+  if (successResult && !isEditMode) {
     return (
       <ProposalSuccessModal
         ref={successResult.ref}
@@ -255,10 +440,21 @@ export default function NewProposalPage() {
           <ChevronLeft size={16} />
         </button>
         <div>
-          <h1 className="text-xl font-bold text-white">הצעה חדשה</h1>
-          <p className="text-sm text-white/40 mt-0.5">TM Energy — Solar Proposal</p>
+          <h1 className="text-xl font-bold text-white">{isEditMode ? 'עריכת הצעה' : 'הצעה חדשה'}</h1>
+          <p className="text-sm text-white/40 mt-0.5">
+            {isEditMode ? `${editRef} · שמירה תעדכן את ההצעה הקיימת` : 'TM Energy — Solar Proposal'}
+          </p>
         </div>
       </div>
+
+      {editLoading && (
+        <div className="flex items-center justify-center py-14">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 size={28} className="animate-spin text-[#E8A820]" />
+            <p className="text-white/45 text-sm">טוען הצעה לעריכה...</p>
+          </div>
+        </div>
+      )}
 
       {/* Pre-fill banner */}
       {prefillLead && (
@@ -272,7 +468,7 @@ export default function NewProposalPage() {
       )}
 
       {/* Draft restored banner */}
-      {draftRestored && !prefillLead && (
+      {draftRestored && !prefillLead && !isEditMode && (
         <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 mb-6">
           <div className="flex items-center gap-3">
             <Info size={15} className="text-emerald-400 shrink-0" />
@@ -289,7 +485,7 @@ export default function NewProposalPage() {
         </div>
       )}
 
-      <div className="space-y-6">
+      {!editLoading && <div className="space-y-6">
         {/* Section A — Client Info */}
         <Section>
           <SectionTitle number="א" title="פרטי לקוח" />
@@ -629,7 +825,20 @@ export default function NewProposalPage() {
                     const clientPrice = Math.round(bomCost * form.price_markup)
                     update('bom_cost_thb', bomCost)
                     update('total_price_thb', clientPrice)
-                    showToast(`עלות BOM: ฿${bomCost.toLocaleString()} · מחיר לקוח: ฿${clientPrice.toLocaleString()}`, 'success')
+                    const summary = data.bom.supplier_summary as BomSupplierSummary | undefined
+                    setBomPriceBasis(summary || null)
+                    setBomPriceSnapshot({
+                      calculated_at: new Date().toISOString(),
+                      bom_summary: data.bom.summary,
+                      supplier_summary: summary,
+                      totals: data.bom.totals,
+                      rows: data.bom.rows,
+                    })
+                    const basis = summary
+                      ? ` · ספקים: ${summary.live_rows}/${summary.supplier_matched_rows} live · ${summary.benchmark_rows} benchmark`
+                      : ''
+                    const expired = summary?.expired_rows ? ` · ${summary.expired_rows} פג תוקף` : ''
+                    showToast(`עלות BOM: ฿${bomCost.toLocaleString()} · מחיר לקוח: ฿${clientPrice.toLocaleString()}${basis}${expired}`, 'success')
                   } catch (e) {
                     showToast(e instanceof Error ? e.message : 'שגיאה', 'error')
                   }
@@ -672,6 +881,11 @@ export default function NewProposalPage() {
                 </div>
               </div>
             </div>
+            {bomPriceBasis && (
+              <div className="mt-3 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/55">
+                בסיס מחיר BOM: {bomPriceBasis.live_rows} שורות live · {bomPriceBasis.expired_rows} פג תוקף · {bomPriceBasis.benchmark_rows} benchmark.
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -779,9 +993,85 @@ export default function NewProposalPage() {
           </div>
         </Section>
 
-        {/* Section G — Language & Submit */}
+        {/* Section G — Bank Financing Model */}
         <Section>
-          <SectionTitle number="ז" title="שפה ואישור" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+            <SectionTitle number="ז" title="מודל כלכלי למימון בנקאי" />
+            <label className="inline-flex items-center gap-2 text-sm text-white/70 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.financing_enabled}
+                onChange={(e) => update('financing_enabled', e.target.checked)}
+                className="w-4 h-4 accent-[#E8A820]"
+              />
+              לכלול בהצעה
+            </label>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <FormField label="אחוז מימון בנקאי" hint="Loan-to-value">
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                step="1"
+                value={form.financing_ltv_pct}
+                onChange={(e) => update('financing_ltv_pct', parseFloat(e.target.value) || 0)}
+                dir="ltr"
+              />
+            </FormField>
+
+            <FormField label="ריבית שנתית" hint="הנחה למודל">
+              <Input
+                type="number"
+                min="0"
+                step="0.1"
+                value={form.financing_interest_pct}
+                onChange={(e) => update('financing_interest_pct', parseFloat(e.target.value) || 0)}
+                dir="ltr"
+              />
+            </FormField>
+
+            <FormField label="תקופת הלוואה" hint="בשנים">
+              <Input
+                type="number"
+                min="1"
+                step="1"
+                value={form.financing_years}
+                onChange={(e) => update('financing_years', parseInt(e.target.value, 10) || 1)}
+                dir="ltr"
+              />
+            </FormField>
+
+            <FormField label="O&M שנתי" hint="% מעלות המערכת">
+              <Input
+                type="number"
+                min="0"
+                step="0.1"
+                value={form.financing_om_pct}
+                onChange={(e) => update('financing_om_pct', parseFloat(e.target.value) || 0)}
+                dir="ltr"
+              />
+            </FormField>
+          </div>
+
+          <div className={`rounded-xl border p-4 ${form.financing_enabled ? 'bg-[#1A7A5A]/5 border-[#1A7A5A]/15' : 'bg-white/5 border-white/10 opacity-60'}`}>
+            <p className="text-xs text-[#1A7A5A]/80 uppercase tracking-wider mb-3">תצוגה מקדימה לבנק</p>
+            <CalcRow label="סכום הלוואה משוער" value={`฿${financingPreview.loanAmount.toLocaleString()}`} />
+            <CalcRow label="הון עצמי משוער" value={`฿${financingPreview.equity.toLocaleString()}`} />
+            <CalcRow label="החזר חוב שנתי" value={`฿${financingPreview.annualDebtService.toLocaleString()}`} />
+            <CalcRow label="תזרים נקי אחרי חוב" value={`฿${financingPreview.netAfterDebt.toLocaleString()}`} highlight={financingPreview.netAfterDebt > 0} />
+            <CalcRow label="DSCR" value={financingPreview.dscr > 0 ? financingPreview.dscr.toFixed(2) : '—'} highlight={financingPreview.dscr >= 1.2} />
+            <CalcRow
+              label="החזר הון עצמי"
+              value={financingPreview.equityPaybackYears > 0 ? `${financingPreview.equityPaybackYears.toFixed(1)} שנים` : 'דורש בדיקה'}
+            />
+          </div>
+        </Section>
+
+        {/* Section H — Language & Submit */}
+        <Section>
+          <SectionTitle number="ח" title="שפה ואישור" />
 
           <div className="mb-6">
             <p className="text-[11px] text-white/40 uppercase tracking-wider mb-3">שפת ההצעה</p>
@@ -832,14 +1122,14 @@ export default function NewProposalPage() {
             {submitting ? (
               <>
                 <Loader2 size={18} className="animate-spin" />
-                יוצר הצעה...
+                {isEditMode ? 'שומר תיקונים...' : 'יוצר הצעה...'}
               </>
             ) : (
-              'צור הצעה'
+              isEditMode ? 'שמור תיקונים בהצעה' : 'צור הצעה'
             )}
           </button>
         </Section>
-      </div>
+      </div>}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { ChevronLeft, FileDown, Printer, Loader2, FileCheck, Eye } from 'lucide-react'
+import { ChevronLeft, FileDown, Printer, Loader2, FileCheck, Eye, AlertTriangle } from 'lucide-react'
 import { getSession } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 
@@ -15,6 +15,11 @@ interface PEAResponse {
   ref: string
   generated_at: string
   drawings: Record<string, Drawing>
+  readiness?: {
+    status: 'ok' | 'warning' | 'blocker'
+    items: Array<{ id: string; severity: 'ok' | 'warning' | 'blocker'; title: string; detail: string; source?: string }>
+    required_documents: Array<{ id: string; title: string; detail: string }>
+  }
   error?: string
 }
 
@@ -175,6 +180,28 @@ export default function PEADrawingsPage() {
       {result && (
         <>
           {/* Tabs */}
+          {result.readiness && (
+            <div className="mb-5 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle size={18} className="text-amber-300 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-amber-200">PEA readiness check</p>
+                  <p className="text-xs text-amber-100/70 mt-0.5">
+                    המסמכים הם package למהנדס/PEA review. נדרש אישור מהנדס וחתימות לפני הגשה.
+                  </p>
+                  <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {result.readiness.items.filter((item) => item.severity !== 'ok').map((item) => (
+                      <div key={item.id} className="rounded-xl bg-black/15 border border-white/10 px-3 py-2">
+                        <p className="text-xs font-semibold text-white">{item.title}</p>
+                        <p className="text-[11px] text-white/45 mt-1">{item.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-2 mb-4 flex-wrap">
             {TAB_ORDER.map((t) => (
               <button

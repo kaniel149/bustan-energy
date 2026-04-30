@@ -37,6 +37,11 @@ const DEFAULTS: Omit<NewProposalForm, 'ref'> = {
   battery_kwh_extra: 10,
   co2_factor: TM_SOLAR_ASSUMPTIONS.co2KgPerKwh,
   monthly_bill_thb: 0,
+  financing_enabled: true,
+  financing_ltv_pct: 70,
+  financing_interest_pct: 6.5,
+  financing_years: 10,
+  financing_om_pct: 1,
   // derived (v3)
   annual_bill_thb: 0,
   annual_bill_with_solar_thb: 0,
@@ -135,14 +140,15 @@ export function clearProposalDraft() {
   localStorage.removeItem(DRAFT_KEY)
 }
 
-export function useNewProposalForm() {
+export function useNewProposalForm(options: { draftEnabled?: boolean } = {}) {
+  const draftEnabled = options.draftEnabled ?? true
   const [form, setForm] = useState<NewProposalForm>({ ref: '', ...DEFAULTS })
   const [errors, setErrors] = useState<Partial<Record<keyof NewProposalForm, string>>>({})
   const [draftRestored, setDraftRestored] = useState(false)
 
   // Generate ref on mount + restore draft if available
   useEffect(() => {
-    const draft = loadDraft()
+    const draft = draftEnabled ? loadDraft() : null
     generateRef().then((ref) => {
       if (draft && draft.client_name) {
         // Restore draft but keep a fresh ref number
@@ -152,14 +158,14 @@ export function useNewProposalForm() {
         setForm((f) => withDerived({ ...f, ref }))
       }
     })
-  }, [])
+  }, [draftEnabled])
 
   // Auto-save draft whenever form changes (debounced via effect cycle)
   useEffect(() => {
-    if (form.client_name || form.total_price_thb > 0) {
+    if (draftEnabled && (form.client_name || form.total_price_thb > 0)) {
       saveDraft(form)
     }
-  }, [form])
+  }, [draftEnabled, form])
 
   const update = useCallback(<K extends keyof NewProposalForm>(key: K, value: NewProposalForm[K]) => {
     setForm((f) => withDerived({ ...f, [key]: value }))
@@ -187,5 +193,10 @@ export function useNewProposalForm() {
     setDraftRestored(false)
   }, [])
 
-  return { form, update, validate, errors, reset, draftRestored }
+  const replaceForm = useCallback((values: Partial<NewProposalForm>) => {
+    setForm((current) => withDerived({ ...current, ...values } as NewProposalForm))
+    setErrors({})
+  }, [])
+
+  return { form, update, replaceForm, validate, errors, reset, draftRestored }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { ChevronLeft, Loader2, Copy, Check, Download, Mail, Package, Save, ExternalLink, Layers, Send } from 'lucide-react'
+import { ChevronLeft, Loader2, Copy, Check, Download, Mail, Package, Save, ExternalLink, Layers, Send, AlertTriangle } from 'lucide-react'
 import { getSession } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 
@@ -11,6 +11,15 @@ interface BOMRow {
   unit_price_thb: number
   subtotal_thb: number
   note: string
+  benchmark_unit_price_thb: number
+  price_status: 'live' | 'expired' | 'benchmark'
+  supplier_name?: string
+  supplier_source?: string
+  supplier_sku?: string
+  supplier_url?: string
+  supplier_valid_until?: string
+  supplier_price_name?: string
+  price_note?: string
 }
 
 interface BOMResponse {
@@ -31,6 +40,16 @@ interface BOMResponse {
       materials_thb: number
       vat_7pct_thb: number
       total_with_vat_thb: number
+    }
+    supplier_summary: {
+      catalog_captured_at: string
+      catalog_total_items: number
+      supplier_matched_rows: number
+      live_rows: number
+      expired_rows: number
+      benchmark_rows: number
+      supplier_materials_thb: number
+      benchmark_materials_thb: number
     }
   }
   supplier_email_text: string
@@ -207,9 +226,9 @@ export default function BOMPage() {
 
   const supplierGroups = result
     ? Object.entries(result.bom.categories).reduce<Record<string, { items: { cat: string; row: BOMRow }[]; subtotal: number }>>((acc, [cat, data]) => {
-        const supplierName = CATEGORY_SUPPLIER[cat] || 'Other Suppliers'
-        if (!acc[supplierName]) acc[supplierName] = { items: [], subtotal: 0 }
         for (const row of data.items) {
+          const supplierName = row.supplier_name || CATEGORY_SUPPLIER[cat] || 'Other Suppliers'
+          if (!acc[supplierName]) acc[supplierName] = { items: [], subtotal: 0 }
           acc[supplierName].items.push({ cat, row })
           acc[supplierName].subtotal += row.subtotal_thb
         }
@@ -343,13 +362,29 @@ export default function BOMPage() {
 
       {result && (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
             <StatCard label="גודל" value={`${result.bom.summary.kwp} kWp`} />
             <StatCard label="פאנלים" value={`${result.bom.summary.panels}× ${result.bom.summary.watt}W`} />
             <StatCard label="Strings" value={`${result.bom.summary.strings}`} />
+            <StatCard
+              label="מחירי ספק"
+              value={`${result.bom.supplier_summary.live_rows}/${result.bom.supplier_summary.supplier_matched_rows}`}
+            />
             <StatCard label="חומרים" value={thb(result.bom.totals.materials_thb)} highlight />
             <StatCard label='סה"כ עם VAT' value={thb(result.bom.totals.total_with_vat_thb)} highlight />
           </div>
+
+          {(result.bom.supplier_summary.expired_rows > 0 || result.bom.supplier_summary.benchmark_rows > 0) && (
+            <div className="flex items-start gap-3 mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25">
+              <AlertTriangle size={18} className="text-amber-300 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-amber-200">נדרש אישור מחיר לפני PO</p>
+                <p className="text-xs text-amber-100/70 mt-0.5">
+                  {result.bom.supplier_summary.expired_rows} שורות עם מחיר ספק שפג תוקף · {result.bom.supplier_summary.benchmark_rows} שורות עדיין על benchmark.
+                </p>
+              </div>
+            </div>
+          )}
 
           {!savedOrderId && (
             <div className="flex items-center justify-between gap-3 mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
@@ -445,6 +480,8 @@ export default function BOMPage() {
                     <thead className="text-[11px] text-white/40 uppercase">
                       <tr>
                         <th className="text-right px-5 py-2 font-normal">SKU</th>
+                        <th className="text-right px-3 py-2 font-normal">ספק</th>
+                        <th className="text-center px-3 py-2 font-normal">סטטוס</th>
                         <th className="text-center px-3 py-2 font-normal">Qty</th>
                         <th className="text-left px-3 py-2 font-normal">Unit</th>
                         <th className="text-left px-5 py-2 font-normal">Subtotal</th>
@@ -454,13 +491,18 @@ export default function BOMPage() {
                       {data.items.map((r, i) => (
                         <tr key={i} className="border-t border-white/5">
                           <td className="px-5 py-2 text-white" dir="ltr">{r.sku}</td>
+                          <td className="px-3 py-2 text-white/60 text-xs">
+                            <div>{r.supplier_name || 'Benchmark'}</div>
+                            {r.supplier_sku && <div className="text-white/35" dir="ltr">{r.supplier_sku}</div>}
+                          </td>
+                          <td className="text-center px-3 py-2"><PriceBadge status={r.price_status} /></td>
                           <td className="text-center px-3 py-2 text-white/80 font-mono">{r.qty}</td>
                           <td className="text-left px-3 py-2 text-white/60 font-mono" dir="ltr">{thb(r.unit_price_thb)}</td>
                           <td className="text-left px-5 py-2 text-white font-mono" dir="ltr">{thb(r.subtotal_thb)}</td>
                         </tr>
                       ))}
                       <tr className="border-t border-white/10 bg-[#E8A820]/5">
-                        <td colSpan={3} className="px-5 py-2 text-white/60 text-xs">Category subtotal</td>
+                        <td colSpan={5} className="px-5 py-2 text-white/60 text-xs">Category subtotal</td>
                         <td className="text-left px-5 py-2 text-[#E8A820] font-mono font-semibold" dir="ltr">
                           {thb(Math.round(data.subtotal))}
                         </td>
@@ -503,6 +545,7 @@ export default function BOMPage() {
                       <tr>
                         <th className="text-right px-5 py-2 font-normal">קטגוריה</th>
                         <th className="text-right px-5 py-2 font-normal">SKU</th>
+                        <th className="text-center px-3 py-2 font-normal">סטטוס</th>
                         <th className="text-center px-3 py-2 font-normal">Qty</th>
                         <th className="text-left px-3 py-2 font-normal">Unit</th>
                         <th className="text-left px-5 py-2 font-normal">Subtotal</th>
@@ -512,14 +555,18 @@ export default function BOMPage() {
                       {group.items.map(({ cat, row }, i) => (
                         <tr key={i} className="border-t border-white/5">
                           <td className="px-5 py-2 text-white/50 text-xs">{cat}</td>
-                          <td className="px-5 py-2 text-white" dir="ltr">{row.sku}</td>
+                          <td className="px-5 py-2 text-white" dir="ltr">
+                            <div>{row.sku}</div>
+                            {row.supplier_sku && <div className="text-[11px] text-white/35">{row.supplier_sku}</div>}
+                          </td>
+                          <td className="text-center px-3 py-2"><PriceBadge status={row.price_status} /></td>
                           <td className="text-center px-3 py-2 text-white/80 font-mono">{row.qty}</td>
                           <td className="text-left px-3 py-2 text-white/60 font-mono" dir="ltr">{thb(row.unit_price_thb)}</td>
                           <td className="text-left px-5 py-2 text-white font-mono" dir="ltr">{thb(row.subtotal_thb)}</td>
                         </tr>
                       ))}
                       <tr className="border-t border-white/10 bg-[#E8A820]/5">
-                        <td colSpan={4} className="px-5 py-2 text-white/60 text-xs">Supplier subtotal</td>
+                        <td colSpan={5} className="px-5 py-2 text-white/60 text-xs">Supplier subtotal</td>
                         <td className="text-left px-5 py-2 text-[#E8A820] font-mono font-semibold" dir="ltr">
                           {thb(Math.round(group.subtotal))}
                         </td>
@@ -607,5 +654,23 @@ function StatCard({ label, value, highlight }: { label: string; value: string; h
       <p className="text-[10px] text-white/40 uppercase tracking-wider mb-1">{label}</p>
       <p className={`text-sm font-semibold ${highlight ? 'text-[#E8A820]' : 'text-white'}`} dir="ltr">{value}</p>
     </div>
+  )
+}
+
+function PriceBadge({ status }: { status: BOMRow['price_status'] }) {
+  const styles = {
+    live: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
+    expired: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+    benchmark: 'bg-white/5 border-white/10 text-white/45',
+  }
+  const labels = {
+    live: 'Live',
+    expired: 'Expired',
+    benchmark: 'Benchmark',
+  }
+  return (
+    <span className={`inline-flex justify-center min-w-[74px] px-2 py-1 rounded-lg border text-[11px] font-medium ${styles[status]}`}>
+      {labels[status]}
+    </span>
   )
 }

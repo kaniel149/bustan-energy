@@ -7,6 +7,11 @@ export const config = { runtime: 'edge' }
 
 // @ts-expect-error - Vercel esbuild handles JSON imports without attributes
 import templatesJson from '../tools/proposal-builder/bom-templates.json'
+import {
+  resolveSupplierPrice,
+  supplierCatalogStats,
+  type SupplierPriceStatus,
+} from '../src/lib/supplier-pricing.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -72,6 +77,15 @@ interface BomRow {
   unit_price_thb: number
   subtotal_thb: number
   note: string
+  benchmark_unit_price_thb: number
+  price_status: SupplierPriceStatus
+  supplier_name?: string
+  supplier_source?: string
+  supplier_sku?: string
+  supplier_url?: string
+  supplier_valid_until?: string
+  supplier_price_name?: string
+  price_note?: string
 }
 
 interface BomCategory {
@@ -97,6 +111,16 @@ interface BomResult {
     materials_thb: number
     vat_7pct_thb: number
     total_with_vat_thb: number
+  }
+  supplier_summary: {
+    catalog_captured_at: string
+    catalog_total_items: number
+    supplier_matched_rows: number
+    live_rows: number
+    expired_rows: number
+    benchmark_rows: number
+    supplier_materials_thb: number
+    benchmark_materials_thb: number
   }
 }
 
@@ -207,10 +231,12 @@ function calcBOM(opts: { panels: number; watt: number; template: string; battery
     const qty = evalFormula(item.qty_formula, ctx)
     if (qty <= 0) continue
 
+    const skuName = (dbPath ? splitPath(dbPath)[1] || item.sku : item.sku) || 'Unknown_SKU'
     const priceInfo = dbPath ? getByPath(db.price_database_thb, dbPath) : null
-    const unitPrice = priceInfo?.price ?? priceOverride ?? 0
+    const benchmarkUnitPrice = priceInfo?.price ?? priceOverride ?? 0
+    const resolvedPrice = resolveSupplierPrice(skuName, item.category, benchmarkUnitPrice)
+    const unitPrice = resolvedPrice.unit_price_thb
     const subtotal = unitPrice * qty
-    const skuName = dbPath ? splitPath(dbPath)[1] || item.sku : item.sku
 
     const row = {
       category: item.category,
@@ -219,6 +245,7 @@ function calcBOM(opts: { panels: number; watt: number; template: string; battery
       unit_price_thb: unitPrice,
       subtotal_thb: subtotal,
       note: item.note || '',
+      ...resolvedPrice,
     }
     rows.push(row)
     byCategory[item.category] ??= { items: [], subtotal: 0 }
@@ -228,6 +255,12 @@ function calcBOM(opts: { panels: number; watt: number; template: string; battery
 
   const total = rows.reduce((s, r) => s + r.subtotal_thb, 0)
   const vat = Math.round(total * 0.07)
+  const catalog = supplierCatalogStats()
+  const benchmarkMaterials = rows.reduce((s, r) => s + (r.benchmark_unit_price_thb * r.qty), 0)
+  const supplierMatchedRows = rows.filter((r) => r.price_status !== 'benchmark').length
+  const liveRows = rows.filter((r) => r.price_status === 'live').length
+  const expiredRows = rows.filter((r) => r.price_status === 'expired').length
+  const benchmarkRows = rows.filter((r) => r.price_status === 'benchmark').length
 
   return {
     summary: {
@@ -245,12 +278,22 @@ function calcBOM(opts: { panels: number; watt: number; template: string; battery
       vat_7pct_thb: vat,
       total_with_vat_thb: Math.round(total + vat),
     },
+    supplier_summary: {
+      catalog_captured_at: catalog.captured_at,
+      catalog_total_items: catalog.total_items,
+      supplier_matched_rows: supplierMatchedRows,
+      live_rows: liveRows,
+      expired_rows: expiredRows,
+      benchmark_rows: benchmarkRows,
+      supplier_materials_thb: Math.round(total),
+      benchmark_materials_thb: Math.round(benchmarkMaterials),
+    },
   }
 }
 
 // Supplier email generator — RFP in English
 function buildSupplierEmail(bom: BomResult, client: { name?: string; site?: string; ref?: string }): string {
-  const { summary, categories, totals } = bom
+  const { summary, categories, totals, supplier_summary } = bom
   const thb = (n: number) => '฿' + n.toLocaleString('en-US')
 
   const lines: string[] = []
@@ -271,6 +314,7 @@ function buildSupplierEmail(bom: BomResult, client: { name?: string; site?: stri
   lines.push(`AC Cable Run:    ${summary.ac_cable_run_m} m to main panel`)
   lines.push(`Grid:            PEA (Provincial Electricity Authority) compliant`)
   if (summary.battery_kwh) lines.push(`Battery Target:  ${summary.battery_kwh} kWh`)
+  lines.push(`Price Basis:     ${supplier_summary.live_rows} live rows · ${supplier_summary.expired_rows} expired supplier rows · ${supplier_summary.benchmark_rows} benchmark rows`)
   lines.push('')
   lines.push('ITEMS REQUIRED')
   lines.push('─────────────────────────────────────────────────────────')
@@ -280,16 +324,22 @@ function buildSupplierEmail(bom: BomResult, client: { name?: string; site?: stri
     lines.push(`━━ ${cat} ━━`)
     for (const r of data.items) {
       const padding = r.sku.length > 42 ? 0 : 42 - r.sku.length
-      lines.push(`  • ${r.sku}${' '.repeat(padding)} qty ${r.qty}${r.note ? ` (${r.note})` : ''}`)
+      const supplier = r.supplier_name ? ` · supplier: ${r.supplier_name}${r.supplier_sku ? ` / ${r.supplier_sku}` : ''}` : ''
+      const priceState = r.price_status === 'benchmark' ? 'benchmark' : r.price_status === 'expired' ? 'supplier price expired' : 'supplier price live'
+      lines.push(`  • ${r.sku}${' '.repeat(padding)} qty ${r.qty} · ${priceState}${supplier}${r.note ? ` (${r.note})` : ''}`)
+      if (r.price_note) lines.push(`    note: ${r.price_note}`)
     }
   }
 
   lines.push('')
-  lines.push('ESTIMATE (based on benchmark prices — please confirm)')
+  lines.push('ESTIMATE (supplier catalog where matched — please confirm)')
   lines.push('─────────────────────────────────────────────────────────')
   lines.push(`Materials subtotal:  ${thb(totals.materials_thb)}`)
   lines.push(`VAT 7%:              ${thb(totals.vat_7pct_thb)}`)
   lines.push(`Total with VAT:      ${thb(totals.total_with_vat_thb)}`)
+  if (supplier_summary.expired_rows > 0) {
+    lines.push(`Warning:             ${supplier_summary.expired_rows} supplier-matched rows use expired prices and require reconfirmation.`)
+  }
   lines.push('')
   lines.push('REQUEST')
   lines.push('─────────────────────────────────────────────────────────')
@@ -314,21 +364,23 @@ function buildSupplierEmail(bom: BomResult, client: { name?: string; site?: stri
 
 // Markdown BOM for internal docs
 function buildMarkdown(bom: BomResult): string {
-  const { summary, categories, totals } = bom
+  const { summary, categories, totals, supplier_summary } = bom
   const thb = (n: number) => '฿' + n.toLocaleString('en-US')
   let out = `# BOM — ${summary.template_name}\n\n`
   out += `**System:** ${summary.panels} × ${summary.watt}W = **${summary.kwp} kWp** · ${summary.strings} strings · ${summary.ac_current_a}A AC\n`
   if (summary.battery_kwh) out += `**Battery:** ${summary.battery_kwh} kWh target\n`
+  out += `**Price basis:** ${supplier_summary.live_rows} live · ${supplier_summary.expired_rows} expired · ${supplier_summary.benchmark_rows} benchmark rows\n`
   out += `\n`
 
   for (const [cat, data] of Object.entries(categories)) {
     out += `\n## ${cat}\n\n`
-    out += `| SKU | Qty | Unit (THB) | Subtotal (THB) |\n`
-    out += `|---|---:|---:|---:|\n`
+    out += `| SKU | Supplier | Status | Qty | Unit (THB) | Subtotal (THB) |\n`
+    out += `|---|---|---|---:|---:|---:|\n`
     for (const r of data.items) {
-      out += `| ${r.sku} | ${r.qty} | ${thb(r.unit_price_thb)} | ${thb(r.subtotal_thb)} |\n`
+      const supplier = r.supplier_name || 'Benchmark'
+      out += `| ${r.sku} | ${supplier}${r.supplier_sku ? ` / ${r.supplier_sku}` : ''} | ${r.price_status} | ${r.qty} | ${thb(r.unit_price_thb)} | ${thb(r.subtotal_thb)} |\n`
     }
-    out += `| | | | **${thb(Math.round(data.subtotal))}** |\n`
+    out += `| | | | | | **${thb(Math.round(data.subtotal))}** |\n`
   }
 
   out += `\n---\n\n`
