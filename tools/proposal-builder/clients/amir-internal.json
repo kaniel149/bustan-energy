@@ -1,0 +1,92 @@
+{
+  "ref": "AMIR-001-INTERNAL",
+  "client_name": "Amir Mizrahi",
+  "client_name_he": "אמיר מזרחי",
+  "location": "Koh Phangan, Thailand",
+  "date": "2026-04-23",
+  "prepared_by": "TM Energy — Erez",
+  "system_size_kwp": 10.44,
+  "panel_count": 18,
+  "panel_model": "JA Solar 580W",
+
+  "options": [
+    {
+      "id": "opt1",
+      "name": "Option 1 — Grid-Tie",
+      "price_to_client_thb": 292320,
+      "equipment": [
+        { "item": "JA Solar 580W panels (x18)", "unit_price": 4200, "qty": 18, "total": 75600 },
+        { "item": "Huawei SUN2000-10KTL grid-tie inverter", "unit_price": 55000, "qty": 1, "total": 55000 },
+        { "item": "Mounting (rails+clamps+feet)", "unit_price": 18000, "qty": 1, "total": 18000 },
+        { "item": "Cables DC+AC+conduit", "unit_price": 15000, "qty": 1, "total": 15000 },
+        { "item": "Protection (SPD+breakers+ground)", "unit_price": 15000, "qty": 1, "total": 15000 },
+        { "item": "Smart meter", "unit_price": 6500, "qty": 1, "total": 6500 },
+        { "item": "Monitoring dongle", "unit_price": 3500, "qty": 1, "total": 3500 }
+      ],
+      "equipment_total": 188600,
+      "labor": 25000,
+      "commissioning": 10000,
+      "pea_permits": 5000,
+      "ops_total": 40000,
+      "total_cost": 228600,
+      "gross_margin_thb": 103720,
+      "gross_margin_pct": 35.5,
+      "net_profit_thb": 63720,
+      "payback_years": 7.1,
+      "annual_savings_thb": 54111
+    },
+    {
+      "id": "opt2",
+      "name": "Option 2 — Hybrid Ready",
+      "price_to_client_thb": 334080,
+      "equipment": [
+        { "item": "JA Solar 580W panels (x18)", "unit_price": 4200, "qty": 18, "total": 75600 },
+        { "item": "Huawei SUN2000-10KTL-M1 hybrid inverter", "unit_price": 88000, "qty": 1, "total": 88000 },
+        { "item": "Mounting (rails+clamps+feet)", "unit_price": 18000, "qty": 1, "total": 18000 },
+        { "item": "Cables DC+AC+conduit + battery prep wiring", "unit_price": 15000, "qty": 1, "total": 15000 },
+        { "item": "Protection (SPD+breakers+ground)", "unit_price": 18000, "qty": 1, "total": 18000 },
+        { "item": "Smart meter", "unit_price": 6500, "qty": 1, "total": 6500 },
+        { "item": "Monitoring dongle", "unit_price": 3500, "qty": 1, "total": 3500 }
+      ],
+      "equipment_total": 224600,
+      "labor": 25000,
+      "commissioning": 10000,
+      "pea_permits": 5000,
+      "ops_total": 40000,
+      "total_cost": 264600,
+      "gross_margin_thb": 109480,
+      "gross_margin_pct": 32.8,
+      "net_profit_thb": 69480,
+      "payback_years": 8.5,
+      "annual_savings_thb": 54111
+    },
+    {
+      "id": "opt3",
+      "name": "Option 3 — Hybrid + Battery",
+      "price_to_client_thb": 454830,
+      "equipment": [
+        { "item": "JA Solar 580W panels (x18)", "unit_price": 4200, "qty": 18, "total": 75600 },
+        { "item": "Huawei SUN2000-10KTL-M1 hybrid inverter", "unit_price": 88000, "qty": 1, "total": 88000 },
+        { "item": "LUNA2000-10KW-C1 Power Module", "unit_price": 28700, "qty": 1, "total": 28700 },
+        { "item": "LUNA2000-7-E1 Battery 6.9kWh", "unit_price": 64500, "qty": 1, "total": 64500 },
+        { "item": "Mounting (rails+clamps+feet)", "unit_price": 18000, "qty": 1, "total": 18000 },
+        { "item": "Cables DC+AC+conduit + battery prep wiring", "unit_price": 15000, "qty": 1, "total": 15000 },
+        { "item": "Protection (SPD+breakers+ground)", "unit_price": 18000, "qty": 1, "total": 18000 },
+        { "item": "Smart meter", "unit_price": 6500, "qty": 1, "total": 6500 },
+        { "item": "Monitoring dongle", "unit_price": 3500, "qty": 1, "total": 3500 }
+      ],
+      "equipment_total": 317800,
+      "labor": 25000,
+      "commissioning": 10000,
+      "pea_permits": 5000,
+      "ops_total": 40000,
+      "total_cost": 357800,
+      "gross_margin_thb": 137030,
+      "gross_margin_pct": 30.1,
+      "net_profit_thb": 97030,
+      "payback_years": 11.7,
+      "annual_savings_thb": 58643
+    }
+  ],
+  "recommendation": "Option 3 gives highest net profit (฿97,030) but Option 2 has best margin % (32.8%). If client is price-sensitive, push Option 2 as upsell from Option 1. Option 3 is the closer if client mentions power cuts."
+}

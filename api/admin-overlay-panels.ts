@@ -135,9 +135,11 @@ export default async function handler(req: Request): Promise<Response> {
         { status: 500 }
       )
     }
-    const data = imagePart.inline_data || imagePart.inlineData
-    const outBase64 = data.data
-    const outMime = data.mime_type || data.mimeType || 'image/png'
+    const data = imagePart.inline_data
+      ? { base64: imagePart.inline_data.data, mime: imagePart.inline_data.mime_type }
+      : { base64: imagePart.inlineData!.data, mime: imagePart.inlineData!.mimeType }
+    const outBase64 = data.base64
+    const outMime = data.mime || 'image/png'
 
     return Response.json({
       ok: true,

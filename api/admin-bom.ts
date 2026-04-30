@@ -171,7 +171,7 @@ function pickInverterHybrid(kwp: number, db: BomTemplatesDb): PickedInverter {
 }
 
 function calcBOM(opts: { panels: number; watt: number; template: string; batteryKwh?: number; acRunM?: number }): BomResult {
-  const db = templatesJson as BomTemplatesDb
+  const db = templatesJson as unknown as BomTemplatesDb
   const tpl = db.templates.find((t) => t.id === opts.template)
   if (!tpl) throw new Error(`Template not found: ${opts.template}`)
 

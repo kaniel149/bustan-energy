@@ -8,7 +8,7 @@ import { escapeHtml } from './_lib/html.js'
 import { fmt } from './_lib/fmt.js'
 import { sha256hex, random6 } from './_lib/crypto.js'
 import { supaUpsert } from './_lib/supa.js'
-import { calculateSolarFinancials, TM_SOLAR_ASSUMPTIONS } from '../src/lib/solar-financials'
+import { calculateSolarFinancials, TM_SOLAR_ASSUMPTIONS } from '../src/lib/solar-financials.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
