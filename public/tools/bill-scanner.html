@@ -132,8 +132,8 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
 <div class="app">
 
 <div class="header">
-  <h1>🧾 Bill Scanner — <span class="gold">Instant Solar Proposal</span></h1>
-  <div class="sub">Enter PEA bill data, get savings analysis + proposal in seconds</div>
+  <h1>🧾 Bill Calculator — <span class="gold">Solar Proposal Estimate</span></h1>
+  <div class="sub">Enter PEA bill data for a preliminary estimate before site survey and PEA review</div>
 </div>
 
 <!-- Steps indicator -->
@@ -323,11 +323,16 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
 
 <script>
 // === Constants ===
-const COST_PER_KWP = 12000; // actual cost
-const PRICE_PER_KWP = 30000; // EPC selling price
-const PPA_RATE = 4.50;
+const COST_PER_KWP = 12000; // planning estimate, verified in BOM before proposal
+const PRICE_PER_KWP = 32000; // EPC planning estimate
+const PPA_RATE = 4.20;
 const PPA_ESCALATION = 0.03;
-const SUN_HOURS = 4.5;
+const SUN_HOURS = 5.0;
+const PERFORMANCE_RATIO = 0.7469;
+const FIRST_YEAR_LID = 0.98;
+const EXPORT_RATE = 3.10;
+const DEFAULT_RETAIL_RATE = 4.40;
+const SELF_CONSUMPTION_GRID = 0.60;
 const DEGRADATION = 0.005;
 const PEA_ESCALATION = 0.03;
 const OM_PER_KWP_YEAR = 720;
@@ -368,12 +373,12 @@ function analyze() {
   if (!kwh || kwh < 100) { alert('Please enter monthly consumption (kWh)'); return; }
 
   // Calculate effective tariff
-  const effectiveTariff = bill && bill > 0 ? bill / kwh : 5.5;
+  const effectiveTariff = bill && bill > 0 ? bill / kwh : DEFAULT_RETAIL_RATE;
 
   // Optimal system size (kWp)
   const annualKwh = kwh * 12;
   const shadingFactor = SHADING[shading];
-  let optimalKwp = Math.ceil(annualKwh / (SUN_HOURS * 365 * shadingFactor));
+  let optimalKwp = Math.ceil(annualKwh / (SUN_HOURS * 365 * PERFORMANCE_RATIO * FIRST_YEAR_LID * shadingFactor));
 
   // Cap by roof area if provided
   if (roofArea > 0) {
@@ -390,13 +395,14 @@ function analyze() {
   const roofNeeded = numPanels * PANEL_AREA;
 
   // Annual production
-  const annualProduction = actualKwp * SUN_HOURS * 365 * shadingFactor;
-  const selfConsumptionRatio = Math.min(1, annualKwh / annualProduction);
+  const annualProduction = actualKwp * SUN_HOURS * 365 * PERFORMANCE_RATIO * FIRST_YEAR_LID * shadingFactor;
+  const selfConsumptionRatio = Math.min(SELF_CONSUMPTION_GRID, annualKwh / annualProduction);
   const solarUsed = annualProduction * selfConsumptionRatio;
+  const solarExported = Math.max(0, annualProduction - solarUsed);
 
   // EPC calculations
   const epcPrice = Math.round(actualKwp * PRICE_PER_KWP);
-  const annualSavings = solarUsed * effectiveTariff;
+  const annualSavings = solarUsed * effectiveTariff + solarExported * EXPORT_RATE;
   const paybackEPC = epcPrice / annualSavings;
 
   // PPA calculations
@@ -570,7 +576,7 @@ function renderProposal() {
           Payback: ${d.paybackEPC.toFixed(1)} years<br>
           15-year savings: ${fmt(d.epc15.totalSavings)}<br>
           ROI: ${Math.round((d.epc15.totalSavings/d.epcPrice)*100)}%<br>
-          Payment: 30% / 40% / 30%<br>
+          Payment: 40% / 40% / 20%<br>
           Warranty: 10yr work, 25yr panels
         </div>
       </div>
@@ -622,7 +628,7 @@ function sendWhatsApp() {
     `15-year savings: up to ${fmt(Math.max(d.epc15.totalSavings - d.epcPrice, d.ppa15.totalSavings))}\n\n` +
     `📞 Free site survey — contact us!`
   );
-  window.open('https://wa.me/?text=' + text, '_blank');
+  window.open('https://wa.me/66946692011?text=' + text, '_blank');
 }
 </script>
 </body>

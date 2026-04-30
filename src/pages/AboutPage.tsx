@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Shield, Users, Eye, Lightbulb, ArrowRight, Sun } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { organizationSchema, breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
 

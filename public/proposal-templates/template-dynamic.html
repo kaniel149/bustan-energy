@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="{{html_lang}}" dir="{{html_dir}}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TM Energy — הצעת מחיר סולארית · {{client_name}}</title>
-<meta name="description" content="הצעת מחיר למערכת סולארית {{system_size_kwp}} kWp — קופנגן, תאילנד. TM Energy.">
+<title>{{html_title}} · {{client_name}}</title>
+<meta name="description" content="{{html_description}} {{system_size_kwp}} kWp — {{location_display}}. TM Energy.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +35,7 @@ body {
   color: var(--text);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
-  direction: rtl;
+  direction: {{html_dir}};
 }
 h1, h2, h3 { font-weight: 900; }
 .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
@@ -97,6 +97,8 @@ section { padding: 72px 0; }
 }
 .hero-meta-item { border-right: 1px solid rgba(232,168,32,.3); padding-right: 20px; }
 .hero-meta-item:last-child { border-right: none; }
+html[dir="ltr"] .hero-meta-item { border-right: none; border-left: 1px solid rgba(232,168,32,.3); padding-right: 0; padding-left: 20px; }
+html[dir="ltr"] .hero-meta-item:last-child { border-left: none; }
 .hero-meta-label {
   font-size: 11px; color: rgba(255,255,255,.5);
   font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;
@@ -478,6 +480,44 @@ footer strong { color: var(--gold); }
   color: var(--navy);
 }
 
+/* ── BANK FINANCING MODEL ── */
+.bank-model {
+  display: {{financing_section_display}};
+  background: #F8FBFA;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.bank-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px; margin-top: 24px;
+}
+.bank-metric {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.bank-metric-label {
+  color: var(--text-secondary); font-size: 11px; font-weight: 800;
+  letter-spacing: .6px; text-transform: uppercase; margin-bottom: 8px;
+}
+.bank-metric-value {
+  color: var(--navy); font-size: 24px; font-weight: 900; line-height: 1.15;
+}
+.bank-metric-value.green { color: var(--green); }
+.bank-assumptions {
+  margin-top: 18px; background: white; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 20px 24px;
+}
+.bank-assumption-row {
+  display: flex; justify-content: space-between; gap: 16px;
+  padding: 9px 0; border-bottom: 1px dashed var(--border);
+  font-size: 14px;
+}
+.bank-assumption-row:last-child { border-bottom: none; }
+.bank-note {
+  margin-top: 16px; color: var(--text-secondary); font-size: 13px; line-height: 1.7;
+}
+
 /* ── MOBILE ── */
 @media (max-width: 768px) {
   section { padding: 48px 0; }
@@ -490,6 +530,7 @@ footer strong { color: var(--gold); }
   .roi-wrap { grid-template-columns: 1fr; }
   .spec-row { grid-template-columns: 1fr; gap: 4px; padding: 14px 20px; }
   .options-grid { grid-template-columns: 1fr; }
+  .bank-grid { grid-template-columns: repeat(2, 1fr); }
   .env-stats-grid { grid-template-columns: repeat(2, 1fr); }
   .timeline-grid { grid-template-columns: repeat(2, 1fr); }
   .timeline-grid::before { display: none; }
@@ -509,21 +550,21 @@ footer strong { color: var(--gold); }
 <!-- HERO -->
 <section class="hero">
   <div class="container" style="position: relative; z-index: 2;">
-    <span class="hero-ref">הצעת מחיר · {{month_year_he}}</span>
-    <h1>מערכת סולארית<br><span>{{system_size_kwp}} kWp + סוללה</span></h1>
-    <p>מערכת היברידית מלאה Huawei לקופנגן — {{panel_count}} פאנלים Jinko N-Type + אינוורטר Huawei SUN2000 + סוללת {{battery_model}} {{battery_kwh}} kWh. עצמאות אנרגטית גם בהפסקות חשמל, חיסכון של 79,900 ฿ בשנה.</p>
+    <span class="hero-ref">{{hero_badge}} · {{month_year}}</span>
+    <h1>{{hero_title}}<br><span>{{system_size_kwp}} kWp</span></h1>
+    <p>{{hero_subtitle}} {{panel_count}} × {{panel_model}}, {{inverter_model}}, {{battery_model}} {{battery_kwh}} kWh. {{annual_savings_label}}: ฿{{annual_savings_fmt}}.</p>
     <div class="hero-meta">
       <div class="hero-meta-item">
-        <div class="hero-meta-label">לקוח</div>
+        <div class="hero-meta-label">{{client_label}}</div>
         <div class="hero-meta-value">{{client_name}}</div>
       </div>
       <div class="hero-meta-item">
-        <div class="hero-meta-label">מיקום</div>
+        <div class="hero-meta-label">{{location_label}}</div>
         <div class="hero-meta-value">{{location_short}}</div>
       </div>
       <div class="hero-meta-item">
-        <div class="hero-meta-label">תוקף</div>
-        <div class="hero-meta-value">30 יום</div>
+        <div class="hero-meta-label">{{validity_label}}</div>
+        <div class="hero-meta-value">{{validity_value}}</div>
       </div>
     </div>
   </div>
@@ -532,22 +573,22 @@ footer strong { color: var(--gold); }
 <!-- VISUAL MOCKUP -->
 <section style="background: white;">
   <div class="container">
-    <div class="section-label">סימולציה ויזואלית</div>
-    <h2 class="section-heading">איך המערכת תיראה על הגג שלך</h2>
-    <p class="section-desc">דימוי AI מדויק המבוסס על תמונת הרחפן של הגג — מראה מדויק של מיקום ומספר הפאנלים.</p>
+    <div class="section-label">{{visual_label}}</div>
+    <h2 class="section-heading">{{visual_heading}}</h2>
+    <p class="section-desc">{{visual_desc}}</p>
     <div class="visual-compare">
       <div class="visual-card">
-        <img src="{{roof_original_url}}" alt="גג מקורי" loading="lazy">
+        <img src="{{roof_original_url}}" alt="{{before_label}}" loading="lazy">
         <div class="visual-caption">
-          <span>לפני</span>
-          <span class="visual-tag">תמונת רחפן</span>
+          <span>{{before_label}}</span>
+          <span class="visual-tag">{{drone_image_label}}</span>
         </div>
       </div>
       <div class="visual-card">
-        <img src="{{roof_panels_url}}" alt="גג עם פאנלים" loading="lazy">
+        <img src="{{roof_panels_url}}" alt="{{after_label}}" loading="lazy">
         <div class="visual-caption">
-          <span>אחרי</span>
-          <span class="visual-tag green">{{panel_count}} פאנלים · {{system_size_kwp}} kWp</span>
+          <span>{{after_label}}</span>
+          <span class="visual-tag green">{{panel_count}} {{panels_tag_suffix}} · {{system_size_kwp}} kWp</span>
         </div>
       </div>
     </div>
@@ -557,46 +598,46 @@ footer strong { color: var(--gold); }
 <!-- ROOF ANALYSIS -->
 <section>
   <div class="container">
-    <div class="section-label">ניתוח הגג</div>
-    <h2 class="section-heading">מדידות ותכנון</h2>
+    <div class="section-label">{{roof_label}}</div>
+    <h2 class="section-heading">{{roof_heading}}</h2>
     <div class="stats-grid">
       <div class="stat">
         <div class="stat-value">120</div>
-        <div class="stat-label">m² שטח גג</div>
+        <div class="stat-label">m² {{roof_area_label}}</div>
       </div>
       <div class="stat">
         <div class="stat-value">22</div>
-        <div class="stat-label">פאנלים פעילים</div>
+        <div class="stat-label">{{active_panels_label}}</div>
       </div>
       <div class="stat">
-        <div class="stat-value">ציר N-S</div>
-        <div class="stat-label">אוריינטציה</div>
+        <div class="stat-value">N-S</div>
+        <div class="stat-label">{{orientation_label}}</div>
       </div>
       <div class="stat">
-        <div class="stat-value">רעפים</div>
-        <div class="stat-label">סוג גג</div>
+        <div class="stat-value">Tile</div>
+        <div class="stat-label">{{roof_type_label}}</div>
       </div>
     </div>
     <div class="spec-table" style="margin-top: 24px;">
       <div class="spec-row">
-        <span class="spec-label">מדרון שמאל (מזרח)</span>
-        <span class="spec-value">~48 m² · 10 פאנלים (2×5)</span>
+        <span class="spec-label">East roof plane</span>
+        <span class="spec-value">~48 m² · 10 panels (2×5)</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">מדרון ימין (מערב)</span>
-        <span class="spec-value">~48 m² · 8 פאנלים (2×4)</span>
+        <span class="spec-label">West roof plane</span>
+        <span class="spec-value">~48 m² · 8 panels (2×4)</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">חלק עליון (clerestory)</span>
-        <span class="spec-value">~18 m² · 4 פאנלים נוספים (2×2)</span>
+        <span class="spec-label">Upper roof plane</span>
+        <span class="spec-value">~18 m² · 4 additional panels (2×2)</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">סה״כ פאנלים</span>
+        <span class="spec-label">{{total_panels_label}}</span>
         <span class="spec-value">{{panel_count}} × {{panel_watt}}W = {{system_size_kwp}} kWp</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">הצללה צפויה</span>
-        <span class="spec-value">5-8% בבוקר מעץ המנגו · זניח</span>
+        <span class="spec-label">Expected shading</span>
+        <span class="spec-value">5-8% morning shading · low impact</span>
       </div>
     </div>
   </div>
@@ -605,40 +646,40 @@ footer strong { color: var(--gold); }
 <!-- SYSTEM SPECS -->
 <section style="background: white;">
   <div class="container">
-    <div class="section-label">מפרט המערכת</div>
-    <h2 class="section-heading">רכיבים Tier-1 בלבד</h2>
+    <div class="section-label">{{system_specs_label}}</div>
+    <h2 class="section-heading">{{system_specs_heading}}</h2>
     <div class="spec-table">
       <div class="spec-row">
-        <span class="spec-label">פאנלים</span>
-        <span class="spec-value">{{panel_count}}× {{panel_model}} (25 שנות אחריות ייצור)</span>
+        <span class="spec-label">{{panels_label}}</span>
+        <span class="spec-value">{{panel_count}}× {{panel_model}}</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">אינוורטר</span>
-        <span class="spec-value">{{inverter_model}} היברידי (10 שנות אחריות)</span>
+        <span class="spec-label">{{inverter_label}}</span>
+        <span class="spec-value">{{inverter_model}}</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">סוללה</span>
-        <span class="spec-value">{{battery_model}} · {{battery_kwh}} kWh · LFP (10 שנות אחריות · 100% DoD)</span>
+        <span class="spec-label">{{battery_label}}</span>
+        <span class="spec-value">{{battery_model}} · {{battery_kwh}} kWh</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">הספק DC</span>
+        <span class="spec-label">{{dc_capacity_label}}</span>
         <span class="spec-value">{{system_size_kwp}} kWp</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">חיבור</span>
-        <span class="spec-value">PEA On-Grid Hybrid · גיבוי אוטומטי בהפסקות חשמל</span>
+        <span class="spec-label">{{connection_label}}</span>
+        <span class="spec-value">PEA On-Grid / Hybrid</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">עיגון</span>
-        <span class="spec-value">Tile hooks אלומיניום עם איטום EPDM</span>
+        <span class="spec-label">{{mounting_label}}</span>
+        <span class="spec-value">Aluminium tile hooks with EPDM sealing</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">ניטור</span>
-        <span class="spec-value">FusionSolar App — ייצור בזמן אמת + התראות</span>
+        <span class="spec-label">{{monitoring_label}}</span>
+        <span class="spec-value">Monitoring app — real-time production and alerts</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">הגנות</span>
-        <span class="spec-value">DC/AC isolator, SPD, RCD, mini-CB (תקן IEC 62446)</span>
+        <span class="spec-label">{{protections_label}}</span>
+        <span class="spec-value">DC/AC isolator, SPD, RCD, mini-CB (IEC 62446)</span>
       </div>
     </div>
   </div>
@@ -647,35 +688,35 @@ footer strong { color: var(--gold); }
 <!-- PRODUCTION / PSH -->
 <section>
   <div class="container">
-    <div class="section-label">תחזית ייצור</div>
-    <h2 class="section-heading">שעות שמש חודשיות · {{location_psh}}</h2>
-    <p class="section-desc">חישוב עצמאי לפי נתוני קרינה NASA SSE לאזור הספציפי, עם תיקון לחום טרופי (PR=0.78).</p>
+    <div class="section-label">{{production_label}}</div>
+    <h2 class="section-heading">{{production_heading}} · {{location_psh}}</h2>
+    <p class="section-desc">{{production_desc}}</p>
     <div class="psh-chart">
       <div class="psh-bars">
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 86%;"><span class="psh-bar-value">5.7</span></div><span class="psh-bar-label">ינו</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 92%;"><span class="psh-bar-value">6.1</span></div><span class="psh-bar-label">פבר</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 95%;"><span class="psh-bar-value">6.3</span></div><span class="psh-bar-label">מרץ</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 90%;"><span class="psh-bar-value">6.0</span></div><span class="psh-bar-label">אפר</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">מאי</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 66%;"><span class="psh-bar-value">4.4</span></div><span class="psh-bar-label">יונ</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">יול</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 60%;"><span class="psh-bar-value">4.0</span></div><span class="psh-bar-label">אוג</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">ספט</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 57%;"><span class="psh-bar-value">3.8</span></div><span class="psh-bar-label">אוק</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">נוב</span></div>
-        <div class="psh-bar"><div class="psh-bar-fill" style="height: 81%;"><span class="psh-bar-value">5.4</span></div><span class="psh-bar-label">דצמ</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 86%;"><span class="psh-bar-value">5.7</span></div><span class="psh-bar-label">Jan</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 92%;"><span class="psh-bar-value">6.1</span></div><span class="psh-bar-label">Feb</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 95%;"><span class="psh-bar-value">6.3</span></div><span class="psh-bar-label">Mar</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 90%;"><span class="psh-bar-value">6.0</span></div><span class="psh-bar-label">Apr</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">May</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 66%;"><span class="psh-bar-value">4.4</span></div><span class="psh-bar-label">Jun</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">Jul</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 60%;"><span class="psh-bar-value">4.0</span></div><span class="psh-bar-label">Aug</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 63%;"><span class="psh-bar-value">4.2</span></div><span class="psh-bar-label">Sep</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 57%;"><span class="psh-bar-value">3.8</span></div><span class="psh-bar-label">Oct</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 72%;"><span class="psh-bar-value">4.8</span></div><span class="psh-bar-label">Nov</span></div>
+        <div class="psh-bar"><div class="psh-bar-fill" style="height: 81%;"><span class="psh-bar-value">5.4</span></div><span class="psh-bar-label">Dec</span></div>
       </div>
       <div class="psh-summary">
         <div class="psh-summary-item">
-          <div class="psh-summary-label">ממוצע שנתי (PSH)</div>
-          <div class="psh-summary-value">5.0 שעות / יום</div>
+          <div class="psh-summary-label">{{psh_avg_label}}</div>
+          <div class="psh-summary-value">5.0 h/day</div>
         </div>
         <div class="psh-summary-item">
-          <div class="psh-summary-label">ייצור צפוי שנתי</div>
+          <div class="psh-summary-label">{{annual_production_label}}</div>
           <div class="psh-summary-value">{{annual_kwh_fmt}} kWh</div>
         </div>
         <div class="psh-summary-item">
-          <div class="psh-summary-label">ייצור ממוצע חודשי</div>
+          <div class="psh-summary-label">{{monthly_production_label}}</div>
           <div class="psh-summary-value">~{{monthly_kwh_fmt}} kWh</div>
         </div>
       </div>
@@ -686,75 +727,75 @@ footer strong { color: var(--gold); }
 <!-- THREE OPTIONS -->
 <section>
   <div class="container">
-    <div class="section-label">בחר את התוכנית שלך</div>
-    <h2 class="section-heading">שלוש אפשרויות, מטרה אחת: חשבון חשמל נמוך יותר</h2>
-    <p class="section-desc">בחר את התוכנית שמתאימה לתקציב שלך. כל האפשרויות משתמשות באותם רכיבים פרמיום בדיוק.</p>
+    <div class="section-label">{{options_label}}</div>
+    <h2 class="section-heading">{{options_heading}}</h2>
+    <p class="section-desc">{{options_desc}}</p>
 
     <div class="options-grid">
       <!-- OPTION A: EPC -->
       <div class="option-card" id="optionCardA">
         <div class="option-icon">⚡</div>
-        <div class="option-name">אופציה א: EPC</div>
-        <div class="option-desc">בעלות מלאה על המערכת</div>
+        <div class="option-name">{{option_a_name}}</div>
+        <div class="option-desc">{{option_a_desc}}</div>
         <div class="option-price">฿{{price_fmt}}</div>
         <div class="option-features">
-          <div class="option-feature"><span class="check-icon">✓</span> מערכת סולארית מותקנת במלואה</div>
-          <div class="option-feature"><span class="check-icon">✓</span> רישיון PEA וחיבור לרשת</div>
-          <div class="option-feature"><span class="check-icon">✓</span> אחריות פאנלים 25 שנה</div>
-          <div class="option-feature"><span class="check-icon">✓</span> אחריות אינוורטר 10 שנים</div>
-          <div class="option-feature"><span class="check-icon">✓</span> ניטור 24/7 (שנה ראשונה חינם)</div>
-          <div class="option-feature"><span class="check-icon">✓</span> בעלות שלך — כל החיסכון שלך</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Complete installed solar system</div>
+          <div class="option-feature"><span class="check-icon">✓</span> PEA documentation and grid connection support</div>
+          <div class="option-feature"><span class="check-icon">✓</span> 25-year panel warranty</div>
+          <div class="option-feature"><span class="check-icon">✓</span> 10-year inverter warranty</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Monitoring included for year one</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Customer ownership and full savings benefit</div>
         </div>
         <div class="option-bottom green">
-          <div class="option-bottom-label">חיסכון שנתי</div>
+          <div class="option-bottom-label">{{annual_savings_label}}</div>
           <div class="option-bottom-value green-text">~฿{{annual_savings_fmt}}</div>
-          <div class="option-bottom-sub">החזר השקעה: <strong>{{payback_no_tax}} שנים</strong></div>
+          <div class="option-bottom-sub">{{payback_label}}: <strong>{{payback_no_tax}} {{years_unit}}</strong></div>
         </div>
-        <button class="option-choose-btn" onclick="selectOption('A')">בחר אפשרות זו</button>
+        <button class="option-choose-btn" onclick="selectOption('A')">{{choose_option}}</button>
       </div>
 
       <!-- OPTION B: PPA (RECOMMENDED) -->
       <div class="option-card featured" id="optionCardB">
-        <div class="option-tag">★ מומלץ</div>
+        <div class="option-tag">★ {{recommended_label}}</div>
         <div class="option-icon">☀️</div>
-        <div class="option-name">אופציה ב: PPA</div>
-        <div class="option-desc">אפס מקדמה — אנחנו מתקינים, אתה חוסך</div>
-        <div class="option-price" style="color:var(--green);">฿0 מקדמה<span class="option-price-note">תשלום ฿{{ppa_rate}}/kWh בלבד · {{ppa_years}} שנה</span></div>
+        <div class="option-name">{{option_b_name}}</div>
+        <div class="option-desc">{{option_b_desc}}</div>
+        <div class="option-price" style="color:var(--green);">฿0<span class="option-price-note">฿{{ppa_rate}}/kWh · {{ppa_years}} {{years_unit}}</span></div>
         <div class="option-features">
-          <div class="option-feature"><span class="check-icon">✓</span> ฿0 התקנה — אנחנו מממנים הכל</div>
-          <div class="option-feature"><span class="check-icon">✓</span> זול יותר מתעריף PEA מהיום הראשון</div>
-          <div class="option-feature"><span class="check-icon">✓</span> תחזוקה וניטור חינם {{ppa_years}} שנים</div>
-          <div class="option-feature"><span class="check-icon">✓</span> ניקוי פאנלים 2 פעמים בשנה</div>
-          <div class="option-feature"><span class="check-icon">✓</span> ערבות החלפת מערכת</div>
-          <div class="option-feature"><span class="check-icon">✓</span> חיסכון מיידי — אפס סיכון</div>
+          <div class="option-feature"><span class="check-icon">✓</span> ฿0 upfront installation</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Lower than grid tariff from day one</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Maintenance and monitoring included</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Panel cleaning twice per year</div>
+          <div class="option-feature"><span class="check-icon">✓</span> System replacement guarantee</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Immediate savings with no upfront capex</div>
         </div>
         <div class="option-bottom gold">
-          <div class="option-bottom-label">חיסכון חודשי</div>
+          <div class="option-bottom-label">{{monthly_savings_label}}</div>
           <div class="option-bottom-value gold-text">~฿{{monthly_savings_fmt}}</div>
-          <div class="option-bottom-sub">החיסכון מתחיל מיידית</div>
+          <div class="option-bottom-sub">{{immediate_label}}</div>
         </div>
-        <button class="option-choose-btn" onclick="selectOption('B')">בחר אפשרות זו</button>
+        <button class="option-choose-btn" onclick="selectOption('B')">{{choose_option}}</button>
       </div>
 
       <!-- OPTION C: EPC + BATTERY -->
       <div class="option-card" id="optionCardC">
         <div class="option-icon">🔋</div>
-        <div class="option-name">אופציה ג: EPC + סוללה</div>
-        <div class="option-desc">עצמאות אנרגטית מקסימלית</div>
+        <div class="option-name">{{option_c_name}}</div>
+        <div class="option-desc">{{option_c_desc}}</div>
         <div class="option-price">฿{{price_battery_fmt}}</div>
         <div class="option-features">
-          <div class="option-feature"><span class="check-icon">✓</span> הכל כמו אופציה א, בנוסף:</div>
-          <div class="option-feature"><span class="check-icon">✓</span> סוללת {{battery_model}} {{battery_kwh_extra}} kWh</div>
-          <div class="option-feature"><span class="check-icon">✓</span> גיבוי בהפסקות חשמל</div>
-          <div class="option-feature"><span class="check-icon">✓</span> אחריות סוללה 10 שנים</div>
-          <div class="option-feature"><span class="check-icon">✓</span> ניהול אנרגיה חכם דרך אפליקציה</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Everything in EPC, plus:</div>
+          <div class="option-feature"><span class="check-icon">✓</span> {{battery_model}} {{battery_kwh_extra}} kWh battery</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Backup for outages</div>
+          <div class="option-feature"><span class="check-icon">✓</span> 10-year battery warranty</div>
+          <div class="option-feature"><span class="check-icon">✓</span> Smart energy management app</div>
         </div>
         <div class="option-bottom green">
-          <div class="option-bottom-label">חיסכון שנתי</div>
+          <div class="option-bottom-label">{{annual_savings_label}}</div>
           <div class="option-bottom-value green-text">~฿{{annual_savings_fmt}}</div>
-          <div class="option-bottom-sub">+ ביטחון אנרגטי מלא</div>
+          <div class="option-bottom-sub">+ Energy security</div>
         </div>
-        <button class="option-choose-btn" onclick="selectOption('C')">בחר אפשרות זו</button>
+        <button class="option-choose-btn" onclick="selectOption('C')">{{choose_option}}</button>
       </div>
     </div>
   </div>
@@ -763,78 +804,78 @@ footer strong { color: var(--gold); }
 <!-- COMPARISON TABLE -->
 <section style="background: white;">
   <div class="container">
-    <div class="section-label">השוואה מלאה</div>
-    <h2 class="section-heading">השוואה בין כל האפשרויות</h2>
+    <div class="section-label">{{comparison_label}}</div>
+    <h2 class="section-heading">{{comparison_heading}}</h2>
     <div style="overflow-x:auto;">
       <table class="compare-table">
         <thead>
           <tr style="background:var(--navy);color:#fff;">
             <th style="padding:16px 20px;text-align:right;font-weight:600;font-size:13px;min-width:160px;"></th>
-            <th style="padding:16px 20px;">⚡ אופציה א: EPC</th>
-            <th class="compare-col-ppa" style="padding:16px 20px;">☀️ אופציה ב: PPA ★</th>
-            <th style="padding:16px 20px;">🔋 אופציה ג: EPC+סוללה</th>
+            <th style="padding:16px 20px;">⚡ {{option_a_name}}</th>
+            <th class="compare-col-ppa" style="padding:16px 20px;">☀️ {{option_b_name}} ★</th>
+            <th style="padding:16px 20px;">🔋 {{option_c_name}}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>עלות מקדמה</td>
+            <td>{{upfront_cost_label}}</td>
             <td style="font-weight:700;">฿{{price_fmt}}</td>
             <td class="compare-col-ppa" style="font-weight:700;color:var(--green);">฿0</td>
             <td style="font-weight:700;">฿{{price_battery_fmt}}</td>
           </tr>
           <tr>
-            <td>תשלום חודשי</td>
-            <td>฿0 לאחר רכישה</td>
+            <td>{{monthly_payment_label}}</td>
+            <td>฿0</td>
             <td class="compare-col-ppa">฿{{ppa_rate}}/kWh</td>
-            <td>฿0 לאחר רכישה</td>
+            <td>฿0</td>
           </tr>
           <tr>
-            <td>חיסכון שנתי</td>
+            <td>{{annual_savings_label}}</td>
             <td style="font-weight:700;color:var(--green);">~฿{{annual_savings_fmt}}</td>
             <td class="compare-col-ppa" style="font-weight:700;color:var(--green);">~฿{{annual_savings_fmt}}</td>
             <td style="font-weight:700;color:var(--green);">~฿{{annual_savings_fmt}}</td>
           </tr>
           <tr>
-            <td>החזר השקעה</td>
-            <td style="font-weight:700;">{{payback_no_tax}} שנים</td>
-            <td class="compare-col-ppa" style="font-weight:700;">מיידי</td>
-            <td style="font-weight:700;">{{payback_no_tax}}+ שנים</td>
+            <td>{{payback_label}}</td>
+            <td style="font-weight:700;">{{payback_no_tax}} {{years_unit}}</td>
+            <td class="compare-col-ppa" style="font-weight:700;">{{immediate_label}}</td>
+            <td style="font-weight:700;">{{payback_no_tax}}+ {{years_unit}}</td>
           </tr>
           <tr>
-            <td>אחריות פאנלים</td>
-            <td>25 שנה</td>
-            <td class="compare-col-ppa">25 שנה</td>
-            <td>25 שנה</td>
+            <td>{{panel_warranty_label}}</td>
+            <td>25 {{years_unit}}</td>
+            <td class="compare-col-ppa">25 {{years_unit}}</td>
+            <td>25 {{years_unit}}</td>
           </tr>
           <tr>
-            <td>אחריות אינוורטר</td>
-            <td>10 שנים</td>
-            <td class="compare-col-ppa">10 שנים</td>
-            <td>10 שנים</td>
+            <td>{{inverter_warranty_label}}</td>
+            <td>10 {{years_unit}}</td>
+            <td class="compare-col-ppa">10 {{years_unit}}</td>
+            <td>10 {{years_unit}}</td>
           </tr>
           <tr>
-            <td>גיבוי סוללה</td>
-            <td>❌ יום בלבד</td>
-            <td class="compare-col-ppa">❌ יום בלבד</td>
-            <td style="font-weight:700;color:var(--green);">✓ {{battery_kwh_extra}} kWh גיבוי</td>
+            <td>{{backup_label}}</td>
+            <td>No</td>
+            <td class="compare-col-ppa">No</td>
+            <td style="font-weight:700;color:var(--green);">✓ {{battery_kwh_extra}} kWh</td>
           </tr>
           <tr>
-            <td>ניטור</td>
+            <td>{{monitoring_label}}</td>
             <td>FusionSolar App</td>
             <td class="compare-col-ppa">FusionSolar App</td>
             <td>FusionSolar App</td>
           </tr>
           <tr>
-            <td>בעלות</td>
-            <td>שלך ✓</td>
-            <td class="compare-col-ppa">TM Energy<br><span style="font-size:11px;">(ניתן לרכוש אחרי {{ppa_years}} שנה)</span></td>
-            <td>שלך ✓</td>
+            <td>{{ownership_label}}</td>
+            <td>{{customer_owned_label}} ✓</td>
+            <td class="compare-col-ppa">TM Energy<br><span style="font-size:11px;">purchase option after {{ppa_years}} {{years_unit}}</span></td>
+            <td>{{customer_owned_label}} ✓</td>
           </tr>
           <tr>
-            <td>תחזוקה</td>
-            <td>שנה ראשונה חינם</td>
-            <td class="compare-col-ppa">חינם {{ppa_years}} שנה</td>
-            <td>שנה ראשונה חינם</td>
+            <td>{{maintenance_label}}</td>
+            <td>{{first_year_included_label}}</td>
+            <td class="compare-col-ppa">{{included_label}} {{ppa_years}} {{years_unit}}</td>
+            <td>{{first_year_included_label}}</td>
           </tr>
         </tbody>
       </table>
@@ -845,38 +886,38 @@ footer strong { color: var(--gold); }
 <!-- SAVINGS VISUALIZATION + CO2 + 10YR -->
 <section>
   <div class="container">
-    <div class="section-label">הסיפור שמאחורי המספרים</div>
-    <h2 class="section-heading">כמה תחסוך בפועל</h2>
-    <p class="section-desc">השוואה בין עלות החשמל הנוכחית שלך לאחר התקנת מערכת סולארית — המספרים מדברים בעד עצמם.</p>
+    <div class="section-label">{{savings_story_label}}</div>
+    <h2 class="section-heading">{{savings_story_heading}}</h2>
+    <p class="section-desc">{{savings_story_desc}}</p>
 
     <div class="savings-section">
       <div class="savings-bar-group">
-        <h4>ללא סולאר — חשמל שנתי: ฿{{annual_bill_fmt}}</h4>
+        <h4>{{without_solar_label}}: ฿{{annual_bill_fmt}}</h4>
         <div class="savings-bar bar-pea">฿{{annual_bill_fmt}}</div>
       </div>
       <div class="savings-bar-group">
-        <h4>עם סולאר (EPC) — עלות שנתית חדשה: ฿{{annual_bill_with_solar_fmt}}</h4>
+        <h4>{{with_solar_label}}: ฿{{annual_bill_with_solar_fmt}}</h4>
         <div class="savings-bar bar-solar" style="width:{{solar_bar_pct}}%;min-width:80px;">฿{{annual_bill_with_solar_fmt}}</div>
-        <div class="savings-badge">חיסכון: ฿{{annual_savings_fmt}} בשנה</div>
+        <div class="savings-badge">{{annual_savings_label}}: ฿{{annual_savings_fmt}}</div>
       </div>
     </div>
 
     <div class="env-stats-grid" style="margin-top: 40px;">
       <div class="env-stat">
         <div class="env-stat-value green">฿{{annual_savings_fmt}}</div>
-        <div class="env-stat-label">חיסכון שנתי</div>
+        <div class="env-stat-label">{{annual_savings_label}}</div>
       </div>
       <div class="env-stat">
         <div class="env-stat-value gold">฿{{savings_10yr_fmt}}</div>
-        <div class="env-stat-label">חיסכון ב-10 שנים</div>
+        <div class="env-stat-label">{{ten_year_savings_label}}</div>
       </div>
       <div class="env-stat">
-        <div class="env-stat-value gold">{{payback_no_tax}} שנים</div>
-        <div class="env-stat-label">החזר השקעה</div>
+        <div class="env-stat-value gold">{{payback_no_tax}} {{years_unit}}</div>
+        <div class="env-stat-label">{{payback_label}}</div>
       </div>
       <div class="env-stat">
-        <div class="env-stat-value green">{{co2_saved_kg}} ק"ג</div>
-        <div class="env-stat-label">CO₂ נחסך בשנה</div>
+        <div class="env-stat-value green">{{co2_saved_kg}} kg</div>
+        <div class="env-stat-label">{{co2_saved_label}}</div>
       </div>
     </div>
   </div>
@@ -885,34 +926,34 @@ footer strong { color: var(--gold); }
 <!-- INSTALLATION TIMELINE -->
 <section style="background: white;">
   <div class="container">
-    <div class="section-label">לוח זמנים</div>
-    <h2 class="section-heading">4 שלבים עד לחיבור לרשת</h2>
-    <p class="section-desc">מרגע אישור ההצעה ועד הדלקת המערכת — תהליך ברור ושקוף.</p>
+    <div class="section-label">{{timeline_label}}</div>
+    <h2 class="section-heading">{{timeline_heading}}</h2>
+    <p class="section-desc">{{timeline_desc}}</p>
 
     <div class="timeline-grid">
       <div class="timeline-card">
         <div class="timeline-num">1</div>
         <div class="timeline-icon">📐</div>
-        <div class="timeline-title">סקר ועיצוב</div>
-        <div class="timeline-period">שבוע 1</div>
+        <div class="timeline-title">{{survey_design_label}}</div>
+        <div class="timeline-period">{{week_1_label}}</div>
       </div>
       <div class="timeline-card">
         <div class="timeline-num">2</div>
         <div class="timeline-icon">📋</div>
-        <div class="timeline-title">היתרים ורכש</div>
-        <div class="timeline-period">שבועות 2–3</div>
+        <div class="timeline-title">{{permits_procurement_label}}</div>
+        <div class="timeline-period">{{weeks_2_3_label}}</div>
       </div>
       <div class="timeline-card">
         <div class="timeline-num">3</div>
         <div class="timeline-icon">🔧</div>
-        <div class="timeline-title">התקנה</div>
-        <div class="timeline-period">שבוע 4 · 3-4 ימים</div>
+        <div class="timeline-title">{{installation_label}}</div>
+        <div class="timeline-period">{{week_4_label}}</div>
       </div>
       <div class="timeline-card">
         <div class="timeline-num">4</div>
         <div class="timeline-icon">⚡</div>
-        <div class="timeline-title">חיבור לרשת</div>
-        <div class="timeline-period">שבועות 5–6</div>
+        <div class="timeline-title">{{grid_connection_label}}</div>
+        <div class="timeline-period">{{weeks_5_6_label}}</div>
       </div>
     </div>
   </div>
@@ -921,12 +962,12 @@ footer strong { color: var(--gold); }
 <!-- CONTRACT DOCUMENTS -->
 <section>
   <div class="container">
-    <div class="section-label">מסמכים חוקיים</div>
-    <h2 class="section-heading">קרא את החוזים המלאים</h2>
-    <p class="section-desc">שקיפות מלאה — כל תנאי ההסכם זמינים לקריאה לפני החתימה.</p>
+    <div class="section-label">{{legal_docs_label}}</div>
+    <h2 class="section-heading">{{legal_docs_heading}}</h2>
+    <p class="section-desc">{{legal_docs_desc}}</p>
     <div class="contract-links">
-      <a class="contract-link-btn epc" href="/contracts/epc-{{language}}.html" target="_blank">📄 קרא חוזה EPC</a>
-      <a class="contract-link-btn ppa" href="/contracts/ppa-{{language}}.html" target="_blank">📄 קרא חוזה PPA</a>
+      <a class="contract-link-btn epc" href="/contracts/epc-{{language}}.html" target="_blank">📄 {{read_epc_contract}}</a>
+      <a class="contract-link-btn ppa" href="/contracts/ppa-{{language}}.html" target="_blank">📄 {{read_ppa_contract}}</a>
     </div>
   </div>
 </section>
@@ -950,48 +991,48 @@ function selectOption(opt) {
 <!-- FINANCIAL / ROI -->
 <section style="background: white;">
   <div class="container">
-    <div class="section-label">השקעה והחזר</div>
-    <h2 class="section-heading">תחזית פיננסית</h2>
+    <div class="section-label">{{investment_label}}</div>
+    <h2 class="section-heading">{{investment_heading}}</h2>
     <div class="roi-wrap">
       <div class="roi-price-card">
-        <span class="roi-tag">Turnkey — הכל כלול</span>
+        <span class="roi-tag">{{turnkey_label}}</span>
         <div class="roi-price">{{price_fmt}}<span class="currency">฿</span></div>
-        <div class="roi-turnkey">מחיר קבוע · לא כולל VAT · תשלום: 50% התחלה + 50% סיום התקנה</div>
+        <div class="roi-turnkey">{{turnkey_note}}</div>
         <ul class="roi-included">
-          <li>{{panel_count}} פאנלים Jinko N-Type 580W</li>
-          <li>{{inverter_model}} היברידי</li>
-          <li>סוללת {{battery_model}} {{battery_kwh}} kWh — כלולה</li>
-          <li>מבנה תומך, כבלים, הגנות IEC 62446</li>
-          <li>התקנה מקצועית (3-4 ימי עבודה)</li>
-          <li>לוגיסטיקה + שילוח לקופנגן</li>
-          <li>הגשה ואישור PEA</li>
-          <li>אחריות 2 שנים על התקנה</li>
-          <li>מוניטורינג FusionSolar + בדיקת שנה ראשונה</li>
+          <li>{{panel_count}} × {{panel_model}}</li>
+          <li>{{inverter_model}}</li>
+          <li>{{battery_model}} {{battery_kwh}} kWh</li>
+          <li>Mounting, cabling, and IEC 62446 protection equipment</li>
+          <li>Professional installation and commissioning</li>
+          <li>Local logistics and project coordination</li>
+          <li>PEA documentation support</li>
+          <li>Workmanship warranty</li>
+          <li>Monitoring setup and handover</li>
         </ul>
       </div>
       <div class="roi-savings">
         <div class="roi-savings-row">
-          <span class="roi-savings-label">תעריף PEA ממוצע</span>
-          <span class="roi-savings-value">4.40 ฿/kWh</span>
+          <span class="roi-savings-label">{{tariff_label}}</span>
+          <span class="roi-savings-value">{{tariff_thb}} ฿/kWh</span>
         </div>
         <div class="roi-savings-row">
-          <span class="roi-savings-label">חיסכון חודשי</span>
+          <span class="roi-savings-label">{{monthly_savings_label}}</span>
           <span class="roi-savings-value">~{{monthly_savings_fmt}} ฿</span>
         </div>
         <div class="roi-savings-row">
-          <span class="roi-savings-label">חיסכון שנתי</span>
+          <span class="roi-savings-label">{{annual_savings_label}}</span>
           <span class="roi-savings-value">~{{annual_savings_fmt}} ฿</span>
         </div>
         <div class="roi-savings-row">
-          <span class="roi-savings-label">החזר השקעה (ללא מס)</span>
-          <span class="roi-savings-value">{{payback_no_tax}} שנים</span>
+          <span class="roi-savings-label">{{payback_no_tax_label}}</span>
+          <span class="roi-savings-value">{{payback_no_tax}} {{years_unit}}</span>
         </div>
         <div class="roi-savings-row">
-          <span class="roi-savings-label">החזר (עם ניכוי מס)</span>
-          <span class="roi-savings-value" style="color: var(--green);">{{payback_with_tax}} שנים</span>
+          <span class="roi-savings-label">{{payback_tax_label}}</span>
+          <span class="roi-savings-value" style="color: var(--green);">{{payback_with_tax_display}}</span>
         </div>
         <div class="roi-savings-row">
-          <span class="roi-savings-label">חיסכון מצטבר 25 שנה</span>
+          <span class="roi-savings-label">{{savings_25_label}}</span>
           <span class="roi-savings-value big">~{{savings_25yr_fmt}} ฿</span>
         </div>
       </div>
@@ -1001,41 +1042,86 @@ function selectOption(opt) {
     <div class="incentive-card">
       <div class="incentive-icon">🏛️</div>
       <div>
-        <div class="incentive-title">תמריץ ממשלת תאילנד · 2026</div>
-        <div class="incentive-heading">ניכוי מס הכנסה עד ฿200,000</div>
-        <div class="incentive-desc">
-          על התקנות סולאריות Residential On-Grid עד 10 kWp, ממשלת תאילנד מעניקה
-          <strong>ניכוי מס הכנסה של עד ฿200,000</strong> בשנת המס של ההתקנה.
-          בפועל, ההשקעה נטו יורדת ל-<strong>~฿250,000</strong> והחזר ההשקעה מתקצר ל-<strong>~3.8 שנים</strong>.
-          ניתן לקזז עם חשבוניות רשמיות — TM Energy מספקת את כל המסמכים הנדרשים.
+        <div class="incentive-title">{{tax_note_label}}</div>
+        <div class="incentive-heading">{{tax_note_heading}}</div>
+        <div class="incentive-desc">{{tax_note_desc}}</div>
+      </div>
+    </div>
+
+    <!-- BANK FINANCING MODEL -->
+    <div class="bank-model" style="margin-top: 24px;">
+      <div class="section-label">{{bank_label}}</div>
+      <h3 style="font-size: 24px; color: var(--navy); margin-bottom: 8px;">{{bank_heading}}</h3>
+      <p class="section-desc">{{bank_desc}}</p>
+      <div class="bank-grid">
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{project_cost_label}}</div>
+          <div class="bank-metric-value">฿{{price_fmt}}</div>
+        </div>
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{loan_amount_label}}</div>
+          <div class="bank-metric-value">฿{{financing_loan_fmt}}</div>
+        </div>
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{annual_debt_service_label}}</div>
+          <div class="bank-metric-value">฿{{financing_debt_service_fmt}}</div>
+        </div>
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{dscr_label}}</div>
+          <div class="bank-metric-value green">{{financing_dscr}}</div>
+        </div>
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{equity_label}}</div>
+          <div class="bank-metric-value">฿{{financing_equity_fmt}}</div>
+        </div>
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{annual_om_label}}</div>
+          <div class="bank-metric-value">฿{{financing_om_fmt}}</div>
+        </div>
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{net_after_debt_label}}</div>
+          <div class="bank-metric-value green">฿{{financing_net_after_debt_fmt}}</div>
+        </div>
+        <div class="bank-metric">
+          <div class="bank-metric-label">{{equity_payback_label}}</div>
+          <div class="bank-metric-value">{{financing_equity_payback_display}}</div>
         </div>
       </div>
+      <div class="bank-assumptions">
+        <div style="font-weight:900;color:var(--navy);margin-bottom:8px;">{{model_assumptions_label}}</div>
+        <div class="bank-assumption-row"><span>{{ltv_assumption_label}}</span><strong>{{financing_ltv_pct}}%</strong></div>
+        <div class="bank-assumption-row"><span>{{interest_assumption_label}}</span><strong>{{financing_interest_pct}}%</strong></div>
+        <div class="bank-assumption-row"><span>{{years_assumption_label}}</span><strong>{{financing_years}} {{years_unit}}</strong></div>
+        <div class="bank-assumption-row"><span>{{om_assumption_label}}</span><strong>{{financing_om_pct}}%</strong></div>
+        <div class="bank-assumption-row"><span>{{net_operating_benefit_label}}</span><strong>฿{{financing_net_operating_fmt}}</strong></div>
+      </div>
+      <p class="bank-note">{{financing_note}}</p>
     </div>
 
     <!-- CUMULATIVE SAVINGS -->
     <div class="cumulative-chart">
-      <div class="section-label" style="margin-bottom: 4px;">חיסכון מצטבר</div>
-      <h3 style="font-size: 20px; color: var(--navy);">ROI לאורך זמן (אחרי ניכוי מס)</h3>
+      <div class="section-label" style="margin-bottom: 4px;">{{savings_25_label}}</div>
+      <h3 style="font-size: 20px; color: var(--navy);">ROI</h3>
       <div class="cumulative-bars">
         <div class="cum-bar">
           <div class="cum-bar-fill" style="height: 20%;"><span class="cum-bar-value">฿{{cum_5yr}}</span></div>
-          <span class="cum-bar-label">שנה 5</span>
+          <span class="cum-bar-label">5 {{years_unit}}</span>
         </div>
         <div class="cum-bar">
           <div class="cum-bar-fill" style="height: 40%;"><span class="cum-bar-value">฿{{cum_10yr}}</span></div>
-          <span class="cum-bar-label">שנה 10</span>
+          <span class="cum-bar-label">10 {{years_unit}}</span>
         </div>
         <div class="cum-bar">
           <div class="cum-bar-fill" style="height: 60%;"><span class="cum-bar-value">฿{{cum_15yr}}</span></div>
-          <span class="cum-bar-label">שנה 15</span>
+          <span class="cum-bar-label">15 {{years_unit}}</span>
         </div>
         <div class="cum-bar">
           <div class="cum-bar-fill" style="height: 80%;"><span class="cum-bar-value">฿{{cum_20yr}}</span></div>
-          <span class="cum-bar-label">שנה 20</span>
+          <span class="cum-bar-label">20 {{years_unit}}</span>
         </div>
         <div class="cum-bar">
           <div class="cum-bar-fill peak" style="height: 100%;"><span class="cum-bar-value">฿{{cum_25yr}}</span></div>
-          <span class="cum-bar-label">שנה 25</span>
+          <span class="cum-bar-label">25 {{years_unit}}</span>
         </div>
       </div>
     </div>
@@ -1045,28 +1131,28 @@ function selectOption(opt) {
 <!-- PEA DOCUMENTS REQUIRED -->
 <section style="background: #FFF8EC;">
   <div class="container">
-    <div class="section-label">✅ רשימת מסמכים לאישור PEA</div>
-    <h2 class="section-heading">מה נזדקק ממך לצורך אישור רשת החשמל</h2>
-    <p class="section-desc">כדי להגיש בקשה ל-PEA לחיבור המערכת הסולארית לרשת, אנחנו זקוקים למסמכים הבאים. ברגע שתשלח אותם — אנחנו מטפלים בכל שאר התהליך מול PEA, ללא מעורבות שלך.</p>
+    <div class="section-label">{{pea_docs_label}}</div>
+    <h2 class="section-heading">{{pea_docs_heading}}</h2>
+    <p class="section-desc">{{pea_docs_desc}}</p>
 
     <div style="background:white;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);">
       <div style="padding:20px 28px;background:linear-gradient(135deg,#FDF1D5,#F9E4B0);border-bottom:1px solid var(--border);">
-        <div style="font-weight:800;color:var(--navy);font-size:15px;">📋 מסמכים שצריך להביא</div>
+        <div style="font-weight:800;color:var(--navy);font-size:15px;">Client documents</div>
       </div>
 
       <div style="padding:8px 0;">
-        <div class="spec-row"><span class="spec-label">1. תעודה מזהה</span><span class="spec-value">צילום ת.ז. תאית / דרכון (כולל הויזה בתוקף)</span></div>
-        <div class="spec-row"><span class="spec-label">2. תבעיין באן</span><span class="spec-value">ทะเบียนบ้าน · רישום הבית (אפשר עותק או תמונה)</span></div>
-        <div class="spec-row"><span class="spec-label">3. שטר קרקע</span><span class="spec-value">โฉนด Chanote · עותק מלא או Nor Sor 3 Kor</span></div>
-        <div class="spec-row"><span class="spec-label">4. חשבון חשמל</span><span class="spec-value">3 חשבונות PEA אחרונים (כולל מספר מונה + מספר לקוח CA)</span></div>
-        <div class="spec-row"><span class="spec-label">5. מספר טלפון</span><span class="spec-value">לצורך תיאום ביקור טכנאי PEA להחלפת מונה</span></div>
+        <div class="spec-row"><span class="spec-label">1. ID document</span><span class="spec-value">Thai ID or passport copy, including valid visa if applicable</span></div>
+        <div class="spec-row"><span class="spec-label">2. House registration</span><span class="spec-value">ทะเบียนบ้าน / Tabien Baan copy or photo</span></div>
+        <div class="spec-row"><span class="spec-label">3. Land document</span><span class="spec-value">Chanote / Nor Sor 3 Kor copy where applicable</span></div>
+        <div class="spec-row"><span class="spec-label">4. PEA bills</span><span class="spec-value">Recent PEA electricity bills with meter number and CA number</span></div>
+        <div class="spec-row"><span class="spec-label">5. Contact number</span><span class="spec-value">For PEA technician coordination if a site visit or meter change is required</span></div>
       </div>
 
       <div style="padding:20px 28px;background:rgba(26,122,90,.05);border-top:1px solid var(--border);">
-        <div style="font-weight:800;color:var(--green);font-size:14px;margin-bottom:6px;">🟢 רק אם הבעלים שונה מהגר בבית</div>
+        <div style="font-weight:800;color:var(--green);font-size:14px;margin-bottom:6px;">If owner and occupant are different</div>
         <div style="color:var(--text-secondary);font-size:13px;line-height:1.7;">
-          6. ייפוי כוח חתום מהבעלים הרשום + צילום ת.ז./דרכון שלו<br>
-          7. חוזה שכירות / הסכם שימוש (אם רלוונטי)
+          6. Signed power of attorney from the registered owner + owner ID/passport copy<br>
+          7. Lease or usage agreement if relevant
         </div>
       </div>
     </div>
@@ -1074,36 +1160,35 @@ function selectOption(opt) {
     <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
       <div style="background:white;padding:24px;border-radius:12px;border:1px solid var(--border);">
         <div style="font-size:32px;margin-bottom:8px;">✅</div>
-        <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">מה TM Energy מטפלים עבורך</div>
+        <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">TM Energy handles</div>
         <ul style="padding-right:18px;color:var(--text-secondary);font-size:14px;line-height:1.9;margin-top:8px;">
-          <li>טופס בקשה PV-01</li>
+          <li>PV-01 application form</li>
           <li>Single Line Diagram (SLD)</li>
-          <li>תכנית פריסה (Site layout)</li>
-          <li>תעודות TIS/IEC של הציוד</li>
-          <li>הגשה למשרד PEA המקומי</li>
-          <li>תיאום בדיקות ומבחנים</li>
-          <li>תחזוקת תכתובת עם PEA עד אישור</li>
-          <li>החלפת מונה ל-smart meter</li>
+          <li>Site layout drawing</li>
+          <li>TIS/IEC equipment certificates</li>
+          <li>Submission to the local PEA office</li>
+          <li>Inspection coordination</li>
+          <li>PEA correspondence until approval</li>
+          <li>Smart meter coordination where required</li>
         </ul>
       </div>
       <div style="background:white;padding:24px;border-radius:12px;border:1px solid var(--border);">
         <div style="font-size:32px;margin-bottom:8px;">⏱️</div>
-        <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">לוח זמנים של PEA</div>
+        <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">PEA timeline</div>
         <ul style="padding-right:18px;color:var(--text-secondary);font-size:14px;line-height:1.9;margin-top:8px;">
-          <li>הגשה תוך 3 ימים מקבלת מסמכים</li>
-          <li>בדיקה ראשונית של PEA: 7-14 ימים</li>
-          <li>ביקור טכנאי (אם נדרש): 2-4 שבועות</li>
-          <li>אישור סופי ו-COD: עד 6 שבועות מההגשה</li>
-          <li>התקנת smart meter: חינם, ע״י PEA</li>
+          <li>Submission after complete client documents are received</li>
+          <li>Initial PEA review: typically 7-14 days</li>
+          <li>Technician visit if required: timeline depends on the local PEA office</li>
+          <li>Final approval and commissioning after PEA acceptance</li>
+          <li>Meter change, if required, is coordinated with PEA</li>
         </ul>
       </div>
     </div>
 
     <div style="margin-top:20px;padding:20px 24px;background:#E8F5F0;border-radius:12px;border-right:4px solid var(--green);">
-      <div style="font-weight:800;color:var(--green);margin-bottom:6px;">💡 טיפ — שלח את המסמכים מיד</div>
+      <div style="font-weight:800;color:var(--green);margin-bottom:6px;">Next step</div>
       <div style="color:var(--text);font-size:14px;line-height:1.7;">
-        ברגע שחתמת על ההצעה, שלח אלינו את 5 המסמכים דרך WhatsApp (<b>+66 94 669 2011</b>) או מייל (<b>erez@energy-tm.com</b>).
-        כך נוכל להתחיל את תהליך PEA במקביל להכנת הציוד — וחוסכים שבועיים מזמן ההתקנה הכולל.
+        After approving the proposal, send the documents by WhatsApp (<b>+66 94 669 2011</b>) or email (<b>erez@energy-tm.com</b>) so the PEA package can move in parallel with procurement.
       </div>
     </div>
   </div>
@@ -1112,24 +1197,24 @@ function selectOption(opt) {
 <!-- TIMELINE -->
 <section>
   <div class="container">
-    <div class="section-label">לוחות זמנים</div>
-    <h2 class="section-heading">מאישור ההצעה ועד חיבור לרשת</h2>
+    <div class="section-label">{{timeline_label}}</div>
+    <h2 class="section-heading">{{timeline_heading}}</h2>
     <div class="spec-table" style="margin-top: 24px;">
       <div class="spec-row">
-        <span class="spec-label">שבוע 1</span>
-        <span class="spec-value">חתימת חוזה · תשלום ראשון · הזמנת ציוד</span>
+        <span class="spec-label">{{week_1_label}}</span>
+        <span class="spec-value">Contract signing · first payment · equipment order</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">שבוע 2-3</span>
-        <span class="spec-value">הכנת מסמכי PEA · הגשה · הגעת ציוד</span>
+        <span class="spec-label">{{weeks_2_3_label}}</span>
+        <span class="spec-value">PEA documentation · submission · procurement</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">שבוע 4</span>
-        <span class="spec-value">התקנה פיזית (3 ימים) · בדיקות</span>
+        <span class="spec-label">{{week_4_label}}</span>
+        <span class="spec-value">Physical installation · testing</span>
       </div>
       <div class="spec-row">
-        <span class="spec-label">שבוע 5-6</span>
-        <span class="spec-value">אישור PEA · החלפת מונה · COD (commissioning)</span>
+        <span class="spec-label">{{weeks_5_6_label}}</span>
+        <span class="spec-value">PEA approval · meter coordination · commissioning</span>
       </div>
     </div>
   </div>
@@ -1139,8 +1224,8 @@ function selectOption(opt) {
 <section>
   <div class="container">
     <div class="cta">
-      <h2>מוכן להתחיל לחסוך?</h2>
-      <p>הזמן אותנו לביקור אתר בקופנגן — ללא עלות, ללא התחייבות.</p>
+      <h2>{{cta_heading}}</h2>
+      <p>{{cta_desc}}</p>
       <a class="cta-btn" href="https://wa.me/66946692011?text=%D7%94%D7%99%D7%99%20TM%20Energy%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%94%D7%94%D7%A6%D7%A2%D7%94%20{{ref}}%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%AA%D7%90%D7%9D%20%D7%91%D7%99%D7%A7%D7%95%D7%A8">
         WhatsApp · +66 94 669 2011 →
       </a>
@@ -1151,7 +1236,7 @@ function selectOption(opt) {
 <footer>
   <div class="container">
     <p><strong>TM Energy · Phangan</strong> · energy-tm.com · +66 94 669 2011</p>
-    <p style="margin-top: 8px; font-size: 12px;">הצעה זו תקפה 30 יום · REF {{ref}} · {{month_year_he}}</p>
+    <p style="margin-top: 8px; font-size: 12px;">{{footer_validity}} · REF {{ref}} · {{month_year}}</p>
   </div>
 </footer>
 

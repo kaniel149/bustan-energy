@@ -34,7 +34,7 @@ export const blogPosts: BlogPost[] = [
 
 <p>At the same time, Ko Phangan sits near the equator with excellent solar irradiance. The island averages around <strong>5.1 peak sun hours per day</strong>, which means a well-designed solar system produces substantial energy year-round. Add in frequent power outages — especially during storms and peak tourist season — and solar with battery storage becomes not just a savings tool, but an <strong>energy security solution</strong>.</p>
 
-<p>There is also the environmental angle. Ko Phangan is a UNESCO Biosphere Reserve candidate and home to a community that values sustainability. Solar panels produce zero emissions during operation and last 25–30 years with minimal maintenance.</p>
+<p>There is also the environmental angle. Ko Phangan is home to a community that values sustainability. Solar panels produce zero emissions during operation and can operate for 25–30 years with regular maintenance.</p>
 
 <h2>How Much Does Solar Cost?</h2>
 
@@ -66,7 +66,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>The PEA Permit Process</h2>
 
-<p>The Provincial Electricity Authority (PEA) regulates all grid-connected solar installations in Thailand. If you want to connect your solar system to the grid — which most people do, to benefit from net metering or self-consumption — you need PEA approval.</p>
+<p>The Provincial Electricity Authority (PEA) regulates grid-connected solar installations in most of Thailand. If you want to connect your solar system to the grid for self-consumption or approved export/net-billing, you need PEA approval.</p>
 
 <p>The process typically involves:</p>
 
@@ -74,7 +74,7 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Application submission</strong> — Your installer submits the system design, single-line diagram, and equipment specifications to the local PEA office in Thong Sala.</li>
   <li><strong>Technical review</strong> — PEA engineers review the application and may request modifications. This takes 2–4 weeks.</li>
   <li><strong>Installation approval</strong> — Once approved, you can proceed with the physical installation.</li>
-  <li><strong>Inspection and commissioning</strong> — After installation, PEA inspects the system and installs a bidirectional meter (for net metering) or approves self-consumption mode.</li>
+  <li><strong>Inspection and commissioning</strong> — After installation, PEA inspects the system and approves self-consumption mode or an export/net-billing arrangement where applicable.</li>
 </ol>
 
 <p>The entire process takes 4–8 weeks from application to commissioning. A good installer handles all the paperwork for you. At <a href="/services">TM Energy</a>, we manage the complete PEA process as part of every installation.</p>
@@ -104,12 +104,12 @@ export const blogPosts: BlogPost[] = [
 <ul>
   <li><strong>Local presence</strong> — An installer based on the island can respond quickly to maintenance issues and understands the unique challenges of island installations (salt air, humidity, shipping logistics).</li>
   <li><strong>Tier-1 equipment</strong> — Insist on panels and inverters from Bloomberg Tier-1 manufacturers. Cheap equipment saves money upfront but costs more in the long run through lower performance and shorter lifespan.</li>
-  <li><strong>PEA experience</strong> — The installer should have a proven track record of PEA approvals on Ko Phangan specifically. Each PEA office has its own requirements and quirks.</li>
-  <li><strong>Warranty and maintenance</strong> — Look for at least a 10-year workmanship warranty and a maintenance package that includes annual inspections and cleaning.</li>
+  <li><strong>PEA experience</strong> — The installer should understand PEA documentation and local branch requirements on Ko Phangan. Each PEA office can have its own review preferences.</li>
+  <li><strong>Warranty and maintenance</strong> — Ask for manufacturer warranty documents, workmanship coverage in writing, and a maintenance package that includes inspections and cleaning.</li>
   <li><strong>Transparent pricing</strong> — Avoid installers who quote suspiciously low prices. A quality installation with Tier-1 equipment has a real cost. Low bids often mean cheap panels, thin wiring, or corners cut on mounting.</li>
 </ul>
 
-<p>TM Energy has been installing solar systems on Ko Phangan since 2018. We use only LonGi and Huawei equipment, handle all PEA permits, and provide long-term monitoring and maintenance. Check out our <a href="/pricing">pricing page</a> for transparent costs, or <a href="/contact">contact us</a> for a free consultation.</p>
+<p>TM Energy designs and delivers solar systems for Ko Phangan properties, using bankable equipment selected for each project and supporting PEA documentation, monitoring, and maintenance. Check out our <a href="/pricing">pricing page</a> for transparent costs, or <a href="/contact">contact us</a> for a free consultation.</p>
 
 <h2>Ready to Go Solar?</h2>
 
@@ -150,7 +150,7 @@ export const blogPosts: BlogPost[] = [
   </tbody>
 </table>
 
-<p><strong>Note on island pricing:</strong> If your property is on an island like Ko Phangan or Ko Samui, expect to pay 10–20% more than mainland prices due to shipping and logistics. However, island electricity tariffs are also higher (6–10+ THB/kWh vs. 3.5–4.5 THB/kWh), so your payback period is actually shorter.</p>
+<p><strong>Note on island pricing:</strong> If your property is on an island like Ko Phangan or Ko Samui, shipping and logistics can increase installed cost versus mainland projects. Payback depends on your actual PEA bill, daytime self-consumption, roof layout, battery choice, and whether export/net-billing is approved.</p>
 
 <h2>What Affects the Cost?</h2>
 
@@ -171,8 +171,8 @@ export const blogPosts: BlogPost[] = [
 
 <ul>
   <li><strong>Mainland residential</strong> (3.5–4.5 THB/kWh): <strong>7–10 year</strong> payback</li>
-  <li><strong>Island residential</strong> (5–7 THB/kWh): <strong>5–7 year</strong> payback</li>
-  <li><strong>Commercial/resort on island</strong> (8–10+ THB/kWh): <strong>3–5 year</strong> payback</li>
+  <li><strong>Island residential</strong>: commonly <strong>6–10 year</strong> payback depending on battery choice and self-consumption</li>
+  <li><strong>Commercial/resort on island</strong>: commonly <strong>4–8 year</strong> payback where daytime load is strong</li>
 </ul>
 
 <p>After payback, you are generating essentially free electricity for the remaining 20+ years of the system's life. A well-maintained solar system with Tier-1 panels degrades at only 0.4–0.5% per year, meaning it still produces over 85% of original capacity after 25 years.</p>
@@ -289,7 +289,7 @@ export const blogPosts: BlogPost[] = [
 <p>This is the <strong>most popular choice on Ko Phangan</strong>. Your solar system is connected to both batteries and the PEA grid. During normal operation:</p>
 <ul>
   <li>Solar powers your home and charges batteries</li>
-  <li>Excess solar feeds to the grid (if net metering is enabled)</li>
+  <li>Excess solar is exported only where PEA has approved the export/net-billing arrangement</li>
   <li>At night, batteries power your home</li>
   <li>If batteries are depleted, the grid kicks in</li>
   <li><strong>During a power outage, batteries provide seamless backup</strong></li>
@@ -479,7 +479,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>Why You Need PEA Approval</h2>
 
-<p>The PEA is the government authority responsible for electricity distribution across most of Thailand (outside Bangkok, which is served by the Metropolitan Electricity Authority). Before connecting any solar system to the grid — even a small residential one — the PEA must review and approve the technical design. This protects the grid from unsafe or incompatible equipment, and it ensures your system can legally feed electricity back to the grid under net metering arrangements.</p>
+<p>The PEA is the government authority responsible for electricity distribution across most of Thailand (outside Bangkok, which is served by the Metropolitan Electricity Authority). Before connecting any solar system to the grid — even a small residential one — the PEA must review and approve the technical design. This protects the grid from unsafe or incompatible equipment, and it confirms whether your system is self-consumption only or approved for export/net-billing.</p>
 
 <p>Installing a solar system without PEA approval is not only illegal — it voids your home insurance and your equipment warranties. More practically, PEA can and will disconnect your service if they discover an unauthorized connection. Do not skip this step.</p>
 
@@ -531,7 +531,7 @@ export const blogPosts: BlogPost[] = [
   <li>The system passes the anti-islanding test (the inverter shuts down safely when the grid is disconnected)</li>
   <li>Metering is correctly configured</li>
 </ul>
-<p>If the inspection passes, PEA installs a bidirectional meter (for net metering) or approves your system for self-consumption mode, and your system is officially commissioned. The inspection appointment typically takes <strong>1–2 weeks</strong> to schedule after requesting.</p>
+<p>If the inspection passes, PEA approves your system for self-consumption mode or an export/net-billing arrangement where applicable, and your system is officially commissioned. The inspection appointment timeline varies by branch workload and documentation quality.</p>
 
 <h2>Total Timeline</h2>
 

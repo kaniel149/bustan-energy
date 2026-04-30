@@ -1,5 +1,4 @@
 import React from 'react';
-import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { SceneWrapper } from '../components/SceneWrapper';
 import { AnimatedText } from '../components/AnimatedText';
 import { GlassCard } from '../components/GlassCard';
@@ -8,9 +7,6 @@ import { ProgressBar } from '../components/ProgressBar';
 import { colors } from '../styles';
 
 export const DataRevealScene: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
   const stats = [
     { value: '245 m²', label: 'Roof Area', color: colors.gold, delay: 20 },
     { value: '18°', label: 'Optimal Angle', color: colors.greenLight, delay: 30 },

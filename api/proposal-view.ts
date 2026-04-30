@@ -11,10 +11,24 @@ import { sha256hex } from './_lib/crypto.js'
 import { escapeHtml } from './_lib/html.js'
 import { fmt } from './_lib/fmt.js'
 import { supaGet, supaPost, supaPatch } from './_lib/supa.js'
+import type { JsonValue } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
 const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
+
+interface ProposalViewRow {
+  ref_number: string
+  client_name?: string | null
+  client_phone?: string | null
+  location?: string | null
+  system_size_kwp?: number | string | null
+  total_price_thb?: number | string | null
+  password_hash: string
+  view_count?: number | null
+  first_viewed_at?: string | null
+  status?: string | null
+}
 
 async function sendEmail(to: string[], subject: string, html: string) {
   if (!RESEND_KEY) return null
@@ -34,7 +48,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
   }).then((r) => r.json()).catch((e) => ({ error: String(e) }))
 }
 
-function emailBody(p: any, viewCount: number, isFirst: boolean) {
+function emailBody(p: ProposalViewRow, viewCount: number, isFirst: boolean) {
   const when = new Date().toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' })
   const flag = isFirst ? '🎯 נצפה בפעם הראשונה!' : `👁️ נצפה שוב (פעם ${viewCount})`
   return `
@@ -64,7 +78,7 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ ok: false, error: 'missing' }, { status: 400 })
     }
 
-    const proposal = await supaGet(`proposals?ref_number=eq.${encodeURIComponent(ref)}&select=*`)
+    const proposal = await supaGet<ProposalViewRow>(`proposals?ref_number=eq.${encodeURIComponent(ref)}&select=*`)
     if (!proposal) {
       return Response.json({ ok: false, error: 'not_found' }, { status: 404 })
     }
@@ -100,7 +114,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     // Only update status/first_viewed_at — NOT view_count (trigger owns it)
     if (isFirst) {
-      const updates: Record<string, any> = { first_viewed_at: now }
+      const updates: Record<string, JsonValue> = { first_viewed_at: now }
       if (proposal.status === 'sent' || proposal.status === 'draft') {
         updates.status = 'viewed'
       }
@@ -124,7 +138,7 @@ export default async function handler(req: Request): Promise<Response> {
     sendEmail(NOTIFY, subject, emailBody(proposal, viewCount, isFirst)).catch(() => {})
 
     return Response.json({ ok: true, first_view: isFirst, view_count: viewCount })
-  } catch (e: any) {
-    return Response.json({ ok: false, error: String(e?.message || e) }, { status: 500 })
+  } catch (e: unknown) {
+    return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 })
   }
 }

@@ -3,5 +3,6 @@
 
 export type { Lang, Translations } from './translations'
 export { translations } from './translations'
-export { LanguageProvider, useLanguage } from './LanguageContext'
+export { LanguageProvider } from './LanguageContext'
+export { useLanguage } from './useLanguage'
 export { useTranslation } from './useTranslation'

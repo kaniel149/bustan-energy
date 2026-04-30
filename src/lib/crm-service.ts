@@ -1,5 +1,6 @@
 import { supabase, isCrmConnected } from './supabase'
 import type { Property } from '../types'
+import { CRM_STATUSES, STATUS_MAP } from '../types/crm'
 import type {
   CrmProject,
   CrmProjectInsert,
@@ -8,6 +9,20 @@ import type {
   ProjectChecklist,
   PipelineFilters,
 } from '../types/crm'
+
+const LEGACY_STATUS_MAP: Record<string, ProjectStatus> = {
+  evaluation: 'survey',
+  survey_approval: 'proposal',
+  ready_to_install: 'installation',
+  installed: 'installation',
+  signed: 'contract',
+}
+
+function normalizeProject(project: CrmProject): CrmProject {
+  const status = (LEGACY_STATUS_MAP[project.status] || project.status) as ProjectStatus
+  const statusInfo = STATUS_MAP[status] || STATUS_MAP.lead
+  return { ...project, status, step_number: statusInfo.step }
+}
 
 // ── Push building from scanner to CRM ──
 export async function pushToCrm(property: Property): Promise<CrmProject | null> {
@@ -56,7 +71,7 @@ export async function pushToCrm(property: Property): Promise<CrmProject | null> 
     })
   }
 
-  return data as CrmProject
+  return normalizeProject(data as CrmProject)
 }
 
 // ── Create lead manually ──
@@ -75,7 +90,7 @@ export async function createLead(data: CrmProjectInsert): Promise<CrmProject | n
     await logActivity(project.id, 'lead_created', { source: data.source || 'manual' })
   }
 
-  return project as CrmProject
+  return normalizeProject(project as CrmProject)
 }
 
 // ── Fetch all CRM projects ──
@@ -93,7 +108,7 @@ export async function getCrmProjects(): Promise<CrmProject[]> {
     return []
   }
 
-  return (data || []) as CrmProject[]
+  return ((data || []) as CrmProject[]).map(normalizeProject)
 }
 
 // ── Fetch single project ──
@@ -107,7 +122,7 @@ export async function getCrmProject(id: string): Promise<CrmProject | null> {
     .single()
 
   if (error) return null
-  return data as CrmProject
+  return normalizeProject(data as CrmProject)
 }
 
 // ── Update project status (move in pipeline) ──
@@ -117,6 +132,12 @@ export async function updateProjectStatus(
   stepNumber: number
 ): Promise<boolean> {
   if (!supabase) return false
+
+  const blockers = await getStatusGateBlockers(projectId, status)
+  if (blockers.length) {
+    console.warn('Status gate blocked:', blockers)
+    return false
+  }
 
   const { error } = await supabase
     .from('projects')
@@ -241,16 +262,17 @@ export async function logProposalSent(
     ...financialSummary,
   })
 
-  // Auto-advance to "proposal" step if still in lead/evaluation
-  if (project.step_number < 3) {
-    await updateProjectStatus(project.id, 'proposal', 3)
+  // Do not skip survey/design gates for lightweight exports. A full proposal can move
+  // the deal to Proposal only after the checklist gate allows it.
+  if (proposalType === 'full_proposal' && project.step_number < STATUS_MAP.proposal.step) {
+    await updateProjectStatus(project.id, 'proposal', STATUS_MAP.proposal.step)
 
     // Update deal value if we have financial data
     if (financialSummary?.dealValue || financialSummary?.capacityKwp) {
       await updateProject(project.id, {
         system_size_kwp: financialSummary.capacityKwp ?? project.system_size_kwp ?? undefined,
         deal_value: financialSummary.dealValue ?? project.deal_value ?? undefined,
-        deal_type: proposalType === 'ppa' ? 'ppa' : proposalType === 'epc' ? 'epc' : project.deal_type ?? undefined,
+        deal_type: project.deal_type ?? undefined,
       })
     }
 
@@ -271,7 +293,7 @@ export async function findByBuildingId(buildingId: string): Promise<CrmProject |
     .eq('building_id', buildingId)
     .limit(1)
 
-  return (data?.[0] as CrmProject) || null
+  return data?.[0] ? normalizeProject(data[0] as CrmProject) : null
 }
 
 // ── Checklist operations ──
@@ -317,6 +339,33 @@ export async function toggleChecklistItem(
     completed,
   })
   return true
+}
+
+export async function getStatusGateBlockers(
+  projectId: string,
+  targetStatus: ProjectStatus
+): Promise<string[]> {
+  if (!supabase) return []
+
+  const project = await getCrmProject(projectId)
+  if (!project) return ['Project not found']
+
+  const currentIdx = CRM_STATUSES.findIndex((s) => s.id === project.status)
+  const targetIdx = CRM_STATUSES.findIndex((s) => s.id === targetStatus)
+  if (targetIdx <= currentIdx) return []
+
+  const checklists = await getProjectChecklists(projectId)
+  const completed = new Set(
+    checklists.filter((c) => c.completed).map((c) => c.checklist_item_id)
+  )
+
+  return CRM_STATUSES
+    .slice(0, targetIdx)
+    .flatMap((stage) =>
+      stage.checklist
+        .filter((item) => item.required && !completed.has(item.id))
+        .map((item) => `${stage.label}: ${item.label}`)
+    )
 }
 
 // ── Filter projects client-side ──

@@ -19,7 +19,7 @@ const en = {
   },
 
   footer: {
-    tagline: "Ko Phangan's most trusted solar installer. Clean energy for every home and business in paradise.",
+    tagline: 'Solar EPC, PPA, PEA coordination, and O&M for Ko Phangan homes and businesses.',
     quickLinks: 'Quick Links',
     servicesTitle: 'Services',
     residential: 'Residential Solar',
@@ -37,19 +37,19 @@ const en = {
 
   home: {
     hero: {
-      badge: 'Trusted by 500+ Homes & Businesses on Ko Phangan',
+      badge: 'Solar EPC, PPA, PEA coordination, and O&M for Ko Phangan',
       title: 'Power Your',
       titleAccent: 'Paradise',
-      subtitle: 'Premium solar panel installation for homes, villas & resorts on Ko Phangan. Save 40% on electricity with Thailand\'s most trusted island solar company.',
+      subtitle: 'Solar design and installation for homes, villas, resorts, and businesses on Ko Phangan. We model your bill, survey the site, coordinate PEA paperwork, and support the system after handover.',
       ctaPrimary: 'Get Free Quote',
       ctaSecondary: 'WhatsApp Us',
-      trustLine: 'Licensed by PEA · LONGi Certified · Huawei Authorized · Full Warranty',
+      trustLine: 'PEA documentation support · Tier-1 equipment options · Monitoring · O&M',
     },
     stats: {
-      installations: { value: 500, suffix: '+', label: 'Installations' },
-      installed: { value: 15, suffix: ' MW', label: 'Installed' },
-      savings: { value: 40, suffix: '%', label: 'Average Savings' },
-      experience: { value: 8, suffix: '+', label: 'Years on Ko Phangan' },
+      installations: { value: 10, suffix: '', label: 'Sales Steps' },
+      installed: { value: 3, suffix: '', label: 'Deal Models' },
+      savings: { value: 25, suffix: ' yr', label: 'Model Horizon' },
+      experience: { value: 4, suffix: '', label: 'Core Tools' },
     },
     services: {
       sectionTag: 'WHAT WE DO',
@@ -92,7 +92,7 @@ const en = {
         },
         {
           title: 'Premium Equipment',
-          description: 'LONGi panels + Huawei inverters. Tier-1 brands with 25-year warranty.',
+          description: 'Tier-1 panels and bankable inverters selected for the site, warranty, and availability.',
         },
         {
           title: 'Blackout Protection',
@@ -141,7 +141,7 @@ const en = {
     cta: {
       sectionTag: 'GET STARTED TODAY',
       title: 'Ready to Power Your Paradise?',
-      subtitle: 'Join 500+ homes and businesses on Ko Phangan already saving with solar energy. Get your free site survey today.',
+      subtitle: 'Get a site-specific solar assessment for your Ko Phangan home or business.',
       ctaPrimary: 'Get Free Quote',
       ctaWhatsapp: 'WhatsApp Us',
       ctaCall: 'Call Now',
@@ -186,11 +186,11 @@ const en = {
       items: [
         {
           question: 'How much does solar installation cost on Ko Phangan?',
-          answer: 'Residential systems (3-15kW) typically cost ฿180,000-฿850,000 including all equipment, installation, permits, and PEA grid connection. Most homeowners see full payback within 3-4 years.',
+          answer: 'Residential systems (3-15kW) typically cost ฿180,000-฿850,000 depending on roof layout, inverter, battery, mounting, logistics, and PEA scope. Payback depends on your actual bill and self-consumption.',
         },
         {
           question: 'How much can I save with solar panels in Thailand?',
-          answer: 'Our clients on Ko Phangan save an average of 40% on electricity bills. With high sunshine hours (1,800+ per year) and rising electricity costs, solar is one of the best investments on the island.',
+          answer: 'Savings depend on daytime usage, PEA tariff, roof layout, battery choice, and export approval. We calculate savings from your bill instead of using a generic percentage.',
         },
         {
           question: 'Do solar panels work during Thailand\'s rainy season?',
@@ -202,7 +202,7 @@ const en = {
         },
         {
           question: 'Is solar worth it for a small villa on Ko Phangan?',
-          answer: 'Absolutely. Even a small 3-5kW system can slash your electricity bill by 40-60%. With Ko Phangan\'s high electricity rates and abundant sunshine, the ROI is excellent for properties of any size.',
+          answer: 'Often, yes. A small 3-5kW system can reduce daytime grid consumption, but ROI depends on your bill, roof, shading, and whether you need battery backup.',
         },
         {
           question: 'Do I need PEA approval for solar panels?',
@@ -214,7 +214,7 @@ const en = {
         },
         {
           question: 'What warranty do you offer?',
-          answer: 'All systems include: 25-year power output warranty on LONGi panels, 10-year product warranty on Huawei inverters, and 10-year workmanship warranty on our installation. We are fully licensed and insured.',
+          answer: 'Each proposal lists the selected equipment warranties and TM Energy workmanship coverage in writing. Warranty terms vary by panel, inverter, and battery model.',
         },
       ],
     },
@@ -238,10 +238,10 @@ const en = {
       description:
         'Complete rooftop solar for homes and villas. We design and install 3kW to 30kW systems tailored to your exact electricity consumption and roof layout.',
       benefits: [
-        'Reduce electricity bills by 40–70%',
+        'Reduce daytime grid consumption',
         'Increase property value significantly',
-        '25-year equipment warranty included',
-        'Net metering eligible through PEA',
+        'Manufacturer warranty documents included',
+        'PEA-compliant export/net-billing setup where approved',
       ],
       cta: 'Get a Free Home Assessment',
     },
@@ -393,7 +393,7 @@ const en = {
         {
           question: 'Do I need battery storage?',
           answer:
-            'For most properties, battery storage is optional. If you are connected to the PEA grid, net metering allows you to export excess energy and draw from the grid at night. Batteries are recommended for remote properties, frequent outages, or maximizing self-consumption.',
+            'For most properties, battery storage is optional. If you are connected to the PEA grid, export/net-billing may be available only where approved. Batteries are recommended for remote properties, frequent outages, or maximizing self-consumption.',
         },
         {
           question: 'What about maintenance?',
@@ -401,14 +401,14 @@ const en = {
             'Solar systems require minimal maintenance. We recommend cleaning panels every 3–6 months and an annual system inspection. We offer maintenance contracts that cover monitoring, cleaning, and any warranty repairs.',
         },
         {
-          question: 'Is net metering available in Thailand?',
+          question: 'Is export/net-billing available in Thailand?',
           answer:
-            "Thailand's VSPP scheme allows residential and commercial systems under 1MW to sell excess electricity back to PEA. The current buyback rate applies to energy exported to the grid.",
+            'Export rules and buyback rates depend on the current PEA/ERC program and project approval. We confirm the applicable arrangement before treating export income as part of the proposal.',
         },
         {
           question: 'What warranties are included?',
           answer:
-            'All systems include: 25-year power output warranty on LONGi solar panels, 10-year product warranty on Huawei inverters, 10-year workmanship warranty on our installation. We are fully insured and registered installers.',
+            'Each proposal lists the selected equipment warranties and TM Energy workmanship coverage in writing. Warranty terms vary by panel, inverter, and battery model.',
         },
       ],
     },
@@ -436,14 +436,14 @@ const en = {
       { name: 'Mae Haad Dive Center', location: 'Mae Haad', size: '12kW', savings: '55%', type: 'Residential' },
     ],
     stats: {
-      totalInstalled: { value: '15MW+', label: 'Total Installed Capacity' },
-      projectsCompleted: { value: '500+', label: 'Projects Completed' },
-      averageSavings: { value: '40%', label: 'Average Energy Savings' },
+      totalInstalled: { value: 'Site-specific', label: 'Engineering Review' },
+      projectsCompleted: { value: 'PEA-ready', label: 'Documentation' },
+      averageSavings: { value: 'Bill-based', label: 'Savings Model' },
     },
     cta: {
       title: 'Want results like these?',
       subtitle:
-        'Join 500+ property owners and businesses across Ko Phangan who are saving with solar.',
+        'Get a proposal based on your roof, bill, tariff, and PEA requirements.',
       button: 'Get Started Today',
     },
   },
@@ -451,13 +451,13 @@ const en = {
   about: {
     hero: {
       tag: 'About TM Energy',
-      title: 'Powering Paradise Since 2018',
+      title: 'Solar Built for Island Operations',
     },
     story: {
       title: 'Our Story',
       paragraphs: [
         'TM Energy was born from a simple observation: Ko Phangan receives over 1,800 hours of sunshine per year, yet most of the island still runs on expensive diesel-generated electricity shipped from the mainland. We set out to change that.',
-        "Founded by solar engineers and island residents, we combine deep technical expertise with local knowledge. We know every village, every grid connection point, and every PEA regulation. That's why we've become the island's most trusted solar installer.",
+        'We combine solar engineering, local site knowledge, PEA documentation support, procurement, installation, and O&M so island projects can move from bill analysis to operating system with fewer surprises.',
       ],
     },
     mission: 'To make Ko Phangan the most solar-powered island in Southeast Asia.',
@@ -550,7 +550,7 @@ const en = {
         tag: 'Regulations',
         title: "Understanding Thailand's Solar Regulations",
         excerpt:
-          'A comprehensive guide to VSPP licensing, PEA requirements, and net metering policies for solar installations in Thailand.',
+          'A practical guide to VSPP licensing, PEA requirements, and export/net-billing policies for solar installations in Thailand.',
         date: 'March 2026',
         readTime: '8 min read',
       },
@@ -694,9 +694,9 @@ const en = {
 
   seo: {
     home: {
-      title: "TM Energy — Ko Phangan's #1 Solar Installer | Solar Panels Thailand",
+      title: "TM Energy — Solar EPC & PPA on Ko Phangan | Solar Panels Thailand",
       description:
-        'Premium solar energy solutions for Ko Phangan and Surat Thani. Save 40% on electricity with TM Energy — residential, commercial, and solar farm installations.',
+        'Solar EPC, PPA, PEA coordination, and O&M for homes, villas, resorts, businesses, and land projects on Ko Phangan and Surat Thani.',
     },
     services: {
       title: 'Solar Services — Residential, Commercial & Solar Farms | TM Energy Ko Phangan',
@@ -716,12 +716,12 @@ const en = {
     projects: {
       title: 'Solar Installation Portfolio | TM Energy Ko Phangan Projects',
       description:
-        'View completed solar installations across Ko Phangan — from 12kW villa systems to 60kW resort installations. 500+ projects, 15MW+ installed capacity.',
+        'Review solar project types across Ko Phangan — villa systems, resorts, businesses, and land feasibility studies with EPC and PPA options.',
     },
     about: {
-      title: "About TM Energy — Ko Phangan's Solar Pioneer Since 2018",
+      title: "About TM Energy — Solar EPC and PPA for Ko Phangan",
       description:
-        'TM Energy was founded by solar engineers and island residents on Ko Phangan. 8+ years experience, 500+ installations, committed to clean energy in paradise.',
+        'TM Energy supports Ko Phangan solar projects with bill analysis, site surveys, EPC/PPA proposals, PEA documentation, procurement, installation, and O&M.',
     },
     blog: {
       title: 'Solar Energy Guides & Insights | TM Energy Blog',
@@ -770,19 +770,19 @@ const th = {
 
   home: {
     hero: {
-      badge: 'บ้านและธุรกิจกว่า 500 แห่งบนเกาะพะงันไว้วางใจเรา',
+      badge: 'บริการ EPC, PPA, เอกสาร กฟภ. และ O&M บนเกาะพะงัน',
       title: 'เปลี่ยนแสงอาทิตย์ให้เป็น',
       titleAccent: 'พลังงานของคุณ',
-      subtitle: 'ติดตั้งแผงโซลาร์เซลล์คุณภาพสูงสำหรับบ้าน วิลล่า และรีสอร์ทบนเกาะพะงัน ประหยัดค่าไฟ 40% กับบริษัทโซลาร์เซลล์ที่ไว้วางใจได้มากที่สุดบนเกาะ',
+      subtitle: 'ออกแบบและติดตั้งโซลาร์เซลล์สำหรับบ้าน วิลล่า รีสอร์ท และธุรกิจบนเกาะพะงัน พร้อมวิเคราะห์บิล สำรวจหน้างาน และช่วยประสานเอกสาร กฟภ.',
       ctaPrimary: 'ขอใบเสนอราคาฟรี',
       ctaSecondary: 'แชท WhatsApp',
-      trustLine: 'ได้รับอนุญาตจาก กฟภ. · รับรองโดย LONGi · ตัวแทน Huawei · รับประกันเต็มรูปแบบ',
+      trustLine: 'ช่วยเตรียมเอกสาร กฟภ. · อุปกรณ์ Tier-1 · Monitoring · O&M',
     },
     stats: {
-      installations: { value: 500, suffix: '+', label: 'โครงการที่ติดตั้งแล้ว' },
-      installed: { value: 15, suffix: ' MW', label: 'กำลังการผลิตรวม' },
-      savings: { value: 40, suffix: '%', label: 'ประหยัดค่าไฟเฉลี่ย' },
-      experience: { value: 8, suffix: '+', label: 'ปีบนเกาะพะงัน' },
+      installations: { value: 10, suffix: '', label: 'ขั้นตอนฝ่ายขาย' },
+      installed: { value: 3, suffix: '', label: 'รูปแบบดีล' },
+      savings: { value: 25, suffix: ' ปี', label: 'ช่วงโมเดล' },
+      experience: { value: 4, suffix: '', label: 'เครื่องมือหลัก' },
     },
     services: {
       sectionTag: 'บริการของเรา',
@@ -825,7 +825,7 @@ const th = {
         },
         {
           title: 'อุปกรณ์ระดับพรีเมียม',
-          description: 'แผงโซลาร์ LONGi + อินเวอร์เตอร์ Huawei แบรนด์ระดับ Tier-1 พร้อมการรับประกัน 25 ปี',
+          description: 'แผง Tier-1 และอินเวอร์เตอร์ที่เชื่อถือได้ เลือกตามไซต์งาน การรับประกัน และความพร้อมของสินค้า',
         },
         {
           title: 'ป้องกันไฟดับ',
@@ -919,11 +919,11 @@ const th = {
       items: [
         {
           question: 'ติดตั้งโซลาร์เซลล์บนเกาะพะงันราคาเท่าไหร่?',
-          answer: 'ระบบสำหรับบ้านพัก (3-15kW) ราคาประมาณ 180,000-850,000 บาท รวมอุปกรณ์ทั้งหมด การติดตั้ง ใบอนุญาต และการเชื่อมต่อกริด กฟภ. เจ้าของบ้านส่วนใหญ่คืนทุนภายใน 3-4 ปี',
+          answer: 'ระบบสำหรับบ้านพัก (3-15kW) ราคาประมาณ 180,000-850,000 บาท ขึ้นกับหลังคา อินเวอร์เตอร์ แบตเตอรี่ โครงยึด โลจิสติกส์ และขอบเขตงาน กฟภ. ระยะคืนทุนขึ้นกับบิลจริงและการใช้ไฟช่วงกลางวัน',
         },
         {
           question: 'ติดโซลาร์เซลล์แล้วประหยัดค่าไฟได้เท่าไหร่?',
-          answer: 'ลูกค้าของเราบนเกาะพะงันประหยัดค่าไฟเฉลี่ย 40% ด้วยชั่วโมงแดดที่สูง (1,800+ ชั่วโมงต่อปี) และค่าไฟที่เพิ่มขึ้น โซลาร์เซลล์เป็นการลงทุนที่คุ้มค่าที่สุดบนเกาะ',
+          answer: 'เงินประหยัดขึ้นกับการใช้ไฟกลางวัน อัตราค่าไฟ กฟภ. หลังคา แบตเตอรี่ และการอนุมัติส่งไฟกลับ เราคำนวณจากบิลจริงแทนการใช้เปอร์เซ็นต์ทั่วไป',
         },
         {
           question: 'โซลาร์เซลล์ทำงานได้ไหมในช่วงฤดูฝนของประเทศไทย?',
@@ -935,7 +935,7 @@ const th = {
         },
         {
           question: 'วิลล่าเล็กๆ บนเกาะพะงันคุ้มไหมที่จะติดโซลาร์?',
-          answer: 'แน่นอน แม้ระบบเล็ก 3-5kW ก็ลดค่าไฟได้ 40-60% ด้วยค่าไฟที่สูงของเกาะพะงันและแสงแดดที่อุดมสมบูรณ์ ROI จึงดีเยี่ยมสำหรับทรัพย์สินทุกขนาด',
+          answer: 'หลายกรณีคุ้มค่า ระบบ 3-5kW ช่วยลดการใช้ไฟจากกริดช่วงกลางวันได้ แต่ ROI ขึ้นกับบิล หลังคา เงาบัง และความต้องการแบตเตอรี่',
         },
         {
           question: 'ต้องขออนุญาต กฟภ. ไหมในการติดตั้งโซลาร์?',
@@ -947,7 +947,7 @@ const th = {
         },
         {
           question: 'มีการรับประกันอะไรบ้าง?',
-          answer: 'ทุกระบบรวม: รับประกันกำลังการผลิต 25 ปีสำหรับแผง LONGi, รับประกันผลิตภัณฑ์ 10 ปีสำหรับอินเวอร์เตอร์ Huawei, และรับประกันงานติดตั้ง 10 ปี เราได้รับใบอนุญาตและประกันภัยครบถ้วน',
+          answer: 'ใบเสนอราคาทุกฉบับระบุการรับประกันของอุปกรณ์ที่เลือกและการรับประกันงานติดตั้งของ TM Energy เป็นลายลักษณ์อักษร เงื่อนไขแตกต่างตามรุ่นแผง อินเวอร์เตอร์ และแบตเตอรี่',
         },
       ],
     },
@@ -1127,7 +1127,7 @@ const th = {
         {
           question: 'ต้องการระบบกักเก็บพลังงานไหม?',
           answer:
-            'สำหรับทรัพย์สินส่วนใหญ่ แบตเตอรี่เป็นตัวเลือกเสริม หากเชื่อมต่อกริด PEA ระบบ Net Metering ช่วยให้ส่งพลังงานส่วนเกินคืนกริดและดึงไฟจากกริดในเวลากลางคืน แนะนำแบตเตอรี่สำหรับพื้นที่ห่างไกลหรือที่มีไฟดับบ่อย',
+            'สำหรับทรัพย์สินส่วนใหญ่ แบตเตอรี่เป็นตัวเลือกเสริม หากเชื่อมต่อกริด PEA การส่งไฟส่วนเกินหรือ net-billing ต้องได้รับอนุมัติตามโครงการที่เกี่ยวข้อง แนะนำแบตเตอรี่สำหรับพื้นที่ห่างไกลหรือที่มีไฟดับบ่อย',
         },
         {
           question: 'เรื่องการบำรุงรักษาเป็นอย่างไร?',
@@ -1135,14 +1135,14 @@ const th = {
             'ระบบโซลาร์ต้องการการบำรุงรักษาน้อยมาก แนะนำทำความสะอาดแผงทุก 3–6 เดือน และตรวจสอบระบบปีละครั้ง เรามีสัญญาบำรุงรักษาครอบคลุมการมอนิเตอร์ ทำความสะอาด และการซ่อมแซมตามการรับประกัน',
         },
         {
-          question: 'ไทยมีระบบ Net Metering ไหม?',
+          question: 'ไทยมีระบบขายไฟส่วนเกินหรือ net-billing ไหม?',
           answer:
-            'มีครับ โครงการ VSPP ของไทยอนุญาตให้ระบบที่อยู่อาศัยและเชิงพาณิชย์ขนาดต่ำกว่า 1MW ขายไฟส่วนเกินคืนให้กับ PEA ในอัตราที่กำหนดปัจจุบัน',
+            'เงื่อนไขการขายไฟส่วนเกินและอัตรารับซื้อขึ้นกับโครงการ กฟภ./ERC และการอนุมัติของแต่ละระบบ เราจะยืนยันก่อนนำรายได้จากการส่งออกไฟเข้าโมเดล',
         },
         {
           question: 'มีการรับประกันอะไรบ้าง?',
           answer:
-            'ทุกระบบรวม: รับประกันกำลังผลิต 25 ปีสำหรับแผงโซลาร์ LONGi รับประกันผลิตภัณฑ์ 10 ปีสำหรับอินเวอร์เตอร์ Huawei รับประกันงานติดตั้ง 10 ปีจากเรา เราได้รับการประกันภัยครบถ้วนและเป็นผู้ติดตั้งที่ลงทะเบียนอย่างถูกต้อง',
+            'ใบเสนอราคาทุกฉบับระบุการรับประกันของอุปกรณ์ที่เลือกและการรับประกันงานติดตั้งของ TM Energy เป็นลายลักษณ์อักษร เงื่อนไขแตกต่างตามรุ่นแผง อินเวอร์เตอร์ และแบตเตอรี่',
         },
       ],
     },
@@ -1206,9 +1206,9 @@ const th = {
       },
     ],
     stats: {
-      totalInstalled: { value: '15MW+', label: 'กำลังการผลิตที่ติดตั้งทั้งหมด' },
-      projectsCompleted: { value: '500+', label: 'โครงการที่เสร็จสมบูรณ์' },
-      averageSavings: { value: '40%', label: 'ประหยัดพลังงานเฉลี่ย' },
+      totalInstalled: { value: 'Site-specific', label: 'รีวิววิศวกรรม' },
+      projectsCompleted: { value: 'PEA-ready', label: 'เอกสารพร้อมยื่น' },
+      averageSavings: { value: 'Bill-based', label: 'โมเดลจากบิลจริง' },
     },
     cta: {
       title: 'ต้องการผลลัพธ์แบบนี้หรือเปล่า?',
@@ -1221,7 +1221,7 @@ const th = {
   about: {
     hero: {
       tag: 'เกี่ยวกับ TM Energy',
-      title: 'ขับเคลื่อนสรวงสวรรค์ตั้งแต่ปี 2018',
+      title: 'โซลาร์ที่ออกแบบสำหรับงานบนเกาะ',
     },
     story: {
       title: 'เรื่องราวของเรา',
@@ -1320,7 +1320,7 @@ const th = {
         tag: 'กฎระเบียบ',
         title: 'ทำความเข้าใจกฎระเบียบโซลาร์เซลล์ในไทย',
         excerpt:
-          'คู่มือครบถ้วนเกี่ยวกับการขอใบอนุญาต VSPP ข้อกำหนดของ PEA และนโยบาย Net Metering สำหรับการติดตั้งโซลาร์ในประเทศไทย',
+          'คู่มือเกี่ยวกับการขอใบอนุญาต VSPP ข้อกำหนดของ PEA และนโยบาย export/net-billing สำหรับการติดตั้งโซลาร์ในประเทศไทย',
         date: 'มีนาคม 2026',
         readTime: 'อ่าน 8 นาที',
       },
@@ -1466,7 +1466,7 @@ const th = {
     home: {
       title: 'TM Energy — ติดตั้งโซลาร์เซลล์เกาะพะงัน อันดับ 1 | แผงโซลาร์ สุราษฎร์ธานี',
       description:
-        'ติดตั้งโซลาร์เซลล์คุณภาพสูงบนเกาะพะงัน สุราษฎร์ธานี ประหยัดค่าไฟ 40% กับ TM Energy บริการครบวงจร ที่อยู่อาศัย เชิงพาณิชย์ และฟาร์มโซลาร์ ขอใบเสนอราคาฟรี',
+        'บริการโซลาร์ EPC, PPA, เอกสาร กฟภ. และ O&M สำหรับบ้าน วิลล่า รีสอร์ท ธุรกิจ และโครงการที่ดินบนเกาะพะงันและสุราษฎร์ธานี',
     },
     services: {
       title:
@@ -1488,12 +1488,12 @@ const th = {
       title:
         'ผลงานติดตั้งโซลาร์เซลล์ | โครงการ TM Energy เกาะพะงัน สุราษฎร์ธานี',
       description:
-        'ดูผลงานการติดตั้งโซลาร์เซลล์ทั่วเกาะพะงัน ตั้งแต่ระบบวิลล่า 12kW ถึงรีสอร์ท 60kW กว่า 500 โครงการ กำลังการผลิตรวมกว่า 15MW แผงโซลาร์เซลล์ที่ไว้วางใจได้',
+        'ดูประเภทโครงการโซลาร์บนเกาะพะงัน ทั้งวิลล่า รีสอร์ท ธุรกิจ และการศึกษาความเป็นไปได้ของที่ดิน พร้อมตัวเลือก EPC และ PPA',
     },
     about: {
-      title: 'เกี่ยวกับ TM Energy — ผู้บุกเบิกโซลาร์เกาะพะงันตั้งแต่ปี 2018',
+      title: 'เกี่ยวกับ TM Energy — Solar EPC และ PPA สำหรับเกาะพะงัน',
       description:
-        'TM Energy ก่อตั้งโดยวิศวกรโซลาร์และชาวเกาะพะงัน ประสบการณ์กว่า 8 ปี ติดตั้งกว่า 500 ระบบ มุ่งมั่นสร้างพลังงานสะอาดให้เกาะพะงัน สุราษฎร์ธานี',
+        'TM Energy ช่วยโครงการโซลาร์บนเกาะพะงันตั้งแต่วิเคราะห์บิล สำรวจหน้างาน ใบเสนอราคา EPC/PPA เอกสาร กฟภ. จัดซื้อ ติดตั้ง และ O&M',
     },
     blog: {
       title: 'บทความโซลาร์เซลล์ คู่มือพลังงานแสงอาทิตย์ในไทย | TM Energy',

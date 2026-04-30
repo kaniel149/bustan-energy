@@ -11,7 +11,7 @@ import {
   TrendingDown,
   Shield,
 } from 'lucide-react'
-import { useLanguage } from '../../i18n/LanguageContext'
+import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
 
@@ -65,7 +65,7 @@ const benefits = [
   {
     icon: Shield,
     title: '25-Year Equipment Warranty',
-    text: 'Every installation comes with a comprehensive manufacturer warranty on panels and inverters. Our LONGi panels are guaranteed to produce at least 84.8% of rated output after 25 years.',
+    text: 'Every installation includes manufacturer warranty documentation for the selected panels, inverter, and battery, plus TM Energy workmanship coverage for the installation.',
   },
   {
     icon: Sun,
@@ -75,12 +75,12 @@ const benefits = [
 ]
 
 const included = [
-  'LONGi Hi-MO 6 monocrystalline panels (440W, Tier-1)',
-  'Huawei SUN2000 string inverter with built-in monitoring',
+  'Tier-1 monocrystalline panels selected per project availability and warranty',
+  'Huawei, Sungrow, or equivalent string inverter with monitoring',
   'Professional roof mounting hardware rated for tropical storms',
   'Full DC and AC wiring with surge protection',
   'PEA (Provincial Electricity Authority) application and grid connection',
-  'Net metering setup so you earn credit for excess power',
+  'PEA-compliant self-consumption and net-billing/export setup where approved',
   'Real-time monitoring via Huawei FusionSolar app',
   'Post-installation system commissioning and handover',
 ]
@@ -123,7 +123,7 @@ export default function ResidentialSolarPage() {
     <>
       <SEOHead
         title="Residential Solar Installation Ko Phangan | Home Solar Panels"
-        description="Install solar panels on your Ko Phangan home. 3kW to 10kW rooftop systems with battery backup. Reduce electricity bills with LONGi panels and Huawei inverters. Free site assessment."
+        description="Install solar panels on your Ko Phangan home. 3kW to 10kW rooftop systems with optional battery backup, PEA coordination, and equipment selected for your site. Free site assessment."
         path="/services/residential"
         lang={lang}
         schema={[

@@ -17,9 +17,9 @@ const OM_COST_PCT = 0.01                   // 1% of EPC/year
 const CO2_KG_PER_KWH = 0.477              // EGAT 2023 official grid mix
 const PANEL_WATT = 550
 
-// ── THAILAND PEA NET METERING / TARIFF MODEL ─────────────────────────────────
-// PEA exports at ~70% of retail rate (Feed-in-Tariff SPP/VSPP).
-// Source: PEA tariff schedule B.E. 2566, effective rate notice 2023.
+// ── THAILAND PEA EXPORT / TARIFF MODEL ───────────────────────────────────────
+// Export value is a planning assumption and must be verified against the current
+// PEA/ERC program and project approval before client or investor use.
 export interface TariffModel {
   retailRate: number          // THB/kWh (e.g. 4.4)
   exportRate: number          // THB/kWh (e.g. 3.1 = ~70% of retail)
@@ -113,7 +113,7 @@ export function calculateFinancials(params: {
   capacityKwp: number
   annualGHI: number          // kWh/m²/day from NASA POWER
   tariffRate?: number        // THB/kWh — legacy param, prefer tariffModel
-  tariffModel?: TariffModel  // Full net-metering model (preferred)
+  tariffModel?: TariffModel  // Full self-consumption/export model (preferred)
   epcCostPerKwp?: number
   discountRate?: number
   degradationRate?: number
@@ -150,7 +150,7 @@ export function calculateFinancials(params: {
   const effectivePR = performanceRatio * soilingFactor
   // Year-1 degradation factor = 0.98 (2% LID)
   const annualKwhYear1 = capacityKwp * annualGHI * 365 * effectivePR * degradationFactor(1, degradationRate)
-  // annualSavingsYear1 uses the blended effective rate (net-metering model)
+  // annualSavingsYear1 uses the blended effective rate (self-consumption + export)
   const annualSavingsYear1 = annualKwhYear1 * blendedRate
 
   // Monthly production based on NASA GHI distributed by monthly factors

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { MessageCircle, Mail, MapPin, Phone } from 'lucide-react'
-import { useLanguage } from '../../i18n/LanguageContext'
+import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
 
 export function Footer() {

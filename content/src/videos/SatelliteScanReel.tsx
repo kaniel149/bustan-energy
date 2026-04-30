@@ -1,5 +1,5 @@
 import React from 'react';
-import { Series, staticFile, Audio } from 'remotion';
+import { Series } from 'remotion';
 import { SatelliteScanScene } from '../scenes/SatelliteScanScene';
 import { DataRevealScene } from '../scenes/DataRevealScene';
 import { SavingsScene } from '../scenes/SavingsScene';

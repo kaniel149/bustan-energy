@@ -12,7 +12,7 @@ import {
   Cable,
   Sun,
 } from 'lucide-react'
-import { useLanguage } from '../../i18n/LanguageContext'
+import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
 
@@ -78,7 +78,7 @@ const systemTypes = [
     subtitle: 'Most popular',
     description: 'Stay connected to the PEA grid while having battery storage for outages. Solar charges your battery during the day, and the grid fills any gaps. During blackouts, the battery seamlessly takes over your essential loads.',
     benefits: [
-      'Net metering — sell excess power back to the grid',
+      'PEA-approved export/net-billing where available',
       'Battery backup during outages',
       'Lower cost than fully off-grid',
       'Best of both worlds — grid stability plus independence',
@@ -109,9 +109,9 @@ const systemTypes = [
 ]
 
 const included = [
-  'LONGi Hi-MO 6 solar panels (440W, Tier-1)',
-  'Huawei SUN2000 hybrid inverter (grid and off-grid capable)',
-  'Huawei LUNA2000 modular lithium battery storage',
+  'Tier-1 solar panels selected for the site and warranty',
+  'Bankable hybrid inverter sized for grid and backup loads',
+  'Modular lithium battery storage sized for your outage target',
   'Automatic transfer switch for seamless grid/battery switching',
   'Surge protection and battery management system',
   'Full system wiring and weatherproof enclosures',

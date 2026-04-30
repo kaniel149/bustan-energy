@@ -91,14 +91,22 @@ BEGIN
   UPDATE public.projects
   SET
     status = CASE NEW.status
-      WHEN 'draft'     THEN COALESCE(status, 'signed')
+      WHEN 'draft'     THEN COALESCE(status, 'contract')
       WHEN 'sent'      THEN 'procurement'
       WHEN 'quoted'    THEN 'procurement'
       WHEN 'ordered'   THEN 'procurement'
-      WHEN 'received'  THEN 'ready_to_install'
-      WHEN 'installed' THEN 'installed'
+      WHEN 'received'  THEN 'installation'
+      WHEN 'installed' THEN 'installation'
       WHEN 'cancelled' THEN status  -- don't downgrade
       ELSE status
+    END,
+    step_number = CASE NEW.status
+      WHEN 'sent'      THEN 7
+      WHEN 'quoted'    THEN 7
+      WHEN 'ordered'   THEN 7
+      WHEN 'received'  THEN 9
+      WHEN 'installed' THEN 9
+      ELSE step_number
     END,
     updated_at = now()
   WHERE id = NEW.lead_id;

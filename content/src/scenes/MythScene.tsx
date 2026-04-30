@@ -1,7 +1,6 @@
 import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { SceneWrapper } from '../components/SceneWrapper';
-import { AnimatedText } from '../components/AnimatedText';
 import { BrandFooter } from '../components/BrandFooter';
 import { colors, fonts } from '../styles';
 

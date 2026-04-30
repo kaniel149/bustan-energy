@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Client Preparation Checklist / רשימת הכנת לקוח — {{ref}}</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page {
+  size: A4 portrait;
+  margin: 18mm 15mm 20mm 15mm;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy:       #0D2137;
+  --navy-mid:   #132D4A;
+  --gold:       #E8A820;
+  --gold-bg:    rgba(232,168,32,0.07);
+  --green:      #1A7A5A;
+  --green-bg:   rgba(26,122,90,0.07);
+  --red:        #C0392B;
+  --white:      #FFFFFF;
+  --bg:         #F7F8FA;
+  --text:       #1A2332;
+  --text-sec:   #4A5568;
+  --border:     #D8DDE6;
+  --sans:       'Inter', system-ui, sans-serif;
+  --hebrew:     'Heebo', 'Arial Hebrew', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--white);
+  color: var(--text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  font-size: 9pt;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  .page-break { page-break-before: always; break-before: page; }
+  body { font-size: 8.5pt; }
+}
+
+/* ─── DOC HEADER ─── */
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--navy);
+  margin-bottom: 20px;
+}
+.doc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.doc-header-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+.doc-header-brand {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 9pt;
+  letter-spacing: 2px;
+  color: var(--navy);
+  text-transform: uppercase;
+  display: block;
+}
+.doc-header-sub {
+  font-size: 7pt;
+  color: var(--text-sec);
+  letter-spacing: 0.5px;
+}
+.doc-header-right {
+  text-align: right;
+}
+.doc-header-ref {
+  font-size: 7pt;
+  color: var(--text-sec);
+  line-height: 1.7;
+}
+
+/* ─── TITLE BLOCK ─── */
+.title-block {
+  background: linear-gradient(135deg, var(--navy) 0%, #0a1a2c 100%);
+  color: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+}
+.title-block-badge {
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+.title-en {
+  font-size: 14pt;
+  font-weight: 800;
+  color: white;
+  line-height: 1.2;
+}
+.title-he {
+  font-family: var(--hebrew);
+  font-size: 13pt;
+  font-weight: 900;
+  color: var(--gold);
+  direction: rtl;
+  text-align: right;
+  line-height: 1.2;
+}
+.title-sub-en {
+  font-size: 8pt;
+  color: rgba(255,255,255,0.65);
+  margin-top: 4px;
+}
+.title-sub-he {
+  font-family: var(--hebrew);
+  font-size: 8pt;
+  color: rgba(255,255,255,0.65);
+  direction: rtl;
+  text-align: right;
+  margin-top: 4px;
+}
+.title-meta {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  margin-top: 10px;
+}
+.title-meta-item {
+  text-align: center;
+}
+.title-meta-label {
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  display: block;
+}
+.title-meta-value {
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: white;
+}
+
+/* ─── SECTION HEADING ─── */
+.section-heading {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: var(--navy);
+  border-radius: 8px 8px 0 0;
+  padding: 9px 14px;
+  margin-top: 16px;
+  align-items: center;
+}
+.section-heading-en {
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.3px;
+  direction: ltr;
+}
+.section-heading-badge {
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: block;
+}
+.section-heading-he {
+  font-family: var(--hebrew);
+  font-size: 8.5pt;
+  font-weight: 800;
+  color: var(--gold);
+  direction: rtl;
+  text-align: right;
+}
+
+/* ─── CHECKLIST TABLE ─── */
+.checklist-table {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+  margin-bottom: 4px;
+  border-collapse: collapse;
+}
+.checklist-table tr:last-child td { border-bottom: none; }
+
+.check-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  align-items: stretch;
+}
+.check-row:last-child { border-bottom: none; }
+.check-row:nth-child(even) { background: var(--bg); }
+
+.check-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.check-box-inner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-radius: 3px;
+  background: white;
+  flex-shrink: 0;
+}
+.check-text-en {
+  padding: 8px 10px;
+  font-size: 8pt;
+  color: var(--text);
+  direction: ltr;
+  text-align: left;
+  border-right: 1px solid var(--border);
+  line-height: 1.5;
+  vertical-align: top;
+  display: flex;
+  align-items: center;
+}
+.check-text-he {
+  padding: 8px 10px;
+  font-family: var(--hebrew);
+  font-size: 8pt;
+  color: var(--text);
+  direction: rtl;
+  text-align: right;
+  line-height: 1.5;
+  vertical-align: top;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.check-text-en strong, .check-text-he strong {
+  color: var(--navy);
+  font-weight: 700;
+}
+.check-note {
+  font-size: 7pt;
+  color: var(--text-sec);
+  display: block;
+  margin-top: 2px;
+  font-style: italic;
+}
+.check-note-he {
+  font-size: 7pt;
+  color: var(--text-sec);
+  display: block;
+  margin-top: 2px;
+  font-style: italic;
+  direction: rtl;
+}
+
+/* ─── REQUIRED BADGE ─── */
+.req-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  background: rgba(192,57,43,0.1);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 3px;
+  font-size: 6pt;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.opt-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  background: var(--gold-bg);
+  border: 1px solid rgba(232,168,32,0.25);
+  border-radius: 3px;
+  font-size: 6pt;
+  font-weight: 700;
+  color: #9A6E00;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* ─── INFO BOX ─── */
+.info-box {
+  background: var(--green-bg);
+  border: 1px solid rgba(26,122,90,0.2);
+  border-left: 3px solid var(--green);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 14px 0 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.info-box-en {
+  font-size: 7.5pt;
+  color: var(--green);
+  direction: ltr;
+}
+.info-box-he {
+  font-family: var(--hebrew);
+  font-size: 7.5pt;
+  color: var(--green);
+  direction: rtl;
+  text-align: right;
+}
+.info-box-en strong, .info-box-he strong {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* ─── COL HEADER ROW ─── */
+.col-header-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 1fr;
+  gap: 0;
+  background: rgba(13,33,55,0.04);
+  border: 1px solid var(--border);
+  border-top: none;
+}
+.col-header-en {
+  padding: 5px 10px;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  border-right: 1px solid var(--border);
+  direction: ltr;
+  text-align: left;
+}
+.col-header-he {
+  padding: 5px 10px;
+  font-family: var(--hebrew);
+  font-size: 7pt;
+  font-weight: 700;
+  color: var(--text-sec);
+  direction: rtl;
+  text-align: right;
+}
+
+/* ─── SECTION WRAPPER ─── */
+.checklist-section {
+  margin-bottom: 14px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ─── FOOTER ─── */
+.doc-footer {
+  margin-top: 24px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 7pt;
+  color: #A0AEC0;
+  font-family: var(--sans);
+}
+
+/* ─── ANNEX BADGE ─── */
+.annex-badge-block {
+  text-align: center;
+  margin-bottom: 14px;
+}
+.annex-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  background: var(--gold-bg);
+  border: 1px solid rgba(232,168,32,0.3);
+  border-radius: 20px;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #9A6E00;
+  text-transform: uppercase;
+}
+
+/* ─── SIGNATURE BLOCK ─── */
+.sig-acknowledgment {
+  margin-top: 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.sig-ack-header {
+  background: var(--navy);
+  padding: 10px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.sig-ack-title-en {
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: white;
+  direction: ltr;
+}
+.sig-ack-title-he {
+  font-family: var(--hebrew);
+  font-size: 8.5pt;
+  font-weight: 800;
+  color: var(--gold);
+  direction: rtl;
+  text-align: right;
+}
+.sig-ack-body {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.sig-ack-text-en {
+  font-size: 7.5pt;
+  color: var(--text-sec);
+  direction: ltr;
+  line-height: 1.6;
+}
+.sig-ack-text-he {
+  font-family: var(--hebrew);
+  font-size: 7.5pt;
+  color: var(--text-sec);
+  direction: rtl;
+  text-align: right;
+  line-height: 1.6;
+}
+.sig-fields-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 8px;
+}
+.sig-field-mini label {
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  display: block;
+  margin-bottom: 4px;
+}
+.sig-line {
+  border-bottom: 1.5px solid var(--border);
+  height: 28px;
+  display: block;
+}
+.sig-box-mini {
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  height: 60px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7pt;
+  color: #CBD5E0;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<!-- ─── DOC HEADER ─── -->
+<div class="doc-header">
+  <div class="doc-header-left">
+    <img src="./tm-energy-logo.png" alt="TM Energy" class="doc-header-logo">
+    <div>
+      <span class="doc-header-brand">TM Energy Co., Ltd.</span>
+      <span class="doc-header-sub">Ko Phangan, Surat Thani, Thailand &nbsp;|&nbsp; energy-tm.com</span>
+    </div>
+  </div>
+  <div class="doc-header-right">
+    <div class="doc-header-ref">
+      Ref: {{ref}}<br>
+      Date: {{date}}<br>
+      Annex A to Installation Agreement
+    </div>
+  </div>
+</div>
+
+<!-- ─── ANNEX BADGE ─── -->
+<div class="annex-badge-block">
+  <span class="annex-badge">Annex A — Annex to Agreement Ref. {{ref}}</span>
+</div>
+
+<!-- ─── TITLE BLOCK ─── -->
+<div class="title-block">
+  <div>
+    <span class="title-block-badge">Client Preparation Checklist</span>
+    <div class="title-en">Solar Installation<br>Preparation Checklist</div>
+    <div class="title-sub-en">Everything you need to prepare before, during, and after installation</div>
+  </div>
+  <div>
+    <div class="title-he">רשימת הכנה<br>להתקנת מערכת סולארית</div>
+    <div class="title-sub-he">כל מה שצריך להכין לפני, במהלך ואחרי ההתקנה</div>
+  </div>
+  <div class="title-meta">
+    <div class="title-meta-item">
+      <span class="title-meta-label">Client</span>
+      <span class="title-meta-value">{{client_name}}</span>
+    </div>
+    <div class="title-meta-item">
+      <span class="title-meta-label">System</span>
+      <span class="title-meta-value">{{panel_count}} Panels + {{battery_kwh}} kWh Battery</span>
+    </div>
+    <div class="title-meta-item">
+      <span class="title-meta-label">PEA Branch</span>
+      <span class="title-meta-value">{{pea_branch}}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- PHASE 1: BEFORE SIGNING                                  -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="checklist-section">
+  <div class="section-heading">
+    <div>
+      <span class="section-heading-badge">Phase 1</span>
+      <span class="section-heading-en">Before Signing the Agreement</span>
+    </div>
+    <span class="section-heading-he">לפני חתימה על ההסכם</span>
+  </div>
+  <div class="col-header-row">
+    <div></div>
+    <div class="col-header-en">English</div>
+    <div class="col-header-he">עברית</div>
+  </div>
+  <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:hidden;">
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Valid ID document</strong> <span class="req-badge">Required</span><br>
+          Thai National ID (13-digit) for Thai nationals, or valid Passport for foreign residents. Must not be expired.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>תעודת זהות / דרכון בתוקף</strong> <span class="req-badge">חובה</span><br>
+          תעודת זהות תאילנדית (13 ספרות) לאזרחים תאילנדים, או דרכון בתוקף לתושבים זרים. אין לאפשר פקיעה.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Proof of property ownership</strong> <span class="req-badge">Required</span><br>
+          Chanote, Nor Sor 3 Gor, or Nor Sor 3 (Thai land deed). If leased: lease agreement (30+ years) + property owner's written consent letter.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>הוכחת בעלות על הנכס</strong> <span class="req-badge">חובה</span><br>
+          חנות, נור סור 3 גור, או נור סור 3 (שטר קרקע תאילנדי). בשכירות: הסכם שכירות (30+ שנה) + מכתב הסכמה בכתב מבעל הנכס.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Latest electricity bill (PEA)</strong> <span class="req-badge">Required</span><br>
+          Last 1–3 months recommended. Must show PEA account number and account holder name.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>חשבון חשמל עדכני (PEA)</strong> <span class="req-badge">חובה</span><br>
+          1-3 חודשים אחרונים מומלץ. חייב לכלול מספר חשבון PEA ושם בעל החשבון.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>PEA account number + customer name</strong> <span class="req-badge">Required</span><br>
+          Exactly as it appears on your electricity bill. Required for PEA application.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>מספר חשבון PEA + שם הלקוח</strong> <span class="req-badge">חובה</span><br>
+          בדיוק כפי שמופיע בחשבון החשמל. נדרש לבקשת PEA.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Tax invoice address</strong> <span class="opt-badge">If company</span><br>
+          If purchasing as a registered company, provide company name, tax ID, and registered address for official invoices.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>כתובת לחשבונית מס</strong> <span class="opt-badge">אם חברה</span><br>
+          ברכישה כחברה רשומה, יש לספק שם חברה, מספר זיהוי מס, וכתובת רשומה לחשבוניות רשמיות.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- PHASE 2: BEFORE INSTALLATION DAY                         -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="checklist-section">
+  <div class="section-heading">
+    <div>
+      <span class="section-heading-badge">Phase 2</span>
+      <span class="section-heading-en">Before Installation Day</span>
+    </div>
+    <span class="section-heading-he">לפני יום ההתקנה</span>
+  </div>
+  <div class="col-header-row">
+    <div></div>
+    <div class="col-header-en">English</div>
+    <div class="col-header-he">עברית</div>
+  </div>
+  <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:hidden;">
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Clear the installation zone</strong> <span class="req-badge">Required</span><br>
+          Roof area, 2m around inverter location, and 2m around battery location must be clear before the team arrives.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>פינוי אזור ההתקנה</strong> <span class="req-badge">חובה</span><br>
+          אזור הגג, 2 מטר סביב מיקום האינוורטר ו-2 מטר סביב מיקום הסוללה חייבים להיות פנויים לפני הגעת הצוות.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Trim trees blocking panels</strong> <span class="req-badge">Required</span><br>
+          Maintain at least 3m clearance between any tree canopy and the panel installation area to minimize shading losses.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>קיצוץ עצים החוסמים פאנלים</strong> <span class="req-badge">חובה</span><br>
+          יש לשמור על מרחק מינימלי של 3 מטר בין כל צמרת עץ לאזור התקנת הפאנלים להפחתת הפסדי הצללה.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Confirm roof structural integrity</strong> <span class="req-badge">Required</span><br>
+          Roof must bear approximately 25 kg/m² (panels + mounting) plus wind loads. Client signs structural declaration.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>אישור יציבות מבנה הגג</strong> <span class="req-badge">חובה</span><br>
+          הגג חייב לשאת כ-25 ק"ג/מ"ר (פאנלים + עגינה) בתוספת עומסי רוח. הלקוח חותם על הצהרת מבנה.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Working water tap on site</strong> <span class="req-badge">Required</span><br>
+          For panel cleaning, dust removal during installation, and general cleanup.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>ברז מים פעיל באתר</strong> <span class="req-badge">חובה</span><br>
+          לניקוי פאנלים, הסרת אבק בזמן ההתקנה וניקיון כללי.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Working electricity on site</strong> <span class="req-badge">Required</span><br>
+          For power tools, drills, testing equipment. The existing grid connection must be active.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>חשמל פעיל באתר</strong> <span class="req-badge">חובה</span><br>
+          לכלי עבודה חשמליים, מקדחות, ציוד בדיקה. חיבור הרשת הקיים חייב להיות פעיל.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Parking space for TM Energy truck</strong> <span class="req-badge">Required</span><br>
+          A vehicle with materials (panels + racking) needs access within 20m of the building.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>חנייה לרכב TM Energy</strong> <span class="req-badge">חובה</span><br>
+          רכב הסוחב ציוד (פאנלים + עגינה) צריך גישה בתוך 20 מטר מהמבנה.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Contact person available on site</strong> <span class="req-badge">Required</span><br>
+          One responsible person (client or authorized representative) must be reachable by phone and present on-site for key decisions.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>איש קשר זמין באתר</strong> <span class="req-badge">חובה</span><br>
+          אדם אחד (הלקוח או נציג מורשה) חייב להיות זמין בטלפון ונוכח פיזית באתר להחלטות מרכזיות.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Children and pets secured during work hours</strong> <span class="req-badge">Safety</span><br>
+          Installation involves roof work, electrical work, and heavy equipment. Keep the work zone clear.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>ילדים ובעלי חיים מחוץ לאזור העבודה</strong> <span class="req-badge">בטיחות</span><br>
+          ההתקנה כוללת עבודות גג, עבודות חשמל וציוד כבד. יש לשמור על אזור העבודה נקי.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- PHASE 3: INSTALLATION DAY                                -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="checklist-section">
+  <div class="section-heading">
+    <div>
+      <span class="section-heading-badge">Phase 3</span>
+      <span class="section-heading-en">Installation Day(s)</span>
+    </div>
+    <span class="section-heading-he">ביום / ימי ההתקנה</span>
+  </div>
+  <div class="col-header-row">
+    <div></div>
+    <div class="col-header-en">English</div>
+    <div class="col-header-he">עברית</div>
+  </div>
+  <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:hidden;">
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Physical access to roof</strong> <span class="req-badge">Required</span><br>
+          Via interior stairs, fixed ladder, or scaffolding. Drones cannot carry workers. Confirm access point before arrival.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>גישה פיזית לגג</strong> <span class="req-badge">חובה</span><br>
+          דרך מדרגות פנימיות, סולם קבוע, או פיגומים. רחפנים אינם יכולים לשאת עובדים. יש לאשר נקודת גישה לפני ההגעה.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Access to main electrical panel (DB board)</strong> <span class="req-badge">Required</span><br>
+          The team needs to connect the inverter to the distribution board. Ensure the DB area is accessible and not locked.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>גישה ללוח חשמל ראשי (DB)</strong> <span class="req-badge">חובה</span><br>
+          הצוות צריך לחבר את האינוורטר ללוח החלוקה. יש לוודא שאזור הלוח נגיש ולא נעול.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Access to inverter and battery location</strong> <span class="req-badge">Required</span><br>
+          Typically a garage, covered veranda, or utility room. Must be indoors or sheltered from direct rain.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>גישה למיקום האינוורטר והסוללה</strong> <span class="req-badge">חובה</span><br>
+          בדרך כלל מוסך, מרפסת מכוסה, או חדר שירות. חייב להיות בפנים או מוגן מגשם ישיר.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Sanitation and water for installers</strong> <span class="opt-badge">Recommended</span><br>
+          Team works daylight hours (approx. 7:00–17:00). Bathroom access and drinking water appreciated.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>שירותים ומים למתקינים</strong> <span class="opt-badge">מומלץ</span><br>
+          הצוות עובד בשעות אור (כ-7:00-17:00). גישה לשירותים ומים לשתייה מוערכת.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Availability for 2–3 full working days</strong> <span class="req-badge">Required</span><br>
+          Installation typically takes 2–3 days. Client or representative must be reachable throughout.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>זמינות ל-2-3 ימי עבודה מלאים</strong> <span class="req-badge">חובה</span><br>
+          ההתקנה לוקחת בדרך כלל 2-3 ימים. הלקוח או נציג חייב להיות זמין לאורך כל התקופה.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- PHASE 4: AFTER INSTALLATION                              -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="checklist-section">
+  <div class="section-heading">
+    <div>
+      <span class="section-heading-badge">Phase 4</span>
+      <span class="section-heading-en">After Installation</span>
+    </div>
+    <span class="section-heading-he">לאחר ההתקנה</span>
+  </div>
+  <div class="col-header-row">
+    <div></div>
+    <div class="col-header-en">English</div>
+    <div class="col-header-he">עברית</div>
+  </div>
+  <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:hidden;">
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Sign installation completion acknowledgment</strong> <span class="req-badge">Required</span><br>
+          Confirms physical installation is complete and you have received the operator training and owner's manual.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>חתימה על אישור השלמת ההתקנה</strong> <span class="req-badge">חובה</span><br>
+          מאשר שההתקנה הפיזית הושלמה ושקיבלת הדרכת מפעיל ומדריך למשתמש.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Walk-through inspection with foreman</strong> <span class="req-badge">Required</span><br>
+          Joint inspection of all installed components. Any concerns must be raised before signing the completion acknowledgment.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>סיור בדיקה עם ראש הצוות</strong> <span class="req-badge">חובה</span><br>
+          בדיקה משותפת של כל הרכיבים המותקנים. יש להעלות כל חשש לפני חתימת אישור ההשלמה.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Install FusionSolar app on mobile</strong> <span class="req-badge">Required</span><br>
+          Download the Huawei FusionSolar app (iOS/Android). TM Energy will register your system and walk you through monitoring.
+          <span class="check-note">Search "FusionSolar" in App Store / Google Play</span>
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>התקנת אפליקציית FusionSolar בטלפון</strong> <span class="req-badge">חובה</span><br>
+          הורד את אפליקציית Huawei FusionSolar (iOS/Android). TM Energy תרשום את המערכת שלך ותדריך אותך בניטור.
+          <span class="check-note-he">חפש "FusionSolar" ב-App Store / Google Play</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>PEA meter inspection appointment</strong><br>
+          TM Energy coordinates with PEA for the official meter inspection and grid connection approval. Client must be available when PEA visits.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>תיאום ביקור מד PEA</strong><br>
+          TM Energy מתאמת עם PEA לבדיקת מד רשמית ואישור חיבור לרשת. הלקוח חייב להיות זמין בעת ביקור PEA.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Final payment</strong> <span class="req-badge">Required</span><br>
+          20% final payment (&#3647;78,000) due upon PEA approval and system commissioning confirmation.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>תשלום סופי</strong> <span class="req-badge">חובה</span><br>
+          תשלום סופי 20% (&#3647;78,000) נדרש עם קבלת אישור PEA ואישור הפעלת המערכת.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- PHASE 5: PEA SUBMISSION DOCUMENTS                        -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="checklist-section">
+  <div class="section-heading">
+    <div>
+      <span class="section-heading-badge">Phase 5</span>
+      <span class="section-heading-en">Documents for PEA Submission</span>
+    </div>
+    <span class="section-heading-he">מסמכים להגשה ל-PEA</span>
+  </div>
+  <div class="col-header-row">
+    <div></div>
+    <div class="col-header-en">English</div>
+    <div class="col-header-he">עברית</div>
+  </div>
+  <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:hidden;">
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>2x photocopies of Thai ID / Passport</strong> <span class="req-badge">Required</span><br>
+          Both copies must be signed by the holder with the annotation "true copy" (or Thai equivalent).
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>2 צילומי תעודת זהות / דרכון תאילנדי</strong> <span class="req-badge">חובה</span><br>
+          שני הצילומים חייבים להיות חתומים על-ידי בעל הזהות עם הכיתוב "עותק נכון" (או המקבילה התאילנדית).
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>2x photocopies of house registration or land deed</strong> <span class="req-badge">Required</span><br>
+          Tabien Baan (blue book) or Chanote. Signed "true copy."
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>2 צילומי רישום בית או שטר קרקע</strong> <span class="req-badge">חובה</span><br>
+          ספר הבית (ספר כחול / טביאן באאן) או חנות. חתום "עותק נכון."
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>2x photocopies of current electricity bill</strong> <span class="req-badge">Required</span><br>
+          Must show PEA account number, customer name, and meter number clearly.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>2 צילומי חשבון חשמל עדכני</strong> <span class="req-badge">חובה</span><br>
+          חייב להציג בבירור מספר חשבון PEA, שם הלקוח ומספר המד.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Signed PEA Application Form</strong> <span class="req-badge">Required</span><br>
+          TM Energy prepares and fills in the form. Client reviews and signs. We submit to PEA Surat Thani branch on your behalf.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>טופס בקשת PEA חתום</strong> <span class="req-badge">חובה</span><br>
+          TM Energy מכינה וממלאת את הטופס. הלקוח בודק וחותם. אנו מגישים לסניף PEA סורת תאני בשמך.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Signed Authorization Letter</strong> <span class="req-badge">Required</span><br>
+          Authorizes TM Energy Co., Ltd. to act as the Client's representative at PEA for all matters related to the solar grid connection application.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>מכתב ייפוי כוח חתום</strong> <span class="req-badge">חובה</span><br>
+          מייפה כוח ל-TM Energy Co., Ltd. לפעול כנציג הלקוח ב-PEA בכל עניין הקשור לבקשת חיבור הרשת הסולארית.
+        </div>
+      </div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en">
+        <div>
+          <strong>Photos of existing meter and main panel</strong><br>
+          TM Energy takes these during site survey. No action needed from client unless site survey has not yet occurred.
+        </div>
+      </div>
+      <div class="check-text-he">
+        <div>
+          <strong>צילומי המד ולוח החשמל הקיים</strong><br>
+          TM Energy מצלמת אלו במהלך סקר האתר. אין צורך בפעולה מהלקוח אלא אם סקר האתר טרם התבצע.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- PHASE 6: OPTIONAL                                        -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="checklist-section">
+  <div class="section-heading" style="background:#4A5568;">
+    <div>
+      <span class="section-heading-badge" style="color:#CBD5E0;">Optional</span>
+      <span class="section-heading-en">Optional / Nice-to-Have</span>
+    </div>
+    <span class="section-heading-he" style="color:#CBD5E0;">אופציונלי / רצוי</span>
+  </div>
+  <div class="col-header-row">
+    <div></div>
+    <div class="col-header-en">English</div>
+    <div class="col-header-he">עברית</div>
+  </div>
+  <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; overflow:hidden;">
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en"><div><strong>Email address</strong> <span class="opt-badge">Optional</span><br>For digital delivery of warranty documents, owner's manual, and system reports.</div></div>
+      <div class="check-text-he"><div><strong>כתובת אימייל</strong> <span class="opt-badge">אופציונלי</span><br>למשלוח דיגיטלי של מסמכי אחריות, מדריך למשתמש ודוחות מערכת.</div></div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en"><div><strong>Preferred WhatsApp contact</strong> <span class="opt-badge">Optional</span><br>For faster service calls and system notifications from TM Energy support team.</div></div>
+      <div class="check-text-he"><div><strong>איש קשר WhatsApp מועדף</strong> <span class="opt-badge">אופציונלי</span><br>לקריאות שירות מהירות יותר והתראות מערכת מצוות התמיכה של TM Energy.</div></div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en"><div><strong>Emergency contact</strong> <span class="opt-badge">Optional</span><br>A secondary contact person in case the client is unavailable (e.g., property manager, family member on site).</div></div>
+      <div class="check-text-he"><div><strong>איש קשר לחירום</strong> <span class="opt-badge">אופציונלי</span><br>אדם קשר משני במקרה שהלקוח אינו זמין (לדוג', מנהל נכסים, בן משפחה באתר).</div></div>
+    </div>
+
+    <div class="check-row">
+      <div class="check-box"><div class="check-box-inner"></div></div>
+      <div class="check-text-en"><div><strong>Consent for marketing photos</strong> <span class="opt-badge">Optional</span><br>Written consent for TM Energy to use installation photos (with your property) for marketing. Purely voluntary.</div></div>
+      <div class="check-text-he"><div><strong>הסכמה לצילומי שיווק</strong> <span class="opt-badge">אופציונלי</span><br>הסכמה בכתב ל-TM Energy להשתמש בצילומי ההתקנה (עם הנכס שלך) לשיווק. וולונטרי לחלוטין.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── INFO BOX ─── -->
+<div class="info-box">
+  <div class="info-box-en">
+    <strong>Questions?</strong> Contact TM Energy at any stage:<br>
+    erez@energy-tm.com &nbsp;|&nbsp; k@kanielt.com<br>
+    WhatsApp as provided at proposal signing
+  </div>
+  <div class="info-box-he">
+    <strong>שאלות?</strong> צרו קשר עם TM Energy בכל שלב:<br>
+    erez@energy-tm.com &nbsp;|&nbsp; k@kanielt.com<br>
+    WhatsApp כפי שנמסר בחתימת ההצעה
+  </div>
+</div>
+
+<!-- ─── SIGNATURE ACKNOWLEDGMENT ─── -->
+<div class="sig-acknowledgment">
+  <div class="sig-ack-header">
+    <span class="sig-ack-title-en">Client Acknowledgment / חתימת הלקוח</span>
+    <span class="sig-ack-title-he">אני מאשר/ת קריאה והבנה של רשימה זו</span>
+  </div>
+  <div class="sig-ack-body">
+    <div class="sig-ack-text-en">I confirm I have read and understood this Client Preparation Checklist and I am aware of all items required before, during, and after the solar installation. This checklist forms Annex A to the Installation Agreement ref. {{ref}}.</div>
+    <div class="sig-ack-text-he">אני מאשר/ת כי קראתי והבנתי רשימת הכנה זו ללקוח ואני מודע/ת לכל הפריטים הנדרשים לפני, במהלך ואחרי ההתקנה הסולארית. רשימה זו מהווה נספח א' להסכם ההתקנה מס' {{ref}}.</div>
+    <div class="sig-fields-grid">
+      <div class="sig-field-mini">
+        <label>Client Name / שם הלקוח</label>
+        <span class="sig-line">{{client_name}}</span>
+      </div>
+      <div class="sig-field-mini">
+        <label>Date / תאריך</label>
+        <span class="sig-line">_____________</span>
+      </div>
+      <div class="sig-field-mini">
+        <label>Signature / חתימה</label>
+        <div class="sig-box-mini">Sign here</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<div class="doc-footer">
+  <span>TM Energy Co., Ltd. — Ko Phangan, Surat Thani, Thailand — energy-tm.com</span>
+  <span>Annex A — {{ref}} — {{date}}</span>
+  <span>erez@energy-tm.com</span>
+</div>
+
+</body>
+</html>

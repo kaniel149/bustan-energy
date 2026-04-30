@@ -42,20 +42,30 @@ export function PropertySidebar() {
   const [showProposalModal, setShowProposalModal] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+
     if (!property) {
-      setNasaData(null)
-      setFinancial(null)
-      setNasaError(null)
+      queueMicrotask(() => {
+        if (cancelled) return
+        setNasaData(null)
+        setFinancial(null)
+        setNasaError(null)
+        setNasaLoading(false)
+      })
       return
     }
 
-    setNasaData(null)
-    setFinancial(null)
-    setNasaError(null)
-    setNasaLoading(true)
+    queueMicrotask(() => {
+      if (cancelled) return
+      setNasaData(null)
+      setFinancial(null)
+      setNasaError(null)
+      setNasaLoading(true)
+    })
 
     fetchSolarIrradiance(property.lat, property.lng)
       .then((data) => {
+        if (cancelled) return
         setNasaData(data)
 
         const isRoof = property.type === 'roof'
@@ -72,6 +82,7 @@ export function PropertySidebar() {
         setFinancial(analysis)
       })
       .catch((err) => {
+        if (cancelled) return
         console.warn('NASA POWER API failed, falling back to region default:', err)
         setNasaError('Using estimated irradiance (NASA API unavailable)')
 
@@ -88,8 +99,14 @@ export function PropertySidebar() {
         })
         setFinancial(analysis)
       })
-      .finally(() => setNasaLoading(false))
-  }, [property?.id, regionConfig])
+      .finally(() => {
+        if (!cancelled) setNasaLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [property, regionConfig])
 
   if (!property) return null
 
@@ -710,8 +727,8 @@ function CrmPushButton({ property }: { property: import('../../types').Property 
         setCrmProjects([project, ...crmProjects])
         navigate(`/crm/leads/${project.id}`)
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to push to CRM')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to push to CRM')
     } finally {
       setPushing(false)
     }

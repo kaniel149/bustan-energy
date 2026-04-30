@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { NewProposalForm, ProposalLanguage } from '../types/proposals'
 import { generateRef } from '../lib/admin-service'
+import { calculateSolarFinancials, TM_SOLAR_ASSUMPTIONS } from '../lib/solar-financials'
 
 const DEFAULTS: Omit<NewProposalForm, 'ref'> = {
   client_name: '',
@@ -17,32 +18,37 @@ const DEFAULTS: Omit<NewProposalForm, 'ref'> = {
   inverter_model: 'Huawei SUN2000-12KTL-M2',
   battery_model: 'Huawei LUNA2000-10-S0',
   battery_kwh: 10,
-  psh: 5.0,
-  pr: 0.78,
-  tariff_thb: 4.40,
+  psh: TM_SOLAR_ASSUMPTIONS.pshAnnual,
+  pr: TM_SOLAR_ASSUMPTIONS.performanceRatio * TM_SOLAR_ASSUMPTIONS.soilingFactor,
+  tariff_thb: TM_SOLAR_ASSUMPTIONS.retailRateThb,
   annual_kwh: 0,
   monthly_kwh: 0,
   monthly_savings_thb: 0,
   annual_savings_thb: 0,
   total_price_thb: 0,
-  tax_deduction_thb: 200000,
+  tax_deduction_thb: 0,
   payback_no_tax: 0,
   payback_with_tax: 0,
   savings_25yr_thb: 0,
   // deal options (v3)
-  ppa_rate_thb_per_kwh: 4.50,
+  ppa_rate_thb_per_kwh: 4.20,
   ppa_years: 15,
   battery_price_thb: 150000,
   battery_kwh_extra: 10,
-  co2_factor: 0.5,
+  co2_factor: TM_SOLAR_ASSUMPTIONS.co2KgPerKwh,
   monthly_bill_thb: 0,
+  financing_enabled: true,
+  financing_ltv_pct: 70,
+  financing_interest_pct: 6.5,
+  financing_years: 10,
+  financing_om_pct: 1,
   // derived (v3)
   annual_bill_thb: 0,
   annual_bill_with_solar_thb: 0,
   co2_saved_kg: 0,
   savings_10yr_thb: 0,
   // Pricing auto-calc
-  price_markup: 3.0,        // client price = BOM cost × 3
+  price_markup: 1.35,       // client price = direct BOM cost × target gross margin buffer
   bom_cost_thb: 0,          // auto-populated from BOM calc
   language: 'he' as ProposalLanguage,
 }
@@ -52,26 +58,33 @@ function calcDerived(form: NewProposalForm): Partial<NewProposalForm> {
   // treated as independent input so 157 panels × 620W showed 12.76 kWp.
   const system_size_kwp = Math.round((form.panel_count * form.panel_watt) / 1000 * 100) / 100
 
-  // Correct physics: annual_kwh = kWp × PSH × 365 × PR
-  const annual_kwh = Math.round(system_size_kwp * form.psh * 365 * form.pr)
-  const monthly_kwh = Math.round(annual_kwh / 12)
-  // Use annual_kwh × tariff directly (avoids monthly-rounding cascade error)
-  const annual_savings_thb = Math.round(annual_kwh * form.tariff_thb)
-  const monthly_savings_thb = Math.round(annual_savings_thb / 12)
+  const financials = calculateSolarFinancials({
+    systemSizeKwp: system_size_kwp,
+    panelCount: form.panel_count,
+    panelWatt: form.panel_watt,
+    pshAvg: form.psh,
+    // `pr` is the effective PR shown in the admin UI, so keep soiling at 1.
+    performanceRatio: form.pr,
+    soilingFactor: 1,
+    retailRateThb: form.tariff_thb,
+    batteryKwh: form.battery_kwh,
+    totalPriceThb: form.total_price_thb,
+    taxDeductionThb: form.tax_deduction_thb,
+  })
 
-  const payback_no_tax = annual_savings_thb > 0
-    ? Math.round((form.total_price_thb / annual_savings_thb) * 10) / 10
-    : 0
-  const payback_with_tax = annual_savings_thb > 0
-    ? Math.round(((form.total_price_thb - form.tax_deduction_thb) / annual_savings_thb) * 10) / 10
-    : 0
-  const savings_25yr_thb = annual_savings_thb * 25
+  const annual_kwh = financials.annual_kwh
+  const monthly_kwh = financials.monthly_kwh
+  const annual_savings_thb = financials.annual_savings_thb
+  const monthly_savings_thb = financials.monthly_savings_thb
+  const payback_no_tax = financials.payback_discounted_years
+  const payback_with_tax = financials.payback_with_tax_years
+  const savings_25yr_thb = financials.savings_25yr_thb
 
   // v3 derived
   const annual_bill_thb = form.monthly_bill_thb * 12
   const annual_bill_with_solar_thb = Math.max(0, annual_bill_thb - annual_savings_thb)
-  const co2_saved_kg = Math.round(annual_kwh * form.co2_factor)
-  const savings_10yr_thb = annual_savings_thb * 10
+  const co2_saved_kg = financials.co2_saved_kg_year1
+  const savings_10yr_thb = financials.savings_10yr_thb
 
   return {
     system_size_kwp,
@@ -87,6 +100,10 @@ function calcDerived(form: NewProposalForm): Partial<NewProposalForm> {
     co2_saved_kg,
     savings_10yr_thb,
   }
+}
+
+function withDerived(form: NewProposalForm): NewProposalForm {
+  return { ...form, ...calcDerived(form) }
 }
 
 const DRAFT_KEY = 'tm-proposal-draft-v1'
@@ -123,51 +140,35 @@ export function clearProposalDraft() {
   localStorage.removeItem(DRAFT_KEY)
 }
 
-export function useNewProposalForm() {
+export function useNewProposalForm(options: { draftEnabled?: boolean } = {}) {
+  const draftEnabled = options.draftEnabled ?? true
   const [form, setForm] = useState<NewProposalForm>({ ref: '', ...DEFAULTS })
   const [errors, setErrors] = useState<Partial<Record<keyof NewProposalForm, string>>>({})
   const [draftRestored, setDraftRestored] = useState(false)
 
   // Generate ref on mount + restore draft if available
   useEffect(() => {
-    const draft = loadDraft()
+    const draft = draftEnabled ? loadDraft() : null
     generateRef().then((ref) => {
       if (draft && draft.client_name) {
         // Restore draft but keep a fresh ref number
-        setForm({ ...DEFAULTS, ...draft, ref: draft.ref || ref } as NewProposalForm)
+        setForm(withDerived({ ...DEFAULTS, ...draft, ref: draft.ref || ref } as NewProposalForm))
         setDraftRestored(true)
       } else {
-        setForm((f) => ({ ...f, ref }))
+        setForm((f) => withDerived({ ...f, ref }))
       }
     })
-  }, [])
+  }, [draftEnabled])
 
   // Auto-save draft whenever form changes (debounced via effect cycle)
   useEffect(() => {
-    if (form.client_name || form.total_price_thb > 0) {
+    if (draftEnabled && (form.client_name || form.total_price_thb > 0)) {
       saveDraft(form)
     }
-  }, [form])
-
-  // Auto-recalculate derived fields whenever inputs change
-  useEffect(() => {
-    const derived = calcDerived(form)
-    setForm((f) => ({ ...f, ...derived }))
-  // Only recalculate when these specific inputs change — not on every form change
-  }, [ // eslint-disable-line react-hooks/exhaustive-deps
-    form.panel_count,      // kWp now derives from panels × watt
-    form.panel_watt,
-    form.psh,
-    form.pr,
-    form.tariff_thb,
-    form.total_price_thb,
-    form.tax_deduction_thb,
-    form.monthly_bill_thb,
-    form.co2_factor,
-  ])
+  }, [draftEnabled, form])
 
   const update = useCallback(<K extends keyof NewProposalForm>(key: K, value: NewProposalForm[K]) => {
-    setForm((f) => ({ ...f, [key]: value }))
+    setForm((f) => withDerived({ ...f, [key]: value }))
     setErrors((e) => ({ ...e, [key]: undefined }))
   }, [])
 
@@ -187,10 +188,15 @@ export function useNewProposalForm() {
 
   const reset = useCallback(() => {
     clearProposalDraft()
-    generateRef().then((ref) => setForm({ ref, ...DEFAULTS }))
+    generateRef().then((ref) => setForm(withDerived({ ref, ...DEFAULTS })))
     setErrors({})
     setDraftRestored(false)
   }, [])
 
-  return { form, update, validate, errors, reset, draftRestored }
+  const replaceForm = useCallback((values: Partial<NewProposalForm>) => {
+    setForm((current) => withDerived({ ...current, ...values } as NewProposalForm))
+    setErrors({})
+  }, [])
+
+  return { form, update, replaceForm, validate, errors, reset, draftRestored }
 }

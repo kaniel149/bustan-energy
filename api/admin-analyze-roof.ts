@@ -86,7 +86,7 @@ export default async function handler(req: Request): Promise<Response> {
     const PROMPT = buildPrompt(panel_watt, panelArea, usable_pct)
 
     let b64: string
-    let mime = 'image/jpeg'
+    const mime = 'image/jpeg'
 
     if (image_url) {
       const imgRes = await fetch(image_url)
@@ -195,9 +195,9 @@ export default async function handler(req: Request): Promise<Response> {
       },
       _timing: { fetch_ms: tFetch, gemini_ms: tGemini, total_ms: Date.now() - t0 },
     })
-  } catch (e: any) {
+  } catch (e: unknown) {
     return Response.json(
-      { ok: false, error: String(e?.message || e), total_ms: Date.now() - t0 },
+      { ok: false, error: e instanceof Error ? e.message : String(e), total_ms: Date.now() - t0 },
       { status: 500 }
     )
   }

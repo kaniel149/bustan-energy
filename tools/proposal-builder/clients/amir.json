@@ -12,17 +12,17 @@
   "inverter_model": "Huawei SUN2000-12KTL-M2",
   "battery_model": "Huawei LUNA2000-10-S0",
   "battery_kwh": 10,
-  "annual_kwh": 18171,
-  "monthly_kwh": 1514,
+  "annual_kwh": 17045,
+  "monthly_kwh": 1420,
   "psh_avg": 5.0,
   "tariff_thb_per_kwh": 4.4,
-  "monthly_savings_thb": 6660,
-  "annual_savings_thb": 79900,
+  "monthly_savings_thb": 5973,
+  "annual_savings_thb": 71675,
   "price_thb": 450000,
-  "tax_deduction_thb": 200000,
-  "payback_years_no_tax": 5.6,
-  "payback_years_with_tax": 3.1,
-  "savings_25yr_thb": 2000000,
+  "tax_deduction_thb": 0,
+  "payback_years_no_tax": 8.7,
+  "payback_years_with_tax": 0,
+  "savings_25yr_thb": 2455428,
   "images": [
     "amir-mizrahi-001-roof-original.jpeg",
     "amir-mizrahi-001-roof-with-panels.png"
@@ -32,6 +32,7 @@
     "roof_type": "red_ceramic_tile",
     "roof_area_m2": 120,
     "orientation": "N-S",
-    "shading": "5-8% morning from mango tree"
+    "shading": "5-8% morning from mango tree",
+    "co2_tons_avoided_25yr": 192.4
   }
 }

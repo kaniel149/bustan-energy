@@ -116,14 +116,14 @@ export default function ProposalDetailPage() {
 
     // Also load pea_documents
     let docs: PEAState['documents'] = []
-    if (proj?.id) {
-      const { data: docRows } = await supabase
-        .from('pea_documents')
-        .select('id,document_type,file_url,signed_by_owner,signed_by_engineer')
-        .eq('project_id', proj.id)
-        .order('created_at', { ascending: false })
-      docs = (docRows ?? []) as PEAState['documents']
-    }
+    const docQuery = supabase
+      .from('pea_documents')
+      .select('id,document_type,file_url,signed_by_owner,signed_by_engineer')
+      .order('created_at', { ascending: false })
+    const { data: docRows } = proj?.id
+      ? await docQuery.eq('project_id', proj.id)
+      : await docQuery.eq('proposal_ref', proposalRef)
+    docs = (docRows ?? []) as PEAState['documents']
 
     setPea({
       project_id: proj?.id ?? null,
@@ -227,8 +227,8 @@ export default function ProposalDetailPage() {
         .eq('id', pea.project_id)
       if (error) throw new Error(error.message)
       showToast('PEA status saved', 'success')
-    } catch (e: any) {
-      showToast(e.message || 'Save failed', 'error')
+    } catch (e: unknown) {
+      showToast(e instanceof Error ? e.message : 'Save failed', 'error')
     } finally {
       setPeaSaving(false)
     }
@@ -253,17 +253,23 @@ export default function ProposalDetailPage() {
       const data = await res.json()
       if (!data.ok) throw new Error(data.error || 'Package generation failed')
 
-      showToast(`Package ready: ${data.document_count} documents`, 'success')
+      const readinessWarnings = data.readiness?.items?.filter((item: { severity: string }) => item.severity !== 'ok').length || 0
+      showToast(
+        readinessWarnings > 0
+          ? `Package ready: ${data.document_count} documents · ${readinessWarnings} readiness warnings`
+          : `Package ready: ${data.document_count} documents`,
+        readinessWarnings > 0 ? 'info' : 'success',
+      )
       // Update local status
       setPea((prev) => ({ ...prev, pea_status: 'package_ready' }))
       // Refresh PEA data to show new documents
       await loadPeaData(proposal.ref_number)
 
       // Open first document URL in new tab
-      const firstDoc = data.documents?.find((d: any) => d.url)
+      const firstDoc = data.documents?.find((d: { url?: string }) => d.url)
       if (firstDoc?.url) window.open(firstDoc.url, '_blank')
-    } catch (e: any) {
-      showToast(e.message || 'Package generation failed', 'error')
+    } catch (e: unknown) {
+      showToast(e instanceof Error ? e.message : 'Package generation failed', 'error')
     } finally {
       setPeaPackageLoading(false)
     }
@@ -322,6 +328,16 @@ export default function ProposalDetailPage() {
               PDF חתום
             </button>
           )}
+
+          <button
+            onClick={() => navigate(`/admin/proposals/${proposal.ref_number}/edit`)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#E8A820]/10 border border-[#E8A820]/30 text-[#E8A820] text-sm hover:bg-[#E8A820]/20 transition-all"
+            aria-label="ערוך הצעה"
+            title="ערוך ופרסם מחדש את ההצעה"
+          >
+            <PenLine size={15} />
+            ערוך
+          </button>
 
           {/* Internal PEA drawings — always visible */}
           <button
@@ -481,6 +497,10 @@ export default function ProposalDetailPage() {
                 No project linked to this proposal. PEA fields are read-only until a project is created.
               </div>
             )}
+
+            <div className="mb-4 px-3 py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-200/80 text-xs leading-relaxed">
+              Package generation creates preliminary drawings and an application letter for engineer/PEA review. Do not submit before owner documents, recent PEA bill, equipment certificates, and licensed PE stamp are attached.
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Branch selector */}

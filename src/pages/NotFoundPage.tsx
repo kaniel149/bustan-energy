@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Home, Sun, Phone } from 'lucide-react'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 
 const fadeUp = {

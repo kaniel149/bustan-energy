@@ -97,6 +97,12 @@ export interface NewProposalForm {
   battery_kwh_extra: number
   co2_factor: number
   monthly_bill_thb: number
+  // bank financing model
+  financing_enabled: boolean
+  financing_ltv_pct: number
+  financing_interest_pct: number
+  financing_years: number
+  financing_om_pct: number
   // derived (v3) — auto-calculated
   annual_bill_thb: number
   annual_bill_with_solar_thb: number

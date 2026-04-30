@@ -2,27 +2,12 @@
 // URL-based language detection: /th/* = Thai, everything else = English
 // Provides langPath() and switchLangPath() helpers for navigation
 
-import { createContext, useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import type { Lang } from './translations'
-
-interface LanguageContextType {
-  lang: Lang
-  /** Prefix path with language segment.
-   *  en: /services  →  /services
-   *  th: /services  →  /th/services
-   */
-  langPath: (path: string) => string
-  /** Returns the current page URL in the alternate language. */
-  switchLangPath: () => string
-}
-
-const LanguageContext = createContext<LanguageContextType>({
-  lang: 'en',
-  langPath: (p) => p,
-  switchLangPath: () => '/',
-})
+import { LanguageContext } from './language-context'
+import type { LanguageContextType } from './language-context'
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
@@ -55,8 +40,4 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [pathname])
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
-}
-
-export function useLanguage(): LanguageContextType {
-  return useContext(LanguageContext)
 }

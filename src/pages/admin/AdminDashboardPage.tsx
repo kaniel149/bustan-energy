@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FilePlus, FileText, Eye, PenLine, RefreshCw } from 'lucide-react'
 import { fetchProposals, fetchProposalStats } from '../../lib/admin-service'
@@ -42,18 +42,20 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     const [allProposals, proposalStats] = await Promise.all([
       fetchProposals(),
       fetchProposalStats(),
     ])
     setProposals(allProposals)
     setStats(proposalStats)
-  }
+  }, [setProposals])
 
   useEffect(() => {
-    loadData().finally(() => setLoading(false))
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    queueMicrotask(() => {
+      void loadData().finally(() => setLoading(false))
+    })
+  }, [loadData])
 
   const handleRefresh = async () => {
     setRefreshing(true)

@@ -128,8 +128,8 @@ export default function PEASignaturePad({
       if (!data.ok) throw new Error(data.error || 'Signature failed')
 
       onSigned(data.signature_id)
-    } catch (e: any) {
-      setError(e.message || 'Failed to save signature')
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Failed to save signature')
     } finally {
       setSaving(false)
     }

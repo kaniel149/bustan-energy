@@ -1,18 +1,17 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
-import { SolarMap } from '../components/Map/SolarMap'
-import { FilterBar } from '../components/FilterBar/FilterBar'
-import { PropertySidebar } from '../components/Sidebar/PropertySidebar'
-import { LoginModal } from '../components/Auth/LoginModal'
-import { CRMPanel } from '../components/CRM/CRMPanel'
-import { Scanner } from '../components/Scanner/Scanner'
-import { MobileBottomNav } from '../components/MobileNav/MobileBottomNav'
 import { useAppStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
 import { identifyUser, resetAnalytics } from '../lib/analytics'
-import { loadGridData, loadRoofData, loadLandData, enrichWithGridProximity } from '../lib/load-data'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
 
+const SolarMap = lazy(() => import('../components/Map/SolarMap').then((m) => ({ default: m.SolarMap })))
+const FilterBar = lazy(() => import('../components/FilterBar/FilterBar').then((m) => ({ default: m.FilterBar })))
+const PropertySidebar = lazy(() => import('../components/Sidebar/PropertySidebar').then((m) => ({ default: m.PropertySidebar })))
+const LoginModal = lazy(() => import('../components/Auth/LoginModal').then((m) => ({ default: m.LoginModal })))
+const CRMPanel = lazy(() => import('../components/CRM/CRMPanel').then((m) => ({ default: m.CRMPanel })))
+const Scanner = lazy(() => import('../components/Scanner/Scanner').then((m) => ({ default: m.Scanner })))
+const MobileBottomNav = lazy(() => import('../components/MobileNav/MobileBottomNav').then((m) => ({ default: m.MobileBottomNav })))
 const CRMDashboard = lazy(() => import('../components/CRM/Dashboard'))
 const CRMPipeline = lazy(() => import('../components/CRM/Pipeline'))
 
@@ -35,7 +34,10 @@ export default function PlatformPage() {
   const setCrmLoading = useAppStore((s) => s.setCrmLoading)
   const platformView = useAppStore((s) => s.platformView)
   const user = useAppStore((s) => s.user)
+  const selectedProperty = useAppStore((s) => s.selectedProperty)
+  const showCrmPanel = useAppStore((s) => s.showCrmPanel)
   const [dataStatus, setDataStatus] = useState<'loading' | 'loaded' | 'error'>('loading')
+  const [hasLoadedMap, setHasLoadedMap] = useState(platformView === 'map')
 
   // Real-time Supabase sync
   useRealtimeSync()
@@ -76,6 +78,12 @@ export default function PlatformPage() {
   useEffect(() => {
     async function init() {
       try {
+        const {
+          loadGridData,
+          loadRoofData,
+          loadLandData,
+          enrichWithGridProximity,
+        } = await import('../lib/load-data')
         const grid = await loadGridData()
         setGridData(grid)
         const roofs = await loadRoofData()
@@ -94,18 +102,32 @@ export default function PlatformPage() {
 
   const isMapView = platformView === 'map'
 
+  useEffect(() => {
+    if (isMapView) setHasLoadedMap(true)
+  }, [isMapView])
+
   return (
     <div className="platform-layout bg-[#0A1628] relative">
-      {/* Map — always rendered but hidden when not active (preserves state) */}
-      <div style={{ display: isMapView ? 'block' : 'none' }} className="absolute inset-0">
-        <SolarMap />
-      </div>
+      {/* Map — lazy loaded on first map visit, then hidden when inactive to preserve state */}
+      {hasLoadedMap && (
+        <div style={{ display: isMapView ? 'block' : 'none' }} className="absolute inset-0">
+          <Suspense fallback={<ViewLoader />}>
+            <SolarMap />
+          </Suspense>
+        </div>
+      )}
 
       {/* FilterBar — always visible */}
-      <FilterBar />
+      <Suspense fallback={null}>
+        <FilterBar />
+      </Suspense>
 
       {/* Scanner view */}
-      {platformView === 'scanner' && <Scanner />}
+      {platformView === 'scanner' && (
+        <Suspense fallback={<ViewLoader />}>
+          <Scanner />
+        </Suspense>
+      )}
 
       {/* Pipeline view */}
       {platformView === 'pipeline' && (
@@ -126,16 +148,28 @@ export default function PlatformPage() {
       )}
 
       {/* PropertySidebar — works in map & scanner */}
-      {(isMapView || platformView === 'scanner') && <PropertySidebar />}
+      {selectedProperty && (isMapView || platformView === 'scanner') && (
+        <Suspense fallback={null}>
+          <PropertySidebar />
+        </Suspense>
+      )}
 
       {/* CRM Panel overlay — only in map view */}
-      {isMapView && <CRMPanel />}
+      {isMapView && showCrmPanel && (
+        <Suspense fallback={null}>
+          <CRMPanel />
+        </Suspense>
+      )}
 
       {/* Login modal */}
-      <LoginModal />
+      <Suspense fallback={null}>
+        <LoginModal />
+      </Suspense>
 
       {/* Mobile bottom nav */}
-      <MobileBottomNav />
+      <Suspense fallback={null}>
+        <MobileBottomNav />
+      </Suspense>
 
       {/* Data loading status */}
       {dataStatus === 'loading' && (

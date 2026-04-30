@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { X, Building2, Phone, Mail, ChevronRight, RefreshCw } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { getCrmProjects, updateProjectStatus } from '../../lib/crm-service'
@@ -15,16 +15,19 @@ export function CRMPanel() {
   const [loading, setLoading] = useState(false)
   const [activeStatus, setActiveStatus] = useState<ProjectStatus | 'all'>('all')
 
-  const loadProjects = async () => {
+  const loadProjects = useCallback(async () => {
     setLoading(true)
     const projects = await getCrmProjects()
     setCrmProjects(projects)
     setLoading(false)
-  }
+  }, [setCrmProjects])
 
   useEffect(() => {
-    if (showCrmPanel && user) loadProjects()
-  }, [showCrmPanel, user])
+    if (!showCrmPanel || !user) return
+    queueMicrotask(() => {
+      void loadProjects()
+    })
+  }, [loadProjects, showCrmPanel, user])
 
   const handleStatusChange = async (projectId: string, newStatus: ProjectStatus) => {
     const statusStep = CRM_STATUSES.find(s => s.id === newStatus)?.step ?? 1

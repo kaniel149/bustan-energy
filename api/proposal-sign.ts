@@ -12,6 +12,37 @@ const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
 const FROM = process.env.RESEND_FROM || 'TM Energy Contracts <contracts@energy-tm.com>'
 
+interface ProposalSignRow {
+  ref_number: string
+  client_name?: string | null
+  system_size_kwp?: number | string | null
+  total_price_thb?: number | string | null
+  status?: string | null
+  expires_at?: string | null
+}
+
+interface SignatureRow {
+  id: string
+  signed_at: string
+  signer_name: string
+  signer_id?: string | null
+  signer_phone?: string | null
+  signer_email?: string | null
+  ip?: string | null
+  hash_sha256: string
+  signature_base64: string
+}
+
+interface SignRequestBody {
+  ref?: string
+  signer_name?: string
+  signer_id?: string
+  signer_email?: string
+  signer_phone?: string
+  signature_base64?: string
+  terms_version?: string
+}
+
 async function sendEmail(to: string[], subject: string, html: string) {
   if (!RESEND_KEY) return null
   return fetch('https://api.resend.com/emails', {
@@ -30,7 +61,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
   }).then((r) => r.json()).catch((e) => ({ error: String(e) }))
 }
 
-function teamEmail(p: any, s: any) {
+function teamEmail(p: ProposalSignRow, s: SignatureRow) {
   const when = new Date(s.signed_at).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' })
   return `
 <div style="font-family:system-ui;max-width:620px;direction:rtl;">
@@ -58,7 +89,7 @@ function teamEmail(p: any, s: any) {
 </div>`
 }
 
-function clientEmail(p: any, s: any) {
+function clientEmail(p: ProposalSignRow, s: SignatureRow) {
   return `
 <div style="font-family:system-ui;max-width:620px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:32px;border-radius:16px 16px 0 0;color:white;text-align:center;">
@@ -91,14 +122,14 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    const body = await req.json()
+    const body = await req.json() as SignRequestBody
     const { ref, signer_name, signer_id, signer_email, signer_phone, signature_base64, terms_version } = body
 
     if (!ref || !signer_name || !signature_base64) {
       return Response.json({ ok: false, error: 'missing_fields' }, { status: 400 })
     }
 
-    const proposal = await supaGet(`proposals?ref_number=eq.${encodeURIComponent(ref)}&select=*`)
+    const proposal = await supaGet<ProposalSignRow>(`proposals?ref_number=eq.${encodeURIComponent(ref)}&select=*`)
     if (!proposal) {
       return Response.json({ ok: false, error: 'not_found' }, { status: 404 })
     }
@@ -130,7 +161,7 @@ export default async function handler(req: Request): Promise<Response> {
       signed_at: new Date().toISOString(),
     }
 
-    const saved = await supaPost('proposal_signatures', signature)
+    const saved = await supaPost<SignatureRow>('proposal_signatures', signature)
     if (!saved) {
       return Response.json({ ok: false, error: 'save_failed' }, { status: 500 })
     }
@@ -163,7 +194,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     return Response.json({ ok: true, signature_id: s.id, hash })
-  } catch (e: any) {
-    return Response.json({ ok: false, error: String(e?.message || e) }, { status: 500 })
+  } catch (e: unknown) {
+    return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 })
   }
 }

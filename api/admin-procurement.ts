@@ -93,6 +93,37 @@ async function loadBomSnapshot(): Promise<{ snapshot: Record<string, any>; hash:
   }
 }
 
+function buildPriceSnapshot(
+  bomJson: any,
+  templateSnapshot: Record<string, any>,
+  templateHash: string,
+): Record<string, any> {
+  const rows = Array.isArray(bomJson?.rows) ? bomJson.rows : []
+  return {
+    captured_at: new Date().toISOString(),
+    bom_summary: bomJson?.summary || null,
+    supplier_summary: bomJson?.supplier_summary || null,
+    totals: bomJson?.totals || null,
+    rows: rows.map((row: any) => ({
+      category: row.category,
+      sku: row.sku,
+      qty: row.qty,
+      unit_price_thb: row.unit_price_thb,
+      subtotal_thb: row.subtotal_thb,
+      benchmark_unit_price_thb: row.benchmark_unit_price_thb,
+      price_status: row.price_status,
+      supplier_name: row.supplier_name,
+      supplier_source: row.supplier_source,
+      supplier_sku: row.supplier_sku,
+      supplier_valid_until: row.supplier_valid_until,
+      supplier_url: row.supplier_url,
+      price_note: row.price_note,
+    })),
+    template_hash: templateHash || null,
+    template_snapshot: Object.keys(templateSnapshot || {}).length ? templateSnapshot : undefined,
+  }
+}
+
 // ── Validate incoming BOM matches proposal values ─────────────
 // Returns error string if mismatch, null if ok.
 async function validateAgainstProposal(
@@ -221,11 +252,12 @@ export default async function handler(req: Request): Promise<Response> {
           const bomChanged = JSON.stringify(existingOrder.bom_json) !== JSON.stringify(bom_json)
           if (bomChanged) {
             const { snapshot, hash } = await loadBomSnapshot()
+            const priceSnapshot = buildPriceSnapshot(bom_json, snapshot, hash)
             const updated = await supaPatch(`procurement_orders?id=eq.${existingOrder.id}`, {
               bom_json,
               supplier_email_text: supplier_email_text || null,
               estimated_thb: estimated_thb || null,
-              price_snapshot: snapshot,
+              price_snapshot: priceSnapshot,
               bom_templates_hash: hash || null,
             })
             const order = Array.isArray(updated) ? updated[0] : updated
@@ -237,6 +269,7 @@ export default async function handler(req: Request): Promise<Response> {
 
       // ── Load BOM snapshot for new order ───────────────────
       const { snapshot, hash } = await loadBomSnapshot()
+      const priceSnapshot = buildPriceSnapshot(bom_json, snapshot, hash)
 
       // ── Insert new order ───────────────────────────────────
       const inserted = await supaInsert('procurement_orders', {
@@ -253,7 +286,7 @@ export default async function handler(req: Request): Promise<Response> {
         supplier_email: supplier_email || null,
         supplier_phone: supplier_phone || null,
         estimated_thb: estimated_thb || null,
-        price_snapshot: snapshot,
+        price_snapshot: priceSnapshot,
         bom_templates_hash: hash || null,
         notes: notes || null,
         status: 'draft',

@@ -65,12 +65,17 @@ begin
     set status = 'cancelled'
     where proposal_ref = NEW.ref_number and status = 'pending';
 
-    -- Schedule new ones
+    -- Schedule new ones. Expiry follow-up requires expires_at; email automation requires client_email.
     insert into public.proposal_followups (proposal_ref, followup_type, scheduled_for, recipient)
-    values
-      (NEW.ref_number, 'not_viewed_3d', NEW.sent_at + interval '3 days', NEW.client_email),
-      (NEW.ref_number, 'not_viewed_7d', NEW.sent_at + interval '7 days', NEW.client_email),
-      (NEW.ref_number, 'expiring_soon', NEW.expires_at - interval '3 days', NEW.client_email);
+    select NEW.ref_number, followup_type, scheduled_for, NEW.client_email
+    from (
+      values
+        ('not_viewed_3d', NEW.sent_at + interval '3 days'),
+        ('not_viewed_7d', NEW.sent_at + interval '7 days'),
+        ('expiring_soon', NEW.expires_at - interval '3 days')
+    ) as f(followup_type, scheduled_for)
+    where NEW.client_email is not null
+      and f.scheduled_for is not null;
   end if;
   return NEW;
 end;
@@ -92,6 +97,20 @@ begin
     where proposal_ref = NEW.proposal_ref
       and followup_type like 'not_viewed%'
       and status = 'pending';
+
+    -- Remind after a viewed proposal if it is still unsigned.
+    insert into public.proposal_followups (proposal_ref, followup_type, scheduled_for, recipient)
+    select p.ref_number, 'not_signed_after_view_5d', now() + interval '5 days', p.client_email
+    from public.proposals p
+    where p.ref_number = NEW.proposal_ref
+      and p.client_email is not null
+      and p.status not in ('signed', 'rejected')
+      and not exists (
+        select 1 from public.proposal_followups f
+        where f.proposal_ref = p.ref_number
+          and f.followup_type = 'not_signed_after_view_5d'
+          and f.status = 'pending'
+      );
   end if;
   return NEW;
 end;

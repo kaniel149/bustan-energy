@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { Button } from '../ui/Button'
-import { useLanguage } from '../../i18n/LanguageContext'
+import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
 
 export function Navbar() {
@@ -31,12 +31,8 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileOpen(false)
-  }, [location.pathname])
-
   function handleSwitchLang() {
+    setMobileOpen(false)
     navigate(switchLangPath())
   }
 
@@ -166,6 +162,7 @@ export function Navbar() {
                   >
                     <Link
                       to={href}
+                      onClick={() => setMobileOpen(false)}
                       className={[
                         'flex items-center px-4 py-3 rounded-xl text-base font-medium',
                         'transition-colors duration-200',
@@ -202,7 +199,13 @@ export function Navbar() {
               </motion.div>
 
               <div className="pt-2 pb-1">
-                <Button variant="primary" size="md" href={langPath('/contact')} className="w-full">
+                <Button
+                  variant="primary"
+                  size="md"
+                  href={langPath('/contact')}
+                  className="w-full"
+                  onClick={() => setMobileOpen(false)}
+                >
                   {t.nav.getQuote}
                 </Button>
               </div>

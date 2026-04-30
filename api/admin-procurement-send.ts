@@ -245,7 +245,8 @@ export default async function handler(req: Request): Promise<Response> {
           bySupplier.set(key, { supplier: sup || null, items: [] })
         }
         // Strip nested supplier object from item before emailing
-        const { suppliers: _s, ...cleanItem } = item
+        const cleanItem = { ...item }
+        delete cleanItem.suppliers
         bySupplier.get(key)!.items.push(cleanItem)
       }
 

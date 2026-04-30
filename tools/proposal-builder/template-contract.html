@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TM Energy — Solar Installation Agreement / הסכם התקנת מערכת סולארית — {{ref}}</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── PAGE SETUP ─── */
+@page {
+  size: A4 portrait;
+  margin: 18mm 15mm 20mm 15mm;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy:       #0D2137;
+  --navy-mid:   #132D4A;
+  --gold:       #E8A820;
+  --gold-light: #F5C84A;
+  --green:      #1A7A5A;
+  --white:      #FFFFFF;
+  --bg:         #F7F8FA;
+  --text:       #1A2332;
+  --text-sec:   #4A5568;
+  --border:     #D8DDE6;
+  --serif:      'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --sans:       'Inter', system-ui, sans-serif;
+  --hebrew:     'Heebo', 'Arial Hebrew', sans-serif;
+}
+
+body {
+  font-family: var(--serif);
+  background: var(--white);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  font-size: 9.5pt;
+}
+
+/* ─── PRINT HELPERS ─── */
+@media print {
+  .no-print { display: none !important; }
+  .page-break { page-break-before: always; break-before: page; }
+  .avoid-break { page-break-inside: avoid; break-inside: avoid; }
+  body { font-size: 8.5pt; }
+}
+
+/* ─── COVER PAGE ─── */
+.cover-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--navy) 0%, #0a1a2c 100%);
+  color: white;
+  text-align: center;
+  padding: 60px 40px;
+  position: relative;
+  page-break-after: always;
+  break-after: page;
+}
+.cover-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 30%, rgba(232,168,32,0.12) 0%, transparent 55%),
+              radial-gradient(ellipse at 70% 70%, rgba(26,122,90,0.08) 0%, transparent 50%);
+}
+.cover-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid rgba(232,168,32,0.4);
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+.cover-brand {
+  font-family: var(--sans);
+  font-size: 11pt;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+.cover-divider {
+  width: 60px;
+  height: 2px;
+  background: var(--gold);
+  margin: 20px auto;
+  position: relative;
+  z-index: 1;
+}
+.cover-title-en {
+  font-family: var(--serif);
+  font-size: 22pt;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.3;
+}
+.cover-title-he {
+  font-family: var(--hebrew);
+  font-size: 20pt;
+  font-weight: 800;
+  color: var(--gold-light);
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+  direction: rtl;
+  line-height: 1.3;
+}
+.cover-meta-box {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(232,168,32,0.25);
+  border-radius: 14px;
+  padding: 28px 40px;
+  margin: 0 auto;
+  max-width: 520px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  text-align: left;
+}
+.cover-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  gap: 16px;
+}
+.cover-meta-row:last-child { border-bottom: none; }
+.cover-meta-label {
+  font-family: var(--sans);
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  min-width: 110px;
+  flex-shrink: 0;
+}
+.cover-meta-value {
+  font-family: var(--serif);
+  font-size: 9.5pt;
+  color: white;
+  text-align: right;
+  flex: 1;
+}
+.cover-meta-value-he {
+  font-family: var(--hebrew);
+  font-size: 9pt;
+  color: rgba(255,255,255,0.85);
+  direction: rtl;
+  text-align: right;
+  display: block;
+  margin-top: 2px;
+}
+.cover-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(232,168,32,0.15);
+  border: 1px solid rgba(232,168,32,0.3);
+  border-radius: 20px;
+  font-family: var(--sans);
+  font-size: 7pt;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+.cover-footer {
+  position: absolute;
+  bottom: 24px;
+  left: 0; right: 0;
+  font-family: var(--sans);
+  font-size: 7pt;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+/* ─── MAIN DOCUMENT BODY ─── */
+.doc-body {
+  padding: 20px 0;
+}
+
+/* ─── BILINGUAL 2-COLUMN LAYOUT ─── */
+.bilingual-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 2px solid var(--navy);
+  margin-bottom: 0;
+}
+.col-en {
+  padding: 0 18px 0 0;
+  border-right: 1px solid var(--border);
+  direction: ltr;
+  text-align: left;
+}
+.col-he {
+  padding: 0 0 0 18px;
+  direction: rtl;
+  text-align: right;
+  font-family: var(--hebrew);
+}
+
+/* ─── SECTION HEADERS ─── */
+.doc-section-header {
+  background: var(--navy);
+  color: white;
+  padding: 10px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  page-break-after: avoid;
+  break-after: avoid;
+  margin-bottom: 0;
+}
+.doc-section-num {
+  font-family: var(--sans);
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+.doc-section-title-en {
+  font-family: var(--sans);
+  font-size: 10pt;
+  font-weight: 700;
+  color: white;
+  direction: ltr;
+}
+.doc-section-title-he {
+  font-family: var(--hebrew);
+  font-size: 10pt;
+  font-weight: 800;
+  color: var(--gold-light);
+  direction: rtl;
+  text-align: right;
+}
+.col-en-header { direction: ltr; text-align: left; }
+.col-he-header { direction: rtl; text-align: right; }
+
+/* ─── BODY TEXT ─── */
+.section-body {
+  padding: 14px 0 18px;
+}
+p, li { margin-bottom: 6px; line-height: 1.6; }
+.col-en p, .col-en li {
+  font-family: var(--serif);
+  font-size: 8.5pt;
+  color: var(--text);
+}
+.col-he p, .col-he li {
+  font-family: var(--hebrew);
+  font-size: 8.5pt;
+  color: var(--text);
+}
+ul, ol {
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-bottom: 6px;
+}
+.col-en ul, .col-en ol { padding-left: 18px; padding-right: 0; }
+.col-he ul, .col-he ol { padding-right: 18px; padding-left: 0; }
+
+strong {
+  font-weight: 700;
+  color: var(--navy);
+}
+.col-he strong { font-weight: 800; }
+
+/* ─── PAYMENT TABLE ─── */
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 8pt;
+}
+.payment-table th {
+  background: var(--navy);
+  color: var(--gold);
+  padding: 7px 9px;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 7pt;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid rgba(13,33,55,0.3);
+}
+.payment-table td {
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.payment-table tr:nth-child(even) td { background: var(--bg); }
+.payment-table .amt {
+  font-family: var(--sans);
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+}
+.payment-table .pct {
+  font-family: var(--sans);
+  font-size: 9pt;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+/* ─── HIGHLIGHT BOX ─── */
+.highlight-box {
+  background: rgba(232,168,32,0.07);
+  border: 1px solid rgba(232,168,32,0.3);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.col-he .highlight-box {
+  border-left: none;
+  border-right: 3px solid var(--gold);
+}
+.highlight-box p {
+  font-family: var(--sans);
+  font-size: 8pt;
+  font-weight: 600;
+  color: var(--navy);
+  margin: 0;
+}
+.col-he .highlight-box p {
+  font-family: var(--hebrew);
+  font-weight: 700;
+}
+
+/* ─── WARRANTY GRID ─── */
+.warranty-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.warranty-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.warranty-text { flex: 1; }
+.warranty-label {
+  font-family: var(--sans);
+  font-size: 7.5pt;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+}
+.col-he .warranty-label {
+  font-family: var(--hebrew);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.warranty-desc {
+  font-size: 8pt;
+  color: var(--text-sec);
+  margin: 0;
+}
+
+/* ─── SIGNATURE SECTION ─── */
+.signature-section {
+  page-break-before: always;
+  break-before: page;
+  padding: 30px 0 0;
+}
+.sig-section-title {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.sig-section-title h2 {
+  font-family: var(--serif);
+  font-size: 14pt;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.sig-section-title h3 {
+  font-family: var(--hebrew);
+  font-size: 13pt;
+  font-weight: 800;
+  color: var(--navy);
+  direction: rtl;
+}
+.sig-section-title p {
+  font-family: var(--sans);
+  font-size: 8pt;
+  color: var(--text-sec);
+  margin-top: 8px;
+}
+.sig-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.sig-party {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.sig-party-header {
+  background: var(--navy);
+  color: white;
+  padding: 10px 14px;
+}
+.sig-party-title-en {
+  font-family: var(--sans);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+}
+.sig-party-title-he {
+  font-family: var(--hebrew);
+  font-size: 9pt;
+  font-weight: 800;
+  color: white;
+  display: block;
+  direction: rtl;
+  margin-top: 2px;
+}
+.sig-party-body {
+  padding: 16px;
+}
+.sig-field {
+  margin-bottom: 16px;
+}
+.sig-field-label {
+  font-family: var(--sans);
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  display: block;
+  margin-bottom: 4px;
+}
+.sig-field-value {
+  font-family: var(--serif);
+  font-size: 9pt;
+  color: var(--text);
+  padding: 4px 0;
+  border-bottom: 1.5px solid var(--border);
+  min-height: 24px;
+  display: block;
+}
+.sig-field-value.blank {
+  color: var(--text-sec);
+  font-style: italic;
+}
+.sig-box {
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  margin-top: 4px;
+}
+.sig-box-label {
+  font-family: var(--sans);
+  font-size: 7pt;
+  color: #CBD5E0;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.sig-date-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.witness-section {
+  border-top: 1px dashed var(--border);
+  padding-top: 24px;
+  margin-top: 8px;
+}
+.witness-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.witness-box {
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.witness-title-en {
+  font-family: var(--sans);
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+.witness-title-he {
+  font-family: var(--hebrew);
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: var(--text-sec);
+  direction: rtl;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* ─── DOCUMENT HEADER (repeated page header) ─── */
+.doc-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--navy);
+  margin-bottom: 20px;
+}
+.doc-page-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.doc-page-header-logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.doc-page-header-brand {
+  font-family: var(--sans);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--navy);
+  text-transform: uppercase;
+}
+.doc-page-header-ref {
+  font-family: var(--sans);
+  font-size: 7pt;
+  color: var(--text-sec);
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+/* ─── FOOTER ─── */
+.doc-footer {
+  margin-top: 40px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--sans);
+  font-size: 7pt;
+  color: #A0AEC0;
+}
+@media print {
+  .doc-footer { position: running(footer); }
+}
+
+/* ─── NOTICE BOX ─── */
+.notice-box {
+  background: rgba(26,122,90,0.06);
+  border: 1px solid rgba(26,122,90,0.25);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.notice-box p {
+  font-size: 7.5pt;
+  color: var(--green);
+  font-family: var(--sans);
+  margin: 0;
+}
+
+/* ─── SECTION SPACING ─── */
+.section-block {
+  margin-bottom: 2px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* ─── TOC ─── */
+.toc-section {
+  margin: 24px 0 32px;
+  padding: 20px 24px;
+  background: var(--bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.toc-title {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.toc-title-en {
+  font-family: var(--sans);
+  font-size: 9pt;
+  font-weight: 700;
+  color: var(--navy);
+  direction: ltr;
+}
+.toc-title-he {
+  font-family: var(--hebrew);
+  font-size: 9pt;
+  font-weight: 800;
+  color: var(--navy);
+  direction: rtl;
+  text-align: right;
+}
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 20px;
+}
+.toc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--border);
+  font-size: 7.5pt;
+}
+.toc-item-num {
+  font-family: var(--sans);
+  font-weight: 700;
+  color: var(--gold);
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.toc-item-title { flex: 1; font-family: var(--serif); }
+.toc-he { direction: rtl; text-align: right; }
+.toc-he .toc-item-num { margin-left: 6px; margin-right: 0; }
+.toc-he .toc-item-title { font-family: var(--hebrew); }
+
+/* ─── ANNEX HEADER ─── */
+.annex-header {
+  background: rgba(232,168,32,0.08);
+  border: 1px solid rgba(232,168,32,0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 20px 0 14px;
+  text-align: center;
+  page-break-before: always;
+  break-before: page;
+}
+.annex-badge {
+  font-family: var(--sans);
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 4px;
+}
+.annex-title-en {
+  font-family: var(--serif);
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--navy);
+}
+.annex-title-he {
+  font-family: var(--hebrew);
+  font-size: 11pt;
+  font-weight: 800;
+  color: var(--navy);
+  direction: rtl;
+  display: block;
+  margin-top: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- COVER PAGE                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="cover-page">
+  <img src="./tm-energy-logo.png" alt="TM Energy" class="cover-logo">
+  <div class="cover-brand">TM Energy Co., Ltd. — Ko Phangan, Thailand</div>
+  <div class="cover-divider"></div>
+  <div class="cover-badge">Official Legal Document — מסמך משפטי רשמי</div>
+  <div class="cover-title-en">Solar Installation Agreement</div>
+  <div class="cover-title-he">הסכם התקנת מערכת סולארית</div>
+
+  <div class="cover-meta-box">
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Reference</span>
+      <span class="cover-meta-value">{{ref}}<span class="cover-meta-value-he">מספר הסכם: {{ref}}</span></span>
+    </div>
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Agreement Date</span>
+      <span class="cover-meta-value">{{date}}<span class="cover-meta-value-he">תאריך הסכם: {{date_he}}</span></span>
+    </div>
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Contractor</span>
+      <span class="cover-meta-value">TM Energy Co., Ltd.<span class="cover-meta-value-he">קבלן: TM Energy Co., Ltd.</span></span>
+    </div>
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Client</span>
+      <span class="cover-meta-value">{{client_name}}<span class="cover-meta-value-he">לקוח: {{client_name_he}}</span></span>
+    </div>
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Passport / ID</span>
+      <span class="cover-meta-value">{{client_id}}<span class="cover-meta-value-he">דרכון / ת.ז.: {{client_id}}</span></span>
+    </div>
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Installation Site</span>
+      <span class="cover-meta-value">{{location}}<span class="cover-meta-value-he">אתר ההתקנה: {{location}}</span></span>
+    </div>
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Total Contract Value</span>
+      <span class="cover-meta-value" style="color:#E8A820; font-weight:700;">&#3647;{{total_price_thb}} THB<span class="cover-meta-value-he" style="color:rgba(255,255,255,0.7);">ערך ההסכם: &#3647;{{total_price_thb}} THB</span></span>
+    </div>
+    <div class="cover-meta-row">
+      <span class="cover-meta-label">Based On Proposal</span>
+      <span class="cover-meta-value">{{ref}} dated {{date}}<span class="cover-meta-value-he">מבוסס על הצעת מחיר {{ref}}</span></span>
+    </div>
+  </div>
+
+  <div class="cover-footer">TM Energy — energy-tm.com — erez@energy-tm.com — Ko Phangan, Thailand</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- DOCUMENT BODY                                              -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="doc-body">
+
+  <!-- Page Header -->
+  <div class="doc-page-header">
+    <div class="doc-page-header-logo">
+      <img src="./tm-energy-logo.png" alt="TM Energy">
+      <span class="doc-page-header-brand">TM Energy Co., Ltd.</span>
+    </div>
+    <div class="doc-page-header-ref">
+      Solar Installation Agreement<br>
+      Ref: {{ref}} &nbsp;|&nbsp; {{date}}
+    </div>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc-section">
+    <div class="toc-title">
+      <span class="toc-title-en">Table of Contents</span>
+      <span class="toc-title-he">תוכן עניינים</span>
+    </div>
+    <div class="toc-grid">
+      <div>
+        <div class="toc-item"><span class="toc-item-num">1</span><span class="toc-item-title">Definitions</span></div>
+        <div class="toc-item"><span class="toc-item-num">2</span><span class="toc-item-title">Scope of Work</span></div>
+        <div class="toc-item"><span class="toc-item-num">3</span><span class="toc-item-title">Price and Payment Terms</span></div>
+        <div class="toc-item"><span class="toc-item-num">4</span><span class="toc-item-title">Timeline</span></div>
+        <div class="toc-item"><span class="toc-item-num">5</span><span class="toc-item-title">Warranties</span></div>
+        <div class="toc-item"><span class="toc-item-num">6</span><span class="toc-item-title">Client Responsibilities</span></div>
+        <div class="toc-item"><span class="toc-item-num">7</span><span class="toc-item-title">TM Energy Responsibilities</span></div>
+        <div class="toc-item"><span class="toc-item-num">8</span><span class="toc-item-title">Risk and Force Majeure</span></div>
+        <div class="toc-item"><span class="toc-item-num">9</span><span class="toc-item-title">Change Orders</span></div>
+        <div class="toc-item"><span class="toc-item-num">10</span><span class="toc-item-title">Termination</span></div>
+        <div class="toc-item"><span class="toc-item-num">11</span><span class="toc-item-title">Confidentiality</span></div>
+        <div class="toc-item"><span class="toc-item-num">12</span><span class="toc-item-title">Warranty Claims</span></div>
+        <div class="toc-item"><span class="toc-item-num">13</span><span class="toc-item-title">Dispute Resolution</span></div>
+        <div class="toc-item"><span class="toc-item-num">14</span><span class="toc-item-title">Entire Agreement</span></div>
+        <div class="toc-item"><span class="toc-item-num">15</span><span class="toc-item-title">Signatures</span></div>
+      </div>
+      <div class="toc-he">
+        <div class="toc-item"><span class="toc-item-num">1</span><span class="toc-item-title">הגדרות</span></div>
+        <div class="toc-item"><span class="toc-item-num">2</span><span class="toc-item-title">היקף העבודה</span></div>
+        <div class="toc-item"><span class="toc-item-num">3</span><span class="toc-item-title">מחיר ותנאי תשלום</span></div>
+        <div class="toc-item"><span class="toc-item-num">4</span><span class="toc-item-title">לוח זמנים</span></div>
+        <div class="toc-item"><span class="toc-item-num">5</span><span class="toc-item-title">אחריות</span></div>
+        <div class="toc-item"><span class="toc-item-num">6</span><span class="toc-item-title">חובות הלקוח</span></div>
+        <div class="toc-item"><span class="toc-item-num">7</span><span class="toc-item-title">חובות TM Energy</span></div>
+        <div class="toc-item"><span class="toc-item-num">8</span><span class="toc-item-title">סיכונים וכוח עליון</span></div>
+        <div class="toc-item"><span class="toc-item-num">9</span><span class="toc-item-title">שינויים בהיקף</span></div>
+        <div class="toc-item"><span class="toc-item-num">10</span><span class="toc-item-title">סיום והפסקת ההסכם</span></div>
+        <div class="toc-item"><span class="toc-item-num">11</span><span class="toc-item-title">סודיות</span></div>
+        <div class="toc-item"><span class="toc-item-num">12</span><span class="toc-item-title">תביעות אחריות</span></div>
+        <div class="toc-item"><span class="toc-item-num">13</span><span class="toc-item-title">יישוב סכסוכים</span></div>
+        <div class="toc-item"><span class="toc-item-num">14</span><span class="toc-item-title">הסכם מלא</span></div>
+        <div class="toc-item"><span class="toc-item-num">15</span><span class="toc-item-title">חתימות</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREAMBLE -->
+  <div class="section-block">
+    <div class="bilingual-page" style="border-top:none; margin-bottom:18px;">
+      <div class="col-en">
+        <p style="font-style:italic; color:var(--text-sec); font-size:8pt; line-height:1.7;">
+          This Solar Installation Agreement (<strong>"Agreement"</strong>) is entered into as of <strong>{{date}}</strong>
+          between <strong>TM Energy Co., Ltd.</strong>, a company registered under the laws of Thailand, with its principal
+          place of business at Ko Phangan, Surat Thani Province, Thailand
+          (<strong>"TM Energy"</strong> or <strong>"Contractor"</strong>), and the individual named on the Cover Page
+          (<strong>"Client"</strong>).<br><br>
+          TM Energy and the Client are each referred to herein as a <strong>"Party"</strong> and collectively as the <strong>"Parties."</strong>
+        </p>
+      </div>
+      <div class="col-he">
+        <p style="font-style:italic; color:var(--text-sec); font-size:8pt; line-height:1.7; direction:rtl;">
+          הסכם התקנת מערכת סולארית זה (<strong>"ההסכם"</strong>) נכרת ביום <strong>{{date_he}}</strong>
+          בין <strong>TM Energy Co., Ltd.</strong>, חברה הרשומה על-פי דיני ממלכת תאילנד, שמרכז עסקיה בקופנגן,
+          מחוז סורת תאני, תאילנד (<strong>"TM Energy"</strong> או <strong>"הקבלן"</strong>),
+          לבין האדם המופיע בדף השער (<strong>"הלקוח"</strong>).<br><br>
+          TM Energy והלקוח יכונו כל אחד <strong>"צד"</strong> ויחד <strong>"הצדדים."</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: DEFINITIONS ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 1</span>
+        <span class="doc-section-title-en">Definitions</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 1</span>
+        <span class="doc-section-title-he">הגדרות</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p><strong>"System"</strong> means the solar photovoltaic installation comprising all equipment described in the Proposal attached hereto, including panels, inverter, battery storage, mounting structures, cabling, protection devices, and monitoring hardware.</p>
+          <p><strong>"Site"</strong> means the property located at <strong>{{location}}</strong> where the System shall be installed.</p>
+          <p><strong>"Effective Date"</strong> means the date this Agreement is fully executed (signed by both Parties and initial deposit received).</p>
+          <p><strong>"Commissioning"</strong> means the date on which the Provincial Electricity Authority (<strong>"PEA"</strong>) grants approval for grid connection and the System is operational and producing electricity.</p>
+          <p><strong>"Completion"</strong> means the date on which physical installation of all components is finished, prior to PEA approval.</p>
+          <p><strong>"Proposal"</strong> means the solar proposal document ref. <strong>{{ref}}</strong> dated <strong>{{date}}</strong>, which is incorporated herein by reference.</p>
+          <p><strong>"Change Order"</strong> means any written modification to this Agreement signed by both Parties.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p><strong>"המערכת"</strong> פירושה מתקן הפוטו-וולטאי הסולארי הכולל את כל הציוד המפורט בהצעה המצורפת, לרבות פאנלים, אינוורטר, אחסון סוללות, מבני עגינה, כבלים, מגני יתר, וחומרת ניטור.</p>
+          <p><strong>"האתר"</strong> פירושו הנכס הממוקם ב-<strong>{{location}}</strong> שבו תותקן המערכת.</p>
+          <p><strong>"מועד התוקף"</strong> פירושו התאריך שבו נחתם ההסכם על-ידי שני הצדדים ונתקבלה המקדמה הראשונה.</p>
+          <p><strong>"הפעלה"</strong> פירושה התאריך שבו קיבלה רשות החשמל המחוזית (<strong>"PEA"</strong>) אישור לחיבור לרשת והמערכת פועלת ומייצרת חשמל.</p>
+          <p><strong>"השלמה"</strong> פירושה התאריך שבו הסתיימה ההתקנה הפיזית של כל הרכיבים, לפני קבלת אישור PEA.</p>
+          <p><strong>"ההצעה"</strong> פירושה מסמך הצעת המחיר הסולארית מס' <strong>{{ref}}</strong> מיום <strong>{{date_he}}</strong>, המהווה חלק בלתי נפרד מהסכם זה.</p>
+          <p><strong>"צו שינוי"</strong> פירושו כל שינוי בכתב בהסכם זה החתום על-ידי שני הצדדים.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: SCOPE OF WORK ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 2</span>
+        <span class="doc-section-title-en">Scope of Work</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 2</span>
+        <span class="doc-section-title-he">היקף העבודה</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p>TM Energy shall supply and install the System as detailed in the Proposal (ref. <strong>{{ref}}</strong>), which constitutes the binding technical specification. The scope includes:</p>
+          <ul>
+            <li>Supply and installation of <strong>{{panel_count}} solar panels</strong> ({{panel_model}})</li>
+            <li>Supply and installation of <strong>hybrid inverter</strong> ({{inverter_model}})</li>
+            <li>Supply and installation of <strong>battery storage system</strong> ({{battery_kwh}} kWh)</li>
+            <li>Roof-mounting structures, DC/AC cabling, and conduit</li>
+            <li>Surge protection, disconnect switches, and safety devices</li>
+            <li>Smart meter and monitoring hardware (FusionSolar)</li>
+            <li>PEA application preparation, submission, and follow-up</li>
+            <li>System commissioning, testing, and performance verification</li>
+            <li>Client operator training and delivery of owner's manual</li>
+          </ul>
+          <div class="notice-box" style="margin-top:10px;">
+            <p>The binding technical specification is the Proposal dated {{date}}. Any item not explicitly listed in the Proposal is not included in this scope.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p>TM Energy תספק ותתקין את המערכת כמפורט בהצעה (מס' <strong>{{ref}}</strong>), המהווה המפרט הטכני המחייב. היקף העבודה כולל:</p>
+          <ul>
+            <li>אספקה והתקנת <strong>{{panel_count}} פאנלים סולאריים</strong> ({{panel_model}})</li>
+            <li>אספקה והתקנת <strong>אינוורטר היברידי</strong> ({{inverter_model}})</li>
+            <li>אספקה והתקנת <strong>מערכת אחסון סוללות</strong> ({{battery_kwh}} kWh)</li>
+            <li>מבני עגינה על הגג, כבלי DC/AC וצינורות</li>
+            <li>הגנות יתר, מפסקי ניתוק, ומכשירי בטיחות</li>
+            <li>מד חכם וחומרת ניטור (FusionSolar)</li>
+            <li>הכנה, הגשה ומעקב אחר בקשה ל-PEA</li>
+            <li>הפעלת המערכת, בדיקות ואימות ביצועים</li>
+            <li>הדרכת מפעיל ומסירת מדריך למשתמש</li>
+          </ul>
+          <div class="notice-box" style="margin-top:10px;">
+            <p>המפרט הטכני המחייב הוא ההצעה מיום {{date_he}}. כל פריט שאינו מפורש בהצעה אינו כלול בהיקף זה.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: PRICE AND PAYMENT ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 3</span>
+        <span class="doc-section-title-en">Price and Payment Terms</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 3</span>
+        <span class="doc-section-title-he">מחיר ותנאי תשלום</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <div class="highlight-box">
+            <p>Total Contract Price: <strong>&#3647;{{total_price_thb}} THB</strong><br>
+            VAT: Added according to Thai law unless this agreement explicitly states that VAT is included.</p>
+          </div>
+
+          <p style="margin-top:10px; margin-bottom:8px;"><strong>Payment Schedule:</strong></p>
+          <table class="payment-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Milestone</th>
+                <th>%</th>
+                <th>Amount (THB)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1</strong></td>
+                <td>Deposit — upon signing this Agreement</td>
+                <td class="pct">40%</td>
+                <td class="amt">&#3647;{{payment_40_thb}}</td>
+              </tr>
+              <tr>
+                <td><strong>2</strong></td>
+                <td>Materials Delivery — upon panels, inverter &amp; battery on-site</td>
+                <td class="pct">40%</td>
+                <td class="amt">&#3647;{{payment_40_thb}}</td>
+              </tr>
+              <tr>
+                <td><strong>3</strong></td>
+                <td>Commissioning — PEA approval obtained, system operational</td>
+                <td class="pct">20%</td>
+                <td class="amt">&#3647;{{payment_20_thb}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-top:8px; font-size:7.5pt; color:var(--text-sec);">Payment by bank transfer only. Bank details will be provided by TM Energy at least 3 business days prior to each milestone. Late payments accrue interest at <strong>1.5% per month</strong> on the overdue balance.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <div class="highlight-box">
+            <p>מחיר חוזה: <strong>&#3647;{{total_price_thb}} THB</strong><br>
+            מע"מ יתווסף לפי דין תאילנדי אלא אם ההסכם מציין במפורש שהמחיר כולל VAT.</p>
+          </div>
+
+          <p style="margin-top:10px; margin-bottom:8px;"><strong>לוח תשלומים:</strong></p>
+          <table class="payment-table" style="direction:rtl; text-align:right;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>אבן דרך</th>
+                <th>%</th>
+                <th>סכום (THB)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1</strong></td>
+                <td>מקדמה — עם חתימה על ההסכם</td>
+                <td class="pct">40%</td>
+                <td class="amt">&#3647;{{payment_40_thb}}</td>
+              </tr>
+              <tr>
+                <td><strong>2</strong></td>
+                <td>הגעת ציוד — עם הגעת פאנלים, אינוורטר וסוללה לאתר</td>
+                <td class="pct">40%</td>
+                <td class="amt">&#3647;{{payment_40_thb}}</td>
+              </tr>
+              <tr>
+                <td><strong>3</strong></td>
+                <td>הפעלה — אישור PEA התקבל, המערכת פועלת</td>
+                <td class="pct">20%</td>
+                <td class="amt">&#3647;{{payment_20_thb}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-top:8px; font-size:7.5pt; color:var(--text-sec); direction:rtl;">תשלום בהעברה בנקאית בלבד. פרטי חשבון הבנק יימסרו על-ידי TM Energy לפחות 3 ימי עסקים לפני כל אבן דרך. איחור בתשלום יחייב ריבית של <strong>1.5% לחודש</strong> על היתרה הפגומה.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: TIMELINE ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 4</span>
+        <span class="doc-section-title-en">Timeline</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 4</span>
+        <span class="doc-section-title-he">לוח זמנים</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <ul>
+            <li><strong>PEA Submission:</strong> Within 7 calendar days of Effective Date</li>
+            <li><strong>Materials Delivery:</strong> Within 30 calendar days of Effective Date</li>
+            <li><strong>Physical Installation:</strong> 2–3 business days; scheduled in advance with Client</li>
+            <li><strong>PEA Approval:</strong> Typically 20–45 days from submission (PEA-controlled; not TM Energy's liability for delays within this range)</li>
+            <li><strong>Commissioning Target:</strong> Within 45 calendar days of Effective Date (subject to PEA timeline)</li>
+          </ul>
+          <p style="margin-top:10px; font-size:8pt; color:var(--text-sec);">Delays caused by Client (e.g., site not ready, missing PEA documents, access denied) extend all deadlines day-for-day without liability to TM Energy. Delays during Thai public holidays or monsoon season (June–October) are treated as force majeure.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <ul>
+            <li><strong>הגשה ל-PEA:</strong> תוך 7 ימים קלנדריים ממועד התוקף</li>
+            <li><strong>הגעת ציוד:</strong> תוך 30 ימים קלנדריים ממועד התוקף</li>
+            <li><strong>התקנה פיזית:</strong> 2-3 ימי עסקים; מתואמת מראש עם הלקוח</li>
+            <li><strong>אישור PEA:</strong> בדרך כלל 20-45 ימים מהגשה (בשליטת PEA; עיכובים בטווח זה אינם באחריות TM Energy)</li>
+            <li><strong>יעד הפעלה:</strong> תוך 45 ימים קלנדריים ממועד התוקף (תלוי ב-PEA)</li>
+          </ul>
+          <p style="margin-top:10px; font-size:8pt; color:var(--text-sec); direction:rtl;">עיכובים הנגרמים על-ידי הלקוח (כגון: האתר אינו מוכן, מסמכי PEA חסרים, חסימת גישה) מאריכים את כל המועדים יום תמורת יום ללא אחריות TM Energy. עיכובים בחגים ציבוריים תאילנדיים או בעונת המונסון (יוני-אוקטובר) מטופלים כאירועי כוח עליון.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: WARRANTIES ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 5</span>
+        <span class="doc-section-title-en">Warranties</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 5</span>
+        <span class="doc-section-title-he">אחריות</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <div class="warranty-item">
+            <div class="warranty-dot"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">Solar Panels — 12 + 25 Years</span>
+              <p class="warranty-desc">12-year product warranty (minimum 90% output at Year 12). 25-year manufacturer linear degradation warranty (per JA Solar datasheet, IEC 61215 certified).</p>
+            </div>
+          </div>
+          <div class="warranty-item">
+            <div class="warranty-dot"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">Hybrid Inverter — 10 Years</span>
+              <p class="warranty-desc">Huawei SUN2000 manufacturer warranty. Covers inverter defects, MPPT failure, and hardware faults. Excludes physical damage.</p>
+            </div>
+          </div>
+          <div class="warranty-item">
+            <div class="warranty-dot"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">Battery Storage — 10 Years / 5,000 Cycles</span>
+              <p class="warranty-desc">Huawei LUNA2000 warranty: 10 years or 5,000 charge-discharge cycles (whichever comes first), minimum 70% capacity retention.</p>
+            </div>
+          </div>
+          <div class="warranty-item">
+            <div class="warranty-dot"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">Installation Workmanship — 2 Years</span>
+              <p class="warranty-desc">TM Energy guarantees all installation work including mounting, wiring, conduit, and connections for 2 years from Commissioning date.</p>
+            </div>
+          </div>
+          <p style="margin-top:10px; font-size:7.5pt; color:var(--text-sec);"><strong>Warranty exclusions:</strong> Acts of God, client misuse, unauthorized modifications, animal damage, and lightning strikes (lightning protection system is installed but cannot guarantee against all events).</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <div class="warranty-item" style="direction:rtl; text-align:right;">
+            <div class="warranty-dot" style="margin-left:8px; margin-right:0;"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">פאנלים סולאריים — 12 + 25 שנה</span>
+              <p class="warranty-desc">אחריות מוצר ל-12 שנה (מינימום 90% תפוקה בשנת 12). אחריות דגרדציה לינארית ל-25 שנה של היצרן (לפי מפרט JA Solar, מאושר IEC 61215).</p>
+            </div>
+          </div>
+          <div class="warranty-item" style="direction:rtl; text-align:right;">
+            <div class="warranty-dot" style="margin-left:8px; margin-right:0;"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">אינוורטר היברידי — 10 שנים</span>
+              <p class="warranty-desc">אחריות יצרן Huawei SUN2000. מכסה תקלות אינוורטר, כשל MPPT ותקלות חומרה. לא כולל נזק פיזי.</p>
+            </div>
+          </div>
+          <div class="warranty-item" style="direction:rtl; text-align:right;">
+            <div class="warranty-dot" style="margin-left:8px; margin-right:0;"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">אחסון סוללות — 10 שנים / 5,000 מחזורים</span>
+              <p class="warranty-desc">אחריות Huawei LUNA2000: 10 שנים או 5,000 מחזורי טעינה-פריקה (המוקדם מביניהם), עם שמירת מינימום 70% קיבולת.</p>
+            </div>
+          </div>
+          <div class="warranty-item" style="direction:rtl; text-align:right;">
+            <div class="warranty-dot" style="margin-left:8px; margin-right:0;"></div>
+            <div class="warranty-text">
+              <span class="warranty-label">אחריות התקנה — 2 שנים</span>
+              <p class="warranty-desc">TM Energy מבטיחה את כל עבודות ההתקנה כולל עגינה, חיווט, צינורות וחיבורים למשך 2 שנים ממועד ההפעלה.</p>
+            </div>
+          </div>
+          <p style="margin-top:10px; font-size:7.5pt; color:var(--text-sec); direction:rtl;"><strong>חריגים מהאחריות:</strong> אירועי כוח עליון, שימוש לא נכון של הלקוח, שינויים לא מורשים, נזקי בעלי חיים, ופגיעות ברק (מערכת הגנת ברק מותקנת אך לא יכולה להבטיח הגנה מוחלטת).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: CLIENT RESPONSIBILITIES ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 6</span>
+        <span class="doc-section-title-en">Client Responsibilities</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 6</span>
+        <span class="doc-section-title-he">חובות הלקוח</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <ul>
+            <li>Provide clean, accessible roof and electrical panel area throughout installation</li>
+            <li>Sign a structural declaration confirming the roof can bear approximately 25 kg/m² plus wind loads</li>
+            <li>Provide all documents required for PEA submission (see Annex A — Client Preparation Checklist)</li>
+            <li>Pay per the schedule in Section 3</li>
+            <li>Authorize TM Energy in writing to submit documents to PEA on the Client's behalf</li>
+            <li>Notify TM Energy of any relevant changes (ownership transfer, roof repairs, structural alterations) within 14 days of occurrence</li>
+            <li>Not modify, obstruct, or permit third parties to modify the System without TM Energy's written consent</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <ul>
+            <li>לספק גג נגיש ונקי ואזור לוח חשמל לאורך כל ההתקנה</li>
+            <li>לחתום על הצהרת מבנה המאשרת שהגג עמיד בעומס של כ-25 ק"ג/מ"ר בתוספת עומסי רוח</li>
+            <li>לספק את כל המסמכים הנדרשים להגשה ל-PEA (ראה נספח א' - רשימת הכנת לקוח)</li>
+            <li>לשלם לפי לוח התשלומים שבסעיף 3</li>
+            <li>להסמיך בכתב את TM Energy להגיש מסמכים ל-PEA בשמו</li>
+            <li>להודיע ל-TM Energy על שינויים רלוונטיים (העברת בעלות, תיקוני גג, שינויים מבניים) תוך 14 ימים מהתרחשותם</li>
+            <li>לא לשנות, לחסום, או לאפשר לצדדים שלישיים לשנות את המערכת ללא הסכמת TM Energy בכתב</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 7: TM ENERGY RESPONSIBILITIES ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 7</span>
+        <span class="doc-section-title-en">TM Energy Responsibilities</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 7</span>
+        <span class="doc-section-title-he">חובות TM Energy</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <ul>
+            <li>Perform professional installation in accordance with Thai PEA TS-15:2558 standard and international standards IEC 62109 / IEC 61730</li>
+            <li>Use only Tier-1 certified equipment as specified in the Proposal</li>
+            <li>Prepare, submit, and follow up on the PEA grid-connection application</li>
+            <li>Perform full system commissioning, testing, and performance verification</li>
+            <li>Provide Client with operator training and owner's manual</li>
+            <li>Monitor system performance for the first 30 days post-Commissioning and report any anomalies</li>
+            <li>Maintain installation liability insurance covering the installation work period</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <ul>
+            <li>לבצע התקנה מקצועית בהתאם לתקן PEA TS-15:2558 התאילנדי ולתקנים בינלאומיים IEC 62109 / IEC 61730</li>
+            <li>להשתמש אך ורק בציוד Tier-1 מוסמך כמפורט בהצעה</li>
+            <li>להכין, להגיש ולעקוב אחר בקשת חיבור לרשת PEA</li>
+            <li>לבצע הפעלה מלאה של המערכת, בדיקות ואימות ביצועים</li>
+            <li>לספק ללקוח הדרכת מפעיל ומדריך למשתמש</li>
+            <li>לנטר את ביצועי המערכת ל-30 ימים הראשונים לאחר ההפעלה ולדווח על חריגות</li>
+            <li>לשמור על ביטוח אחריות התקנה המכסה את תקופת עבודות ההתקנה</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 8: RISK AND FORCE MAJEURE ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 8</span>
+        <span class="doc-section-title-en">Risk and Force Majeure</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 8</span>
+        <span class="doc-section-title-he">סיכונים וכוח עליון</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p><strong>Risk Transfer:</strong> Risk of loss or damage to the System transfers to the Client upon physical Completion of installation.</p>
+          <p><strong>Force Majeure Events</strong> include: typhoons and tropical storms, floods, earthquakes, pandemic or government-declared emergency, government restrictions on materials or labor, international supply chain disruptions, and acts of war. Installation work pauses automatically during official storm warnings (Class 1 or above) issued by the Thai Meteorological Department.</p>
+          <p><strong>Insurance:</strong> The Client is responsible for obtaining property insurance covering the installed System. TM Energy maintains installation liability insurance during the installation work period only.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p><strong>העברת סיכון:</strong> הסיכון לאובדן או נזק למערכת עובר ללקוח עם השלמת ההתקנה הפיזית.</p>
+          <p><strong>אירועי כוח עליון</strong> כוללים: טייפונים וסופות טרופיות, שיטפונות, רעידות אדמה, מגפה או מצב חירום ממשלתי, הגבלות ממשלתיות על חומרים או כוח עבודה, שיבושים בשרשרת האספקה הבינלאומית, ופעולות מלחמה. עבודות ההתקנה מופסקות אוטומטית בזמן אזהרות סופה רשמיות (רמה 1 ומעלה) של המחלקה המטאורולוגית התאילנדית.</p>
+          <p><strong>ביטוח:</strong> הלקוח אחראי לרכוש ביטוח נכסים המכסה את המערכת המותקנת. TM Energy מחזיקה ביטוח אחריות התקנה בתקופת עבודות ההתקנה בלבד.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 9: CHANGE ORDERS ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 9</span>
+        <span class="doc-section-title-en">Change Orders</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 9</span>
+        <span class="doc-section-title-he">שינויים בהיקף</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p>Any modification to the Scope of Work requires a written Change Order signed by both Parties, including any resulting adjustment to the price or timeline. Client-initiated changes requested after Materials Delivery may be subject to additional procurement and handling fees. TM Energy is not obligated to accept Change Orders that are technically infeasible or unsafe.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p>כל שינוי בהיקף העבודה מצריך צו שינוי בכתב החתום על-ידי שני הצדדים, כולל כל התאמה במחיר או בלוח הזמנים. שינויים ביוזמת הלקוח המבוקשים לאחר הגעת הציוד עלולים לכלול דמי רכש וטיפול נוספים. TM Energy אינה מחויבת לקבל צווי שינוי שאינם ישימים מבחינה טכנית או שאינם בטיחותיים.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 10: TERMINATION ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 10</span>
+        <span class="doc-section-title-en">Termination</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 10</span>
+        <span class="doc-section-title-he">סיום והפסקת ההסכם</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p><strong>By TM Energy:</strong> TM Energy may terminate this Agreement upon 14 days written notice if the Client fails to make any payment when due or commits a material breach that is not cured within the notice period.</p>
+          <p><strong>By Client:</strong> The Client may terminate this Agreement upon 14 days written notice if TM Energy commits a material breach of its obligations and fails to cure such breach within the notice period.</p>
+          <p><strong>On Termination:</strong> The Client shall pay for (a) all work completed as of the termination date at pro-rated value, (b) all materials delivered to the Site, and (c) a termination fee of <strong>15%</strong> of the remaining contract value not yet invoiced. Deposit payments are non-refundable once materials have been ordered.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p><strong>על-ידי TM Energy:</strong> TM Energy רשאית לסיים הסכם זה בהודעה בכתב של 14 ימים אם הלקוח לא ביצע תשלום כלשהו במועד או ביצע הפרה מהותית שלא תוקנה בתקופת ההתראה.</p>
+          <p><strong>על-ידי הלקוח:</strong> הלקוח רשאי לסיים הסכם זה בהודעה בכתב של 14 ימים אם TM Energy ביצעה הפרה מהותית של חובותיה ולא תיקנה הפרה זו בתקופת ההתראה.</p>
+          <p><strong>עם הסיום:</strong> הלקוח ישלם עבור (א) כל העבודה שהושלמה עד מועד הסיום בערך יחסי, (ב) כל החומרים שנמסרו לאתר, ו-(ג) דמי סיום בשיעור <strong>15%</strong> מערך החוזה שנותר שטרם הוחשב. תשלומי מקדמה אינם ניתנים להחזר לאחר הזמנת חומרים.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 11: CONFIDENTIALITY ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 11</span>
+        <span class="doc-section-title-en">Confidentiality</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 11</span>
+        <span class="doc-section-title-he">סודיות</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p>The pricing, technical drawings, and system design contained in this Agreement and the Proposal are confidential and shall not be disclosed by either Party to third parties without prior written consent. TM Energy may use installation photographs for marketing purposes; photographs that identify the Client personally will only be used with the Client's explicit written consent.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p>המחיר, השרטוטים הטכניים ועיצוב המערכת הכלולים בהסכם זה ובהצעה הם חסויים ולא יגולו על-ידי מי מהצדדים לצדדים שלישיים ללא הסכמה מוקדמת בכתב. TM Energy רשאית להשתמש בצילומי ההתקנה למטרות שיווקיות; צילומים המזהים את הלקוח אישית ישמשו רק בהסכמה מפורשת בכתב של הלקוח.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 12: WARRANTY CLAIMS ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 12</span>
+        <span class="doc-section-title-en">Warranty Claims</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 12</span>
+        <span class="doc-section-title-he">תביעות אחריות</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p><strong>Contact:</strong> erez@energy-tm.com or k@kanielt.com<br>
+          <strong>WhatsApp:</strong> As provided at Commissioning</p>
+          <ul style="margin-top:8px;">
+            <li>TM Energy will acknowledge warranty claims within <strong>48 hours</strong> of receipt</li>
+            <li>A service visit will be scheduled within <strong>7 business days</strong> of acknowledgment</li>
+            <li>Delays during monsoon season (June–October) or due to force majeure events are excluded from the above SLA</li>
+            <li>Client must not attempt to repair the System without TM Energy's authorization; unauthorized repairs void the workmanship warranty</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p><strong>צור קשר:</strong> erez@energy-tm.com או k@kanielt.com<br>
+          <strong>WhatsApp:</strong> כפי שנמסר בעת ההפעלה</p>
+          <ul style="margin-top:8px; direction:rtl;">
+            <li>TM Energy תאשר קבלת תביעות אחריות תוך <strong>48 שעות</strong> מקבלתן</li>
+            <li>ביקור שירות יתואם תוך <strong>7 ימי עסקים</strong> מהאישור</li>
+            <li>עיכובים בעונת המונסון (יוני-אוקטובר) או עקב אירועי כוח עליון אינם נכללים בהסכם SLA הנ"ל</li>
+            <li>הלקוח אינו רשאי לנסות לתקן את המערכת ללא אישור TM Energy; תיקונים לא מורשים מבטלים את אחריות ההתקנה</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 13: DISPUTE RESOLUTION ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 13</span>
+        <span class="doc-section-title-en">Dispute Resolution</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 13</span>
+        <span class="doc-section-title-he">יישוב סכסוכים</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p><strong>Governing Law:</strong> This Agreement is governed by the laws of the Kingdom of Thailand.</p>
+          <p><strong>Jurisdiction:</strong> Courts of Surat Thani Province, Thailand.</p>
+          <p><strong>Mediation First:</strong> The Parties agree to attempt good-faith mediation before initiating litigation. Mediation shall be conducted through the Thai BOI Dispute Resolution Center or a mutually agreed mediator.</p>
+          <p><strong>Foreign Clients:</strong> At the election of the Client, disputes may alternatively be resolved by arbitration in Bangkok under the rules of the Thai Arbitration Institute (TAI).</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p><strong>הדין החל:</strong> הסכם זה כפוף לחוקי ממלכת תאילנד.</p>
+          <p><strong>סמכות שיפוטית:</strong> בתי משפט של מחוז סורת תאני, תאילנד.</p>
+          <p><strong>גישור תחילה:</strong> הצדדים מסכימים לנסות גישור בתום לב לפני פנייה לבית המשפט. הגישור ייערך דרך מרכז ליישוב סכסוכים של BOI התאילנדי או גורם גישור שיוסכם הדדית.</p>
+          <p><strong>לקוחות זרים:</strong> לפי בחירת הלקוח, ניתן ליישב סכסוכים לחלופין בבוררות בבנגקוק תחת כללי מוסד הבוררות התאילנדי (TAI).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 14: ENTIRE AGREEMENT ── -->
+  <div class="section-block">
+    <div class="doc-section-header">
+      <div class="col-en-header">
+        <span class="doc-section-num">Section 14</span>
+        <span class="doc-section-title-en">Entire Agreement</span>
+      </div>
+      <div class="col-he-header">
+        <span class="doc-section-num" style="text-align:right; display:block;">סעיף 14</span>
+        <span class="doc-section-title-he">הסכם מלא</span>
+      </div>
+    </div>
+    <div class="bilingual-page">
+      <div class="col-en">
+        <div class="section-body">
+          <p>This Agreement, together with the attached Proposal (ref. {{ref}}) and the Client Preparation Checklist (Annex A), constitutes the entire agreement between the Parties with respect to the subject matter hereof and supersedes all prior negotiations, representations, warranties, and understandings. This Agreement may only be amended by a written document signed by both Parties.</p>
+        </div>
+      </div>
+      <div class="col-he">
+        <div class="section-body" style="direction:rtl;">
+          <p>הסכם זה, יחד עם ההצעה המצורפת (מס' {{ref}}) ורשימת הכנת הלקוח (נספח א'), מהווה את ההסכם המלא בין הצדדים ביחס לנושא המוסדר בו ומחליף את כל המשא ומתן, המצגים, האחריות וההבנות הקודמות. ניתן לתקן הסכם זה רק במסמך בכתב החתום על-ידי שני הצדדים.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 15: SIGNATURES ── -->
+  <div class="signature-section">
+    <div class="sig-section-title">
+      <h2>Section 15 — Signatures / חתימות</h2>
+      <h3>IN WITNESS WHEREOF, the Parties have executed this Agreement / לאות הסכמתם, חתמו הצדדים על הסכם זה</h3>
+      <p>Agreement Reference: {{ref}} &nbsp;|&nbsp; Date: {{date}}</p>
+    </div>
+
+    <div class="sig-grid">
+      <!-- TM Energy -->
+      <div class="sig-party">
+        <div class="sig-party-header">
+          <span class="sig-party-title-en">Contractor — TM Energy Co., Ltd.</span>
+          <span class="sig-party-title-he">הקבלן — TM Energy Co., Ltd.</span>
+        </div>
+        <div class="sig-party-body">
+          <div class="sig-field">
+            <span class="sig-field-label">Full Name / שם מלא</span>
+            <span class="sig-field-value">Erez Ben David</span>
+          </div>
+          <div class="sig-field">
+            <span class="sig-field-label">Title / תפקיד</span>
+            <span class="sig-field-value">Director, TM Energy Co., Ltd.</span>
+          </div>
+          <div class="sig-date-grid">
+            <div class="sig-field">
+              <span class="sig-field-label">Date / תאריך</span>
+              <span class="sig-field-value blank">{{date}}</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <span class="sig-field-label">Signature / חתימה</span>
+            <div class="sig-box">
+              <span class="sig-box-label">Signature</span>
+            </div>
+          </div>
+          <div class="sig-field" style="margin-top:12px;">
+            <span class="sig-field-label">Company Stamp (if applicable) / חותמת</span>
+            <div class="sig-box" style="height:55px;">
+              <span class="sig-box-label">Company Stamp</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Client -->
+      <div class="sig-party">
+        <div class="sig-party-header">
+          <span class="sig-party-title-en">Client</span>
+          <span class="sig-party-title-he">הלקוח</span>
+        </div>
+        <div class="sig-party-body">
+          <div class="sig-field">
+            <span class="sig-field-label">Full Name / שם מלא</span>
+            <span class="sig-field-value">{{client_name}}</span>
+          </div>
+          <div class="sig-field">
+            <span class="sig-field-label">Passport / Thai ID / דרכון / ת.ז.</span>
+            <span class="sig-field-value">{{client_id}}</span>
+          </div>
+          <div class="sig-date-grid">
+            <div class="sig-field">
+              <span class="sig-field-label">Date / תאריך</span>
+              <span class="sig-field-value blank">_____________</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <span class="sig-field-label">Signature / חתימה</span>
+            <div class="sig-box">
+              <span class="sig-box-label">Client Signature</span>
+            </div>
+          </div>
+          <div class="sig-field" style="margin-top:12px;">
+            <span class="sig-field-label">Initials on Each Page / ראשי תיבות בכל עמוד</span>
+            <div class="sig-box" style="height:55px;">
+              <span class="sig-box-label">___</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Witnesses -->
+    <div class="witness-section">
+      <p style="text-align:center; font-family:var(--sans); font-size:8pt; color:var(--text-sec); margin-bottom:16px;">Witnesses (optional but recommended for Thai contracts) / עדים (אופציונלי אך מומלץ לחוזים בתאילנד)</p>
+      <div class="witness-grid">
+        <div class="witness-box">
+          <span class="witness-title-en">Witness 1 / עד 1</span>
+          <span class="witness-title-he">עד ראשון</span>
+          <div class="sig-field"><span class="sig-field-label">Name / שם</span><span class="sig-field-value blank">_______________________</span></div>
+          <div class="sig-field"><span class="sig-field-label">ID / ת.ז.</span><span class="sig-field-value blank">_______________________</span></div>
+          <div class="sig-field"><span class="sig-field-label">Signature / חתימה</span><div class="sig-box" style="height:50px;"><span class="sig-box-label">Sign</span></div></div>
+        </div>
+        <div class="witness-box">
+          <span class="witness-title-en">Witness 2 / עד 2</span>
+          <span class="witness-title-he">עד שני</span>
+          <div class="sig-field"><span class="sig-field-label">Name / שם</span><span class="sig-field-value blank">_______________________</span></div>
+          <div class="sig-field"><span class="sig-field-label">ID / ת.ז.</span><span class="sig-field-value blank">_______________________</span></div>
+          <div class="sig-field"><span class="sig-field-label">Signature / חתימה</span><div class="sig-box" style="height:50px;"><span class="sig-box-label">Sign</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acknowledgment -->
+    <div style="margin-top:28px; padding:16px; background:var(--bg); border-radius:8px; border:1px solid var(--border); text-align:center;">
+      <p style="font-family:var(--sans); font-size:7.5pt; color:var(--text-sec); line-height:1.8;">
+        By signing above, both Parties acknowledge they have read, understood, and agree to all terms and conditions of this Agreement.<br>
+        <span style="font-family:var(--hebrew); direction:rtl; display:block; margin-top:4px;">בחתימתם לעיל, מאשרים שני הצדדים כי קראו, הבינו והסכימו לכל תנאי הסכם זה.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="doc-footer">
+    <span>TM Energy Co., Ltd. — Ko Phangan, Surat Thani, Thailand — energy-tm.com</span>
+    <span>{{ref}} — {{date}}</span>
+    <span>erez@energy-tm.com</span>
+  </div>
+
+</div>
+</body>
+</html>

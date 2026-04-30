@@ -19,7 +19,7 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
-import { useLanguage } from '../i18n/LanguageContext'
+import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, homeBreadcrumb, faqSchema } from '../components/seo/schemas'
 
@@ -39,6 +39,24 @@ const monitorImg = '/assets/images/monitor-02-app.png'
 
 // ─── Project images mapped to 6 items ───────────────────────────────────────
 const projectImages = [villaImg, resortImg, aerialImg, happyImg, monitorImg, installImg]
+
+type HomeHeroExtra = { trustLine?: string }
+type HomeServicesExtra = {
+  batteryStorage?: { title?: string; description?: string; cta?: string }
+}
+type ScrollAnimationCopy = { sectionTag?: string; title?: string; subtitle?: string }
+type ProcessExtra = { statsLine?: string }
+type ProjectExtra = { type?: string }
+type ProjectsExtra = { viewAll?: string }
+type TestimonialItem = { stars: number; quote: string; name: string; role: string }
+type TestimonialsCopy = {
+  sectionTag?: string
+  title?: string
+  items?: TestimonialItem[]
+  rating?: string
+}
+type FAQCopy = { items?: Array<{ question: string; answer: string }> }
+type CTAExtra = { ctaWhatsapp?: string; ctaCall?: string; urgency?: string }
 
 // ─── Animation variants ─────────────────────────────────────────────────────
 const fadeUp = {
@@ -77,6 +95,7 @@ function useCountUp(target: number, duration = 1800, started = false) {
 function HeroSection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
+  const hero = t.home.hero as typeof t.home.hero & HomeHeroExtra
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -191,12 +210,12 @@ function HeroSection() {
         </motion.div>
 
         {/* Trust line */}
-        {'trustLine' in t.home.hero && (
+        {hero.trustLine && (
           <motion.p
             variants={fadeUp}
             className="mt-8 text-sm text-white/35 tracking-wide"
           >
-            {(t.home.hero as any).trustLine}
+            {hero.trustLine}
           </motion.p>
         )}
       </motion.div>
@@ -256,6 +275,7 @@ function StatsBar() {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-60px 0px' })
   const { t } = useTranslation()
+  const hero = t.home.hero as typeof t.home.hero & HomeHeroExtra
 
   const icons = [
     <Home size={20} key="h" />,
@@ -293,10 +313,10 @@ function StatsBar() {
         ))}
       </div>
       {/* Trust line */}
-      {'trustLine' in t.home.hero && (
+      {hero.trustLine && (
         <div className="text-center pb-6 pt-2">
           <p className="text-xs text-white/25 tracking-widest uppercase">
-            {(t.home.hero as any).trustLine}
+            {hero.trustLine}
           </p>
         </div>
       )}
@@ -310,6 +330,7 @@ function StatsBar() {
 function ServicesSection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
+  const servicesCopy = t.home.services as typeof t.home.services & HomeServicesExtra
 
   const services = [
     {
@@ -320,7 +341,7 @@ function ServicesSection() {
       href: langPath('/services#residential'),
       image: villaImg,
       altText: 'Residential solar panel installation on a villa roof in Ko Phangan',
-      bullets: ['Save 40-70% on electricity', 'Increase property value', 'Battery backup available'],
+      bullets: ['Reduce daytime grid consumption', 'Increase property resilience', 'Battery backup available'],
     },
     {
       icon: <Building2 size={24} />,
@@ -344,11 +365,11 @@ function ServicesSection() {
     },
     {
       icon: <Battery size={24} />,
-      title: (t.home.services as any).batteryStorage?.title ?? 'Battery Storage',
+      title: servicesCopy.batteryStorage?.title ?? 'Battery Storage',
       description:
-        (t.home.services as any).batteryStorage?.description ??
+        servicesCopy.batteryStorage?.description ??
         'Blackout protection and 24/7 power independence.',
-      cta: (t.home.services as any).batteryStorage?.cta ?? 'Learn More',
+      cta: servicesCopy.batteryStorage?.cta ?? 'Learn More',
       href: langPath('/services#battery'),
       image: huaweiImg,
       altText: 'Huawei battery storage system for off-grid solar power on Ko Phangan',
@@ -474,7 +495,7 @@ function ServicesSection() {
 // ═══════════════════════════════════════════════════════════════════════════
 function ScrollAnimationSection() {
   const { t } = useTranslation()
-  const scrollData = (t.home as any).scrollAnimation
+  const scrollData = (t.home as typeof t.home & { scrollAnimation?: ScrollAnimationCopy }).scrollAnimation
 
   return (
     <section>
@@ -648,6 +669,7 @@ const stepNums = ['01', '02', '03', '04']
 function ProcessSection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
+  const processCopy = t.home.process as typeof t.home.process & ProcessExtra
 
   return (
     <section className="py-24 px-6" id="process">
@@ -726,13 +748,13 @@ function ProcessSection() {
         </motion.div>
 
         {/* Stats line */}
-        {'statsLine' in t.home.process && (
+        {processCopy.statsLine && (
           <div className="mt-10 text-center">
             <p
               className="text-sm font-semibold"
               style={{ color: 'var(--color-gold)' }}
             >
-              {(t.home.process as any).statsLine}
+              {processCopy.statsLine}
             </p>
           </div>
         )}
@@ -768,6 +790,7 @@ function ProcessSection() {
 function ProjectsSection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
+  const projectsCopy = t.home.projects as typeof t.home.projects & ProjectsExtra
 
   return (
     <section className="py-24 px-6" id="work">
@@ -794,9 +817,11 @@ function ProjectsSection() {
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
         >
-          {t.home.projects.items.map((proj, i) => (
+          {t.home.projects.items.map((proj, i) => {
+            const project = proj as typeof proj & ProjectExtra
+            return (
             <motion.div
-              key={proj.name}
+              key={project.name}
               variants={fadeUp}
               className="group relative overflow-hidden rounded-2xl"
               style={{ border: '1px solid rgba(255,255,255,0.08)' }}
@@ -807,7 +832,7 @@ function ProjectsSection() {
               <div className="relative h-56 overflow-hidden">
                 <img
                   src={projectImages[i % projectImages.length]}
-                  alt={`Solar panel installation ${proj.name} ${proj.location} Ko Phangan`}
+                  alt={`Solar panel installation ${project.name} ${project.location} Ko Phangan`}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -826,10 +851,10 @@ function ProjectsSection() {
                     color: 'var(--color-dark)',
                   }}
                 >
-                  Saves {proj.savings}
+                  Saves {project.savings}
                 </div>
                 {/* Type badge */}
-                {'type' in proj && (
+                {project.type && (
                   <div
                     className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium"
                     style={{
@@ -838,7 +863,7 @@ function ProjectsSection() {
                       border: '1px solid rgba(255,255,255,0.2)',
                     }}
                   >
-                    {(proj as any).type}
+                    {project.type}
                   </div>
                 )}
               </div>
@@ -851,32 +876,32 @@ function ProjectsSection() {
                   backdropFilter: 'blur(12px)',
                 }}
               >
-                <h3 className="text-lg font-semibold mb-1">{proj.name}</h3>
+                <h3 className="text-lg font-semibold mb-1">{project.name}</h3>
                 <div className="flex items-center justify-between">
                   <span className="text-white/50 text-sm flex items-center gap-1">
                     <MapPin size={12} />
-                    {proj.location}
+                    {project.location}
                   </span>
                   <span
                     className="text-sm font-medium"
                     style={{ color: 'var(--color-gold)' }}
                   >
-                    {proj.size}
+                    {project.size}
                   </span>
                 </div>
               </div>
             </motion.div>
-          ))}
+          )})}
         </motion.div>
 
-        {'viewAll' in t.home.projects && (
+        {projectsCopy.viewAll && (
           <div className="mt-10 flex justify-center">
             <Link
               to={langPath('/projects')}
               className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
               style={{ color: 'var(--color-gold)' }}
             >
-              {(t.home.projects as any).viewAll}
+              {projectsCopy.viewAll}
               <ArrowRight size={14} />
             </Link>
           </div>
@@ -891,7 +916,7 @@ function ProjectsSection() {
 // ═══════════════════════════════════════════════════════════════════════════
 function TestimonialsSection() {
   const { t } = useTranslation()
-  const testimonials = (t.home as any).testimonials
+  const testimonials = (t.home as typeof t.home & { testimonials?: TestimonialsCopy }).testimonials
   const [active, setActive] = useState(0)
 
   // Auto-rotate
@@ -991,7 +1016,7 @@ function TestimonialsSection() {
 
           {/* Dots */}
           <div className="flex gap-2 mt-8">
-            {testimonials.items.map((_: any, i: number) => (
+            {testimonials.items.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setActive(i)}
@@ -1090,7 +1115,7 @@ function FAQItem({
 
 function FAQSection() {
   const { t } = useTranslation()
-  const faqData = (t.home as any).faq
+  const faqData = (t.home as typeof t.home & { faq?: FAQCopy }).faq
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   if (!faqData?.items?.length) return null
@@ -1139,6 +1164,7 @@ function FAQSection() {
 function CTASection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
+  const cta = t.home.cta as typeof t.home.cta & CTAExtra
 
   return (
     <section className="py-28 px-6" id="contact">
@@ -1214,7 +1240,7 @@ function CTASection() {
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
                 <MessageCircle size={16} />
-                {(t.home.cta as any).ctaWhatsapp ?? 'WhatsApp Us'}
+                {cta.ctaWhatsapp ?? 'WhatsApp Us'}
               </motion.span>
             </a>
 
@@ -1236,15 +1262,15 @@ function CTASection() {
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
                 <Phone size={16} />
-                {(t.home.cta as any).ctaCall ?? 'Call Now'}
+                {cta.ctaCall ?? 'Call Now'}
               </motion.span>
             </a>
           </div>
 
           {/* Urgency line */}
-          {'urgency' in (t.home.cta as any) && (
+          {cta.urgency && (
             <p className="mt-6 text-sm text-white/35">
-              ⚡ {(t.home.cta as any).urgency}
+              ⚡ {cta.urgency}
             </p>
           )}
         </div>
@@ -1368,7 +1394,7 @@ function aggregateRatingSchema() {
 // ═══════════════════════════════════════════════════════════════════════════
 export default function HomePage() {
   const { t, lang } = useTranslation()
-  const faqData = (t.home as any).faq
+  const faqData = (t.home as typeof t.home & { faq?: FAQCopy }).faq
   const navigate = useNavigate()
   const [showAdminBanner, setShowAdminBanner] = useState(false)
 
@@ -1415,8 +1441,8 @@ export default function HomePage() {
         }
         description={
           lang === 'th'
-            ? 'TM Energy ผู้เชี่ยวชาญติดตั้งโซลาร์เซลล์บนเกาะพะงัน เกาะสมุย ประหยัดค่าไฟ 40% ได้รับอนุญาตจาก กฟภ. แผง LONGi อินเวอร์เตอร์ Huawei รับประกัน 25 ปี'
-            : 'TM Energy — Ko Phangan\'s trusted solar installer. Save 40% on electricity with premium LONGi panels & Huawei inverters. PEA licensed. 500+ installations. Free site survey.'
+            ? 'TM Energy ผู้เชี่ยวชาญโซลาร์บนเกาะพะงันและเกาะสมุย วิเคราะห์บิล สำรวจหน้างาน ออกแบบระบบ และยื่นเอกสาร กฟภ. สำหรับบ้าน วิลล่า และธุรกิจ'
+            : 'TM Energy — solar design, EPC, PPA, PEA coordination, and O&M for homes, villas, resorts, and businesses on Ko Phangan and nearby islands.'
         }
         path="/"
         lang={lang}
