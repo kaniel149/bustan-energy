@@ -15,8 +15,10 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@remotion/cli": "4.0.448",
-    "@remotion/player": "4.0.448",
+    "@remotion/bundler": "^4.0.454",
+    "@remotion/cli": "^4.0.454",
+    "@remotion/player": "^4.0.454",
+    "@remotion/studio-server": "^4.0.454",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "remotion": "4.0.448"
