@@ -51,6 +51,13 @@ export interface CrmProject {
   deal_type: DealType | null
   monthly_consumption: number | null
   electricity_rate: number | null
+  pea_customer_number?: string | null
+  pea_meter_number?: string | null
+  tariff_class?: string | null
+  bill_url?: string | null
+  twelve_month_usage_kwh?: Record<string, number> | number[] | null
+  main_breaker_amp?: number | null
+  transformer_notes?: string | null
   payback_years: number | null
   roof_type: string | null
   roof_condition: string | null
@@ -61,6 +68,11 @@ export interface CrmProject {
   electrical_phase: string | null
   shading_notes: string | null
   source: string | null
+  selected_proposal_ref?: string | null
+  selected_option?: string | null
+  deposit_received_at?: string | null
+  installation_scheduled_for?: string | null
+  om_contract_ref?: string | null
   assigned_to: string | null
   notes: string | null
   created_by: string | null

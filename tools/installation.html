@@ -551,28 +551,28 @@ body.lang-en body.lang-th
 <div class="slide slide-reef" data-title="חיבור PEA">
 <img src="visuals/install-08-meter.png" class="slide-img-sm" alt="PEA meter">
   <span class="section-num">07</span>
-  <h2>✅ שלב 6: חיבור PEA + Net Metering</h2>
+  <h2>✅ שלב 6: חיבור PEA + Export/Net Billing</h2>
   <p class="subtitle">הרגולטור — Provincial Electricity Authority</p>
   <div class="two-col">
     <div>
-      <h3>תהליך PEA (מפושט מ-11/2025)</h3>
+      <h3>תהליך PEA</h3>
       <div style="font-size:13px;line-height:2.4">
         <p><span class="gold">1.</span> הגשת בקשה — טופס + SLD + מפרט טכני</p>
         <p><span class="gold">2.</span> PEA בודק מסמכים (3-5 ימי עבודה)</p>
         <p><span class="gold">3.</span> בדיקה בשטח — מפקח PEA מגיע לאתר</p>
-        <p><span class="gold">4.</span> אישור → החלפת מונה לדו-כיווני</p>
+        <p><span class="gold">4.</span> אישור → החלפת מונה/תצורה לפי החלטת PEA</p>
         <p><span class="gold">5.</span> Commissioning Test — בדיקת Anti-Islanding</p>
         <p><span class="gold">6.</span> חיבור לרשת — <strong class="reef-text">LIVE!</strong></p>
       </div>
       <div class="alert alert-success">
-        <strong>חדש (2025):</strong> אין צורך בהיתר בנייה, אין רישיון מפעל. רק תיאום PEA. זמן: 7-14 יום מהגשה עד חיבור.
+        יש לאשר מול PEA לכל פרויקט: מסמכים, מונה, export/net-billing אם רלוונטי, ולוחות זמנים לפי עומס הסניף.
       </div>
     </div>
     <div>
-      <h3>Net Metering בתאילנד</h3>
+      <h3>Export / Net Billing בתאילנד</h3>
       <div class="card" style="margin:8px 0">
         <h3>איך זה עובד</h3>
-        <p>עודף ייצור → נזרק לרשת → מונה חוזר אחורה. <strong>יחס 1:1</strong> — כל kWh שמיוצא = kWh חינם בלילה.</p>
+        <p>צריכה עצמית היא בסיס החישוב. עודפי ייצור נמכרים או נמדדים רק אם PEA מאשרת זאת, ובדרך כלל לא ביחס 1:1 מול תעריף הקנייה.</p>
       </div>
       <div class="card" style="margin:8px 0">
         <h3>הגבלות</h3>
@@ -914,7 +914,7 @@ window.PAGE_TRANSLATIONS = {
   "10 שנות אחריות (15 בהרחבה)": {en:"10-year warranty (15 with extension)",th:"รับประกัน 10 ปี (15 ปีพร้อมส่วนขยาย)"},
 
   // Slide 7 — PEA
-  "שלב 6: חיבור PEA + Net Metering": {en:"Phase 6: PEA Connection + Net Metering",th:"ขั้นที่ 6: เชื่อมต่อ PEA + Net Metering"},
+  "שלב 6: חיבור PEA + Export/Net Billing": {en:"Phase 6: PEA Connection + Export/Net Billing",th:"ขั้นที่ 6: เชื่อมต่อ PEA + Export/Net Billing"},
   "הרגולטור — Provincial Electricity Authority": {en:"The regulator — Provincial Electricity Authority",th:"ผู้กำกับดูแล — Provincial Electricity Authority"},
   "תהליך PEA (מפושט מ-11/2025)": {en:"PEA process (simplified from 11/2025)",th:"กระบวนการ PEA (ปรับปรุงจาก 11/2025)"},
   "הגשת בקשה — טופס + SLD + מפרט טכני": {en:"Submit application — form + SLD + technical spec",th:"ยื่นคำขอ — แบบฟอร์ม + SLD + ข้อกำหนดทางเทคนิค"},
@@ -924,9 +924,9 @@ window.PAGE_TRANSLATIONS = {
   "Commissioning Test — בדיקת Anti-Islanding": {en:"Commissioning Test — Anti-Islanding check",th:"Commissioning Test — ตรวจสอบ Anti-Islanding"},
   "חיבור לרשת — LIVE!": {en:"Grid connection — LIVE!",th:"เชื่อมต่อกริด — เปิดใช้งาน!"},
   "חדש (2025): אין צורך בהיתר בנייה, אין רישיון מפעל. רק תיאום PEA. זמן: 7-14 יום מהגשה עד חיבור.": {en:"New (2025): no building permit required, no factory license. Only PEA coordination. Time: 7–14 days from submission to connection.",th:"ใหม่ (2025): ไม่ต้องมีใบอนุญาตก่อสร้าง ไม่ต้องมีใบอนุญาตโรงงาน ประสานงาน PEA เท่านั้น เวลา: 7–14 วันจากการยื่นถึงการเชื่อมต่อ"},
-  "Net Metering בתאילנד": {en:"Net Metering in Thailand",th:"Net Metering ในไทย"},
+  "Export / Net Billing בתאילנד": {en:"Export / Net Billing in Thailand",th:"Export / Net Billing ในไทย"},
   "איך זה עובד": {en:"How it works",th:"วิธีการทำงาน"},
-  "עודף ייצור → נזרק לרשת → מונה חוזר אחורה. יחס 1:1 — כל kWh שמיוצא = kWh חינם בלילה.": {en:"Excess production → exported to grid → meter runs backwards. 1:1 ratio — every kWh exported = free kWh at night.",th:"การผลิตส่วนเกิน → ส่งออกสู่กริด → มิเตอร์เดินถอยหลัง อัตราส่วน 1:1 — ทุก kWh ที่ส่งออก = kWh ฟรีตอนกลางคืน"},
+  "צריכה עצמית היא בסיס החישוב. עודפי ייצור נמכרים או נמדדים רק אם PEA מאשרת זאת, ובדרך כלל לא ביחס 1:1 מול תעריף הקנייה.": {en:"Self-consumption is the base case. Surplus production is exported or credited only if PEA approves it, and usually not at a 1:1 retail offset.",th:"กรณีฐานคือใช้ไฟเอง ส่วนเกินส่งออกหรือเครดิตได้เฉพาะเมื่อ PEA อนุมัติ และโดยทั่วไปไม่ใช่อัตรา 1:1 กับค่าไฟซื้อ"},
   "הגבלות": {en:"Limitations",th:"ข้อจำกัด"},
   "מערכת ≤ גודל החיבור הקיים. ייצוא לא עולה על ייבוא שנתי. עודף סוף שנה → לא מפוצה.": {en:"System ≤ existing connection size. Export does not exceed annual import. Year-end surplus → not compensated.",th:"ระบบ ≤ ขนาดการเชื่อมต่อที่มีอยู่ การส่งออกไม่เกินการนำเข้ารายปี ส่วนเกินสิ้นปี → ไม่ได้รับการชดเชย"},
 

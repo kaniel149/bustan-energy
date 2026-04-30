@@ -177,7 +177,7 @@ export default function CommercialSolarPage() {
                 Solar Solutions by Business Type
               </motion.h2>
               <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                We have installed solar systems across every major commercial sector on Ko Phangan. Each system is engineered for the specific energy profile of your business.
+                We design each commercial system around the load profile, roof conditions, PEA requirements, and financing model of the business.
               </motion.p>
             </motion.div>
 

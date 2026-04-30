@@ -674,7 +674,7 @@
     <h3>📈 ROI Assumptions <span class="collapse-btn" onclick="toggleAssumptions()">−</span></h3>
     <div class="row">
       <label>PPA Rate (THB/kWh)</label>
-      <input type="number" id="inp-ppa" value="4.5" step="0.1" onchange="applyAssumptions()">
+      <input type="number" id="inp-ppa" value="4.2" step="0.1" onchange="applyAssumptions()">
     </div>
     <div class="row">
       <label>EPC Revenue (THB/kWp)</label>
@@ -1243,7 +1243,7 @@
     }
 
     function resetAssumptions() {
-      document.getElementById('inp-ppa').value = 4.5;
+      document.getElementById('inp-ppa').value = 4.2;
       document.getElementById('inp-epc').value = 32500;
       document.getElementById('inp-land').value = 800000;
       document.getElementById('inp-batt').value = 18000;

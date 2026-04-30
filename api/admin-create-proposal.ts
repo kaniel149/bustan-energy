@@ -167,6 +167,7 @@ export default async function handler(req: Request): Promise<Response> {
       price_fmt: fmt(total_price_thb),
       payback_no_tax,
       payback_with_tax,
+      payback_with_tax_display: payback_with_tax ? `${payback_with_tax} שנים` : 'לא נכלל במודל',
       savings_25yr_fmt: `${(savings_25yr_thb / 1000000).toFixed(1)}M`,
       cum_5yr: `${y5}K`,
       cum_10yr: `${y10}K`,

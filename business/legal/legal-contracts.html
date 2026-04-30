@@ -113,8 +113,8 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
         <p>Factory License ≤ 1MW — בוטל. גם מערכות מסחריות גדולות — בלי רישיון.</p>
       </div>
       <div class="card" style="margin:8px 0;border-color:rgba(232,168,32,.3)">
-        <h3 class="gold">⚡ Net Metering — פעיל</h3>
-        <p>PEA מאפשר 1:1 net metering. עודף ייצור מפחית חשבון. ללא פיצוי על עודף שנתי.</p>
+        <h3 class="gold">⚡ Net Billing / Export — בכפוף לאישור</h3>
+        <p>הנחת העבודה היא צריכה עצמית עם אפשרות export/net-billing רק אם PEA מאשרת בפרויקט הספציפי. אין להציג 1:1 net metering ללא אישור כתוב.</p>
       </div>
       <div class="card" style="margin:8px 0;border-color:rgba(100,150,255,.3)">
         <h3 style="color:#6496FF">📋 רק תיאום PEA נדרש</h3>
@@ -157,7 +157,7 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
         <p><span class="gold">2. היקף העבודה:</span> עיצוב, רכש, הרכבה, חיבור PEA, commissioning, הדרכה</p>
         <p><span class="gold">3. לוח זמנים:</span> תאריך התחלה, אבני דרך, תאריך סיום. פיצוי על איחור: ฿X/יום</p>
         <p><span class="gold">4. מחיר ותשלום:</span> סכום כולל, מע"מ 7%, תנאי תשלום (30/40/30)</p>
-        <p><span class="gold">5. אחריות:</span> עבודה 10 שנים, פאנלים 25 שנים (יצרן), אינוורטר 10 שנים (יצרן)</p>
+        <p><span class="gold">5. אחריות:</span> אחריות עבודה לפי ההצעה החתומה (ברירת מחדל 2 שנים), אחריות יצרן לפאנלים/אינוורטר/סוללה לפי הדגם שנבחר</p>
         <p><span class="gold">6. ביצועים מובטחים:</span> Performance Ratio ≥ 75%, ייצור שנתי מינימלי (kWh)</p>
         <p><span class="gold">7. ביטוח:</span> CAR במהלך ההתקנה, אחריות צד ג'</p>
         <p><span class="gold">8. סיום והפרה:</span> תנאי ביטול, החזר כספי, סנקציות</p>
@@ -166,16 +166,16 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
     <div>
       <h3>תנאי תשלום סטנדרטיים</h3>
       <div class="card" style="margin:8px 0;border-color:var(--gold)">
-        <h3>30% — מקדמה</h3>
+        <h3>40% — מקדמה</h3>
         <p>עם חתימת חוזה. מממן הזמנת ציוד.</p>
       </div>
       <div class="card" style="margin:8px 0;border-color:var(--gold)">
-        <h3>40% — אמצע עבודה</h3>
-        <p>לאחר השלמת קונסטרוקציה + פאנלים על הגג.</p>
+        <h3>40% — הגעת ציוד</h3>
+        <p>עם הגעת הציוד לאתר או למחסן המקומי.</p>
       </div>
       <div class="card" style="margin:8px 0;border-color:var(--gold)">
-        <h3>30% — חיבור לרשת</h3>
-        <p>לאחר אישור PEA + commissioning + מסירת תיעוד.</p>
+        <h3>20% — הפעלה</h3>
+        <p>לאחר commissioning + מסירת תיעוד. חיבור/export תלוי באישור PEA.</p>
       </div>
       <div class="alert alert-warn" style="margin-top:12px">
         <strong>חשוב:</strong> חוזה חייב להיות <strong>דו-לשוני (EN + TH)</strong>. הגרסה התאילנדית גוברת במקרה של סתירה. שפה משפטית מקומית חובה.
@@ -194,7 +194,7 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
       <h3>סעיפים קריטיים</h3>
       <div style="font-size:13px;line-height:2.2">
         <p><span class="gold">1. תקופה:</span> 15 שנים. אופציה להארכה.</p>
-        <p><span class="gold">2. תעריף:</span> ฿4.50/kWh (מול PEA ฿6-8). <strong>הצמדה: CPI או עליית תעריפי PEA — הגבוה מביניהם (~3%/שנה).</strong></p>
+        <p><span class="gold">2. תעריף:</span> ברירת מחדל מסחרית ฿4.20/kWh, או תעריף אחר לפי חוזה וחשבון PEA בפועל. <strong>הצמדה רק לפי סעיף חוזי מפורש ומאושר משפטית.</strong></p>
         <p><span class="gold">3. בעלות:</span> Ko Phangan Solar = בעלים של המערכת. הלקוח = צרכן.</p>
         <p><span class="gold">4. תחזוקה:</span> אחריות שלנו. O&M כלול בתעריף.</p>
         <p><span class="gold">5. ביצועים:</span> מינימום 80% availability/שנה. פיצוי אם פחות.</p>
@@ -208,7 +208,7 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
       <h3>דוגמה: רזורט 50kWp</h3>
       <div class="card" style="margin:8px 0;border-color:var(--gold)">
         <h3>Year 1</h3>
-        <p>ייצור: 82,000 kWh × ฿4.50 = <strong class="gold">฿369,000</strong></p>
+        <p>ייצור: 82,000 kWh × ฿4.20 = <strong class="gold">฿344,400</strong> לפני התאמות חוזיות</p>
       </div>
       <div class="card" style="margin:8px 0">
         <h3>Year 5 (הצמדה ~3%/שנה)</h3>
@@ -544,8 +544,8 @@ window.PAGE_TRANSLATIONS = {
   "מערכות סולאריות על גגות פטורות מהיתר בנייה. שינוי דרמטי — חוסך 3-6 חודשים.": {en: "Rooftop solar systems are exempt from building permits. Dramatic change — saves 3-6 months.", th: "ระบบโซลาร์บนหลังคาได้รับการยกเว้นจากใบอนุญาตก่อสร้าง การเปลี่ยนแปลงครั้งใหญ่ — ประหยัด 3-6 เดือน"},
   "אין רישיון מפעל (12/2024)": {en: "No factory license required (12/2024)", th: "ไม่จำเป็นต้องมีใบอนุญาตโรงงาน (12/2024)"},
   "Factory License ≤ 1MW — בוטל. גם מערכות מסחריות גדולות — בלי רישיון.": {en: "Factory License ≤ 1MW — cancelled. Even large commercial systems — no license needed.", th: "ใบอนุญาตโรงงาน ≤ 1MW — ยกเลิก แม้แต่ระบบเชิงพาณิชย์ขนาดใหญ่ — ไม่ต้องมีใบอนุญาต"},
-  "Net Metering — פעיל": {en: "Net Metering — Active", th: "Net Metering — ใช้งานอยู่"},
-  "PEA מאפשר 1:1 net metering. עודף ייצור מפחית חשבון. ללא פיצוי על עודף שנתי.": {en: "PEA allows 1:1 net metering. Excess production reduces bill. No compensation for annual excess.", th: "PEA อนุญาต net metering 1:1 การผลิตส่วนเกินช่วยลดค่าไฟ ไม่มีการชดเชยสำหรับส่วนเกินรายปี"},
+  "Net Billing / Export — בכפוף לאישור": {en: "Net Billing / Export — subject to approval", th: "Net Billing / ส่งออกไฟ — ขึ้นกับการอนุมัติ"},
+  "הנחת העבודה היא צריכה עצמית עם אפשרות export/net-billing רק אם PEA מאשרת בפרויקט הספציפי. אין להציג 1:1 net metering ללא אישור כתוב.": {en: "Working assumption: self-consumption, with export/net-billing only if PEA approves the specific project. Do not present 1:1 net metering without written approval.", th: "สมมติฐานหลักคือใช้เอง และขายไฟ/net-billing เฉพาะเมื่อ PEA อนุมัติโครงการนั้น ห้ามนำเสนอ net metering 1:1 หากไม่มีเอกสารอนุมัติ"},
   "רק תיאום PEA נדרש": {en: "Only PEA coordination required", th: "ต้องการเพียงการประสานงานกับ PEA เท่านั้น"},
   "הגשת טפסים + SLD + מפרט טכני. בדיקה בשטח. אישור תוך 7-14 יום.": {en: "Submit forms + SLD + technical spec. On-site inspection. Approval within 7-14 days.", th: "ยื่นแบบฟอร์ม + SLD + ข้อกำหนดทางเทคนิค การตรวจสอบในพื้นที่ อนุมัติภายใน 7-14 วัน"},
   "חוקים רלוונטיים": {en: "Relevant Laws", th: "กฎหมายที่เกี่ยวข้อง"},
@@ -764,7 +764,7 @@ window.PAGE_TRANSLATIONS = {
   "BOI Certificate (אם רלוונטי)": {en: "BOI Certificate (if applicable)", th: "ใบรับรอง BOI (ถ้าเกี่ยวข้อง)"},
   "→ הקודם": {en: "← Prev", th: "← ก่อนหน้า"},
   "הבא ←": {en: "Next →", th: "ถัดไป →"},
-  "ייצור: 82,000 kWh × ฿4.50 =": {en: "Production: 82,000 kWh × ฿4.50 =", th: "การผลิต: 82,000 kWh × ฿4.50 ="},
+  "ייצור: 82,000 kWh × ฿4.20 =": {en: "Production: 82,000 kWh × ฿4.20 =", th: "การผลิต: 82,000 kWh × ฿4.20 ="},
   "25 שנים": {en: "25 years", th: "25 ปี"},
   "1 שנה": {en: "1 year", th: "1 ปี"},
   "מול PEA": {en: "vs. PEA", th: "เทียบกับ PEA"},

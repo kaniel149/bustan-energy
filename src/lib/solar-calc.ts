@@ -9,7 +9,7 @@ const SOILING_FACTOR = 0.97
 const EPC_COST_PER_KWP = 32000 // THB
 const DISCOUNT_RATE = 0.08     // 8% for discounted payback
 
-// Thailand PEA net-metering defaults (PEA tariff schedule B.E. 2566)
+// Thailand PEA export/net-billing planning defaults (verify per project approval)
 export const RETAIL_RATE_DEFAULT = 4.4    // THB/kWh
 export const EXPORT_RATE_DEFAULT = 3.1    // THB/kWh (~70% of retail)
 export const SELF_CONSUMPTION_PCT = 0.60  // grid-tied default
@@ -29,7 +29,7 @@ export function calculateSolar(
   // Year-1 degradation: 2% LID for mono-PERC/TOPCon (Jordan & Kurtz 2013)
   const annualKwh = capacityKwp * irradiance * 365 * effectivePR * (1 - 0.02)
 
-  // Blended effective rate (net-metering model)
+  // Blended effective rate (self-consumption + export/net-billing assumption)
   const exportRate = Math.min(tariff * 0.70, EXPORT_RATE_DEFAULT)
   const blendedRate = SELF_CONSUMPTION_PCT * tariff + (1 - SELF_CONSUMPTION_PCT) * exportRate
   const annualSavingsTHB = annualKwh * blendedRate

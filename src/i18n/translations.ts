@@ -46,10 +46,10 @@ const en = {
       trustLine: 'PEA documentation support · Tier-1 equipment options · Monitoring · O&M',
     },
     stats: {
-      installations: { value: 500, suffix: '+', label: 'Installations' },
-      installed: { value: 15, suffix: ' MW', label: 'Installed' },
-      savings: { value: 40, suffix: '%', label: 'Average Savings' },
-      experience: { value: 8, suffix: '+', label: 'Years on Ko Phangan' },
+      installations: { value: 10, suffix: '', label: 'Sales Steps' },
+      installed: { value: 3, suffix: '', label: 'Deal Models' },
+      savings: { value: 25, suffix: ' yr', label: 'Model Horizon' },
+      experience: { value: 4, suffix: '', label: 'Core Tools' },
     },
     services: {
       sectionTag: 'WHAT WE DO',
@@ -779,10 +779,10 @@ const th = {
       trustLine: 'ช่วยเตรียมเอกสาร กฟภ. · อุปกรณ์ Tier-1 · Monitoring · O&M',
     },
     stats: {
-      installations: { value: 500, suffix: '+', label: 'โครงการที่ติดตั้งแล้ว' },
-      installed: { value: 15, suffix: ' MW', label: 'กำลังการผลิตรวม' },
-      savings: { value: 40, suffix: '%', label: 'ประหยัดค่าไฟเฉลี่ย' },
-      experience: { value: 8, suffix: '+', label: 'ปีบนเกาะพะงัน' },
+      installations: { value: 10, suffix: '', label: 'ขั้นตอนฝ่ายขาย' },
+      installed: { value: 3, suffix: '', label: 'รูปแบบดีล' },
+      savings: { value: 25, suffix: ' ปี', label: 'ช่วงโมเดล' },
+      experience: { value: 4, suffix: '', label: 'เครื่องมือหลัก' },
     },
     services: {
       sectionTag: 'บริการของเรา',
@@ -1127,7 +1127,7 @@ const th = {
         {
           question: 'ต้องการระบบกักเก็บพลังงานไหม?',
           answer:
-            'สำหรับทรัพย์สินส่วนใหญ่ แบตเตอรี่เป็นตัวเลือกเสริม หากเชื่อมต่อกริด PEA ระบบ Net Metering ช่วยให้ส่งพลังงานส่วนเกินคืนกริดและดึงไฟจากกริดในเวลากลางคืน แนะนำแบตเตอรี่สำหรับพื้นที่ห่างไกลหรือที่มีไฟดับบ่อย',
+            'สำหรับทรัพย์สินส่วนใหญ่ แบตเตอรี่เป็นตัวเลือกเสริม หากเชื่อมต่อกริด PEA การส่งไฟส่วนเกินหรือ net-billing ต้องได้รับอนุมัติตามโครงการที่เกี่ยวข้อง แนะนำแบตเตอรี่สำหรับพื้นที่ห่างไกลหรือที่มีไฟดับบ่อย',
         },
         {
           question: 'เรื่องการบำรุงรักษาเป็นอย่างไร?',
@@ -1320,7 +1320,7 @@ const th = {
         tag: 'กฎระเบียบ',
         title: 'ทำความเข้าใจกฎระเบียบโซลาร์เซลล์ในไทย',
         excerpt:
-          'คู่มือครบถ้วนเกี่ยวกับการขอใบอนุญาต VSPP ข้อกำหนดของ PEA และนโยบาย Net Metering สำหรับการติดตั้งโซลาร์ในประเทศไทย',
+          'คู่มือเกี่ยวกับการขอใบอนุญาต VSPP ข้อกำหนดของ PEA และนโยบาย export/net-billing สำหรับการติดตั้งโซลาร์ในประเทศไทย',
         date: 'มีนาคม 2026',
         readTime: 'อ่าน 8 นาที',
       },

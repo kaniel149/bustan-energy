@@ -370,7 +370,7 @@ async function main() {
     console.log('\n-- CALCULATED FINANCIALS (v1.1) --')
     console.log(`  Location:           ${calc._location_id}`)
     console.log(`  Effective PR:       ${calc._effective_pr} (PR * soiling)`)
-    console.log(`  Blended rate:       ${calc._blended_rate_thb} THB/kWh (net-metering)`)
+    console.log(`  Blended rate:       ${calc._blended_rate_thb} THB/kWh (net-billing/export assumption)`)
     console.log(`  Annual kWh (calc):  ${fmt(calc.annual_kwh_calc)} kWh`)
     console.log(`  Annual savings:     ${fmt(calc.annual_savings_calc_thb)} THB`)
     console.log(`  Payback (discntd):  ${calc.payback_discounted_years} yrs @ 8% discount`)
@@ -409,18 +409,63 @@ async function main() {
   // Load template (multi-language)
   const lang = data.language || 'he'
   const langTemplates = {
-    he: 'template.html',
+    he: '../../public/proposal-templates/template-dynamic.html',
     th: 'template-th.html',
     en: 'template-en.html',
   }
   const templateFile = langTemplates[lang] || langTemplates.he
-  const templatePath = existsSync(join(__dirname, templateFile))
-    ? join(__dirname, templateFile)
+  const templatePath = existsSync(resolve(__dirname, templateFile))
+    ? resolve(__dirname, templateFile)
     : join(__dirname, 'template.html')
   const template = readFileSync(templatePath, 'utf8')
 
+  const annualBill = Number(data.monthly_bill_thb || 0) * 12
+  const annualBillWithSolar = Math.max(0, annualBill - Number(data.annual_savings_thb || 0))
+  const y5 = Math.round(Number(data.annual_savings_thb || 0) * 5 / 1000)
+  const y10 = Math.round(Number(data.annual_savings_thb || 0) * 10 / 1000)
+  const y15 = Math.round(Number(data.annual_savings_thb || 0) * 15 / 1000)
+  const y20 = Math.round(Number(data.annual_savings_thb || 0) * 20 / 1000)
+  const renderData = {
+    ...data,
+    ref,
+    client_name: data.client_name_he || data.client_name,
+    panel_watt: data.panel_watt || 580,
+    annual_kwh_fmt: fmt(data.annual_kwh),
+    monthly_kwh_fmt: fmt(data.monthly_kwh),
+    monthly_savings_fmt: fmt(data.monthly_savings_thb),
+    annual_savings_fmt: fmt(data.annual_savings_thb),
+    price_fmt: fmt(data.total_price_thb || data.price_thb),
+    payback_no_tax: data.payback_years_no_tax || data.payback_years_discounted || '',
+    payback_with_tax_display: data.payback_years_with_tax
+      ? `${data.payback_years_with_tax} שנים`
+      : 'לא נכלל במודל',
+    savings_25yr_fmt: `${(Number(data.savings_25yr_thb || 0) / 1000000).toFixed(1)}M`,
+    cum_5yr: `${y5}K`,
+    cum_10yr: `${y10}K`,
+    cum_15yr: `${(y15 / 1000).toFixed(1)}M`,
+    cum_20yr: `${(y20 / 1000).toFixed(1)}M`,
+    cum_25yr: `${(Number(data.savings_25yr_thb || 0) / 1000000).toFixed(1)}M`,
+    location_he: data.location_he || data.location || '',
+    location_en: data.location || '',
+    location_short: data.location_short || data.location || '',
+    location_psh: data.location_psh || data.location || '',
+    logo_url: data.logo_url || './tm-energy-logo.png',
+    roof_original_url: data.roof_original_url || data.images?.[0] || './tm-energy-logo.png',
+    roof_panels_url: data.roof_panels_url || data.images?.[1] || './tm-energy-logo.png',
+    month_year_he: data.date_he || data.date || '',
+    ppa_rate: String(data.ppa_rate_thb_per_kwh || 4.2),
+    ppa_years: String(data.ppa_years || 15),
+    price_battery_fmt: fmt((data.total_price_thb || data.price_thb || 0) + (data.battery_price_thb || 0)),
+    battery_kwh_extra: String(data.battery_kwh_extra || data.battery_kwh || 0),
+    co2_saved_kg: String(Math.round((data.annual_kwh || 0) * 0.477)),
+    savings_10yr_fmt: fmt((data.annual_savings_thb || 0) * 10),
+    annual_bill_fmt: fmt(annualBill),
+    annual_bill_with_solar_fmt: fmt(annualBillWithSolar),
+    solar_bar_pct: annualBill > 0 ? String(Math.max(2, Math.round((annualBillWithSolar / annualBill) * 100))) : '2',
+  }
+
   // Render
-  const renderedBody = render(template, data)
+  const renderedBody = render(template, renderData)
 
   // Inject contract before closing body
   const contractPath = join(__dirname, `contract-snippet-${lang}.html`)
@@ -428,7 +473,7 @@ async function main() {
   const contractTemplate = existsSync(contractPath)
     ? readFileSync(contractPath, 'utf8')
     : readFileSync(contractFallback, 'utf8')
-  const contractHTML = render(contractTemplate, { ref, ...data })
+  const contractHTML = render(contractTemplate, { ref, ...renderData })
 
   // Inject password gate
   const gateHTML = passwordGateHTML(ref, passwordHash)

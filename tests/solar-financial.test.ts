@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { calculateFinancials } from '../src/lib/financial-calc'
+import { calculateSolarFinancials } from '../src/lib/solar-financials'
 import {
   calculateGridProximity,
   calculateSolar,
@@ -8,7 +9,7 @@ import {
 } from '../src/lib/solar-calc'
 
 describe('solar calculations', () => {
-  it('sizes rooftop systems from usable area and applies Thailand net-metering rate', () => {
+  it('sizes rooftop systems from usable area and applies Thailand export-adjusted rate', () => {
     const result = calculateSolar(100, 5, 5, true)
 
     expect(result.usableArea).toBe(70)
@@ -61,6 +62,22 @@ describe('solar calculations', () => {
     expect(result.nearestFeatureType).toBe('substation')
     expect(result.distanceMeters).toBeLessThan(100)
     expect(result.grade).toBe('A')
+  })
+})
+
+describe('proposal financials', () => {
+  it('matches the corrected Amir final proposal assumptions', () => {
+    const result = calculateSolarFinancials({
+      systemSizeKwp: 9.28,
+      batteryKwh: 6.9,
+      totalPriceThb: 390000,
+    })
+
+    expect(result.annual_kwh).toBe(12397)
+    expect(result.annual_savings_thb).toBe(52127)
+    expect(result.payback_discounted_years).toBe(11.1)
+    expect(result.savings_25yr_thb).toBe(1785766)
+    expect(result.blended_rate_thb).toBe(4.205)
   })
 })
 

@@ -987,8 +987,8 @@ function selectOption(opt) {
           <span class="roi-savings-value">{{payback_no_tax}} שנים</span>
         </div>
         <div class="roi-savings-row">
-          <span class="roi-savings-label">החזר (עם ניכוי מס)</span>
-          <span class="roi-savings-value" style="color: var(--green);">{{payback_with_tax}} שנים</span>
+          <span class="roi-savings-label">החזר עם הטבת מס מאושרת</span>
+          <span class="roi-savings-value" style="color: var(--green);">{{payback_with_tax_display}}</span>
         </div>
         <div class="roi-savings-row">
           <span class="roi-savings-label">חיסכון מצטבר 25 שנה</span>
@@ -1001,13 +1001,11 @@ function selectOption(opt) {
     <div class="incentive-card">
       <div class="incentive-icon">🏛️</div>
       <div>
-        <div class="incentive-title">תמריץ ממשלת תאילנד · 2026</div>
-        <div class="incentive-heading">ניכוי מס הכנסה עד ฿200,000</div>
+        <div class="incentive-title">הערת מס · לא ייעוץ מס</div>
+        <div class="incentive-heading">הטבת מס — רק אם אושרה ללקוח</div>
         <div class="incentive-desc">
-          על התקנות סולאריות Residential On-Grid עד 10 kWp, ממשלת תאילנד מעניקה
-          <strong>ניכוי מס הכנסה של עד ฿200,000</strong> בשנת המס של ההתקנה.
-          בפועל, ההשקעה נטו יורדת ל-<strong>~฿250,000</strong> והחזר ההשקעה מתקצר ל-<strong>~3.8 שנים</strong>.
-          ניתן לקזז עם חשבוניות רשמיות — TM Energy מספקת את כל המסמכים הנדרשים.
+          הטבות מס תלויות בסוג הלקוח, מבנה הבעלות, חשבוניות, וייעוץ רו״ח/BOI.
+          TM Energy מספקת מסמכי ציוד והתקנה; אין לראות בכך ייעוץ מס או הבטחה לזכאות.
         </div>
       </div>
     </div>
@@ -1090,7 +1088,7 @@ function selectOption(opt) {
         <div style="font-size:32px;margin-bottom:8px;">⏱️</div>
         <div style="font-weight:800;color:var(--navy);margin-bottom:4px;">לוח זמנים של PEA</div>
         <ul style="padding-right:18px;color:var(--text-secondary);font-size:14px;line-height:1.9;margin-top:8px;">
-          <li>הגשה תוך 3 ימים מקבלת מסמכים</li>
+          <li>הגשה תוך 7 ימים מקבלת מסמכים מלאים</li>
           <li>בדיקה ראשונית של PEA: 7-14 ימים</li>
           <li>ביקור טכנאי (אם נדרש): 2-4 שבועות</li>
           <li>אישור סופי ו-COD: עד 6 שבועות מההגשה</li>
@@ -1121,7 +1119,7 @@ function selectOption(opt) {
       </div>
       <div class="spec-row">
         <span class="spec-label">שבוע 2-3</span>
-        <span class="spec-value">הכנת מסמכי PEA · הגשה · הגעת ציוד</span>
+        <span class="spec-value">הכנת מסמכי PEA · הגשה · הזמנת ציוד</span>
       </div>
       <div class="spec-row">
         <span class="spec-label">שבוע 4</span>
