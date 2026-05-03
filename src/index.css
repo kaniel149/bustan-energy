@@ -41,6 +41,66 @@ html, body, #root {
   color: var(--bustan-ink);
 }
 
+.bustan-home {
+  background:
+    linear-gradient(180deg, rgba(216, 236, 232, 0.52) 0%, transparent 18%),
+    linear-gradient(20deg, rgba(242, 184, 75, 0.14), transparent 36%),
+    var(--bustan-paper);
+  color: var(--bustan-ink);
+}
+
+.bustan-home .text-white { color: var(--bustan-ink) !important; }
+.bustan-home .text-white\/80 { color: rgba(39, 52, 47, 0.86) !important; }
+.bustan-home .text-white\/70 { color: rgba(39, 52, 47, 0.78) !important; }
+.bustan-home .text-white\/60,
+.bustan-home .text-white\/55 { color: rgba(39, 52, 47, 0.74) !important; }
+.bustan-home .text-white\/50,
+.bustan-home .text-white\/40,
+.bustan-home .text-white\/35,
+.bustan-home .text-white\/30,
+.bustan-home .text-white\/25,
+.bustan-home .text-white\/20 { color: rgba(39, 52, 47, 0.72) !important; }
+.bustan-home .bg-white\/5,
+.bustan-home .bg-white\/8,
+.bustan-home .bg-white\/\[0\.03\],
+.bustan-home .bg-white\/\[0\.04\] {
+  background: rgba(255, 244, 226, 0.7) !important;
+}
+.bustan-home .border-white\/8,
+.bustan-home .border-white\/10,
+.bustan-home .border-white\/15,
+.bustan-home .border-white\/20,
+.bustan-home .border-white\/25,
+.bustan-home .border-white\/\[0\.06\],
+.bustan-home .border-white\/\[0\.07\],
+.bustan-home .border-white\/\[0\.08\] {
+  border-color: rgba(36, 70, 62, 0.14) !important;
+}
+.bustan-home .divide-white\/\[0\.06\] > :not(:last-child) {
+  border-color: rgba(36, 70, 62, 0.14) !important;
+}
+
+.bustan-home .bustan-home-hero,
+.bustan-home .bustan-home-hero .text-white,
+.bustan-home .bustan-home-hero .text-white\/80,
+.bustan-home .bustan-home-hero .text-white\/70,
+.bustan-home .bustan-home-hero .text-white\/60,
+.bustan-home .bustan-home-hero .text-white\/55,
+.bustan-home .bustan-home-hero .text-white\/50,
+.bustan-home .bustan-home-hero .text-white\/40,
+.bustan-home .bustan-home-hero .text-white\/35,
+.bustan-home .bustan-home-hero .text-white\/30 {
+  color: rgba(255, 244, 226, 0.82) !important;
+}
+
+.bustan-home .bustan-home-image-caption,
+.bustan-home .bustan-home-image-caption .text-white,
+.bustan-home .bustan-home-image-caption .text-white\/80,
+.bustan-home .bustan-home-image-caption .text-white\/50,
+.bustan-home .bustan-home-image-caption .text-white\/40 {
+  color: rgba(255, 244, 226, 0.86) !important;
+}
+
 .bustan-admin-main {
   background:
     linear-gradient(140deg, rgba(216, 236, 232, 0.55), transparent 34%),

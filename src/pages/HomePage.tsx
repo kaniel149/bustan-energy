@@ -14,7 +14,6 @@ import {
   Home,
   Battery,
   MapPin,
-  Star,
   ChevronRight,
   MessageCircle,
 } from 'lucide-react'
@@ -48,13 +47,6 @@ type ScrollAnimationCopy = { sectionTag?: string; title?: string; subtitle?: str
 type ProcessExtra = { statsLine?: string }
 type ProjectExtra = { type?: string }
 type ProjectsExtra = { viewAll?: string }
-type TestimonialItem = { stars: number; quote: string; name: string; role: string }
-type TestimonialsCopy = {
-  sectionTag?: string
-  title?: string
-  items?: TestimonialItem[]
-  rating?: string
-}
 type FAQCopy = { items?: Array<{ question: string; answer: string }> }
 type CTAExtra = { ctaWhatsapp?: string; ctaCall?: string; urgency?: string }
 
@@ -98,7 +90,7 @@ function HeroSection() {
   const hero = t.home.hero as typeof t.home.hero & HomeHeroExtra
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <section className="bustan-home-hero relative min-h-[86vh] flex flex-col items-center justify-center overflow-hidden px-0 pt-20 pb-16">
       {/* Aerial background image */}
       <div className="absolute inset-0">
         <img
@@ -110,7 +102,7 @@ function HeroSection() {
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(to bottom, rgba(13,17,23,0.75) 0%, rgba(13,17,23,0.6) 40%, rgba(13,17,23,0.85) 100%)',
+              'linear-gradient(180deg, rgba(36,70,62,0.66) 0%, rgba(36,70,62,0.46) 44%, rgba(244,234,216,0.92) 100%)',
           }}
         />
       </div>
@@ -120,7 +112,7 @@ function HeroSection() {
         className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)',
+            'linear-gradient(rgba(255,244,226,0.55) 1px, transparent 1px), linear-gradient(90deg, rgba(255,244,226,0.55) 1px, transparent 1px)',
           backgroundSize: '64px 64px',
         }}
       />
@@ -136,9 +128,9 @@ function HeroSection() {
           <span
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
             style={{
-              background: 'rgba(232,168,32,0.12)',
-              border: '1px solid rgba(232,168,32,0.3)',
-              color: 'var(--color-gold)',
+              background: 'rgba(255,244,226,0.14)',
+              border: '1px solid rgba(255,244,226,0.24)',
+              color: 'var(--bustan-shell)',
             }}
           >
             <Sun size={14} />
@@ -149,11 +141,11 @@ function HeroSection() {
         <motion.h1
           variants={fadeUp}
           className="text-[48px] md:text-[64px] lg:text-[80px] leading-none tracking-tight mb-6"
-          style={{ fontFamily: 'var(--font-serif)' }}
+          style={{ fontFamily: 'var(--font-serif)', color: 'var(--bustan-shell)' }}
         >
           {t.home.hero.title}
           <br />
-          <span style={{ color: 'var(--color-gold)' }}>
+          <span style={{ color: 'var(--bustan-sun)' }}>
             {t.home.hero.titleAccent}
           </span>
         </motion.h1>
@@ -173,12 +165,12 @@ function HeroSection() {
             <motion.span
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold cursor-pointer select-none"
               style={{
-                background: 'var(--color-gold)',
-                color: 'var(--color-dark)',
+                background: 'var(--bustan-lagoon)',
+                color: 'var(--bustan-shell)',
               }}
               whileHover={{
                 scale: 1.04,
-                boxShadow: '0 0 28px 6px rgba(232,168,32,0.30)',
+                boxShadow: '0 18px 44px rgba(0,111,107,0.28)',
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -192,13 +184,13 @@ function HeroSection() {
             <motion.span
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
               style={{
-                background: 'rgba(37,211,102,0.15)',
-                border: '1px solid rgba(37,211,102,0.35)',
-                color: '#25D366',
+                background: 'rgba(255,244,226,0.12)',
+                border: '1px solid rgba(255,244,226,0.32)',
+                color: 'var(--bustan-shell)',
               }}
               whileHover={{
                 scale: 1.03,
-                borderColor: 'rgba(37,211,102,0.6)',
+                borderColor: 'rgba(255,244,226,0.55)',
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -222,7 +214,7 @@ function HeroSection() {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-white/30"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
@@ -261,7 +253,7 @@ function StatItem({
       <div className="text-white/30 mb-1">{icon}</div>
       <span
         className="text-4xl md:text-5xl font-bold tabular-nums"
-        style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-gold)' }}
+        style={{ fontFamily: 'var(--font-serif)', color: 'var(--bustan-lagoon)' }}
       >
         {value}
         {suffix}
@@ -295,9 +287,9 @@ function StatsBar() {
       ref={ref}
       className="relative overflow-hidden"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(255,244,226,0.64)',
+        borderTop: '1px solid rgba(36,70,62,0.12)',
+        borderBottom: '1px solid rgba(36,70,62,0.12)',
       }}
     >
       <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-white/[0.06]">
@@ -383,7 +375,7 @@ function ServicesSection() {
         <div className="text-center mb-16">
           <p
             className="text-sm font-medium tracking-widest uppercase mb-3"
-            style={{ color: 'var(--color-gold)' }}
+            style={{ color: 'var(--bustan-lagoon)' }}
           >
             {t.home.services.sectionTag}
           </p>
@@ -408,13 +400,13 @@ function ServicesSection() {
               variants={fadeUp}
               className="group relative flex flex-col rounded-2xl overflow-hidden cursor-pointer"
               style={{
-                border: '1px solid rgba(255,255,255,0.08)',
+                border: '1px solid rgba(36,70,62,0.13)',
               }}
               whileHover={{
                 y: -4,
-                borderColor: 'rgba(232,168,32,0.35)',
+                borderColor: 'rgba(0,111,107,0.34)',
                 boxShadow:
-                  '0 24px 64px rgba(0,0,0,0.35), 0 0 0 1px rgba(232,168,32,0.15)',
+                  '0 22px 52px rgba(36,70,62,0.14), 0 0 0 1px rgba(0,111,107,0.10)',
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 24 }}
             >
@@ -430,16 +422,16 @@ function ServicesSection() {
                   className="absolute inset-0"
                   style={{
                     background:
-                      'linear-gradient(to bottom, rgba(13,17,23,0.2) 0%, rgba(13,17,23,0.8) 100%)',
+                      'linear-gradient(to bottom, rgba(36,70,62,0.08) 0%, rgba(36,70,62,0.58) 100%)',
                   }}
                 />
                 {/* Icon badge */}
                 <div
                   className="absolute top-4 left-4 w-11 h-11 rounded-xl flex items-center justify-center"
                   style={{
-                    background: 'rgba(232,168,32,0.15)',
-                    border: '1px solid rgba(232,168,32,0.3)',
-                    color: 'var(--color-gold)',
+                    background: 'rgba(255,244,226,0.72)',
+                    border: '1px solid rgba(255,244,226,0.5)',
+                    color: 'var(--bustan-lagoon)',
                     backdropFilter: 'blur(8px)',
                   }}
                 >
@@ -451,7 +443,7 @@ function ServicesSection() {
               <div
                 className="flex flex-col flex-1 p-6"
                 style={{
-                  background: 'rgba(13,33,55,0.6)',
+                  background: 'rgba(255,244,226,0.82)',
                   backdropFilter: 'blur(16px)',
                 }}
               >
@@ -467,7 +459,7 @@ function ServicesSection() {
                     >
                       <ChevronRight
                         size={12}
-                        style={{ color: 'var(--color-gold)' }}
+                        style={{ color: 'var(--bustan-lagoon)' }}
                       />
                       {b}
                     </li>
@@ -476,7 +468,7 @@ function ServicesSection() {
                 <Link
                   to={svc.href}
                   className="inline-flex items-center gap-1.5 mt-auto text-sm font-medium transition-colors duration-200"
-                  style={{ color: 'var(--color-gold)' }}
+                  style={{ color: 'var(--bustan-lagoon)' }}
                 >
                   {svc.cta}
                   <ArrowRight size={14} />
@@ -504,17 +496,17 @@ function ScrollAnimationSection() {
         className="py-16 px-6 text-center"
         style={{
           background:
-            'linear-gradient(to bottom, var(--color-dark), #f8f9fa)',
+            'linear-gradient(to bottom, var(--bustan-paper), var(--bustan-shell))',
         }}
       >
         <p
           className="text-sm font-medium tracking-widest uppercase mb-3"
-          style={{ color: 'var(--color-gold)' }}
+          style={{ color: 'var(--bustan-lagoon)' }}
         >
           {scrollData?.sectionTag ?? 'SEE THE PROCESS'}
         </p>
         <h2
-          className="text-4xl md:text-5xl text-gray-900"
+          className="text-4xl md:text-5xl text-[var(--bustan-ink)]"
           style={{ fontFamily: 'var(--font-serif)' }}
         >
           {scrollData?.title ?? 'Watch Your Solar System Come to Life'}
@@ -528,19 +520,19 @@ function ScrollAnimationSection() {
       {/* The scroll component */}
       <Suspense
         fallback={
-          <div className="h-screen flex items-center justify-center bg-white">
-            <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+          <div className="h-screen flex items-center justify-center" style={{ background: 'var(--bustan-shell)' }}>
+            <div className="w-8 h-8 rounded-full animate-spin" style={{ border: '2px solid rgba(36,70,62,0.18)', borderTopColor: 'var(--bustan-lagoon)' }} />
           </div>
         }
       >
         <SolarInstallationScroll />
       </Suspense>
 
-      {/* Transition back to dark */}
+      {/* Transition back to the warm site canvas */}
       <div
         className="h-24"
         style={{
-          background: 'linear-gradient(to bottom, #f8f9fa, var(--color-dark))',
+          background: 'linear-gradient(to bottom, var(--bustan-shell), var(--bustan-paper))',
         }}
       />
     </section>
@@ -565,14 +557,14 @@ function WhySection() {
       className="py-24 px-6"
       style={{
         background:
-          'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(14,77,115,0.18) 0%, transparent 70%)',
+          'linear-gradient(180deg, rgba(216,236,232,0.34) 0%, rgba(244,234,216,0) 62%)',
       }}
     >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p
             className="text-sm font-medium tracking-widest uppercase mb-3"
-            style={{ color: 'var(--color-gold)' }}
+            style={{ color: 'var(--bustan-lagoon)' }}
           >
             {t.home.why.sectionTag}
           </p>
@@ -603,15 +595,15 @@ function WhySection() {
               className="absolute inset-0"
               style={{
                 background:
-                  'linear-gradient(to top, rgba(13,17,23,0.7) 0%, transparent 50%)',
+                  'linear-gradient(to top, rgba(36,70,62,0.54) 0%, transparent 55%)',
               }}
             />
             {/* Badge */}
             <div
               className="absolute bottom-6 left-6 px-5 py-2.5 rounded-xl text-sm font-semibold"
               style={{
-                background: 'rgba(232,168,32,0.9)',
-                color: 'var(--color-dark)',
+                background: 'rgba(255,244,226,0.9)',
+                color: 'var(--bustan-grove)',
               }}
             >
               8+ Years Serving Ko Phangan
@@ -632,16 +624,16 @@ function WhySection() {
                 variants={fadeUp}
                 className="flex gap-5 p-6 rounded-2xl"
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: 'rgba(255,244,226,0.76)',
+                  border: '1px solid rgba(36,70,62,0.12)',
                 }}
               >
                 <div
                   className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center mt-0.5"
                   style={{
-                    background: 'rgba(10,61,92,0.6)',
-                    color: 'var(--color-gold)',
-                    border: '1px solid rgba(232,168,32,0.2)',
+                    background: 'rgba(216,236,232,0.72)',
+                    color: 'var(--bustan-lagoon)',
+                    border: '1px solid rgba(0,111,107,0.16)',
                   }}
                 >
                   {whyIcons[i]}
@@ -677,7 +669,7 @@ function ProcessSection() {
         <div className="text-center mb-6">
           <p
             className="text-sm font-medium tracking-widest uppercase mb-3"
-            style={{ color: 'var(--color-gold)' }}
+            style={{ color: 'var(--bustan-lagoon)' }}
           >
             {t.home.process.sectionTag}
           </p>
@@ -702,7 +694,7 @@ function ProcessSection() {
             className="hidden md:block absolute top-[34px] left-[12.5%] right-[12.5%] h-px"
             style={{
               background:
-                'linear-gradient(90deg, transparent, rgba(232,168,32,0.3) 20%, rgba(232,168,32,0.3) 80%, transparent)',
+                'linear-gradient(90deg, transparent, rgba(0,111,107,0.28) 20%, rgba(0,111,107,0.28) 80%, transparent)',
             }}
           />
 
@@ -724,16 +716,16 @@ function ProcessSection() {
                   className="md:hidden absolute left-1/2 -translate-x-1/2 top-[68px] w-px h-full"
                   style={{
                     background:
-                      'linear-gradient(180deg, rgba(232,168,32,0.3), transparent)',
+                      'linear-gradient(180deg, rgba(0,111,107,0.28), transparent)',
                   }}
                 />
               )}
               <div
                 className="w-[68px] h-[68px] rounded-full flex items-center justify-center text-xl font-bold mb-5 relative z-10"
                 style={{
-                  background: 'rgba(14,77,115,0.6)',
-                  border: '2px solid rgba(232,168,32,0.45)',
-                  color: 'var(--color-gold)',
+                  background: 'rgba(255,244,226,0.84)',
+                  border: '2px solid rgba(0,111,107,0.32)',
+                  color: 'var(--bustan-lagoon)',
                   fontFamily: 'var(--font-serif)',
                 }}
               >
@@ -752,7 +744,7 @@ function ProcessSection() {
           <div className="mt-10 text-center">
             <p
               className="text-sm font-semibold"
-              style={{ color: 'var(--color-gold)' }}
+              style={{ color: 'var(--bustan-lagoon)' }}
             >
               {processCopy.statsLine}
             </p>
@@ -764,12 +756,12 @@ function ProcessSection() {
             <motion.span
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold cursor-pointer select-none"
               style={{
-                background: 'var(--color-gold)',
-                color: 'var(--color-dark)',
+                background: 'var(--bustan-lagoon)',
+                color: 'var(--bustan-shell)',
               }}
               whileHover={{
                 scale: 1.04,
-                boxShadow: '0 0 28px 6px rgba(232,168,32,0.30)',
+                boxShadow: '0 18px 44px rgba(0,111,107,0.22)',
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -798,7 +790,7 @@ function ProjectsSection() {
         <div className="text-center mb-16">
           <p
             className="text-sm font-medium tracking-widest uppercase mb-3"
-            style={{ color: 'var(--color-gold)' }}
+            style={{ color: 'var(--bustan-lagoon)' }}
           >
             {t.home.projects.sectionTag}
           </p>
@@ -824,7 +816,7 @@ function ProjectsSection() {
               key={project.name}
               variants={fadeUp}
               className="group relative overflow-hidden rounded-2xl"
-              style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+              style={{ border: '1px solid rgba(36,70,62,0.13)' }}
               whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 280, damping: 24 }}
             >
@@ -840,27 +832,28 @@ function ProjectsSection() {
                   className="absolute inset-0"
                   style={{
                     background:
-                      'linear-gradient(to bottom, rgba(13,17,23,0.1) 0%, rgba(13,17,23,0.75) 100%)',
+                      'linear-gradient(to bottom, rgba(36,70,62,0.06) 0%, rgba(36,70,62,0.58) 100%)',
                   }}
                 />
                 {/* Savings badge */}
                 <div
                   className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold"
                   style={{
-                    background: 'rgba(232,168,32,0.9)',
-                    color: 'var(--color-dark)',
+                    background: 'rgba(242,184,75,0.92)',
+                    color: 'var(--bustan-grove)',
                   }}
                 >
-                  Saves {project.savings}
+                  Site-modeled
                 </div>
                 {/* Type badge */}
                 {project.type && (
                   <div
                     className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium"
                     style={{
-                      background: 'rgba(255,255,255,0.15)',
+                      background: 'rgba(255,244,226,0.16)',
                       backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(255,255,255,0.2)',
+                      border: '1px solid rgba(255,244,226,0.3)',
+                      color: 'var(--bustan-shell)',
                     }}
                   >
                     {project.type}
@@ -872,7 +865,7 @@ function ProjectsSection() {
               <div
                 className="px-6 py-5"
                 style={{
-                  background: 'rgba(13,33,55,0.85)',
+                  background: 'rgba(255,244,226,0.88)',
                   backdropFilter: 'blur(12px)',
                 }}
               >
@@ -884,7 +877,7 @@ function ProjectsSection() {
                   </span>
                   <span
                     className="text-sm font-medium"
-                    style={{ color: 'var(--color-gold)' }}
+                    style={{ color: 'var(--bustan-lagoon)' }}
                   >
                     {project.size}
                   </span>
@@ -899,7 +892,7 @@ function ProjectsSection() {
             <Link
               to={langPath('/projects')}
               className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
-              style={{ color: 'var(--color-gold)' }}
+              style={{ color: 'var(--bustan-lagoon)' }}
             >
               {projectsCopy.viewAll}
               <ArrowRight size={14} />
@@ -912,145 +905,7 @@ function ProjectsSection() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 8. TESTIMONIALS
-// ═══════════════════════════════════════════════════════════════════════════
-function TestimonialsSection() {
-  const { t } = useTranslation()
-  const testimonials = (t.home as typeof t.home & { testimonials?: TestimonialsCopy }).testimonials
-  const [active, setActive] = useState(0)
-
-  // Auto-rotate
-  useEffect(() => {
-    if (!testimonials?.items?.length) return
-    const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % testimonials.items.length)
-    }, 6000)
-    return () => clearInterval(timer)
-  }, [testimonials?.items?.length])
-
-  if (!testimonials?.items?.length) return null
-
-  return (
-    <section
-      className="py-24 px-6"
-      style={{
-        background:
-          'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(14,77,115,0.15) 0%, transparent 70%)',
-      }}
-    >
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <p
-            className="text-sm font-medium tracking-widest uppercase mb-3"
-            style={{ color: 'var(--color-gold)' }}
-          >
-            {testimonials.sectionTag}
-          </p>
-          <h2
-            className="text-4xl md:text-5xl"
-            style={{ fontFamily: 'var(--font-serif)' }}
-          >
-            {testimonials.title}
-          </h2>
-        </div>
-
-        {/* Testimonial card */}
-        <div
-          className="relative rounded-2xl px-8 py-10 md:px-12 md:py-14 text-center min-h-[280px] flex flex-col items-center justify-center"
-          style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            backdropFilter: 'blur(16px)',
-          }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col items-center"
-            >
-              {/* Stars */}
-              <div className="flex gap-1 mb-6">
-                {Array.from({ length: testimonials.items[active].stars }).map(
-                  (_, i) => (
-                    <Star
-                      key={i}
-                      size={18}
-                      fill="#E8A820"
-                      color="#E8A820"
-                    />
-                  )
-                )}
-              </div>
-
-              {/* Quote */}
-              <p className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl mb-8 italic">
-                "{testimonials.items[active].quote}"
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                  style={{
-                    background: 'rgba(232,168,32,0.2)',
-                    color: 'var(--color-gold)',
-                  }}
-                >
-                  {testimonials.items[active].name.charAt(0)}
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-semibold">
-                    {testimonials.items[active].name}
-                  </p>
-                  <p className="text-xs text-white/40">
-                    {testimonials.items[active].role}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Dots */}
-          <div className="flex gap-2 mt-8">
-            {testimonials.items.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActive(i)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  i === active
-                    ? 'w-6 bg-[var(--color-gold)]'
-                    : 'bg-white/20 hover:bg-white/40'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Rating badge */}
-        <div className="mt-8 flex justify-center">
-          <div
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm"
-            style={{
-              background: 'rgba(232,168,32,0.1)',
-              border: '1px solid rgba(232,168,32,0.25)',
-              color: 'var(--color-gold)',
-            }}
-          >
-            <Star size={14} fill="#E8A820" />
-            {testimonials.rating}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 9. FAQ (accordion)
+// 8. FAQ (accordion)
 // ═══════════════════════════════════════════════════════════════════════════
 function FAQItem({
   question,
@@ -1067,10 +922,10 @@ function FAQItem({
     <div
       className="rounded-xl overflow-hidden"
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,244,226,0.74)',
         border: isOpen
-          ? '1px solid rgba(232,168,32,0.25)'
-          : '1px solid rgba(255,255,255,0.07)',
+          ? '1px solid rgba(0,111,107,0.28)'
+          : '1px solid rgba(36,70,62,0.12)',
       }}
     >
       <button
@@ -1082,7 +937,7 @@ function FAQItem({
           animate={{ rotate: isOpen ? 45 : 0 }}
           transition={{ duration: 0.2 }}
           className="shrink-0"
-          style={{ color: 'var(--color-gold)' }}
+          style={{ color: 'var(--bustan-lagoon)' }}
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path
@@ -1126,7 +981,7 @@ function FAQSection() {
         <div className="text-center mb-14">
           <p
             className="text-sm font-medium tracking-widest uppercase mb-3"
-            style={{ color: 'var(--color-gold)' }}
+            style={{ color: 'var(--bustan-lagoon)' }}
           >
             {faqData.sectionTag}
           </p>
@@ -1171,24 +1026,24 @@ function CTASection() {
       <div
         className="max-w-3xl mx-auto rounded-3xl text-center px-8 py-16 relative overflow-hidden"
         style={{
-          background: 'rgba(14,77,115,0.25)',
-          border: '1px solid rgba(232,168,32,0.20)',
+          background: 'rgba(255,244,226,0.82)',
+          border: '1px solid rgba(36,70,62,0.14)',
           backdropFilter: 'blur(24px)',
         }}
       >
-        {/* Gold glow */}
+        {/* Soft lagoon glow */}
         <div
           className="absolute inset-0 rounded-3xl pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 70% 60% at 50% 110%, rgba(232,168,32,0.14) 0%, transparent 70%)',
+              'radial-gradient(ellipse 70% 60% at 50% 110%, rgba(0,111,107,0.12) 0%, transparent 70%)',
           }}
         />
 
         <div className="relative z-10">
           <p
             className="text-sm font-medium tracking-widest uppercase mb-4"
-            style={{ color: 'var(--color-gold)' }}
+            style={{ color: 'var(--bustan-lagoon)' }}
           >
             {t.home.cta.sectionTag}
           </p>
@@ -1208,12 +1063,12 @@ function CTASection() {
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold cursor-pointer select-none"
                 style={{
-                  background: 'var(--color-gold)',
-                  color: 'var(--color-dark)',
+                  background: 'var(--bustan-lagoon)',
+                  color: 'var(--bustan-shell)',
                 }}
                 whileHover={{
                   scale: 1.04,
-                  boxShadow: '0 0 28px 6px rgba(232,168,32,0.32)',
+                  boxShadow: '0 18px 44px rgba(0,111,107,0.22)',
                 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -1228,13 +1083,13 @@ function CTASection() {
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
                 style={{
-                  background: 'rgba(37,211,102,0.15)',
-                  border: '1px solid rgba(37,211,102,0.35)',
-                  color: '#25D366',
+                  background: 'rgba(216,236,232,0.7)',
+                  border: '1px solid rgba(0,111,107,0.22)',
+                  color: 'var(--bustan-lagoon)',
                 }}
                 whileHover={{
                   scale: 1.03,
-                  borderColor: 'rgba(37,211,102,0.6)',
+                  borderColor: 'rgba(0,111,107,0.36)',
                 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -1249,14 +1104,14 @@ function CTASection() {
               <motion.span
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-medium cursor-pointer select-none"
                 style={{
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.20)',
+                  background: 'rgba(36,70,62,0.08)',
+                  border: '1px solid rgba(36,70,62,0.18)',
                   backdropFilter: 'blur(12px)',
-                  color: 'white',
+                  color: 'var(--bustan-grove)',
                 }}
                 whileHover={{
                   scale: 1.03,
-                  borderColor: 'rgba(255,255,255,0.38)',
+                  borderColor: 'rgba(36,70,62,0.34)',
                 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -1270,7 +1125,7 @@ function CTASection() {
           {/* Urgency line */}
           {cta.urgency && (
             <p className="mt-6 text-sm text-white/35">
-              ⚡ {cta.urgency}
+              {cta.urgency}
             </p>
           )}
         </div>
@@ -1290,8 +1145,8 @@ function PartnersBar() {
     <section
       className="py-14 px-6"
       style={{
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        background: 'rgba(255,255,255,0.015)',
+        borderTop: '1px solid rgba(36,70,62,0.12)',
+        background: 'rgba(255,244,226,0.58)',
       }}
     >
       <div className="max-w-5xl mx-auto">
@@ -1309,7 +1164,7 @@ function PartnersBar() {
                   src={partnerImages[i]!}
                   alt={`${p.name} — official solar equipment partner of Bustan Energy`}
                   loading="lazy"
-                  className="h-10 w-auto object-contain grayscale brightness-200"
+                  className="h-10 w-auto object-contain grayscale opacity-75"
                 />
               ) : (
                 <div className="h-10 flex items-center">
@@ -1366,26 +1221,11 @@ function howToSchema() {
       {
         '@type': 'HowToStep',
         position: 4,
-        name: 'Monitor & Save',
-        text: 'Real-time app monitoring. Watch your savings grow every day.',
+        name: 'Monitor & Maintain',
+        text: 'Real-time app monitoring, handover guidance, and ongoing support.',
       },
     ],
     totalTime: 'P14D',
-  }
-}
-
-function aggregateRatingSchema() {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Bustan Energy',
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      bestRating: '5',
-      ratingCount: '50',
-      reviewCount: '50',
-    },
   }
 }
 
@@ -1422,15 +1262,14 @@ export default function HomePage() {
   const schemas = [
     breadcrumbSchema(homeBreadcrumb(lang)),
     howToSchema(),
-    aggregateRatingSchema(),
     ...(faqItems.length > 0 ? [faqSchema(faqItems)] : []),
   ]
 
   return (
     <>
       {showAdminBanner && (
-        <div style={{position:'fixed',top:0,left:0,right:0,zIndex:10000,background:'linear-gradient(135deg,#E8A820,#E85D3A)',color:'#0D2137',padding:'12px 20px',textAlign:'center',fontWeight:700,fontFamily:'Heebo,sans-serif'}}>
-          🎯 אתה מחובר כאדמין · <a href="/admin" style={{color:'#0D2137',textDecoration:'underline',fontWeight:900}}>לחץ כאן לעבור לדשבורד האדמין ←</a>
+        <div style={{position:'fixed',top:0,left:0,right:0,zIndex:10000,background:'linear-gradient(135deg,var(--bustan-lagoon),var(--bustan-papaya))',color:'var(--bustan-shell)',padding:'12px 20px',textAlign:'center',fontWeight:700,fontFamily:'Heebo,sans-serif'}}>
+          אתה מחובר כאדמין · <a href="/admin" style={{color:'var(--bustan-shell)',textDecoration:'underline',fontWeight:900}}>לחץ כאן לעבור לדשבורד האדמין ←</a>
         </div>
       )}
       <SEOHead
@@ -1449,8 +1288,8 @@ export default function HomePage() {
         schema={schemas}
       />
       <div
-        className="min-h-screen"
-        style={{ background: 'var(--color-dark)', color: 'white' }}
+        className="bustan-home min-h-screen"
+        style={{ background: 'var(--bustan-paper)', color: 'var(--bustan-ink)' }}
       >
         <HeroSection />
         <StatsBar />
@@ -1459,7 +1298,6 @@ export default function HomePage() {
         <WhySection />
         <ProcessSection />
         <ProjectsSection />
-        <TestimonialsSection />
         <FAQSection />
         <CTASection />
         <PartnersBar />

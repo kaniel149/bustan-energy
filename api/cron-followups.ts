@@ -10,7 +10,7 @@ import { fmt } from './_lib/fmt.js'
 import { supaGetAll, supaPatch } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
-const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan.energy>'
 
 // CRON_SECRET must be set — no fallback to prevent unauthenticated execution
 const CRON_SECRET = process.env.CRON_SECRET

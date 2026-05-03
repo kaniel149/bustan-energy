@@ -27,7 +27,7 @@ export function Footer() {
   ]
 
   return (
-    <footer className="bg-dark border-t border-white/8">
+    <footer className="bg-[var(--bustan-grove)] border-t border-[rgba(255,244,226,0.14)]">
       {/* Main columns */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
@@ -51,14 +51,16 @@ export function Footer() {
                 className="hidden items-center gap-1"
                 style={{ display: 'none' }}
               >
-                <span className="font-serif text-xl text-gold">TM</span>
-                <span className="font-sans text-sm font-medium text-white/80 tracking-wide">
-                  ENERGY
+                <span className="font-serif text-xl text-[var(--bustan-sun)]">
+                  Bustan
+                </span>
+                <span className="font-sans text-sm font-medium text-[rgba(255,244,226,0.82)] tracking-wide">
+                  Energy
                 </span>
               </span>
             </Link>
 
-            <p className="text-white/50 text-sm leading-relaxed max-w-[240px]">
+            <p className="text-[rgba(255,244,226,0.66)] text-sm leading-relaxed max-w-[240px]">
               {t.footer.tagline}
             </p>
 
@@ -68,33 +70,33 @@ export function Footer() {
                 href="https://wa.me/66946692011"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-white/8 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/25 hover:bg-white/12 transition-colors"
+                className="w-9 h-9 rounded-xl bg-[rgba(255,244,226,0.09)] border border-[rgba(255,244,226,0.12)] flex items-center justify-center text-[rgba(255,244,226,0.62)] hover:text-[var(--bustan-shell)] hover:border-[rgba(255,244,226,0.28)] hover:bg-[rgba(255,244,226,0.14)] transition-colors"
                 aria-label="WhatsApp"
               >
                 <Phone size={15} />
               </a>
               <a
-                href="https://line.me/ti/p/~your-line-id"
+                href="https://line.me/R/ti/p/@bustanenergy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-white/8 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/25 hover:bg-white/12 transition-colors"
+                className="w-9 h-9 rounded-xl bg-[rgba(255,244,226,0.09)] border border-[rgba(255,244,226,0.12)] flex items-center justify-center text-[rgba(255,244,226,0.62)] hover:text-[var(--bustan-shell)] hover:border-[rgba(255,244,226,0.28)] hover:bg-[rgba(255,244,226,0.14)] transition-colors"
                 aria-label="LINE"
               >
                 <MessageCircle size={15} />
               </a>
-              <a
-                href="mailto:info@energy-tm.com"
-                className="w-9 h-9 rounded-xl bg-white/8 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/25 hover:bg-white/12 transition-colors"
-                aria-label="Email"
+              <Link
+                to={langPath('/contact')}
+                className="w-9 h-9 rounded-xl bg-[rgba(255,244,226,0.09)] border border-[rgba(255,244,226,0.12)] flex items-center justify-center text-[rgba(255,244,226,0.62)] hover:text-[var(--bustan-shell)] hover:border-[rgba(255,244,226,0.28)] hover:bg-[rgba(255,244,226,0.14)] transition-colors"
+                aria-label="Contact Bustan Energy"
               >
                 <Mail size={15} />
-              </a>
+              </Link>
             </div>
           </div>
 
           {/* Col 2: Quick Links */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[rgba(255,244,226,0.42)]">
               {t.footer.quickLinks}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -102,7 +104,7 @@ export function Footer() {
                 <li key={link.path}>
                   <Link
                     to={langPath(link.path)}
-                    className="text-sm text-white/55 hover:text-white transition-colors"
+                    className="text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -113,7 +115,7 @@ export function Footer() {
 
           {/* Col 3: Services */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[rgba(255,244,226,0.42)]">
               {t.footer.servicesTitle}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -121,7 +123,7 @@ export function Footer() {
                 <li key={svc.path}>
                   <Link
                     to={langPath(svc.path)}
-                    className="text-sm text-white/55 hover:text-white transition-colors"
+                    className="text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors"
                   >
                     {svc.label}
                   </Link>
@@ -132,7 +134,7 @@ export function Footer() {
 
           {/* Col 4: Contact */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[rgba(255,244,226,0.42)]">
               {t.footer.contactTitle}
             </h4>
             <ul className="flex flex-col gap-4">
@@ -141,35 +143,35 @@ export function Footer() {
                   href="https://wa.me/66946692011"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors group"
+                  className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors group"
                 >
-                  <Phone size={15} className="mt-0.5 shrink-0 text-gold/70 group-hover:text-gold transition-colors" />
+                  <Phone size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)] group-hover:text-[var(--bustan-sun)] transition-colors" />
                   <span>WhatsApp: +66 94 669 2011</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="https://line.me/ti/p/~your-line-id"
+                  href="https://line.me/R/ti/p/@bustanenergy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors group"
+                  className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors group"
                 >
-                  <MessageCircle size={15} className="mt-0.5 shrink-0 text-gold/70 group-hover:text-gold transition-colors" />
+                  <MessageCircle size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)] group-hover:text-[var(--bustan-sun)] transition-colors" />
                   <span>LINE: @bustanenergy</span>
                 </a>
               </li>
               <li>
-                <a
-                  href="mailto:info@energy-tm.com"
-                  className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors group"
+                <Link
+                  to={langPath('/contact')}
+                  className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors group"
                 >
-                  <Mail size={15} className="mt-0.5 shrink-0 text-gold/70 group-hover:text-gold transition-colors" />
-                  <span>info@energy-tm.com</span>
-                </a>
+                  <Mail size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)] group-hover:text-[var(--bustan-sun)] transition-colors" />
+                  <span>Contact Bustan Energy</span>
+                </Link>
               </li>
               <li>
-                <div className="flex items-start gap-3 text-sm text-white/55">
-                  <MapPin size={15} className="mt-0.5 shrink-0 text-gold/70" />
+                <div className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)]">
+                  <MapPin size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)]" />
                   <span>
                     Ko Phangan<br />
                     Surat Thani, Thailand
@@ -182,16 +184,16 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/8">
+      <div className="border-t border-[rgba(255,244,226,0.12)]">
         <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/30 text-xs">
+          <p className="text-[rgba(255,244,226,0.42)] text-xs">
             {t.footer.copyright}
           </p>
           <div className="flex items-center gap-5">
-            <Link to={langPath('/privacy')} className="text-white/30 text-xs hover:text-white/60 transition-colors">
+            <Link to={langPath('/privacy')} className="text-[rgba(255,244,226,0.42)] text-xs hover:text-[rgba(255,244,226,0.74)] transition-colors">
               Privacy Policy
             </Link>
-            <Link to={langPath('/terms')} className="text-white/30 text-xs hover:text-white/60 transition-colors">
+            <Link to={langPath('/terms')} className="text-[rgba(255,244,226,0.42)] text-xs hover:text-[rgba(255,244,226,0.74)] transition-colors">
               Terms of Service
             </Link>
           </div>

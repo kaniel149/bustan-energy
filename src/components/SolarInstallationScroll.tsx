@@ -153,7 +153,7 @@ export default function SolarInstallationScroll() {
       className="relative"
       style={{ height: '500vh' }}
     >
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
+      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-[var(--bustan-shell)]">
         {/* House type tabs */}
         <div className="absolute top-6 z-20 flex gap-2">
           {HOUSE_TYPES.map((type) => (
@@ -163,8 +163,8 @@ export default function SolarInstallationScroll() {
               className={`
                 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300
                 ${activeType === type.id
-                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-900/25'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-[var(--bustan-lagoon)] text-[var(--bustan-shell)] shadow-[0_14px_32px_rgba(0,111,107,0.20)]'
+                  : 'bg-[rgba(216,236,232,0.72)] text-[rgba(39,52,47,0.68)] hover:bg-[rgba(216,236,232,0.96)]'
                 }
               `}
             >
@@ -175,9 +175,9 @@ export default function SolarInstallationScroll() {
 
         {/* Progress bar */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-64 z-20">
-          <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-1 bg-[rgba(36,70,62,0.12)] rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gray-900 rounded-full"
+              className="h-full bg-[var(--bustan-lagoon)] rounded-full"
               style={{ width: `${stageProgress}%` }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
             />
@@ -187,7 +187,7 @@ export default function SolarInstallationScroll() {
               <div
                 key={i}
                 className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-                  i <= currentStage ? 'bg-gray-900' : 'bg-gray-200'
+                  i <= currentStage ? 'bg-[var(--bustan-lagoon)]' : 'bg-[rgba(36,70,62,0.18)]'
                 }`}
               />
             ))}
@@ -204,13 +204,13 @@ export default function SolarInstallationScroll() {
           {/* Loading bar */}
           {!loaded && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-              <div className="w-48 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-48 h-1.5 bg-[rgba(36,70,62,0.12)] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gray-900 rounded-full transition-all duration-200"
+                  className="h-full bg-[var(--bustan-lagoon)] rounded-full transition-all duration-200"
                   style={{ width: `${loadProgress * 100}%` }}
                 />
               </div>
-              <span className="text-gray-400 text-xs">
+              <span className="text-[rgba(39,52,47,0.48)] text-xs">
                 Loading {Math.round(loadProgress * 100)}%
               </span>
             </div>
@@ -228,14 +228,14 @@ export default function SolarInstallationScroll() {
               transition={{ duration: 0.3 }}
             >
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-xs font-mono text-gray-400">
+                <span className="text-xs font-mono text-[rgba(39,52,47,0.46)]">
                   {String(currentStage + 1).padStart(2, '0')}/{String(STAGES.length).padStart(2, '0')}
                 </span>
-                <h3 className="text-2xl font-semibold text-gray-900">
+                <h3 className="text-2xl font-semibold text-[var(--bustan-ink)]">
                   {STAGES[currentStage].label}
                 </h3>
               </div>
-              <p className="text-gray-500 text-sm">
+              <p className="text-[rgba(39,52,47,0.58)] text-sm">
                 {STAGES[currentStage].description}
               </p>
             </motion.div>
@@ -245,7 +245,7 @@ export default function SolarInstallationScroll() {
         {/* Scroll hint */}
         {currentStage === 0 && loaded && (
           <motion.div
-            className="absolute bottom-6 text-gray-400 text-xs flex flex-col items-center gap-1"
+            className="absolute bottom-6 text-[rgba(39,52,47,0.48)] text-xs flex flex-col items-center gap-1"
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 2, repeat: Infinity }}
           >

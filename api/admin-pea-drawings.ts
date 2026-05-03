@@ -84,7 +84,7 @@ function baseHead(title: string, drawingNo: string): string {
 <body>
 <div class="title-block">
   <div>
-    <div class="logo"><span class="amber">TM</span> ENERGY</div>
+    <div class="logo"><span class="amber">Bustan</span> Energy</div>
     <div style="font-size:8pt;color:#666;margin-top:2mm">Bustan Energy · For PE Review</div>
   </div>
   <div>

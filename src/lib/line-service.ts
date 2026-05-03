@@ -1,7 +1,7 @@
 // LINE messaging integration for Thailand market
 // LINE has 54M MAU in Thailand (85% of internet users)
 
-const LINE_OA_ID = import.meta.env.VITE_LINE_OA_ID || ''  // e.g. '@tmenergy'
+const LINE_OA_ID = import.meta.env.VITE_LINE_OA_ID || ''  // e.g. '@bustanenergy'
 
 // Open LINE chat with pre-filled message (client-side, no API key needed)
 export function openLineChat(message: string): void {
