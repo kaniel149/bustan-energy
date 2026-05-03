@@ -24,7 +24,7 @@ export function Navbar() {
     { label: t.nav.contact, path: '/contact' },
   ]
 
-  // Detect scroll to toggle glassmorphism background
+  // Detect scroll to toggle the warmer Bustan navigation surface.
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 24)
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -46,8 +46,8 @@ export function Navbar() {
           'fixed top-0 inset-x-0 z-50',
           'transition-all duration-300',
           scrolled
-            ? 'bg-dark/80 backdrop-blur-xl border-b border-white/8 shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
-            : 'bg-transparent',
+            ? 'bg-[rgba(255,244,226,0.92)] backdrop-blur-xl border-b border-[rgba(36,70,62,0.14)] shadow-[0_8px_28px_rgba(36,70,62,0.12)]'
+            : 'bg-[rgba(36,70,62,0.24)] backdrop-blur-md border-b border-[rgba(255,244,226,0.12)]',
         ].join(' ')}
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -71,9 +71,21 @@ export function Navbar() {
               aria-hidden="true"
               style={{ display: 'none' }}
             >
-              <span className="font-serif text-xl text-gold leading-none">TM</span>
-              <span className="font-sans text-sm font-medium text-white/80 tracking-wide leading-none">
-                ENERGY
+              <span
+                className={[
+                  'font-serif text-xl leading-none',
+                  scrolled ? 'text-[var(--bustan-grove)]' : 'text-[var(--bustan-sun)]',
+                ].join(' ')}
+              >
+                Bustan
+              </span>
+              <span
+                className={[
+                  'font-sans text-sm font-medium tracking-wide leading-none',
+                  scrolled ? 'text-[rgba(39,52,47,0.74)]' : 'text-[var(--bustan-shell)]',
+                ].join(' ')}
+              >
+                Energy
               </span>
             </span>
           </Link>
@@ -91,8 +103,12 @@ export function Navbar() {
                     'px-3 py-1.5 rounded-lg text-sm font-medium',
                     'transition-colors duration-200',
                     active
-                      ? 'text-gold'
-                      : 'text-white/70 hover:text-white',
+                      ? scrolled
+                        ? 'text-[var(--bustan-lagoon)]'
+                        : 'text-[var(--bustan-sun)]'
+                      : scrolled
+                        ? 'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)]'
+                        : 'text-[rgba(255,244,226,0.78)] hover:text-[var(--bustan-shell)]',
                   ].join(' ')}
                 >
                   {link.label}
@@ -108,8 +124,9 @@ export function Navbar() {
               onClick={handleSwitchLang}
               className={[
                 'px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide',
-                'bg-white/8 border border-white/15',
-                'text-white/60 hover:text-white hover:border-white/30 hover:bg-white/12',
+                scrolled
+                  ? 'bg-[rgba(36,70,62,0.06)] border border-[rgba(36,70,62,0.16)] text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(36,70,62,0.10)]'
+                  : 'bg-[rgba(255,244,226,0.10)] border border-[rgba(255,244,226,0.18)] text-[rgba(255,244,226,0.74)] hover:text-[var(--bustan-shell)] hover:bg-[rgba(255,244,226,0.16)]',
                 'transition-colors duration-200 cursor-pointer',
               ].join(' ')}
               aria-label={lang === 'en' ? 'Switch to Thai' : 'Switch to English'}
@@ -124,7 +141,12 @@ export function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+            className={[
+              'md:hidden p-2 rounded-lg transition-colors',
+              scrolled
+                ? 'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(36,70,62,0.08)]'
+                : 'text-[rgba(255,244,226,0.78)] hover:text-[var(--bustan-shell)] hover:bg-[rgba(255,244,226,0.12)]',
+            ].join(' ')}
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >
@@ -144,9 +166,9 @@ export function Navbar() {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className={[
               'fixed top-16 inset-x-0 z-40',
-              'bg-dark/95 backdrop-blur-xl',
-              'border-b border-white/10',
-              'shadow-[0_16px_48px_rgba(0,0,0,0.5)]',
+              'bg-[rgba(255,244,226,0.96)] backdrop-blur-xl',
+              'border-b border-[rgba(36,70,62,0.14)]',
+              'shadow-[0_16px_42px_rgba(36,70,62,0.14)]',
             ].join(' ')}
           >
             <nav className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
@@ -167,8 +189,8 @@ export function Navbar() {
                         'flex items-center px-4 py-3 rounded-xl text-base font-medium',
                         'transition-colors duration-200',
                         active
-                          ? 'text-gold bg-gold/10'
-                          : 'text-white/70 hover:text-white hover:bg-white/8',
+                          ? 'text-[var(--bustan-lagoon)] bg-[rgba(216,236,232,0.74)]'
+                          : 'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(216,236,232,0.55)]',
                       ].join(' ')}
                     >
                       {link.label}
@@ -188,8 +210,8 @@ export function Navbar() {
                   onClick={handleSwitchLang}
                   className={[
                     'px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide',
-                    'bg-white/8 border border-white/15',
-                    'text-white/60 hover:text-white hover:border-white/30 hover:bg-white/12',
+                    'bg-[rgba(36,70,62,0.06)] border border-[rgba(36,70,62,0.16)]',
+                    'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(36,70,62,0.10)]',
                     'transition-colors duration-200 cursor-pointer',
                   ].join(' ')}
                   aria-label={lang === 'en' ? 'Switch to Thai' : 'Switch to English'}

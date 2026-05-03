@@ -25,13 +25,13 @@ const sizeClasses: Record<Size, string> = {
 
 const variantClasses: Record<Variant, string> = {
   primary: [
-    'bg-gold text-dark font-semibold',
-    'shadow-[0_0_0_0_rgba(232,168,32,0)] hover:shadow-[0_0_24px_4px_rgba(232,168,32,0.35)]',
+    'bg-[var(--bustan-lagoon)] text-[var(--bustan-shell)] font-semibold',
+    'shadow-[0_0_0_0_rgba(0,111,107,0)] hover:shadow-[0_14px_34px_rgba(0,111,107,0.24)]',
     'border border-transparent',
   ].join(' '),
   secondary: [
-    'bg-white/5 text-white font-medium',
-    'border border-white/20 hover:border-white/40',
+    'bg-[rgba(255,244,226,0.62)] text-[var(--bustan-grove)] font-medium',
+    'border border-[rgba(36,70,62,0.18)] hover:border-[rgba(36,70,62,0.34)]',
     'backdrop-blur-md',
   ].join(' '),
 }
@@ -55,7 +55,7 @@ export function Button({
     'inline-flex items-center justify-center',
     'font-sans cursor-pointer select-none',
     'transition-colors duration-200',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bustan-lagoon)]',
     disabled ? 'opacity-40 pointer-events-none' : '',
     sizeClasses[size],
     variantClasses[variant],

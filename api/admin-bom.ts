@@ -356,7 +356,7 @@ function buildSupplierEmail(bom: BomResult, client: { name?: string; site?: stri
   lines.push('')
   lines.push('Bustan Energy')
   lines.push('Koh Phangan, Thailand')
-  lines.push('contracts@energy-tm.com · +66 94 669 2011')
+  lines.push('Bustan Energy Contracts · +66 94 669 2011')
 
   return lines.join('\n')
 }

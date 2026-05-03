@@ -11,7 +11,7 @@ import { supaGet, supaPost, supaPatch } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
-const FROM = process.env.RESEND_FROM || 'Bustan Energy Contracts <contracts@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy Contracts <contracts@bustan.energy>'
 
 interface ProposalSignRow {
   ref_number: string
@@ -112,7 +112,7 @@ function clientEmail(p: ProposalSignRow, s: SignatureRow) {
       <li>50% deposit invoice will be sent separately</li>
       <li>Installation within 4-6 weeks</li>
     </ol>
-    <p style="margin-top:20px;font-size:13px;color:#888;">WhatsApp: +66 94 669 2011 · contracts@energy-tm.com</p>
+    <p style="margin-top:20px;font-size:13px;color:#888;">WhatsApp: +66 94 669 2011 · Bustan Energy Contracts</p>
   </div>
 </div>`
 }

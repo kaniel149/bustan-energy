@@ -370,10 +370,10 @@ function buildHTML(p: LetterParams, branch: typeof BRANCHES[string]): string {
 
 <!-- Letterhead -->
 <div class="letterhead">
-  <div class="logo"><span class="amber">TM</span> ENERGY</div>
+  <div class="logo"><span class="amber">Bustan</span> Energy</div>
   <div class="company-info">
     Bustan Energy Co., Ltd. · Koh Phangan, Surat Thani 84280 · Thailand<br>
-    Tel: +66 94 669 2011 · contracts@energy-tm.com · energy-tm.com<br>
+    Tel: +66 94 669 2011 · Bustan Energy<br>
     ${showTh ? `วันที่: ${thaiDate(p.date)}` : `Date: ${englishDate(p.date)}`}
     ${p.pea_reference_number ? `&nbsp;|&nbsp; Ref: ${esc(p.pea_reference_number)}` : ''}
   </div>

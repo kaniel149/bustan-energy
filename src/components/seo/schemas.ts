@@ -30,7 +30,6 @@ export function localBusinessSchema(lang: 'en' | 'th') {
         : 'Premium solar energy solutions for Ko Phangan, Surat Thani, and all of Thailand — residential, commercial, and solar farm EPC & PPA.',
     url: BASE_URL,
     telephone: '+66-94-669-2011',
-    email: 'info@energy-tm.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'PX7X+7X',
@@ -412,7 +411,6 @@ export function organizationSchema() {
       {
         '@type': 'ContactPoint',
         contactType: 'sales',
-        email: 'info@energy-tm.com',
         telephone: '+66-94-669-2011',
         availableLanguage: ['English', 'Thai'],
       },

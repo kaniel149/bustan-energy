@@ -361,7 +361,7 @@ export default function ContactPage() {
               {/* LINE */}
               <motion.a
                 variants={fadeUp}
-                href="https://line.me/ti/p/@tmenergy"
+                href="https://line.me/R/ti/p/@bustanenergy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-4 bg-green-500/10 border border-green-500/25 rounded-2xl p-5 hover:border-green-500/50 transition-colors duration-300"
@@ -379,9 +379,8 @@ export default function ContactPage() {
               </motion.a>
 
               {/* Email */}
-              <motion.a
+              <motion.div
                 variants={fadeUp}
-                href={`mailto:${info.email.value}`}
                 className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors duration-300"
               >
                 <div className="w-10 h-10 rounded-xl bg-[var(--color-gold)]/15 border border-[var(--color-gold)]/30 flex items-center justify-center flex-shrink-0">
@@ -392,7 +391,7 @@ export default function ContactPage() {
                   <div className="text-white font-medium">{info.email.value}</div>
                   <div className="text-white/40 text-xs mt-0.5">{info.email.cta}</div>
                 </div>
-              </motion.a>
+              </motion.div>
 
               {/* Office */}
               <motion.div

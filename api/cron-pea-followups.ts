@@ -10,7 +10,7 @@ export const config = { runtime: 'edge' }
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
-const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan.energy>'
 const CRON_SECRET = process.env.CRON_SECRET
 const ALERT_RECIPIENT = 'erez@energy-tm.com'
 
