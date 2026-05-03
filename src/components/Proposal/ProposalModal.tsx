@@ -38,7 +38,7 @@ export function ProposalModal({ property, financial, onClose }: ProposalModalPro
     }
   }
 
-  const proposalRef = `TM-${property.id.slice(0, 6).toUpperCase()}`
+  const proposalRef = `BU-${property.id.slice(0, 6).toUpperCase()}`
 
   // PPA rate: 20% above LCOE but still below grid (~4.5 THB/kWh)
   const ppaRate = (financial.lcoe * 1.2).toFixed(2)

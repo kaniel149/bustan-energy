@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Supabase REST payloads here are schemaless until generated DB types are wired in. */
 // ============================================================
 // /api/admin-procurement
 // CRUD for procurement_orders (internal BOMs).
@@ -12,13 +13,12 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { isAllowedAdmin } from './_lib/admin-access.js'
 import { sha256hex } from './_lib/crypto.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA = ['k@kanielt.com']
-const allowed = (e: string) => e.endsWith(ADMIN_DOMAIN) || EXTRA.includes(e)
+const allowed = isAllowedAdmin
 
 // BOM templates file path — relative to repo root at runtime (Vercel edge)
 // We read it via fetch from the public path if available; otherwise fall back to null.

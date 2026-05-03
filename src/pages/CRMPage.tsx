@@ -34,7 +34,7 @@ function CRMLoginScreen() {
       <div className="w-[380px] bg-[#0D2137]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
         <div className="text-center mb-6">
           <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-[#E8A820] to-[#E85D3A] flex items-center justify-center text-xl mb-3">⚡</div>
-          <h1 className="text-xl font-bold text-white">TM Energy CRM</h1>
+          <h1 className="text-xl font-bold text-white">Bustan Energy CRM</h1>
           <p className="text-white/40 text-sm mt-1">{isSignUp ? 'Create account' : 'Sign in to continue'}</p>
         </div>
 

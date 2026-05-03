@@ -1,7 +1,6 @@
 {
   "ref": "AMIR-001-FINAL",
   "ref_number": "AMIR-001-FINAL",
-  "password": "390284",
   "client_name": "Amir Mizrahi",
   "client_name_he": "אמיר מזרחי",
   "client_phone": "+66...",
@@ -11,8 +10,7 @@
   "pea_branch": "Surat Thani",
   "date": "April 23, 2026",
   "date_he": "23 באפריל 2026",
-  "prepared_by": "TM Energy / Erez",
-
+  "prepared_by": "Bustan Energy / Erez",
   "system_size_kwp": 9.28,
   "panel_count": 16,
   "panel_model": "JA Solar 580W Mono Tier-1",
@@ -20,16 +18,14 @@
   "panel_note": "מבנה עגינה מותקן ל-18 פאנלים — מוכן להרחבה של 2 פאנלים נוספים בעתיד",
   "inverter_model": "Huawei SUN2000-10KTL-M1 (Hybrid)",
   "battery_kwh": 6.9,
-  "battery_power_kw": 5.0,
+  "battery_power_kw": 5,
   "battery_model": "Huawei LUNA2000-7-E1 + LUNA2000-10KW-C1 Power Module",
-
-  "psh_avg": 5.0,
+  "psh_avg": 5,
   "performance_ratio": 0.77,
   "soiling_factor": 0.97,
   "tariff_thb_per_kwh": 4.4,
   "tariff_export_thb": 3.1,
   "self_consumption_pct": 0.85,
-
   "annual_kwh": 12397,
   "monthly_kwh": 1033,
   "annual_savings_thb": 52127,
@@ -37,19 +33,16 @@
   "payback_years_no_tax": 11.1,
   "payback_years_discounted": 11.1,
   "savings_25yr_thb": 1785766,
-
   "total_price_thb": 390000,
   "price_thb": 390000,
   "deposit_pct": 40,
   "payment_schedule": "40% עם חתימה + 40% עם הגעת הציוד + 20% עם הפעלה",
   "payment_schedule_en": "40% on signing + 40% on material delivery + 20% on commissioning",
-
   "warranty": "12 שנה ייצור פאנלים / 10 שנה אינוורטר / 10 שנה סוללה / 2 שנה התקנה",
   "warranty_en": "12 years panels output / 10 years inverter / 10 years battery / 2 years workmanship",
   "installation_days": "2-3 ימים",
   "commissioning_timeline": "הגשה ל-PEA תוך 7 ימים מחתימה, הפעלה תוך 45 ימים",
   "commissioning_timeline_en": "PEA submission within 7 days of signing, commissioning within 45 days",
-
   "images": [
     "amir-mizrahi-001-roof-original.jpeg",
     "amir-mizrahi-001-roof-with-panels.png"
@@ -63,9 +56,8 @@
     "mounting_capacity": 18,
     "active_panels": 16,
     "future_expansion": 2,
-    "co2_tons_avoided_25yr": 140.0
+    "co2_tons_avoided_25yr": 140
   },
-
   "bom": {
     "panel_unit": 4200,
     "panel_qty": 16,

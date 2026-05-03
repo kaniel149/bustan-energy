@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags } from 'lucide-react'
 import { onAuthChange, signOut, isAdmin } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
@@ -18,8 +19,8 @@ const NAV_ITEMS = [
 
 function LoadingScreen() {
   return (
-    <div className="h-screen bg-[#0D1117] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#E8A820] border-t-transparent rounded-full animate-spin" />
+    <div className="h-screen bg-[#F4EAD8] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-[#006F6B] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 }
@@ -56,7 +57,11 @@ export default function AdminLayout() {
   const userEmail = adminUser?.email ?? ''
 
   return (
-    <div dir="rtl" className="h-screen w-screen flex bg-[#0D1117] overflow-hidden">
+    <div dir="rtl" className="h-screen w-screen flex bg-[#F4EAD8] overflow-hidden">
+      <Helmet>
+        <title>Bustan Energy Admin</title>
+        <meta name="robots" content="noindex,nofollow,noarchive" />
+      </Helmet>
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -69,24 +74,24 @@ export default function AdminLayout() {
       <aside
         className={`
           fixed lg:relative inset-y-0 right-0 z-40 lg:z-auto
-          w-[220px] border-l border-white/10 bg-[#0A1929]/90 backdrop-blur-xl
+          w-[220px] border-l border-[#FFF4E2]/10 bg-[#24463E] backdrop-blur-xl
           flex flex-col transition-transform duration-200
           ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
         `}
       >
         {/* Brand */}
-        <div className="p-4 border-b border-white/10 flex items-center justify-between">
+        <div className="p-4 border-b border-[#FFF4E2]/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img
-              src="/assets/logo/tm-energy.png"
-              alt="TM Energy"
+              src="/assets/logo/bustan-energy.svg"
+              alt="Bustan Energy"
               className="h-7 object-contain"
             />
-            <span className="text-xs font-semibold text-white/60">Admin</span>
+            <span className="text-xs font-semibold text-[#FFF4E2]/70">Admin</span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-white/30 hover:text-white/60 hover:bg-white/5 transition-colors"
+            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-[#FFF4E2]/45 hover:text-[#FFF4E2] hover:bg-white/5 transition-colors"
             aria-label="סגור תפריט"
           >
             <X size={18} />
@@ -104,8 +109,8 @@ export default function AdminLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all min-h-[44px] ${
                   isActive
-                    ? 'bg-[#E8A820]/10 text-[#E8A820] font-medium border border-[#E8A820]/20'
-                    : 'text-white/50 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#FFF4E2]/12 text-[#F2B84B] font-medium border border-[#F2B84B]/24'
+                    : 'text-[#FFF4E2]/58 hover:text-[#FFF4E2] hover:bg-white/5'
                 }`
               }
             >
@@ -115,9 +120,9 @@ export default function AdminLayout() {
           ))}
 
           {/* Internal-only section divider + items */}
-          <div className="pt-4 mt-4 border-t border-white/5">
-            <p className="px-3 mb-2 text-[10px] uppercase tracking-[0.15em] text-white/30 flex items-center gap-1.5">
-              <span>🔒</span> כלים פנימיים
+          <div className="pt-4 mt-4 border-t border-[#FFF4E2]/10">
+            <p className="px-3 mb-2 text-[10px] uppercase tracking-[0.15em] text-[#FFF4E2]/42 flex items-center gap-1.5">
+              <span aria-hidden="true">•</span> כלים פנימיים
             </p>
             {NAV_ITEMS.filter((i) => 'internal' in i && i.internal).map(({ to, icon: Icon, label, end }) => (
               <NavLink
@@ -128,8 +133,8 @@ export default function AdminLayout() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-3 rounded-xl text-sm transition-all min-h-[44px] ${
                     isActive
-                      ? 'bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/20'
-                      : 'text-white/50 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#D8ECE8]/12 text-[#D8ECE8] font-medium border border-[#D8ECE8]/22'
+                      : 'text-[#FFF4E2]/58 hover:text-[#FFF4E2] hover:bg-white/5'
                   }`
                 }
                 title="כלי פנימי — לא מוצג ללקוח"
@@ -142,17 +147,17 @@ export default function AdminLayout() {
         </nav>
 
         {/* User */}
-        <div className="p-3 border-t border-white/10">
+        <div className="p-3 border-t border-[#FFF4E2]/10">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-7 h-7 rounded-full bg-[#E8A820]/20 flex items-center justify-center text-[11px] text-[#E8A820] font-bold shrink-0">
+            <div className="w-7 h-7 rounded-full bg-[#F2B84B]/18 flex items-center justify-center text-[11px] text-[#F2B84B] font-bold shrink-0">
               {userInitial}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] text-white/60 truncate">{userEmail}</p>
+              <p className="text-[11px] text-[#FFF4E2]/68 truncate">{userEmail}</p>
             </div>
             <button
               onClick={handleSignOut}
-              className="p-1 text-white/30 hover:text-white/60 transition-colors"
+              className="p-1 text-[#FFF4E2]/45 hover:text-[#FFF4E2]/75 transition-colors"
               title="התנתקות"
               aria-label="התנתקות"
             >
@@ -165,18 +170,18 @@ export default function AdminLayout() {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile top bar */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0A1929]/80 backdrop-blur-xl shrink-0">
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[#24463E]/15 bg-[#FFF4E2]/88 backdrop-blur-xl shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-[#27342F]/60 hover:text-[#27342F] hover:bg-[#D8ECE8] transition-colors"
             aria-label="פתח תפריט"
           >
             <Menu size={20} />
           </button>
-          <img src="/assets/logo/tm-energy.png" alt="TM Energy" className="h-6 object-contain" />
+          <img src="/assets/logo/bustan-energy.svg" alt="Bustan Energy" className="h-6 object-contain" />
           <button
             onClick={handleSignOut}
-            className="text-white/30 hover:text-white/60 transition-colors"
+            className="text-[#27342F]/50 hover:text-[#27342F]/75 transition-colors"
             aria-label="התנתקות"
           >
             <LogOut size={16} />
@@ -184,7 +189,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto">
+        <main className="bustan-admin-main flex-1 overflow-auto">
           <Outlet />
         </main>
       </div>

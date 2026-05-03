@@ -10,12 +10,12 @@ export const config = {
   maxDuration: 60,
 }
 
+import { isAllowedAdmin } from './_lib/admin-access.js'
+
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.NANOBANANA_API_KEY!
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA = ['k@kanielt.com']
-const allowed = (e: string) => e.endsWith(ADMIN_DOMAIN) || EXTRA.includes(e)
+const allowed = isAllowedAdmin
 
 async function verifyAdmin(req: Request): Promise<string | null> {
   const auth = req.headers.get('authorization')

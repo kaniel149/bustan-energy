@@ -23,7 +23,7 @@ export default function NotFoundPage() {
     <>
       <SEOHead
         title="Page Not Found"
-        description="The page you are looking for does not exist. Return to TM Energy homepage or explore our solar energy services on Ko Phangan."
+        description="The page you are looking for does not exist. Return to Bustan Energy homepage or explore our solar energy services on Ko Phangan."
         path="/404"
         lang="en"
         robots="noindex, nofollow"

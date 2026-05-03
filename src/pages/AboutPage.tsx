@@ -228,7 +228,7 @@ export default function AboutPage() {
           >
             <img
               src="/assets/images/sales-10-happy.png"
-              alt="TM Energy solar installation team on Ko Phangan ready for a commercial project"
+              alt="Bustan Energy solar installation team on Ko Phangan ready for a commercial project"
               loading="lazy"
               className="w-full h-[400px] object-cover"
             />

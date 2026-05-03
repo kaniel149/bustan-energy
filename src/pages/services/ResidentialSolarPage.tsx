@@ -65,7 +65,7 @@ const benefits = [
   {
     icon: Shield,
     title: '25-Year Equipment Warranty',
-    text: 'Every installation includes manufacturer warranty documentation for the selected panels, inverter, and battery, plus TM Energy workmanship coverage for the installation.',
+    text: 'Every installation includes manufacturer warranty documentation for the selected panels, inverter, and battery, plus Bustan Energy workmanship coverage for the installation.',
   },
   {
     icon: Sun,
@@ -311,7 +311,7 @@ export default function ResidentialSolarPage() {
                 What's Included in Every Installation
               </motion.h2>
               <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto text-center mb-12">
-                Every residential solar installation from TM Energy is a complete, turnkey solution. No hidden costs, no surprises.
+                Every residential solar installation from Bustan Energy is a complete, turnkey solution. No hidden costs, no surprises.
               </motion.p>
 
               <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
@@ -348,7 +348,7 @@ export default function ResidentialSolarPage() {
                 Our Installation Process
               </motion.h2>
               <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Going solar is straightforward with TM Energy. We handle everything from assessment through to commissioning. <Link to={langPath('/how-it-works')} className="text-[var(--color-gold)] hover:underline">Learn more about how it works</Link>.
+                Going solar is straightforward with Bustan Energy. We handle everything from assessment through to commissioning. <Link to={langPath('/how-it-works')} className="text-[var(--color-gold)] hover:underline">Learn more about how it works</Link>.
               </motion.p>
             </motion.div>
 

@@ -1,5 +1,5 @@
-# Drone Island Scan — Koh Phangan Solar Mapping
-## TM Energy — Master Plan
+# Drone Island Scan — Bustan Energy Mapping
+## Bustan Energy — Master Plan
 
 ---
 
@@ -170,7 +170,7 @@ Orthomosaic → Roof Detection Model → Polygons per roof
 3. Booking.com / Agoda listings (resorts/hotels)
 4. Facebook business pages
 5. Physical signage (from drone photos)
-6. Local contacts (TM Developers network)
+6. Local contacts (Bustan Energy network)
 ```
 
 ### שלב E: Interactive Map
@@ -354,4 +354,4 @@ ROI on scan: 1.8 חודשים
 
 ---
 
-*Prepared by G — TM Energy — March 2026*
+*Prepared by G — Bustan Energy — March 2026*

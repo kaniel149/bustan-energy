@@ -23,7 +23,7 @@ export default function CRMLayout() {
         <div className="p-4 border-b border-white/10">
           <h1 className="text-sm font-bold text-white flex items-center gap-2">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#E8A820] to-[#E85D3A] flex items-center justify-center text-[11px]">⚡</span>
-            TM Energy CRM
+            Bustan Energy CRM
           </h1>
         </div>
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ============================================================
-// TM Energy -- 3-Option Proposal Generator (multi-language)
+// Bustan Energy -- 3-Option Proposal Generator (multi-language)
 // Usage:
 //   node generate-3opt.mjs --data clients/amir-3options.json --lang he
 //   node generate-3opt.mjs --data clients/amir-3options.json --lang en
@@ -29,7 +29,7 @@ const T = {
     dir: 'rtl',
     lang: 'he',
     font: "'Heebo', 'Inter', sans-serif",
-    nav_brand: 'TM ENERGY · PHANGAN',
+    nav_brand: 'BUSTAN ENERGY · PHANGAN',
     proposal_label: 'הצעת מחיר',
     hero_title: 'מערכת סולארית',
     hero_subtitle: 'kWp — קופנגן, תאילנד',
@@ -107,7 +107,7 @@ const T = {
     cta_desc: 'צרו קשר עכשיו ונתקדם לחתימה.',
     cta_whatsapp: 'WhatsApp עם Erez',
     footer_ref: 'הצעה תקפה ל-30 יום ממועד ההנפקה',
-    footer_brand: 'TM Energy Thailand',
+    footer_brand: 'Bustan Energy Thailand',
     featured_tag: 'הכי מומלץ',
     includes_label: 'כולל:',
     no_battery: 'ללא סוללה',
@@ -117,7 +117,7 @@ const T = {
     dir: 'ltr',
     lang: 'en',
     font: "'Inter', sans-serif",
-    nav_brand: 'TM ENERGY · PHANGAN',
+    nav_brand: 'BUSTAN ENERGY · PHANGAN',
     proposal_label: 'Solar Proposal',
     hero_title: 'Solar System',
     hero_subtitle: 'kWp — Ko Phangan, Thailand',
@@ -195,7 +195,7 @@ const T = {
     cta_desc: 'Contact us now and we will proceed to sign.',
     cta_whatsapp: 'WhatsApp Erez',
     footer_ref: 'Proposal valid for 30 days from issue date',
-    footer_brand: 'TM Energy Thailand',
+    footer_brand: 'Bustan Energy Thailand',
     featured_tag: 'Most Popular',
     includes_label: 'Includes:',
     no_battery: 'No battery',
@@ -205,7 +205,7 @@ const T = {
     dir: 'ltr',
     lang: 'th',
     font: "'Noto Sans Thai', 'Inter', sans-serif",
-    nav_brand: 'TM ENERGY · เกาะพะงัน',
+    nav_brand: 'BUSTAN ENERGY · เกาะพะงัน',
     proposal_label: 'ใบเสนอราคาโซลาร์เซลล์',
     hero_title: 'ระบบโซลาร์เซลล์',
     hero_subtitle: 'kWp — เกาะพะงัน, ประเทศไทย',
@@ -283,7 +283,7 @@ const T = {
     cta_desc: 'ติดต่อเราตอนนี้เพื่อดำเนินการต่อ',
     cta_whatsapp: 'WhatsApp Erez',
     footer_ref: 'ใบเสนอราคามีผล 30 วันนับจากวันออก',
-    footer_brand: 'TM Energy Thailand',
+    footer_brand: 'Bustan Energy Thailand',
     featured_tag: 'แนะนำมากที่สุด',
     includes_label: 'รวมถึง:',
     no_battery: 'ไม่มีแบตเตอรี่',
@@ -371,7 +371,7 @@ function generateHTML(data, lang) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TM Energy — ${t.proposal_label} · ${clientNameDisplay}</title>
+<title>Bustan Energy — ${t.proposal_label} · ${clientNameDisplay}</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9728;</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -533,7 +533,7 @@ footer strong { color:var(--gold); }
 
 <nav class="nav">
   <div>
-    <img class="nav-logo-img" src="tm-energy-logo.png" alt="TM Energy">
+    <img class="nav-logo-img" src="tm-energy-logo.png" alt="Bustan Energy">
     <span class="nav-brand">${t.nav_brand}</span>
   </div>
   <div class="nav-ref">REF &middot; ${ref} &middot; 2026</div>
@@ -856,8 +856,8 @@ body { overflow: hidden !important; }
 </style>
 <div class="pg-overlay" id="pgOverlay">
   <div class="pg-box">
-    <img src="tm-energy-logo.png" alt="TM Energy" class="pg-logo">
-    <div class="pg-brand">TM ENERGY</div>
+    <img src="tm-energy-logo.png" alt="Bustan Energy" class="pg-logo">
+    <div class="pg-brand">BUSTAN ENERGY</div>
     <h1 class="pg-title">${lang === 'he' ? 'הצעת מחיר אישית' : (lang === 'th' ? 'ใบเสนอราคาส่วนตัว' : 'Personal Quote')}</h1>
     <p class="pg-desc">${lang === 'he' ? 'הכנס את הסיסמה שנשלחה אליך ב-WhatsApp' : (lang === 'th' ? 'กรุณาใส่รหัสผ่านที่ส่งให้ทาง WhatsApp' : 'Enter the password sent to you via WhatsApp')}</p>
     <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" class="pg-input" id="pgInput" placeholder="* * * * * *" autocomplete="off" autofocus>

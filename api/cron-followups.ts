@@ -10,7 +10,7 @@ import { fmt } from './_lib/fmt.js'
 import { supaGetAll, supaPatch } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
-const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@energy-tm.com>'
 
 // CRON_SECRET must be set — no fallback to prevent unauthenticated execution
 const CRON_SECRET = process.env.CRON_SECRET
@@ -60,7 +60,7 @@ function buildFollowupEmail(type: string, proposal: FollowupProposalRow): { subj
       html: `
 <div style="font-family:system-ui;max-width:600px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:28px;border-radius:16px 16px 0 0;color:white;">
-    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:12px;margin-bottom:6px;">TM ENERGY</div>
+    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:12px;margin-bottom:6px;">BUSTAN ENERGY</div>
     <h1 style="margin:0;font-size:22px;">Your solar proposal is ready</h1>
   </div>
   <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
@@ -102,7 +102,7 @@ function buildFollowupEmail(type: string, proposal: FollowupProposalRow): { subj
       html: `
 <div style="font-family:system-ui;max-width:600px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:28px;border-radius:16px 16px 0 0;color:white;">
-    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:12px;margin-bottom:6px;">TM ENERGY</div>
+    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:12px;margin-bottom:6px;">BUSTAN ENERGY</div>
     <h1 style="margin:0;font-size:22px;">Next step for proposal ${refEsc}</h1>
   </div>
   <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
@@ -118,7 +118,7 @@ function buildFollowupEmail(type: string, proposal: FollowupProposalRow): { subj
     }
   }
 
-  return { subject: 'Follow-up from TM Energy', html: `<p>View your proposal: <a href="${url}">${refEsc}</a></p>` }
+  return { subject: 'Follow-up from Bustan Energy', html: `<p>View your proposal: <a href="${url}">${refEsc}</a></p>` }
 }
 
 export default async function handler(req: Request): Promise<Response> {

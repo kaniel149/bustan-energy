@@ -1,4 +1,4 @@
-# TM Energy — Launch TODO List
+# Bustan Energy — Launch TODO List
 ## Last updated: 2026-03-13
 
 ### CRITICAL (Before Launch)
@@ -15,7 +15,7 @@
 - [ ] **Meta Pixel** — Create Meta Business account + Pixel, set `VITE_FB_PIXEL_ID` in Vercel
 - [ ] **Google Places API key** — Set `VITE_GOOGLE_PLACES_API_KEY` in Vercel (for owner enrichment)
 - [ ] **Open Graph image** — Create og-default.jpg (1200x630) for social sharing
-- [ ] **Facebook page** — Create TM Energy Ko Phangan page (required for Meta Pixel + ads)
+- [ ] **Facebook page** — Create Bustan Energy Ko Phangan page (required for Meta Pixel + ads)
 - [ ] **Email service** — Set up Resend API for contact form emails, set `RESEND_API_KEY`
 - [ ] **info@energy-tm.com** — Set up email (Google Workspace / Zoho Mail)
 
@@ -45,7 +45,7 @@ RESEND_API_KEY             ❌ Missing
 | Platform | Status | Action |
 |----------|--------|--------|
 | Instagram | ❌ | Create @tmenergy_solar |
-| Facebook Page | ❌ | Create TM Energy Ko Phangan |
+| Facebook Page | ❌ | Create Bustan Energy Ko Phangan |
 | LINE Official | ⚠️ | Verify @tmenergy is active |
 | WhatsApp Business | ❌ | Get Thai number +66 → WhatsApp Business |
 | Google Business | ❌ | Create GBP in Thong Sala |

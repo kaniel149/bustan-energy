@@ -1,5 +1,6 @@
 // ============================================================
 // /api/cron-pea-followups
+/* eslint-disable @typescript-eslint/no-explicit-any -- Supabase REST payloads here are schemaless until generated DB types are wired in. */
 // Daily cron at 09:00 UTC — emails erez@energy-tm.com about
 // PEA submissions with no response after 20 days.
 // Logs to notification_log table.
@@ -9,7 +10,7 @@ export const config = { runtime: 'edge' }
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
-const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@energy-tm.com>'
 const CRON_SECRET = process.env.CRON_SECRET
 const ALERT_RECIPIENT = 'erez@energy-tm.com'
 
@@ -69,7 +70,7 @@ function buildAlertEmail(staleProjects: any[]): string {
   return `
 <div style="font-family:system-ui;max-width:700px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:24px;border-radius:12px 12px 0 0;color:white;">
-    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:11px;margin-bottom:4px;">TM ENERGY · PEA TRACKER</div>
+    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:11px;margin-bottom:4px;">BUSTAN ENERGY · PEA TRACKER</div>
     <h1 style="margin:0;font-size:20px;">PEA Follow-up Alert</h1>
     <p style="margin:8px 0 0;color:rgba(255,255,255,0.7);font-size:14px;">
       ${staleProjects.length} project${staleProjects.length !== 1 ? 's' : ''} pending PEA response for 20+ days
@@ -95,7 +96,7 @@ function buildAlertEmail(staleProjects: any[]): string {
     </div>
 
     <p style="margin-top:20px;font-size:12px;color:#9ca3af;">
-      Sent automatically by TM Energy PEA Tracker · energy-tm.com/admin<br>
+      Sent automatically by Bustan Energy PEA Tracker · energy-tm.com/admin<br>
       This cron runs daily at 09:00 UTC (16:00 Bangkok time).
     </p>
   </div>

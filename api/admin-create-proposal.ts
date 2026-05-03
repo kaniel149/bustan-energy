@@ -8,16 +8,12 @@ import { escapeHtml } from './_lib/html.js'
 import { fmt } from './_lib/fmt.js'
 import { sha256hex, random6 } from './_lib/crypto.js'
 import { supaUpsert } from './_lib/supa.js'
+import { isAllowedAdmin } from './_lib/admin-access.js'
 import { calculateSolarFinancials, TM_SOLAR_ASSUMPTIONS } from '../src/lib/solar-financials.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA_ADMINS = ['k@kanielt.com']
-const isAllowed = (email: string) => {
-  const e = email.toLowerCase()
-  return e.endsWith(ADMIN_DOMAIN) || EXTRA_ADMINS.includes(e)
-}
+const isAllowed = isAllowedAdmin
 
 type ProposalLang = 'he' | 'en' | 'th'
 
@@ -27,7 +23,7 @@ function proposalLang(value: unknown): ProposalLang {
 
 const COPY: Record<ProposalLang, Record<string, string>> = {
   he: {
-    html_title: 'TM Energy — הצעת מחיר סולארית',
+    html_title: 'Bustan Energy — הצעת מחיר סולארית',
     html_description: 'הצעת מחיר למערכת סולארית',
     hero_badge: 'הצעת מחיר',
     hero_title: 'מערכת סולארית',
@@ -156,7 +152,7 @@ const COPY: Record<ProposalLang, Record<string, string>> = {
     years_unit: 'שנים',
   },
   en: {
-    html_title: 'TM Energy — Solar Proposal',
+    html_title: 'Bustan Energy — Solar Proposal',
     html_description: 'Solar system proposal',
     hero_badge: 'Solar Proposal',
     hero_title: 'Solar PV System',
@@ -285,7 +281,7 @@ const COPY: Record<ProposalLang, Record<string, string>> = {
     years_unit: 'years',
   },
   th: {
-    html_title: 'TM Energy — ข้อเสนอระบบโซลาร์',
+    html_title: 'Bustan Energy — ข้อเสนอระบบโซลาร์',
     html_description: 'ข้อเสนอระบบโซลาร์',
     hero_badge: 'ข้อเสนอระบบโซลาร์',
     hero_title: 'ระบบโซลาร์เซลล์',
@@ -510,7 +506,7 @@ export default async function handler(req: Request): Promise<Response> {
       savings_25yr_thb: savings_25yr_thb_submitted,
       roof_original_url,
       roof_panels_url,
-      logo_url = 'https://energy-tm.com/proposals/tm-energy-logo.png',
+      logo_url = 'https://energy-tm.com/assets/logo/bustan-energy.svg',
       language: language_raw = 'he',
       password,
       psh = TM_SOLAR_ASSUMPTIONS.pshAnnual,
@@ -682,17 +678,12 @@ export default async function handler(req: Request): Promise<Response> {
     const template = await loadTemplate(origin)
     const rendered = render(template, renderData)
 
-    // Inject password gate + contract (fetch snippets)
-    const [gateRes, contractRes] = await Promise.all([
-      fetch(`${origin}/proposal-templates/password-gate.html`),
-      fetch(`${origin}/proposal-templates/contract-snippet.html`),
-    ])
-    const gateTmpl = gateRes.ok ? await gateRes.text() : ''
+    // Inject the contract UI only. Password access is enforced server-side by /api/proposal-serve.
+    const contractRes = await fetch(`${origin}/proposal-templates/contract-snippet.html`)
     const contractTmpl = contractRes.ok ? await contractRes.text() : ''
-    const gate = render(gateTmpl, { ref, password_hash })
     const contract = render(contractTmpl, { ref })
 
-    const finalHtml = rendered.replace('</body>', `${contract}\n${gate}\n</body>`)
+    const finalHtml = rendered.replace('</body>', `${contract}\n</body>`)
 
     const nowIso = new Date().toISOString()
     // 30-day expiry (needed by schedule_followups_on_send trigger)

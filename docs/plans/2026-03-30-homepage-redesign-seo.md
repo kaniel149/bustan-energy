@@ -1,4 +1,4 @@
-# TM Energy Homepage Redesign + SEO — Design Doc
+# Bustan Energy Homepage Redesign + SEO — Design Doc
 
 **Date:** 2026-03-30
 **Goal:** Full homepage redesign + rank #1 on Google for solar in Ko Phangan / Ko Samui
@@ -41,7 +41,7 @@
 - Restyle from white bg to dark theme to match site
 - 3 house types, 63 frames each, canvas scroll
 
-### 5. Why TM Energy (split layout)
+### 5. Why Bustan Energy (split layout)
 - Left: Installation image with badge overlay
 - Right: 4 differentiators (Island Specialists, PEA Licensed, Premium Equipment, Blackout Protection)
 - Island-specific pain points (salt air, humidity, blackouts)

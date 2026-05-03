@@ -9,7 +9,7 @@ import { escapeHtml } from './_lib/html.js'
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY
-const FROM = process.env.RESEND_FROM || 'TM Energy Leads <leads@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy Leads <leads@energy-tm.com>'
 const NOTIFY = (process.env.LEAD_NOTIFY_EMAILS || 'erez@energy-tm.com,kaniel@energy-tm.com')
   .split(',')
   .map((email) => email.trim())
@@ -38,7 +38,7 @@ async function sendLeadEmail(lead: Required<ContactLeadBody>) {
   const html = `
 <div style="font-family:system-ui;max-width:620px;direction:ltr;">
   <div style="background:#0D2137;color:white;padding:24px;border-radius:16px 16px 0 0;">
-    <h1 style="margin:0;color:#E8A820;font-size:22px;">New TM Energy Lead</h1>
+    <h1 style="margin:0;color:#E8A820;font-size:22px;">New Bustan Energy Lead</h1>
     <p style="margin:6px 0 0 0;opacity:.8;">Website contact form</p>
   </div>
   <div style="border:1px solid #eee;border-top:0;padding:22px;border-radius:0 0 16px 16px;">
@@ -61,7 +61,7 @@ async function sendLeadEmail(lead: Required<ContactLeadBody>) {
       from: FROM,
       to: NOTIFY,
       reply_to: [lead.email],
-      subject: `New TM Energy lead · ${lead.name}`,
+      subject: `New Bustan Energy lead · ${lead.name}`,
       html,
     }),
   }).catch(() => null)

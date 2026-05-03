@@ -2,7 +2,7 @@
 
 ## Goal
 
-Use supplier price inputs as the costing backbone for TM Energy proposals, BOM, and procurement. The proposal generator should keep its current admin design language, while exposing enough price provenance for operations to know what can be trusted and what must be reconfirmed before PO.
+Use supplier price inputs as the costing backbone for Bustan Energy proposals, BOM, and procurement. The proposal generator should keep its current admin design language, while exposing enough price provenance for operations to know what can be trusted and what must be reconfirmed before PO.
 
 ## Implemented Now
 

@@ -410,7 +410,7 @@ export function PropertySidebar() {
                       capacityKwp: financial.capacityKwp,
                       annualSavings: financial.annualSavingsYear1,
                       paybackYears: financial.paybackYears,
-                      proposalRef: `TM-${property.id.slice(0, 6).toUpperCase()}`,
+                      proposalRef: `BU-${property.id.slice(0, 6).toUpperCase()}`,
                     })
                     openLineChat(msg)
                   }}

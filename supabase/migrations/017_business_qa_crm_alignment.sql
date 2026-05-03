@@ -1,6 +1,6 @@
 -- =====================================================
 -- 017_business_qa_crm_alignment.sql
--- Align CRM pipeline with real TM Energy EPC/PPA operations.
+-- Align CRM pipeline with real Bustan Energy EPC/PPA operations.
 -- =====================================================
 
 -- Canonical stage order:

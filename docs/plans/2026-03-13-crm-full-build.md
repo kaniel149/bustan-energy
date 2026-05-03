@@ -170,7 +170,7 @@ git commit -m "feat: add CRM schema — projects, activity_log, user_profiles"
 
 ```typescript
 // src/types/crm.ts
-// TM Energy CRM — 10-step solar pipeline
+// Bustan Energy CRM — 10-step solar pipeline
 
 export type ProjectStatus =
   | 'lead'

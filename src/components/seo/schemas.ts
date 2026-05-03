@@ -1,5 +1,5 @@
 /**
- * JSON-LD schema helpers for TM Energy SEO
+ * JSON-LD schema helpers for Bustan Energy SEO
  *
  * Target keywords:
  *   EN: solar koh phangan, solar surat thani, solar panel installation thailand,
@@ -19,11 +19,11 @@ export function localBusinessSchema(lang: 'en' | 'th') {
     '@context': 'https://schema.org',
     '@type': ['LocalBusiness', 'SolarEnergyCompany'],
     '@id': BUSINESS_ID,
-    name: 'TM Energy',
+    name: 'Bustan Energy',
     alternateName:
       lang === 'th'
-        ? ['TM Energy เกาะพะงัน', 'TM Energy สุราษฎร์ธานี']
-        : ['TM Energy Ko Phangan', 'TM Energy Surat Thani'],
+        ? ['Bustan Energy เกาะพะงัน', 'Bustan Energy สุราษฎร์ธานี']
+        : ['Bustan Energy Ko Phangan', 'Bustan Energy Surat Thani'],
     description:
       lang === 'th'
         ? 'บริษัทติดตั้งโซลาร์เซลล์ชั้นนำในเกาะพะงัน สุราษฎร์ธานี — ระบบโซลาร์สำหรับบ้าน รีสอร์ท และโรงงาน ตั้งแต่ 3kW ถึง 100MW'
@@ -68,8 +68,8 @@ export function localBusinessSchema(lang: 'en' | 'th') {
         ? 'โซลาร์เซลล์ เกาะพะงัน, ติดตั้งโซลาร์เซลล์, สุราษฎร์ธานี, โซลาร์ฟาร์ม'
         : 'solar koh phangan, solar surat thani, solar panel installation thailand, solar farm thailand',
     sameAs: [
-      'https://www.facebook.com/tmenergy.th',
-      'https://www.instagram.com/tmenergy.th',
+      'https://www.facebook.com/bustanenergy.th',
+      'https://www.instagram.com/bustanenergy.th',
     ],
   }
 }
@@ -82,7 +82,7 @@ export function websiteSchema() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${BASE_URL}/#website`,
-    name: 'TM Energy',
+    name: 'Bustan Energy',
     url: BASE_URL,
     publisher: { '@id': BUSINESS_ID },
     inLanguage: ['en', 'th'],
@@ -219,7 +219,7 @@ export const PRICING_FAQS_EN = [
   {
     question: 'Do you offer PPA (Power Purchase Agreement) financing?',
     answer:
-      'Yes. Our PPA option requires ฿0 upfront investment. TM Energy installs and owns the system; you buy the solar electricity at a fixed rate below your current grid tariff. Ideal for resorts, hotels, and large commercial properties.',
+      'Yes. Our PPA option requires ฿0 upfront investment. Bustan Energy installs and owns the system; you buy the solar electricity at a fixed rate below your current grid tariff. Ideal for resorts, hotels, and large commercial properties.',
   },
   {
     question: 'Can solar work during the rainy season in Ko Phangan?',
@@ -252,7 +252,7 @@ export const PRICING_FAQS_TH = [
   {
     question: 'มีตัวเลือก PPA (สัญญาซื้อขายไฟฟ้า) ไหม?',
     answer:
-      'มี ตัวเลือก PPA ของเราไม่ต้องลงทุนล่วงหน้า TM Energy ติดตั้งและเป็นเจ้าของระบบ คุณซื้อไฟฟ้าโซลาร์ในอัตราคงที่ที่ต่ำกว่าค่าไฟปัจจุบัน เหมาะสำหรับรีสอร์ท โรงแรม และอสังหาริมทรัพย์เชิงพาณิชย์ขนาดใหญ่',
+      'มี ตัวเลือก PPA ของเราไม่ต้องลงทุนล่วงหน้า Bustan Energy ติดตั้งและเป็นเจ้าของระบบ คุณซื้อไฟฟ้าโซลาร์ในอัตราคงที่ที่ต่ำกว่าค่าไฟปัจจุบัน เหมาะสำหรับรีสอร์ท โรงแรม และอสังหาริมทรัพย์เชิงพาณิชย์ขนาดใหญ่',
   },
   {
     question: 'โซลาร์เซลล์ทำงานได้ในช่วงฤดูฝนไหม?',
@@ -292,7 +292,7 @@ export function articleSchema(article: ArticleSchemaInput) {
     url: `${BASE_URL}${langPrefix}/blog/${article.slug}`,
     author: {
       '@type': 'Organization',
-      name: 'TM Energy',
+      name: 'Bustan Energy',
       url: BASE_URL,
     },
     publisher: {
@@ -367,12 +367,12 @@ export function organizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${BASE_URL}/#organization`,
-    name: 'TM Energy',
-    legalName: 'TM Energy Co., Ltd.',
+    name: 'Bustan Energy',
+    legalName: 'Bustan Energy Co., Ltd.',
     url: BASE_URL,
     logo: {
       '@type': 'ImageObject',
-      url: `${BASE_URL}/assets/logo/tm-energy.png`,
+      url: `${BASE_URL}/assets/logo/bustan-energy.svg`,
       width: 400,
       height: 120,
     },
@@ -418,8 +418,8 @@ export function organizationSchema() {
       },
     ],
     sameAs: [
-      'https://www.facebook.com/tmenergy.th',
-      'https://www.instagram.com/tmenergy.th',
+      'https://www.facebook.com/bustanenergy.th',
+      'https://www.instagram.com/bustanenergy.th',
     ],
   }
 }
@@ -444,7 +444,7 @@ export function webPageSchema(opts: {
     isPartOf: {
       '@type': 'WebSite',
       '@id': `${BASE_URL}/#website`,
-      name: 'TM Energy',
+      name: 'Bustan Energy',
       url: BASE_URL,
       publisher: { '@id': BUSINESS_ID },
     },

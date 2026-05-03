@@ -1,19 +1,31 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
 Disallow: /platform
 Disallow: /crm
+Disallow: /p
+Disallow: /proposals
+Disallow: /proposal-templates
 Disallow: /preview-scroll
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
 Disallow: /platform
 Disallow: /crm
+Disallow: /p
+Disallow: /proposals
+Disallow: /proposal-templates
 Disallow: /preview-scroll
 
 User-agent: *
 Allow: /
+Disallow: /admin
 Disallow: /platform
 Disallow: /crm
+Disallow: /p
+Disallow: /proposals
+Disallow: /proposal-templates
 Disallow: /preview-scroll
 
 Sitemap: https://energy-tm.com/sitemap.xml

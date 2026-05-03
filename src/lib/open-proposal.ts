@@ -4,7 +4,7 @@ import { REGIONS } from './regions'
 import { getSatelliteImageUrl } from './enrich-building'
 
 const DEFAULT_PPA_DISCOUNT = 0.80  // PPA price = 80% of grid tariff
-const DEFAULT_PHONE = '66502213948' // TM Energy Thailand
+const DEFAULT_PHONE = '66502213948' // Bustan Energy Thailand
 const LINE_OA_ID = import.meta.env.VITE_LINE_OA_ID || '%40tmenergy'
 
 export function openProposal(params: {
@@ -18,7 +18,7 @@ export function openProposal(params: {
     ? region.tariffResidential
     : region.tariffCommercial
 
-  const ref = `TM-${new Date().toISOString().slice(2, 10).replace(/-/g, '')}-${property.id.slice(0, 6).toUpperCase()}`
+  const ref = `BU-${new Date().toISOString().slice(2, 10).replace(/-/g, '')}-${property.id.slice(0, 6).toUpperCase()}`
 
   const q = new URLSearchParams()
   q.set('n', property.ownerName || property.title || `Building ${property.id.slice(0, 8)}`)

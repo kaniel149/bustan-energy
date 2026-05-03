@@ -1,4 +1,4 @@
-# TM Energy — Proposal Generation Workflow
+# Bustan Energy — Proposal Generation Workflow
 
 Reusable playbook for generating a full 3-option proposal package (client PDFs + internal margin doc + PEA drawings).
 

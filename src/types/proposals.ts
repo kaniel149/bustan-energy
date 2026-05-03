@@ -1,4 +1,4 @@
-// TM Energy — Proposal management types
+// Bustan Energy — Proposal management types
 
 export type ProposalStatus = 'draft' | 'sent' | 'viewed' | 'signed' | 'rejected'
 export type ProposalLanguage = 'he' | 'en' | 'th'

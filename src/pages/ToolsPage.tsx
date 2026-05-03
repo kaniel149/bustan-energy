@@ -41,9 +41,9 @@ const TOOLS_EN: Tool[] = [
   },
   {
     icon: Map,
-    title: 'Ko Phangan Solar Atlas',
+    title: 'Bustan Energy Atlas',
     description:
-      'Interactive drone survey map of Ko Phangan. Explore solar potential zones, land parcels, and completed TM Energy installations across the island.',
+      'Interactive drone survey map of Ko Phangan. Explore solar potential zones, land parcels, and completed Bustan Energy installations across the island.',
     href: '/tools/solar-atlas.html',
     badge: 'Map Tool',
     badgeColor: 'text-blue-400 bg-blue-400/10 border-blue-400/30',
@@ -86,7 +86,7 @@ const TOOLS_TH: Tool[] = [
     icon: Map,
     title: 'แผนที่โซลาร์เกาะพะงัน',
     description:
-      'แผนที่โดรนเชิงโต้ตอบของเกาะพะงัน สำรวจพื้นที่ศักยภาพโซลาร์ แปลงที่ดิน และโครงการที่ TM Energy ติดตั้งเสร็จแล้วทั่วเกาะ',
+      'แผนที่โดรนเชิงโต้ตอบของเกาะพะงัน สำรวจพื้นที่ศักยภาพโซลาร์ แปลงที่ดิน และโครงการที่ Bustan Energy ติดตั้งเสร็จแล้วทั่วเกาะ',
     href: '/tools/solar-atlas.html',
     badge: 'แผนที่',
     badgeColor: 'text-blue-400 bg-blue-400/10 border-blue-400/30',
@@ -178,11 +178,11 @@ export default function ToolsPage() {
   const tools = lang === 'th' ? TOOLS_TH : TOOLS_EN
 
   const title = lang === 'th'
-    ? 'เครื่องมือโซลาร์เซลล์ฟรี — คำนวณ วางแผน วิเคราะห์ | TM Energy'
-    : 'Free Solar Tools — Calculate, Plan & Analyse | TM Energy Ko Phangan'
+    ? 'เครื่องมือโซลาร์เซลล์ฟรี — คำนวณ วางแผน วิเคราะห์ | Bustan Energy'
+    : 'Free Solar Tools — Calculate, Plan & Analyse | Bustan Energy Ko Phangan'
   const description = lang === 'th'
-    ? 'เครื่องมือโซลาร์เซลล์ฟรีจาก TM Energy: สแกนบิลไฟฟ้า แผนที่โซลาร์เกาะพะงัน ค้นหาที่ดินโซลาร์ฟาร์ม และแผนที่โครงข่ายไฟฟ้า เริ่มวางแผนโซลาร์ของคุณวันนี้'
-    : 'Free solar tools from TM Energy: electricity bill scanner, Ko Phangan solar atlas, solar farm site finder, and power grid map. Start planning your solar installation today.'
+    ? 'เครื่องมือโซลาร์เซลล์ฟรีจาก Bustan Energy: สแกนบิลไฟฟ้า แผนที่โซลาร์เกาะพะงัน ค้นหาที่ดินโซลาร์ฟาร์ม และแผนที่โครงข่ายไฟฟ้า เริ่มวางแผนโซลาร์ของคุณวันนี้'
+    : 'Free solar tools from Bustan Energy: electricity bill scanner, Ko Phangan solar atlas, solar farm site finder, and power grid map. Start planning your solar installation today.'
 
   const pageUrl = `${BASE_URL}${lang === 'th' ? '/th' : ''}/tools`
 
@@ -240,7 +240,7 @@ export default function ToolsPage() {
                 className="text-white/55 text-xl max-w-2xl mx-auto leading-relaxed"
               >
                 {lang === 'th'
-                  ? 'เครื่องมือที่ทีมงาน TM Energy ใช้จริงในการสำรวจ วางแผน และนำเสนอโครงการโซลาร์เซลล์บนเกาะพะงัน — เปิดให้ใช้ฟรีสำหรับเจ้าของบ้านและนักลงทุน'
+                  ? 'เครื่องมือที่ทีมงาน Bustan Energy ใช้จริงในการสำรวจ วางแผน และนำเสนอโครงการโซลาร์เซลล์บนเกาะพะงัน — เปิดให้ใช้ฟรีสำหรับเจ้าของบ้านและนักลงทุน'
                   : 'The same tools our team uses to survey, plan, and pitch solar projects on Ko Phangan — open and free for homeowners and investors.'}
               </motion.p>
             </motion.div>

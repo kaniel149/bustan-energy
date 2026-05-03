@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ============================================================
-// TM Energy -- Proposal Generator
+// Bustan Energy -- Proposal Generator
 // Usage:
 //   node generate.mjs --data clients/amir.json
 // Output:
@@ -201,8 +201,8 @@ function passwordGateHTML(ref, passwordHash) {
 </style>
 <div class="pg-overlay" id="pgOverlay">
   <div class="pg-box">
-    <img src="./tm-energy-logo.png" alt="TM Energy" class="pg-logo">
-    <div class="pg-brand">TM ENERGY</div>
+    <img src="./tm-energy-logo.png" alt="Bustan Energy" class="pg-logo">
+    <div class="pg-brand">BUSTAN ENERGY</div>
     <h1 class="pg-title">הצעת מחיר אישית</h1>
     <p class="pg-desc">הכנס את הסיסמה שנשלחה אליך ב-WhatsApp כדי לצפות בהצעה.</p>
     <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
@@ -553,7 +553,7 @@ async function main() {
   console.log(`URL:      ${PUBLIC_BASE_URL}/${ref}`)
   console.log('-------------------------------')
   console.log(`\nSend the client:\n`)
-  console.log(`${data.client_name.split(' ')[0]}, הנה הצעת המחיר שלך מ-TM Energy:`)
+  console.log(`${data.client_name.split(' ')[0]}, הנה הצעת המחיר שלך מ-Bustan Energy:`)
   console.log(`${PUBLIC_BASE_URL}/${ref}`)
   console.log(`סיסמה: ${password}\n`)
 }

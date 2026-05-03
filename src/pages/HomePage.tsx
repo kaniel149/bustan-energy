@@ -548,7 +548,7 @@ function ScrollAnimationSection() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 5. WHY TM ENERGY (split layout)
+// 5. WHY BUSTAN ENERGY (split layout)
 // ═══════════════════════════════════════════════════════════════════════════
 const whyIcons = [
   <MapPin size={22} key="1" />,
@@ -1307,7 +1307,7 @@ function PartnersBar() {
               {partnerImages[i] ? (
                 <img
                   src={partnerImages[i]!}
-                  alt={`${p.name} — official solar equipment partner of TM Energy`}
+                  alt={`${p.name} — official solar equipment partner of Bustan Energy`}
                   loading="lazy"
                   className="h-10 w-auto object-contain grayscale brightness-200"
                 />
@@ -1378,7 +1378,7 @@ function aggregateRatingSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: 'TM Energy',
+    name: 'Bustan Energy',
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '4.9',
@@ -1405,11 +1405,11 @@ export default function HomePage() {
       if (cancelled || !session?.user?.email) return
       if (!isAdmin(session.user.email)) return
       // Don't auto-redirect if user explicitly came to home (e.g. via nav click)
-      if (sessionStorage.getItem('tm_admin_skip_redirect') === '1') {
+      if (sessionStorage.getItem('bustan_admin_skip_redirect') === '1') {
         setShowAdminBanner(true)
         return
       }
-      sessionStorage.setItem('tm_admin_skip_redirect', '1')
+      sessionStorage.setItem('bustan_admin_skip_redirect', '1')
       navigate('/admin', { replace: true })
     })
     return () => {
@@ -1441,8 +1441,8 @@ export default function HomePage() {
         }
         description={
           lang === 'th'
-            ? 'TM Energy ผู้เชี่ยวชาญโซลาร์บนเกาะพะงันและเกาะสมุย วิเคราะห์บิล สำรวจหน้างาน ออกแบบระบบ และยื่นเอกสาร กฟภ. สำหรับบ้าน วิลล่า และธุรกิจ'
-            : 'TM Energy — solar design, EPC, PPA, PEA coordination, and O&M for homes, villas, resorts, and businesses on Ko Phangan and nearby islands.'
+            ? 'Bustan Energy ผู้เชี่ยวชาญโซลาร์บนเกาะพะงันและเกาะสมุย วิเคราะห์บิล สำรวจหน้างาน ออกแบบระบบ และยื่นเอกสาร กฟภ. สำหรับบ้าน วิลล่า และธุรกิจ'
+            : 'Bustan Energy — solar design, EPC, PPA, PEA coordination, and O&M for homes, villas, resorts, and businesses on Ko Phangan and nearby islands.'
         }
         path="/"
         lang={lang}

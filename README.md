@@ -1,4 +1,4 @@
-# TM Energy — Solar Intelligence Platform
+# Bustan Energy — Solar Intelligence Platform
 
 ## Status: Live
 - **URL:** https://energy-tm.com

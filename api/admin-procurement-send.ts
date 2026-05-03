@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Supabase REST payloads here are schemaless until generated DB types are wired in. */
 // ============================================================
 // /api/admin-procurement-send
 // Send RFQ emails to suppliers, grouped by supplier.
@@ -13,15 +14,15 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { isAllowedAdmin } from './_lib/admin-access.js'
+
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY   = process.env.RESEND_API_KEY!
-const FROM         = process.env.RESEND_FROM || 'TM Energy <procurement@energy-tm.com>'
+const FROM         = process.env.RESEND_FROM || 'Bustan Energy <procurement@energy-tm.com>'
 const REPLY_TO     = 'erez@energy-tm.com'
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA        = ['k@kanielt.com']
 
-const allowed = (e: string) => e.endsWith(ADMIN_DOMAIN) || EXTRA.includes(e)
+const allowed = isAllowedAdmin
 
 // ── Supabase helpers ──────────────────────────────────────────
 function supaHeaders(): HeadersInit {
@@ -111,7 +112,7 @@ function buildSupplierEmail(opts: {
   return `
 <div style="font-family:system-ui,sans-serif;max-width:680px;margin:0 auto;color:#111;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:28px 32px;border-radius:12px 12px 0 0;color:white;">
-    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:11px;margin-bottom:6px;">TM ENERGY · PROCUREMENT</div>
+    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:11px;margin-bottom:6px;">BUSTAN ENERGY · PROCUREMENT</div>
     <h1 style="margin:0;font-size:20px;">Request for Quotation</h1>
     <p style="margin:4px 0 0;opacity:.75;font-size:13px;">${escHtml(poNumber)} · ${escHtml(orderRef || 'Internal Order')}</p>
   </div>
@@ -143,12 +144,12 @@ function buildSupplierEmail(opts: {
     </div>
 
     <p style="margin-top:24px;">Thank you for your prompt response.</p>
-    <p><strong>TM Energy Procurement</strong><br>
+    <p><strong>Bustan Energy Procurement</strong><br>
     <a href="https://energy-tm.com" style="color:#E8A820;">energy-tm.com</a></p>
   </div>
 
   <div style="padding:16px 32px;background:#f9fafb;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;font-size:11px;color:#9ca3af;text-align:center;">
-    TM Energy · Ko Phangan, Surat Thani 84280, Thailand
+    Bustan Energy · Ko Phangan, Surat Thani 84280, Thailand
   </div>
 </div>`
 }
@@ -298,7 +299,7 @@ export default async function handler(req: Request): Promise<Response> {
       const html = `
 <div style="font-family:system-ui;max-width:620px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:24px;border-radius:12px 12px 0 0;color:white;">
-    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:11px;">TM ENERGY · PROCUREMENT</div>
+    <div style="color:#E8A820;font-weight:800;letter-spacing:2px;font-size:11px;">BUSTAN ENERGY · PROCUREMENT</div>
     <h1 style="margin:8px 0 0;font-size:18px;">Request for Quotation — ${escHtml(order.po_number || order_id.slice(0, 8))}</h1>
   </div>
   <div style="background:#fff;padding:24px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">

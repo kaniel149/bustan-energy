@@ -1,4 +1,4 @@
-# Thailand Solar Farm Research — TM Energy
+# Thailand Solar Farm Research — Bustan Energy
 
 ## 12 Research Documents | 9,240+ Lines | March 2026
 
@@ -28,4 +28,4 @@ Comprehensive research for developing solar farms up to 10 MW on Koh Phangan, Th
 - **First-mover advantage:** No competing solar farms on Koh Phangan
 
 ## Prepared by
-Rex (Research Agent) — TM Energy — March 2026
+Rex (Research Agent) — Bustan Energy — March 2026

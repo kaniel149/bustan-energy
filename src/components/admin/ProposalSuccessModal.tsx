@@ -44,7 +44,7 @@ export function ProposalSuccessModal({
   const url = `https://energy-tm.com/p/${ref}`
   const firstName = clientName.split(' ')[0] ?? clientName
 
-  const waMessage = `היי ${firstName}, הצעת המחיר שלך מ-TM Energy:\n${url}\nסיסמה: ${password}`
+  const waMessage = `היי ${firstName}, הצעת המחיר שלך מ-Bustan Energy:\n${url}\nסיסמה: ${password}`
   // wa.me needs E.164 without + / spaces / dashes
   const waPhoneDigits = (clientPhone || '').replace(/[^\d]/g, '')
   const waUrl = waPhoneDigits
@@ -55,8 +55,8 @@ export function ProposalSuccessModal({
 
   const openMail = () => {
     if (!clientEmail) return
-    const subj = `Your Solar Proposal from TM Energy · ${ref}`
-    const body = `Hi ${firstName},\n\nYour personalized solar proposal is ready:\n${url}\n\nPassword: ${password}\n\nReply or WhatsApp +66 94 669 2011 with any questions.\n\nBest,\nTM Energy`
+    const subj = `Your Solar Proposal from Bustan Energy · ${ref}`
+    const body = `Hi ${firstName},\n\nYour personalized solar proposal is ready:\n${url}\n\nPassword: ${password}\n\nReply or WhatsApp +66 94 669 2011 with any questions.\n\nBest,\nBustan Energy`
     window.open(`mailto:${clientEmail}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`)
   }
 

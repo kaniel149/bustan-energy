@@ -10,13 +10,12 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { isAllowedAdmin } from './_lib/admin-access.js'
 import { calculatePeaReadiness } from '../src/lib/pea-readiness.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA = ['k@kanielt.com']
-const allowed = (e: string) => e.endsWith(ADMIN_DOMAIN) || EXTRA.includes(e)
+const allowed = isAllowedAdmin
 
 async function verifyAdmin(req: Request): Promise<string | null> {
   const auth = req.headers.get('authorization')
@@ -58,7 +57,7 @@ function baseHead(title: string, drawingNo: string): string {
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<title>${title} — TM Energy</title>
+<title>${title} — Bustan Energy</title>
 <style>
   @page { size: A4 landscape; margin: 10mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -86,7 +85,7 @@ function baseHead(title: string, drawingNo: string): string {
 <div class="title-block">
   <div>
     <div class="logo"><span class="amber">TM</span> ENERGY</div>
-    <div style="font-size:8pt;color:#666;margin-top:2mm">Koh Phangan Solar · For PE Review</div>
+    <div style="font-size:8pt;color:#666;margin-top:2mm">Bustan Energy · For PE Review</div>
   </div>
   <div>
     <label>Drawing Title</label>
@@ -113,7 +112,7 @@ function baseFoot(params: PEAParams): string {
   <div>
     <label>Designed By</label>
     <div class="slot"></div>
-    <div style="margin-top:2mm;font-size:8pt">TM Energy · Koh Phangan</div>
+    <div style="margin-top:2mm;font-size:8pt">Bustan Energy · Koh Phangan</div>
   </div>
   <div>
     <label>Engineer Approval (วิศวกร) / Licensed PE Stamp</label>

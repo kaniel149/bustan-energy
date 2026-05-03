@@ -1,9 +1,9 @@
-# TM Energy Social Media Setup
+# Bustan Energy Social Media Setup
 
 ## Facebook Page
 
-- [ ] Create page: **"TM Energy"** — Category: "Solar Energy Company"
-- [ ] Profile pic: TM Energy logo (circle crop from `marketing/brand/brand-kit.html`)
+- [ ] Create page: **"Bustan Energy"** — Category: "Solar Energy Company"
+- [ ] Profile pic: Bustan Energy logo (circle crop from `marketing/brand/brand-kit.html`)
 - [ ] Cover photo: Dark hero image (render from templates or use AI-generated villa+solar scene)
 - [ ] About section:
   > Solar intelligence for Koh Phangan. We scan your roof from space before we ever step on your property. Premium solar solutions for resorts, villas, and businesses across Thailand's islands.
@@ -15,10 +15,10 @@
 
 ## Instagram
 
-- [ ] Account: **@tmenergy.th** (already created per project records)
+- [ ] Account: **@bustanenergy.th** (already created per project records)
 - [ ] Switch to **Professional Account → Business**
 - [ ] Connect to Facebook page
-- [ ] Profile pic: Same as FB (TM Energy logo)
+- [ ] Profile pic: Same as FB (Bustan Energy logo)
 - [ ] Bio:
   ```
   Solar Intelligence for Koh Phangan

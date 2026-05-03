@@ -51,7 +51,7 @@ drone-tiles/
 Tiles are TMS scheme (Y-flipped from Google/OSM), zoom levels 15-19.
 
 ### Supabase Database
-- **Project**: trvgpgpsqvvdsudpgwpm (TM Energy)
+- **Project**: trvgpgpsqvvdsudpgwpm (Bustan Energy)
 - **Table**: `buildings`
 - **Key columns**: name, lat, lng, roof_area_sqm, building_type, roof_type, potential_kwp, source, status
 - **Valid enums**:

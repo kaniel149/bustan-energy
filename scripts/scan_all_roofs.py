@@ -311,7 +311,7 @@ def build_property(
 
 def main():
     print("=" * 60)
-    print("Ko Phangan Solar Roof Scanner")
+    print("Bustan Energy Roof Scanner")
     print("=" * 60)
 
     # Step 1: Load existing buildings for enrichment

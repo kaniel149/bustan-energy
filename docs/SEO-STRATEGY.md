@@ -1,5 +1,5 @@
-# TM Energy — SEO Strategy
-## energy-tm.com | Ko Phangan Solar Installation
+# Bustan Energy — SEO Strategy
+## energy-tm.com | Bustan Energy Installation
 
 **Created:** 2026-04-08
 **Current ranking:** #2 for "solar energy ko phangan" | Missing from all other keywords
@@ -39,17 +39,17 @@
 ## Critical Fixes (Week 1)
 
 ### 1. Unique Page Titles
-Currently ALL pages have: "TM Energy — Ko Phangan Solar Solutions"
+Currently ALL pages have: "Bustan Energy — Bustan Energy Solutions"
 
 ```
-Homepage:     TM Energy — #1 Solar Installer on Ko Phangan, Thailand
-Services:     Solar Installation Services | Residential & Commercial — TM Energy
-Pricing:      Solar Panel Prices Ko Phangan | Get a Free Quote — TM Energy
-About:        About TM Energy | Ko Phangan's Trusted Solar Company
-Blog:         Solar Energy Blog | Tips & Guides for Ko Phangan — TM Energy
-Contact:      Contact TM Energy | Free Solar Consultation Ko Phangan
-How It Works: How Solar Installation Works | 4 Easy Steps — TM Energy
-Projects:     Our Solar Projects | Ko Phangan Installations — TM Energy
+Homepage:     Bustan Energy — #1 Solar Installer on Ko Phangan, Thailand
+Services:     Solar Installation Services | Residential & Commercial — Bustan Energy
+Pricing:      Solar Panel Prices Ko Phangan | Get a Free Quote — Bustan Energy
+About:        About Bustan Energy | Ko Phangan's Trusted Solar Company
+Blog:         Solar Energy Blog | Tips & Guides for Ko Phangan — Bustan Energy
+Contact:      Contact Bustan Energy | Free Solar Consultation Ko Phangan
+How It Works: How Solar Installation Works | 4 Easy Steps — Bustan Energy
+Projects:     Our Solar Projects | Ko Phangan Installations — Bustan Energy
 ```
 
 ### 2. Meta Descriptions (unique per page)
@@ -75,7 +75,7 @@ Add `<link rel="canonical" href="https://energy-tm.com/[page]">` to every page.
 {
   "@context": "https://schema.org",
   "@type": ["SolarEnergyCompany", "LocalBusiness"],
-  "name": "TM Energy",
+  "name": "Bustan Energy",
   "url": "https://energy-tm.com",
   "logo": "https://energy-tm.com/logo.png",
   "description": "Premium solar energy solutions for Ko Phangan, Thailand",
@@ -263,7 +263,7 @@ Map each route to its SEO config (title, description, schema type).
 
 ### Step 4: Google Business Profile
 1. Go to business.google.com
-2. Create listing for "TM Energy"
+2. Create listing for "Bustan Energy"
 3. Set category: "Solar Energy Company"
 4. Add photos, hours, service area (Ko Phangan)
 

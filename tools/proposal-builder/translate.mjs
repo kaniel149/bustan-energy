@@ -19,12 +19,12 @@ const dict = {
     ['margin-left: 10px', 'margin-right: 10px'],
     ['.roi-savings-value', '.roi-savings-value'],
     // Title/meta
-    ['TM Energy — הצעת מחיר סולארית · אמיר מזרחי', 'TM Energy — Solar Proposal · Amir Mizrahi'],
+    ['Bustan Energy — הצעת מחיר סולארית · אמיר מזרחי', 'Bustan Energy — Solar Proposal · Amir Mizrahi'],
     ['הצעת מחיר למערכת סולארית', 'Solar system proposal'],
     ['הצעת מחיר', 'Proposal'],
     ['קופנגן, תאילנד', 'Koh Phangan, Thailand'],
     // Nav
-    ['TM ENERGY · PHANGAN', 'TM ENERGY · PHANGAN'],
+    ['BUSTAN ENERGY · PHANGAN', 'BUSTAN ENERGY · PHANGAN'],
     ['REF · AMIR-001 · 2026', 'REF · AMIR-001 · 2026'],
     // Hero
     ['הצעת מחיר · אפריל 2026', 'Proposal · April 2026'],
@@ -125,7 +125,7 @@ const dict = {
     ['~฿250,000', '~฿250,000'],
     ['והחזר ההשקעה מתקצר ל-', 'and payback shortens to'],
     ['~3.1 שנים', '~3.1 years'],
-    ['ניתן לקזז עם חשבוניות רשמיות — TM Energy מספקת את כל המסמכים הנדרשים.', 'Deductible against official invoices — TM Energy provides all required documentation.'],
+    ['ניתן לקזז עם חשבוניות רשמיות — Bustan Energy מספקת את כל המסמכים הנדרשים.', 'Deductible against official invoices — Bustan Energy provides all required documentation.'],
     // Cumulative
     ['חיסכון מצטבר', 'Cumulative Savings'],
     ['ROI לאורך זמן (אחרי ניכוי מס)', 'ROI over time (after tax deduction)'],
@@ -147,14 +147,14 @@ const dict = {
     ['הזמן אותנו לביקור אתר בקופנגן — ללא עלות, ללא התחייבות.', 'Book a free, no-obligation site visit in Koh Phangan.'],
     ['WhatsApp · +66 94 669 2011', 'WhatsApp · +66 94 669 2011'],
     // Footer
-    ['TM Energy · Phangan', 'TM Energy · Phangan'],
+    ['Bustan Energy · Phangan', 'Bustan Energy · Phangan'],
     ['הצעה זו תקפה 30 יום · REF AMIR-001 · אפריל 2026', 'This proposal is valid for 30 days · REF AMIR-001 · April 2026'],
     // Section labels (after specific heading replacements)
   ],
   th: [
     ['<html lang="he" dir="rtl">', '<html lang="th" dir="ltr">'],
     ['direction: rtl;', 'direction: ltr;'],
-    ['TM Energy — הצעת מחיר סולארית · אמיר מזרחי', 'TM Energy — ใบเสนอราคาระบบโซลาร์ · Amir Mizrahi'],
+    ['Bustan Energy — הצעת מחיר סולארית · אמיר מזרחי', 'Bustan Energy — ใบเสนอราคาระบบโซลาร์ · Amir Mizrahi'],
     ['הצעת מחיר למערכת סולארית', 'ใบเสนอราคาระบบโซลาร์'],
     ['קופנגן, תאילנד', 'เกาะพะงัน, ประเทศไทย'],
     ['הצעת מחיר · אפריל 2026', 'ใบเสนอราคา · เมษายน 2026'],
@@ -245,7 +245,7 @@ const dict = {
     ['בפועל, ההשקעה נטו יורדת ל-', 'ในทางปฏิบัติ การลงทุนสุทธิจะเหลือ'],
     ['והחזר ההשקעה מתקצר ל-', 'และระยะคืนทุนจะสั้นลงเหลือ'],
     ['~3.1 שנים', '~3.1 ปี'],
-    ['ניתן לקזז עם חשבוניות רשמיות — TM Energy מספקת את כל המסמכים הנדרשים.', 'ใช้หักภาษีได้กับใบกำกับภาษีอย่างเป็นทางการ — TM Energy จัดเตรียมเอกสารทั้งหมด'],
+    ['ניתן לקזז עם חשבוניות רשמיות — Bustan Energy מספקת את כל המסמכים הנדרשים.', 'ใช้หักภาษีได้กับใบกำกับภาษีอย่างเป็นทางการ — Bustan Energy จัดเตรียมเอกสารทั้งหมด'],
     ['חיסכון מצטבר', 'ประหยัดสะสม'],
     ['ROI לאורך זמן (אחרי ניכוי מס)', 'ROI ตามเวลา (หลังลดหย่อนภาษี)'],
     ['שנה 5', 'ปีที่ 5'], ['שנה 10', 'ปีที่ 10'], ['שנה 15', 'ปีที่ 15'],

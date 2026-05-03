@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="64" viewBox="0 0 220 64" role="img" aria-labelledby="title desc">
+  <title id="title">Bustan Energy</title>
+  <desc id="desc">Bustan Energy island solar and battery wordmark</desc>
+  <rect width="220" height="64" rx="10" fill="#27342F"/>
+  <circle cx="34" cy="31" r="14" fill="#F5B84B"/>
+  <path d="M19 43c9-17 22-24 39-25" fill="none" stroke="#008F8A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M22 47c11-8 23-10 36-6" fill="none" stroke="#FFF4E2" stroke-width="2.5" stroke-linecap="round" opacity=".86"/>
+  <text x="72" y="29" fill="#FFF4E2" font-family="DM Sans, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing=".2">Bustan</text>
+  <text x="72" y="46" fill="#F5B84B" font-family="DM Sans, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2.4">ENERGY</text>
+</svg>

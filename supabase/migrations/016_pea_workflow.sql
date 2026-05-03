@@ -1,7 +1,7 @@
 -- =====================================================
 -- 016_pea_workflow.sql
 -- PEA (Provincial Electricity Authority) submission
--- workflow for TM Energy solar projects.
+-- workflow for Bustan Energy solar projects.
 --   - PEA tracking columns on projects
 --   - pea_documents table + Storage bucket
 --   - pea_signatures table

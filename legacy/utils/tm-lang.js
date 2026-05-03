@@ -1,4 +1,4 @@
-/* TM Energy Tri-Lingual Engine v3
+/* Bustan Energy Tri-Lingual Engine v3
    Full-page translation: all text elements, auto lang-bar, no flash */
 (function(){
   // --- Core dictionary (common terms across all files) ---

@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test'
 
-test('public homepage renders primary TM Energy offer', async ({ page }) => {
+test('public homepage renders primary Bustan Energy offer', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page).toHaveTitle(/TM Energy/)
+  await expect(page).toHaveTitle(/Bustan Energy/)
   await expect(page.getByRole('navigation')).toBeVisible()
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   await expect(page.getByText(/solar/i).first()).toBeVisible()

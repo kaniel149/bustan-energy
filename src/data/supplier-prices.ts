@@ -1,4 +1,4 @@
-// Generated from supplier inputs captured for TM Energy on 2026-04-30.
+// Generated from supplier inputs captured for Bustan Energy on 2026-04-30.
 // Sources: QES_Price_list_March.pdf and Integra Renewable Energy portal.
 
 export interface SupplierPrice {

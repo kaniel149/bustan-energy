@@ -1,15 +1,15 @@
-# TM Energy — Premium Authority Content Strategy
+# Bustan Energy — Premium Authority Content Strategy
 
 **Date:** 2026-03-31
 **Status:** Approved
-**Brand:** TM Energy (energy-tm.com)
+**Brand:** Bustan Energy (energy-tm.com)
 **Market:** Koh Phangan, Samui, Phuket — Thailand
 
 ---
 
 ## Goal
 
-Build TM Energy as the premium solar brand in Thailand's island/expat market through consistent, high-quality social media content. Strategy: credibility first (60 days), leads later (day 60+).
+Build Bustan Energy as the premium solar brand in Thailand's island/expat market through consistent, high-quality social media content. Strategy: credibility first (60 days), leads later (day 60+).
 
 ## Target Audience (Priority Order)
 
@@ -59,7 +59,7 @@ Build TM Energy as the premium solar brand in Thailand's island/expat market thr
 - AI renders: luxury villa + solar + tropical setting
 - Dashboard screenshots showing real-time production
 - Brand quotes + energy facts
-- "Did you know?" format with TM Energy branding
+- "Did you know?" format with Bustan Energy branding
 
 ## Content Ratio
 
@@ -70,7 +70,7 @@ Build TM Energy as the premium solar brand in Thailand's island/expat market thr
 
 1. **AI renders** — Midjourney/Flux for villa + solar panel compositions
 2. **Data visualizations** — ROI charts, savings infographics, production graphs
-3. **Stock + branded overlays** — Premium stock with TM Energy colors/typography
+3. **Stock + branded overlays** — Premium stock with Bustan Energy colors/typography
 4. **Software screenshots** — Dashboard, monitoring, satellite scanner
 5. **Kinetic typography** — Remotion-rendered animated text videos
 
@@ -121,7 +121,7 @@ Script → ElevenLabs (EN voiceover) → Remotion (video render)
 ### Competitive Landscape
 - Canvas Solar, Entropy Solar, Kunini — all under 500 IG followers
 - No premium solar brand exists in the Thai island market
-- TM Energy can be #1 with consistency alone
+- Bustan Energy can be #1 with consistency alone
 
 ### What Works in Solar Content
 - Money hooks > environment hooks ("$0 bill" beats "save the planet")

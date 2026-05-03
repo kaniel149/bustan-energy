@@ -37,8 +37,8 @@ export function Footer() {
             {/* Logo */}
             <Link to={langPath('/')} className="inline-flex items-center gap-2 group w-fit">
               <img
-                src="/assets/logo/tm-energy.png"
-                alt="TM Energy"
+                src="/assets/logo/bustan-energy.svg"
+                alt="Bustan Energy"
                 className="h-8 w-auto"
                 onError={(e) => {
                   const target = e.currentTarget as HTMLImageElement
@@ -155,7 +155,7 @@ export function Footer() {
                   className="flex items-start gap-3 text-sm text-white/55 hover:text-white transition-colors group"
                 >
                   <MessageCircle size={15} className="mt-0.5 shrink-0 text-gold/70 group-hover:text-gold transition-colors" />
-                  <span>LINE: @tm-energy</span>
+                  <span>LINE: @bustanenergy</span>
                 </a>
               </li>
               <li>

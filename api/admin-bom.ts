@@ -5,6 +5,7 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { isAllowedAdmin } from './_lib/admin-access.js'
 // @ts-expect-error - Vercel esbuild handles JSON imports without attributes
 import templatesJson from '../tools/proposal-builder/bom-templates.json'
 import {
@@ -15,9 +16,7 @@ import {
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA = ['k@kanielt.com']
-const allowed = (e: string) => e.endsWith(ADMIN_DOMAIN) || EXTRA.includes(e)
+const allowed = isAllowedAdmin
 
 interface AuthUser {
   email?: string
@@ -355,7 +354,7 @@ function buildSupplierEmail(bom: BomResult, client: { name?: string; site?: stri
   lines.push('')
   lines.push('Thank you.')
   lines.push('')
-  lines.push('TM Energy')
+  lines.push('Bustan Energy')
   lines.push('Koh Phangan, Thailand')
   lines.push('contracts@energy-tm.com · +66 94 669 2011')
 

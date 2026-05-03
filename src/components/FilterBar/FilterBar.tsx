@@ -74,7 +74,7 @@ export function FilterBar() {
           </div>
           <div className="hidden sm:block">
             <h1 className="text-sm font-semibold text-white leading-tight">Solar Intelligence</h1>
-            <p className="text-[10px] text-white/50">TM Energy Platform</p>
+            <p className="text-[10px] text-white/50">Bustan Energy Platform</p>
           </div>
         </div>
 
