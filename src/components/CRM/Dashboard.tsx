@@ -65,7 +65,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-bold text-white">Dashboard</h1>
-            <p className="text-sm text-white/40 mt-1">Welcome to TM Energy CRM</p>
+            <p className="text-sm text-white/40 mt-1">Welcome to Bustan Energy CRM</p>
           </div>
         </div>
         <div className="bg-white/5 rounded-2xl border border-white/10 p-12 text-center">

@@ -1,4 +1,4 @@
-# Drone Pipeline — TM Energy Koh Phangan
+# Drone Pipeline — Bustan Energy Koh Phangan
 
 End-to-end pipeline for turning DJI photos into a pixel-accurate orthomosaic on KP Solar Pro v2.
 

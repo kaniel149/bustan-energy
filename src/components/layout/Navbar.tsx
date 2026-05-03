@@ -54,8 +54,8 @@ export function Navbar() {
           {/* Logo */}
           <Link to={langPath('/')} className="flex items-center gap-2.5 group">
             <img
-              src="/assets/logo/tm-energy.png"
-              alt="TM Energy"
+              src="/assets/logo/bustan-energy.svg"
+              alt="Bustan Energy"
               className="h-8 w-auto"
               onError={(e) => {
                 // Fallback to text logo if image missing

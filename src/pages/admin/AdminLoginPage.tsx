@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { Mail, Loader2 } from 'lucide-react'
 import { signInWithEmail, getSession, isAdmin } from '../../lib/admin-auth'
 
@@ -37,8 +38,8 @@ export default function AdminLoginPage() {
 
   if (checking) {
     return (
-      <div className="h-screen bg-[#0D1117] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-[#E8A820] border-t-transparent rounded-full animate-spin" />
+      <div className="h-screen bg-[#F4EAD8] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#006F6B] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -46,39 +47,44 @@ export default function AdminLoginPage() {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-[#0D1117] flex items-center justify-center p-4"
+      className="min-h-screen flex items-center justify-center p-4 text-[#27342F]"
       style={{
-        backgroundImage: 'radial-gradient(ellipse at 60% 0%, rgba(232,168,32,0.07) 0%, transparent 60%)',
+        backgroundColor: '#F4EAD8',
+        backgroundImage: 'linear-gradient(140deg, rgba(216,236,232,0.72), transparent 42%), linear-gradient(25deg, rgba(242,184,75,0.2), transparent 48%)',
       }}
     >
+      <Helmet>
+        <title>Bustan Energy Admin</title>
+        <meta name="robots" content="noindex,nofollow,noarchive" />
+      </Helmet>
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
           <img
-            src="/assets/logo/tm-energy.png"
-            alt="TM Energy"
+            src="/assets/logo/bustan-energy.svg"
+            alt="Bustan Energy"
             className="h-12 mx-auto mb-4 object-contain"
           />
-          <h1 className="text-xl font-bold text-white">פאנל ניהול הצעות</h1>
-          <p className="text-sm text-white/40 mt-1">TM Energy Admin</p>
+          <h1 className="text-xl font-bold text-[#27342F]">פאנל ניהול הצעות</h1>
+          <p className="text-sm text-[#27342F]/55 mt-1">Bustan Energy Admin</p>
         </div>
 
         {/* Card */}
-        <div className="bg-[#0D2137]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+        <div className="bg-[#FFF4E2]/90 backdrop-blur-xl border border-[#24463E]/15 rounded-2xl p-8 shadow-[0_24px_70px_rgba(39,52,47,0.18)]">
           {sent ? (
             <div className="text-center py-4">
-              <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
-                <Mail size={20} className="text-emerald-400" />
+              <div className="w-12 h-12 mx-auto rounded-full bg-[#D8ECE8] border border-[#006F6B]/20 flex items-center justify-center mb-4">
+                <Mail size={20} className="text-[#006F6B]" />
               </div>
-              <h2 className="text-white font-semibold mb-2">לינק נשלח!</h2>
-              <p className="text-white/40 text-sm leading-relaxed">
+              <h2 className="text-[#27342F] font-semibold mb-2">לינק נשלח!</h2>
+              <p className="text-[#27342F]/55 text-sm leading-relaxed">
                 לינק להתחברות נשלח לאימייל
                 <br />
-                <span className="text-white/60">{email}</span>
+                <span className="text-[#27342F]/75">{email}</span>
               </p>
               <button
                 onClick={() => { setSent(false); setEmail('') }}
-                className="mt-6 text-xs text-white/30 hover:text-white/50 transition-colors"
+                className="mt-6 text-xs text-[#27342F]/45 hover:text-[#27342F]/70 transition-colors"
               >
                 שלח שוב
               </button>
@@ -86,17 +92,17 @@ export default function AdminLoginPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
               <div>
-                <label className="block text-[11px] text-white/40 uppercase tracking-wider mb-1.5">
+                <label className="block text-[11px] text-[#27342F]/55 uppercase tracking-wider mb-1.5">
                   אימייל
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@energy-tm.com"
+                  placeholder="you@bustan.energy"
                   required
                   autoComplete="email"
-                  className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#E8A820]/50 transition-colors text-left"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white border border-[#24463E]/15 text-sm text-[#27342F] placeholder:text-[#27342F]/35 focus:outline-none focus:border-[#006F6B]/60 transition-colors text-left"
                   dir="ltr"
                 />
               </div>
@@ -110,7 +116,7 @@ export default function AdminLoginPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#E85D3A] text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-[#006F6B] text-white font-semibold text-sm hover:bg-[#008F8A] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 size={16} className="animate-spin" />
@@ -123,8 +129,8 @@ export default function AdminLoginPage() {
           )}
         </div>
 
-        <p className="text-center text-xs text-white/20 mt-6">
-          גישה לעובדי TM Energy בלבד
+        <p className="text-center text-xs text-[#27342F]/45 mt-6">
+          גישה לעובדי Bustan Energy בלבד
         </p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 // ============================================================
-// Ko Phangan Solar — Roof Scanner Pro v3 (UX Overhaul)
+// Bustan Energy — Roof Scanner Pro v3 (UX Overhaul)
 // ============================================================
 
 // --- Constants ---
@@ -351,7 +351,7 @@ function selectBuilding(id) {
   if (map.getLayer('sel-ring')) map.setFilter('sel-ring', ['==', ['get', 'i'], id]);
 
   const waMsg = encodeURIComponent(
-    `Hello! I'm from Ko Phangan Solar / สวัสดีครับ!\n\n` +
+    `Hello! I'm from Bustan Energy / สวัสดีครับ!\n\n` +
     `We noticed ${b.n || 'your building'} could benefit from a ${b.kw.toFixed(0)}kWp solar system ` +
     `saving ~฿${b.sav.toLocaleString()}/month.\n\nInterested in a free consultation? / สนใจปรึกษาฟรีไหมครับ?`
   );
@@ -609,7 +609,7 @@ function exportCSV() {
 }
 function exportTop() {
   const top = B.filter(b => b.pr === 'A' && b.n).slice(0, 50);
-  let t = '# Ko Phangan Solar — Top 50 Leads\n\n';
+  let t = '# Bustan Energy — Top 50 Leads\n\n';
   top.forEach((b, i) => {
     t += `${i + 1}. **${b.n}** (${CATEGORY_LABELS[b.c] || b.c})${b.pip ? ' 🟢 Pipeline' : ''}\n`;
     t += `   📐 ${b.a}m² | ⚡ ${b.kw.toFixed(1)}kWp | 🔢 ${b.p} panels\n`;
@@ -621,7 +621,7 @@ function exportTop() {
 }
 function exportPipeline() {
   const pip = B.filter(b => b.pip);
-  let t = '# Ko Phangan Solar — Pipeline Leads\n\n';
+  let t = '# Bustan Energy — Pipeline Leads\n\n';
   pip.forEach((b, i) => {
     t += `${i + 1}. **${b.n}** — ${CATEGORY_LABELS[b.c] || b.c}, ${b.a}m², ${b.kw.toFixed(1)}kWp\n`;
     t += `   EPC: ฿${(b.epc / 1000).toFixed(0)}K | PPA: ฿${(b.ppar / 1000).toFixed(0)}K/yr\n`;

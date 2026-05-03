@@ -1,4 +1,4 @@
-// TM Energy CRM — 10-step Thai solar pipeline
+// Bustan Energy CRM — 10-step Thai solar pipeline
 
 export type ProjectStatus =
   | 'lead'

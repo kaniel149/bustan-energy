@@ -9,12 +9,12 @@ export const MythCTAScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Gold glow pulse on TM ENERGY text
+  // Gold glow pulse on BUSTAN ENERGY text
   const pulsePhase = Math.sin((frame / 30) * Math.PI * 2) * 0.5 + 0.5;
   const glowIntensity = interpolate(pulsePhase, [0, 1], [30, 60]);
   const glowOpacity = interpolate(pulsePhase, [0, 1], [0.3, 0.6]);
 
-  // TM ENERGY entrance
+  // BUSTAN ENERGY entrance
   const tmSpring = spring({
     frame: Math.max(0, frame - 45),
     fps,
@@ -57,7 +57,7 @@ export const MythCTAScene: React.FC = () => {
         {/* Gap */}
         <div style={{ height: 60 }} />
 
-        {/* TM ENERGY with glow pulse */}
+        {/* BUSTAN ENERGY with glow pulse */}
         <div
           style={{
             fontSize: 36,
@@ -70,7 +70,7 @@ export const MythCTAScene: React.FC = () => {
             transform: `scale(${tmScale})`,
           }}
         >
-          TM ENERGY
+          BUSTAN ENERGY
         </div>
 
         <div style={{ marginTop: 16 }}>

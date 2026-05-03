@@ -1,12 +1,21 @@
 import { supabase } from './supabase'
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js'
 
-const ADMIN_DOMAIN = '@energy-tm.com'
-const ADMIN_EMAIL = 'k@kanielt.com'
+const DEFAULT_ADMIN_EMAILS = 'k@kanielt.com,erez@energy-tm.com,kaniel@energy-tm.com'
+
+function list(value: string | undefined, fallback = ''): string[] {
+  return (value || fallback)
+    .split(',')
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean)
+}
 
 export function isAdmin(email?: string): boolean {
   if (!email) return false
-  return email.endsWith(ADMIN_DOMAIN) || email === ADMIN_EMAIL
+  const normalized = email.trim().toLowerCase()
+  const explicitEmails = list(import.meta.env.VITE_ADMIN_EMAILS, DEFAULT_ADMIN_EMAILS)
+  const allowedDomains = list(import.meta.env.VITE_ADMIN_EMAIL_DOMAINS)
+  return explicitEmails.includes(normalized) || allowedDomains.some((domain) => normalized.endsWith(domain))
 }
 
 export async function signInWithEmail(email: string): Promise<{ error: string | null }> {

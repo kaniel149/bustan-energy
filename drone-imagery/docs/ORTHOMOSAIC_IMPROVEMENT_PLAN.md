@@ -1,5 +1,5 @@
 # Drone Orthomosaic Improvement Plan
-## KP Solar Pro — TM Energy (Koh Phangan)
+## KP Solar Pro — Bustan Energy (Koh Phangan)
 
 **Date:** 2026-03-29
 **Goal:** Pixel-accurate drone orthomosaic overlay on the Leaflet map with correct building alignment

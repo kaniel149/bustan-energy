@@ -31,6 +31,9 @@ const TILE_SOURCES: Record<string, string[]> = {
   ],
 }
 
+type LayerMouseEventType = 'click' | 'mouseenter' | 'mouseleave' | 'mousemove'
+type LayerMouseHandler = (event: maplibregl.MapLayerMouseEvent) => void
+
 // Creates a GeoJSON circle polygon around a center point
 function createCircle(center: [number, number], radiusKm: number, points = 64): GeoJSON.Feature {
   const coords: [number, number][] = []
@@ -281,7 +284,7 @@ export function SolarMap() {
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)
-  const eventHandlers = useRef<Array<{ type: string; layer: string; handler: (...args: any[]) => void }>>([])
+  const eventHandlers = useRef<Array<{ type: LayerMouseEventType; layer: string; handler: LayerMouseHandler }>>([])
 
   // Properties layer with clustering
   useEffect(() => {
@@ -324,7 +327,7 @@ export function SolarMap() {
 
       // Remove old event handlers
       for (const { type, layer, handler } of eventHandlers.current) {
-        m.off(type as any, layer, handler)
+        m.off(type, layer, handler)
       }
       eventHandlers.current = []
 
@@ -432,8 +435,8 @@ export function SolarMap() {
       })
 
       // --- Event handlers (tracked for cleanup) ---
-      const on = (type: string, layer: string, handler: (...args: any[]) => void) => {
-        m.on(type as any, layer, handler)
+      const on = (type: LayerMouseEventType, layer: string, handler: LayerMouseHandler) => {
+        m.on(type, layer, handler)
         eventHandlers.current.push({ type, layer, handler })
       }
 
@@ -492,7 +495,7 @@ export function SolarMap() {
       // Clean up event handlers on unmount
       if (!m) return
       for (const { type, layer, handler } of eventHandlers.current) {
-        m.off(type as any, layer, handler)
+        m.off(type, layer, handler)
       }
       eventHandlers.current = []
       propsLayersReady.current = false

@@ -46,7 +46,7 @@ export default function BlogPostPage() {
   return (
     <div className="min-h-screen bg-[var(--color-dark)]">
       <SEOHead
-        title={`${post.title} | TM Energy Blog`}
+        title={`${post.title} | Bustan Energy Blog`}
         description={post.excerpt}
         path={`/blog/${post.slug}`}
         lang={lang}

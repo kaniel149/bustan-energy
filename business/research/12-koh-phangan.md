@@ -623,7 +623,7 @@ The Full Moon Party creates a **monthly demand spike** centered on Haad Rin:
    - Explore private PPA with large resorts/developments
    - Consider hybrid diesel-solar-battery for island resilience
 
-### 10.3 Key Contacts for Koh Phangan Solar Development
+### 10.3 Key Contacts for Bustan Energy Development
 
 | Need | Contact | Details |
 |------|---------|---------|

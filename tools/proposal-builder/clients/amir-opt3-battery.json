@@ -1,6 +1,5 @@
 {
   "ref": "AMIR-001-OPT3",
-  "password": "603485",
   "client_name": "Amir Mizrahi",
   "client_name_he": "אמיר מזרחי",
   "client_phone": "+66...",
@@ -33,13 +32,13 @@
   "payback_years_no_tax": 11.7,
   "savings_25yr_thb": 2008986,
   "co2_tons_avoided": 157.5,
-  "psh_avg": 5.0,
+  "psh_avg": 5,
   "month_year_he": "אפריל 2026",
   "valid_days": 30,
   "warranty_panel_years": 25,
   "warranty_inverter_years": 10,
   "warranty_battery_years": 10,
-  "logo_url": "tm-energy-logo.png",
+  "logo_url": "/assets/logo/bustan-energy.svg",
   "roof_original_url": "amir-mizrahi-001-roof-original.jpeg",
   "roof_panels_url": "amir-mizrahi-001-roof-with-panels.png",
   "images": [

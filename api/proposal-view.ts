@@ -15,7 +15,7 @@ import type { JsonValue } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
-const FROM = process.env.RESEND_FROM || 'TM Energy <contracts@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@energy-tm.com>'
 
 interface ProposalViewRow {
   ref_number: string
@@ -63,7 +63,7 @@ function emailBody(p: ProposalViewRow, viewCount: number, isFirst: boolean) {
     <tr><td style="padding:6px 0;color:#666;"><b>זמן</b></td><td>${when} (Bangkok)</td></tr>
     <tr><td style="padding:6px 0;color:#666;"><b>סה״כ צפיות</b></td><td>${viewCount}</td></tr>
   </table>
-  <p style="color:#888;font-size:12px;">TM Energy · Proposal Tracker</p>
+  <p style="color:#888;font-size:12px;">Bustan Energy · Proposal Tracker</p>
 </div>`
 }
 

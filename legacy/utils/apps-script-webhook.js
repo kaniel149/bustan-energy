@@ -1,9 +1,9 @@
 // ============================================
-// TM Energy — Access Log Webhook
+// Bustan Energy — Access Log Webhook
 // Google Apps Script — paste in Sheet script editor
 // ============================================
 // SETUP:
-// 1. Open "TM Energy — Access Log" Google Sheet
+// 1. Open "Bustan Energy — Access Log" Google Sheet
 // 2. Extensions → Apps Script
 // 3. Paste this entire code (replace default code)
 // 4. Click Deploy → New Deployment
@@ -39,7 +39,7 @@ function doPost(e) {
     ]);
 
     // Send email notification to Kaniel
-    var subject = 'TM Energy — ' + (data.name || '?') + ' נכנס/ה';
+    var subject = 'Bustan Energy — ' + (data.name || '?') + ' נכנס/ה';
     var body = 'שם: ' + data.name + '\n'
              + 'דף: ' + data.page + '\n'
              + 'זמן: ' + istTime + '\n'
@@ -56,7 +56,7 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return ContentService.createTextOutput('TM Energy Webhook Active')
+  return ContentService.createTextOutput('Bustan Energy Webhook Active')
     .setMimeType(ContentService.MimeType.TEXT);
 }
 

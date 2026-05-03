@@ -1,6 +1,5 @@
 {
   "ref": "AMIR-001-COMBO",
-  "password": "603485",
   "client_name": "Amir Mizrahi",
   "client_name_he": "אמיר מזרחי",
   "client_phone": "+66...",
@@ -18,10 +17,10 @@
   "annual_kwh": 13946,
   "monthly_kwh": 1162,
   "co2_tons_avoided": 157.5,
-  "psh_avg": 5.0,
+  "psh_avg": 5,
   "month_year_he": "אפריל 2026",
   "valid_days": 30,
-  "logo_url": "tm-energy-logo.png",
+  "logo_url": "/assets/logo/bustan-energy.svg",
   "roof_original_url": "amir-mizrahi-001-roof-original.jpeg",
   "roof_panels_url": "amir-mizrahi-001-roof-with-panels.png",
   "images": [

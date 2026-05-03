@@ -80,7 +80,7 @@ export const PEA_BRANCHES: PEABranch[] = [
 
 /**
  * Detect PEA/MEA branch from GPS coordinates.
- * Falls back to Surat Thani (TM Energy's primary branch).
+ * Falls back to Surat Thani (Bustan Energy's primary branch).
  */
 export function detectBranch(lat: number, lng: number): PEABranch {
   const match = PEA_BRANCHES.find(

@@ -1,5 +1,5 @@
 {
-  "_comment": "Drone camera profiles for TM Energy Koh Phangan orthomosaic pipeline. Used by ODM, GSD calculator, and filter scripts.",
+  "_comment": "Drone camera profiles for Bustan Energy Koh Phangan orthomosaic pipeline. Used by ODM, GSD calculator, and filter scripts.",
   "_updated": "2026-04-19",
   "cameras": {
     "dji_mini_4_pro": {

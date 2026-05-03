@@ -82,7 +82,7 @@ tr:last-child td { border-bottom:none; }
 // ── 01: SLD (Single Line Diagram) ──────────────────────────────────────────────
 function generateSLD() {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<title>SLD — ${CLIENT.ref} — TM Energy</title>
+<title>SLD — ${CLIENT.ref} — Bustan Energy</title>
 ${BASE_CSS}
 </head><body>
 <div class="page">
@@ -95,7 +95,7 @@ ${BASE_CSS}
       <div style="font-weight:800;font-size:13px;color:var(--navy);">Single Line Diagram</div>
       <div>REF: ${CLIENT.ref} — Option 3 (Hybrid + Battery)</div>
       <div>Date: ${CLIENT.installation_date} | Rev: 1.0</div>
-      <div>Engineer: TM Energy Engineering</div>
+      <div>Engineer: Bustan Energy Engineering</div>
     </div>
   </div>
 
@@ -223,7 +223,7 @@ ${BASE_CSS}
   </div>
 
   <div class="footer">
-    <div>TM Energy Thailand · ${CLIENT.ref} · SLD Rev 1.0</div>
+    <div>Bustan Energy Thailand · ${CLIENT.ref} · SLD Rev 1.0</div>
     <div>For PEA application — Surat Thani Branch</div>
     <div>Page 1 of 1</div>
   </div>
@@ -323,7 +323,7 @@ ${BASE_CSS}
   </div>
 
   <div class="footer">
-    <div>TM Energy Thailand · ${CLIENT.ref} · Electrical Plan Rev 1.0</div>
+    <div>Bustan Energy Thailand · ${CLIENT.ref} · Electrical Plan Rev 1.0</div>
     <div>For PEA application — Surat Thani Branch</div>
     <div>Page 1 of 1</div>
   </div>
@@ -432,7 +432,7 @@ ${BASE_CSS}
   </div>
 
   <div class="footer">
-    <div>TM Energy Thailand · ${CLIENT.ref} · Layout Plan Rev 1.0</div>
+    <div>Bustan Energy Thailand · ${CLIENT.ref} · Layout Plan Rev 1.0</div>
     <div>For PEA application — Surat Thani Branch</div>
     <div>Page 1 of 1</div>
   </div>
@@ -546,7 +546,7 @@ ${BASE_CSS}
   </div>
 
   <div class="footer">
-    <div>TM Energy Thailand · ${CLIENT.ref} · Equipment Specs Rev 1.0</div>
+    <div>Bustan Energy Thailand · ${CLIENT.ref} · Equipment Specs Rev 1.0</div>
     <div>For PEA application — Surat Thani Branch</div>
     <div>Page 1 of 1</div>
   </div>
@@ -655,7 +655,7 @@ ${BASE_CSS}
         </div>
         <div class="sig-box">
           <div class="sig-line"></div>
-          <div class="sig-name">( TM Energy Thailand )</div>
+          <div class="sig-name">( Bustan Energy Thailand )</div>
           <div class="sig-title">ผู้ติดตั้งระบบ / ผู้รับเหมา</div>
           <div class="sig-title">เบอร์โทร: +66-86-443-4951</div>
         </div>
@@ -710,7 +710,7 @@ ${BASE_CSS}
   </div>
 
   <div class="footer">
-    <div>TM Energy Thailand · ${CLIENT.ref} · PEA Application Letter</div>
+    <div>Bustan Energy Thailand · ${CLIENT.ref} · PEA Application Letter</div>
     <div>PEA Surat Thani Branch — Ko Phangan Sub-branch</div>
     <div>Page 1 of 1</div>
   </div>
@@ -767,7 +767,7 @@ async function main() {
 
   // README
   const readme = `# AMIR-001 PEA Application Package
-## TM Energy · Option 3 (Hybrid + Battery)
+## Bustan Energy · Option 3 (Hybrid + Battery)
 
 **System:** ${CLIENT.system_kwp} kWp · ${CLIENT.panel_count}× JA Solar 580W · Huawei SUN2000-10KTL-M1 + LUNA2000-7-E1 (6.9 kWh)
 **Location:** ${CLIENT.address}

@@ -35,7 +35,7 @@ export function buildProposalMessage(params: {
     ``,
     params.proposalUrl ? `📄 View Proposal: ${params.proposalUrl}` : '',
     ``,
-    `TM Energy — Koh Phangan`,
+    `Bustan Energy — Koh Phangan`,
   ].filter(Boolean).join('\n')
 }
 

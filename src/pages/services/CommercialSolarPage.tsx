@@ -58,7 +58,7 @@ const advantages = [
   {
     icon: Handshake,
     title: 'PPA Option — Zero Upfront',
-    text: 'Our Power Purchase Agreement model means TM Energy owns and maintains the system. You simply buy solar electricity at a fixed rate below your current grid tariff. No capital expenditure required.',
+    text: 'Our Power Purchase Agreement model means Bustan Energy owns and maintains the system. You simply buy solar electricity at a fixed rate below your current grid tariff. No capital expenditure required.',
   },
   {
     icon: Leaf,
@@ -81,7 +81,7 @@ const included = [
   'PEA-compliant self-consumption and net-billing/export configuration where approved',
   'Huawei FusionSolar commercial monitoring platform',
   'Tax and BOI documentation support for qualifying businesses, coordinated with your accountant',
-  'Manufacturer performance warranties plus TM Energy workmanship warranty',
+  'Manufacturer performance warranties plus Bustan Energy workmanship warranty',
   'Ongoing O&M support and annual inspections',
 ]
 

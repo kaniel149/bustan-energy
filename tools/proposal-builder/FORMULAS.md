@@ -1,8 +1,8 @@
-# TM Energy -- Solar Engineering Formulas
+# Bustan Energy -- Solar Engineering Formulas
 
 Version: 1.1 | Last updated: 2026-04-23
 
-This document specifies every formula used in the TM Energy proposal system.
+This document specifies every formula used in the Bustan Energy proposal system.
 All values here are authoritative -- update this file when changing any constant.
 
 ---
@@ -77,7 +77,7 @@ effectiveRate = selfConsumptionPct * retailRate + (1 - selfConsumptionPct) * exp
 **Previous (wrong):** Used retail rate (4.4) for 100% of production -- ignored export penalty.
 This overstated savings by ~3-5% for grid-tied systems.
 
-**Source:** PEA tariff schedule + current TM Energy export-rate assumption. Treat the export rate as a proposal assumption until the specific PEA approval/export arrangement is confirmed.
+**Source:** PEA tariff schedule + current Bustan Energy export-rate assumption. Treat the export rate as a proposal assumption until the specific PEA approval/export arrangement is confirmed.
 
 ---
 
@@ -96,7 +96,7 @@ Then interpolate:
 | Parameter | Value |
 |-----------|-------|
 | Discount rate | 8% |
-| Source | WACC estimate for Thai solar projects, TM Energy internal |
+| Source | WACC estimate for Thai solar projects, Bustan Energy internal |
 
 **Previous (wrong):** `paybackYears = epcCost / (annualSavingsYear1 - annualOMCost)` -- simple (undiscounted) payback. Understated payback by 1-2 years for typical projects.
 

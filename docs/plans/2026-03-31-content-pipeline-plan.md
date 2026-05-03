@@ -1,8 +1,8 @@
-# TM Energy Content Pipeline — Implementation Plan
+# Bustan Energy Content Pipeline — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Build a production pipeline that generates 4 branded social media posts/week for TM Energy (2 Reels + 1 Carousel + 1 Static) with zero real project photos.
+**Goal:** Build a production pipeline that generates 4 branded social media posts/week for Bustan Energy (2 Reels + 1 Carousel + 1 Static) with zero real project photos.
 
 **Architecture:** New `content/` directory inside `solar-intelligence` project. Remotion for video Reels, branded HTML templates for carousels (rendered to PNG via Playwright), AI image generation for lifestyle statics. Voiceover via ElevenLabs (English). Reuse patterns from `navitas-promo`.
 
@@ -54,7 +54,7 @@ npm install -D typescript @types/react @types/react-dom
 }
 ```
 
-**Step 4: Create styles.ts — TM Energy brand tokens**
+**Step 4: Create styles.ts — Bustan Energy brand tokens**
 
 ```typescript
 // content/src/styles.ts
@@ -139,7 +139,7 @@ Expected: Remotion Studio opens in browser with empty composition list.
 ```bash
 cd ~/Desktop/projects/solar/solar-intelligence
 git add content/
-git commit -m "feat(content): scaffold Remotion pipeline with TM Energy brand tokens"
+git commit -m "feat(content): scaffold Remotion pipeline with Bustan Energy brand tokens"
 ```
 
 ---
@@ -253,9 +253,9 @@ export const GlassCard: React.FC<Props> = ({
 
 **Step 3: StatCard, SceneWrapper, BrandFooter, ProgressBar**
 
-Follow same spring animation pattern. StatCard shows a number + label + icon. SceneWrapper handles scene enter/exit transitions. BrandFooter shows TM Energy logo + tagline. ProgressBar animates a fill bar.
+Follow same spring animation pattern. StatCard shows a number + label + icon. SceneWrapper handles scene enter/exit transitions. BrandFooter shows Bustan Energy logo + tagline. ProgressBar animates a fill bar.
 
-Reference: `~/Desktop/projects/solar/navitas-promo/src/components/MockUI.tsx` for patterns — adapt colors to TM Energy palette.
+Reference: `~/Desktop/projects/solar/navitas-promo/src/components/MockUI.tsx` for patterns — adapt colors to Bustan Energy palette.
 
 **Step 4: Verify in Remotion Studio**
 
@@ -293,7 +293,7 @@ In 30 seconds, we know exactly how much energy your roof can produce.
 
 No guesswork. No surprises. Just data.
 
-TM Energy — solar intelligence for Koh Phangan.
+Bustan Energy — solar intelligence for Koh Phangan.
 ```
 
 **Step 2: Create voiceover generation script**
@@ -341,7 +341,7 @@ Expected: `content/public/audio/reel-01-voiceover.mp3` created.
 Scene 1 — **SatelliteScanScene** (0-8s): Earth zoom → roof highlight → scan lines
 Scene 2 — **DataRevealScene** (8-16s): GlassCard with roof stats (area, angle, shade %)
 Scene 3 — **SavingsScene** (16-24s): Animated counter "$400 → $12/month", ROI chart
-Scene 4 — **CTAScene** (24-30s): TM Energy logo + "Solar Intelligence for Koh Phangan"
+Scene 4 — **CTAScene** (24-30s): Bustan Energy logo + "Solar Intelligence for Koh Phangan"
 
 Each scene: full-screen navy bg, centered content, spring animations, gold accents.
 
@@ -426,7 +426,7 @@ Reality: Modern mounting systems actually protect your roof from direct sun and 
 Myth three: The payback takes ten years.
 Reality: In Koh Phangan, average payback is 3 to 4 years. After that, it's free electricity.
 
-Stop guessing. Start saving. TM Energy.
+Stop guessing. Start saving. Bustan Energy.
 ```
 
 **Step 2: Build reusable MythScene component**
@@ -467,7 +467,7 @@ git commit -m "feat(content): Reel #2 — Thailand Solar Myths"
 <!-- content/templates/carousel-base.html -->
 <!-- 1080x1080 slide, dark bg, Space Grotesk font, gold accents -->
 <!-- Slots: {{title}}, {{body}}, {{stat}}, {{slide_number}}, {{total_slides}} -->
-<!-- TM Energy logo bottom-right, slide indicator dots bottom-center -->
+<!-- Bustan Energy logo bottom-right, slide indicator dots bottom-center -->
 ```
 
 **Step 2: Create ROI carousel — 6 slides**
@@ -476,7 +476,7 @@ git commit -m "feat(content): Reel #2 — Thailand Solar Myths"
 |-------|---------|
 | 1 | Hook: "How much is electricity really costing your resort?" |
 | 2 | Average Koh Phangan electricity bill: ฿45,000/month |
-| 3 | With TM Energy solar: ฿8,000/month (82% reduction) |
+| 3 | With Bustan Energy solar: ฿8,000/month (82% reduction) |
 | 4 | System pays for itself in 3.2 years |
 | 5 | After payback: ฿444,000/year pure savings |
 | 6 | CTA: "Free roof assessment — link in bio" |
@@ -517,7 +517,7 @@ git commit -m "feat(content): carousel template system + ROI carousel #1"
 
 All 1080x1080, dark navy bg, gold/green accents:
 
-1. **"Did you know?"** — Big stat + supporting text + TM Energy logo
+1. **"Did you know?"** — Big stat + supporting text + Bustan Energy logo
 2. **Brand quote** — Inspirational/educational quote + minimal design
 3. **Single stat** — One massive number + context line (e.g., "1,600 sun hours/year in Thailand")
 
@@ -596,18 +596,18 @@ git commit -m "feat(content): content calendar — weeks 1-2"
 **Step 1: Document setup steps**
 
 ```markdown
-# TM Energy Social Media Setup
+# Bustan Energy Social Media Setup
 
 ## Facebook Page
-- [ ] Create page: "TM Energy" under category "Solar Energy Company"
-- [ ] Profile pic: TM Energy logo (circle crop from brand kit)
+- [ ] Create page: "Bustan Energy" under category "Solar Energy Company"
+- [ ] Profile pic: Bustan Energy logo (circle crop from brand kit)
 - [ ] Cover photo: Render dark hero image (villa + solar + ocean)
 - [ ] About: "Solar intelligence for Koh Phangan. We scan your roof from space."
 - [ ] CTA button: "Contact Us" → energy-tm.com/contact
 - [ ] Location: Koh Phangan, Surat Thani, Thailand
 
 ## Instagram
-- [ ] Create business account: @tmenergy.th (already exists per CLAUDE.md)
+- [ ] Create business account: @bustanenergy.th (already exists per CLAUDE.md)
 - [ ] Profile pic: Same as FB
 - [ ] Bio: "Solar Intelligence for Koh Phangan 🛰️☀️\nWe scan your roof from space.\n📩 Free assessment ↓"
 - [ ] Link in bio: energy-tm.com

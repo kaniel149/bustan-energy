@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ko Phangan Solar — Bill Scanner & Proposal Generator</title>
+<title>Bustan Energy — Bill Scanner & Proposal Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
@@ -290,7 +290,7 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
   <div class="proposal-frame" id="proposalFrame">
     <div class="proposal-header">
       <div style="font-size:32px;margin-bottom:8px">☀️</div>
-      <h2>Ko Phangan Solar — <span class="gold">Solar Proposal</span></h2>
+      <h2>Bustan Energy — <span class="gold">Solar Proposal</span></h2>
       <div class="date" id="propDate"></div>
       <div style="font-size:14px;margin-top:8px;opacity:.6" id="propCustomer"></div>
     </div>
@@ -307,7 +307,7 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
     <div class="savings-bar" id="propSavings" style="margin-top:24px"></div>
 
     <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid rgba(232,168,32,.2)">
-      <p style="font-size:14px;opacity:.6">Ko Phangan Solar — TM Energy</p>
+      <p style="font-size:14px;opacity:.6">Bustan Energy — Bustan Energy</p>
       <p style="font-size:12px;opacity:.4;margin-top:4px">Koh Phangan, Surat Thani, Thailand | Line: @kophangansolar</p>
     </div>
   </div>
@@ -620,7 +620,7 @@ function renderProposal() {
 function sendWhatsApp() {
   const d = calcData;
   const text = encodeURIComponent(
-    `☀️ Ko Phangan Solar — Proposal for ${d.name}\n\n` +
+    `☀️ Bustan Energy — Proposal for ${d.name}\n\n` +
     `System: ${d.actualKwp.toFixed(1)} kWp (${d.numPanels} panels)\n` +
     `Current bill: ${fmt(d.kwh * d.effectiveTariff)}/month\n` +
     `EPC price: ${fmt(d.epcPrice)} (payback ${d.paybackEPC.toFixed(1)} yrs)\n` +

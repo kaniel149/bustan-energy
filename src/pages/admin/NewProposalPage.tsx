@@ -442,7 +442,7 @@ export default function NewProposalPage() {
         <div>
           <h1 className="text-xl font-bold text-white">{isEditMode ? 'עריכת הצעה' : 'הצעה חדשה'}</h1>
           <p className="text-sm text-white/40 mt-0.5">
-            {isEditMode ? `${editRef} · שמירה תעדכן את ההצעה הקיימת` : 'TM Energy — Solar Proposal'}
+            {isEditMode ? `${editRef} · שמירה תעדכן את ההצעה הקיימת` : 'Bustan Energy — Solar Proposal'}
           </p>
         </div>
       </div>
@@ -494,7 +494,7 @@ export default function NewProposalPage() {
               <Input
                 value={form.ref}
                 onChange={(e) => update('ref', e.target.value)}
-                placeholder="TM-2026-0042"
+                placeholder="BU-2026-0042"
                 hasError={!!errors.ref}
                 dir="ltr"
               />

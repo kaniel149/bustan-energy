@@ -1,5 +1,5 @@
 // ─── i18n/translations.ts ─────────────────────────────────────────────────────
-// Full bilingual content for TM Energy marketing site (Ko Phangan, Thailand)
+// Full bilingual content for Bustan Energy marketing site (Ko Phangan, Thailand)
 // English + Thai — all pages covered
 
 export type Lang = 'en' | 'th'
@@ -32,7 +32,7 @@ const en = {
     line: 'LINE: @tmenergy',
     email: 'info@energy-tm.com',
     address: 'Ko Pha-ngan, Surat Thani 84280\nThailand',
-    copyright: '© 2026 TM Energy Co., Ltd. All rights reserved.',
+    copyright: '© 2026 Bustan Energy Co., Ltd. All rights reserved.',
   },
 
   home: {
@@ -80,7 +80,7 @@ const en = {
     },
     why: {
       sectionTag: 'OUR ADVANTAGE',
-      title: 'Why Ko Phangan Trusts TM Energy',
+      title: 'Why Ko Phangan Trusts Bustan Energy',
       items: [
         {
           title: 'Island Specialists',
@@ -161,13 +161,13 @@ const en = {
       rating: '4.9/5 from 50+ reviews',
       items: [
         {
-          quote: 'TM Energy transformed our villa. We went from ฿15,000/month electricity bills to almost zero. The system paid for itself in under 3 years.',
+          quote: 'Bustan Energy transformed our villa. We went from ฿15,000/month electricity bills to almost zero. The system paid for itself in under 3 years.',
           name: 'Sarah M.',
           role: 'Villa Owner, Haad Rin',
           stars: 5,
         },
         {
-          quote: 'As a resort manager, reliability is everything. TM Energy delivered a 45kW system on time and the monitoring dashboard is excellent. Our guests love knowing we run on solar.',
+          quote: 'As a resort manager, reliability is everything. Bustan Energy delivered a 45kW system on time and the monitoring dashboard is excellent. Our guests love knowing we run on solar.',
           name: 'James T.',
           role: 'Resort Manager, Thong Nai Pan',
           stars: 5,
@@ -206,7 +206,7 @@ const en = {
         },
         {
           question: 'Do I need PEA approval for solar panels?',
-          answer: 'Yes, all grid-connected solar systems in Thailand require PEA approval. TM Energy handles the entire licensing process for you — from application to final inspection and grid connection.',
+          answer: 'Yes, all grid-connected solar systems in Thailand require PEA approval. Bustan Energy handles the entire licensing process for you — from application to final inspection and grid connection.',
         },
         {
           question: 'How long does solar installation take?',
@@ -214,7 +214,7 @@ const en = {
         },
         {
           question: 'What warranty do you offer?',
-          answer: 'Each proposal lists the selected equipment warranties and TM Energy workmanship coverage in writing. Warranty terms vary by panel, inverter, and battery model.',
+          answer: 'Each proposal lists the selected equipment warranties and Bustan Energy workmanship coverage in writing. Warranty terms vary by panel, inverter, and battery model.',
         },
       ],
     },
@@ -408,7 +408,7 @@ const en = {
         {
           question: 'What warranties are included?',
           answer:
-            'Each proposal lists the selected equipment warranties and TM Energy workmanship coverage in writing. Warranty terms vary by panel, inverter, and battery model.',
+            'Each proposal lists the selected equipment warranties and Bustan Energy workmanship coverage in writing. Warranty terms vary by panel, inverter, and battery model.',
         },
       ],
     },
@@ -450,13 +450,13 @@ const en = {
 
   about: {
     hero: {
-      tag: 'About TM Energy',
+      tag: 'About Bustan Energy',
       title: 'Solar Built for Island Operations',
     },
     story: {
       title: 'Our Story',
       paragraphs: [
-        'TM Energy was born from a simple observation: Ko Phangan receives over 1,800 hours of sunshine per year, yet most of the island still runs on expensive diesel-generated electricity shipped from the mainland. We set out to change that.',
+        'Bustan Energy was born from a simple observation: Ko Phangan receives over 1,800 hours of sunshine per year, yet most of the island still runs on expensive diesel-generated electricity shipped from the mainland. We set out to change that.',
         'We combine solar engineering, local site knowledge, PEA documentation support, procurement, installation, and O&M so island projects can move from bill analysis to operating system with fewer surprises.',
       ],
     },
@@ -694,44 +694,44 @@ const en = {
 
   seo: {
     home: {
-      title: "TM Energy — Solar EPC & PPA on Ko Phangan | Solar Panels Thailand",
+      title: "Bustan Energy — Solar EPC & PPA on Ko Phangan | Solar Panels Thailand",
       description:
         'Solar EPC, PPA, PEA coordination, and O&M for homes, villas, resorts, businesses, and land projects on Ko Phangan and Surat Thani.',
     },
     services: {
-      title: 'Solar Services — Residential, Commercial & Solar Farms | TM Energy Ko Phangan',
+      title: 'Solar Services — Residential, Commercial & Solar Farms | Bustan Energy Ko Phangan',
       description:
         'Complete solar installation services in Ko Phangan: rooftop residential systems, commercial solar, and utility-scale solar farm development. Free consultation.',
     },
     howItWorks: {
-      title: 'How Solar Installation Works | TM Energy Ko Phangan',
+      title: 'How Solar Installation Works | Bustan Energy Ko Phangan',
       description:
-        'From free consultation to solar monitoring — our 4-step process makes going solar simple. See exactly how TM Energy installs your solar system in Ko Phangan.',
+        'From free consultation to solar monitoring — our 4-step process makes going solar simple. See exactly how Bustan Energy installs your solar system in Ko Phangan.',
     },
     pricing: {
-      title: 'Solar Pricing & Packages — EPC & PPA Models | TM Energy Ko Phangan',
+      title: 'Solar Pricing & Packages — EPC & PPA Models | Bustan Energy Ko Phangan',
       description:
         'Transparent solar pricing for Ko Phangan. Choose EPC (own it) or PPA (zero upfront). Starter 3–5kW, Standard 10–15kW, Premium 30–100kW. No hidden fees.',
     },
     projects: {
-      title: 'Solar Installation Portfolio | TM Energy Ko Phangan Projects',
+      title: 'Solar Installation Portfolio | Bustan Energy Ko Phangan Projects',
       description:
         'Review solar project types across Ko Phangan — villa systems, resorts, businesses, and land feasibility studies with EPC and PPA options.',
     },
     about: {
-      title: "About TM Energy — Solar EPC and PPA for Ko Phangan",
+      title: "About Bustan Energy — Solar EPC and PPA for Ko Phangan",
       description:
-        'TM Energy supports Ko Phangan solar projects with bill analysis, site surveys, EPC/PPA proposals, PEA documentation, procurement, installation, and O&M.',
+        'Bustan Energy supports Ko Phangan solar projects with bill analysis, site surveys, EPC/PPA proposals, PEA documentation, procurement, installation, and O&M.',
     },
     blog: {
-      title: 'Solar Energy Guides & Insights | TM Energy Blog',
+      title: 'Solar Energy Guides & Insights | Bustan Energy Blog',
       description:
         'Expert articles on solar energy in Thailand — VSPP regulations, EPC vs PPA comparison, battery storage, and real ROI data from Ko Phangan installations.',
     },
     contact: {
-      title: 'Contact TM Energy — Free Solar Consultation Ko Phangan',
+      title: 'Contact Bustan Energy — Free Solar Consultation Ko Phangan',
       description:
-        'Get a free solar consultation in Ko Phangan. Contact TM Energy via WhatsApp, LINE, or email. Office in Thong Sala, Surat Thani. Mon–Sat 8am–6pm.',
+        'Get a free solar consultation in Ko Phangan. Contact Bustan Energy via WhatsApp, LINE, or email. Office in Thong Sala, Surat Thani. Mon–Sat 8am–6pm.',
     },
   },
 } as const
@@ -765,7 +765,7 @@ const th = {
     line: 'LINE: @tmenergy',
     email: 'info@energy-tm.com',
     address: 'ทองสาลา เกาะพะงัน\nสุราษฎร์ธานี 84280 ประเทศไทย',
-    copyright: '© 2026 TM Energy Co., Ltd. สงวนลิขสิทธิ์ทุกประการ',
+    copyright: '© 2026 Bustan Energy Co., Ltd. สงวนลิขสิทธิ์ทุกประการ',
   },
 
   home: {
@@ -813,7 +813,7 @@ const th = {
     },
     why: {
       sectionTag: 'ข้อได้เปรียบของเรา',
-      title: 'ทำไมเกาะพะงันไว้วางใจ TM Energy',
+      title: 'ทำไมเกาะพะงันไว้วางใจ Bustan Energy',
       items: [
         {
           title: 'ผู้เชี่ยวชาญบนเกาะ',
@@ -894,13 +894,13 @@ const th = {
       rating: '4.9/5 จาก 50+ รีวิว',
       items: [
         {
-          quote: 'TM Energy เปลี่ยนวิลล่าของเรา จากค่าไฟเดือนละ 15,000 บาทเหลือเกือบศูนย์ ระบบคืนทุนภายใน 3 ปี',
+          quote: 'Bustan Energy เปลี่ยนวิลล่าของเรา จากค่าไฟเดือนละ 15,000 บาทเหลือเกือบศูนย์ ระบบคืนทุนภายใน 3 ปี',
           name: 'Sarah M.',
           role: 'เจ้าของวิลล่า หาดรีน',
           stars: 5,
         },
         {
-          quote: 'ในฐานะผู้จัดการรีสอร์ท ความเชื่อถือได้สำคัญที่สุด TM Energy ส่งมอบระบบ 45kW ตรงเวลา แดชบอร์ดมอนิเตอร์ยอดเยี่ยม แขกของเราชอบที่รู้ว่าเราใช้โซลาร์',
+          quote: 'ในฐานะผู้จัดการรีสอร์ท ความเชื่อถือได้สำคัญที่สุด Bustan Energy ส่งมอบระบบ 45kW ตรงเวลา แดชบอร์ดมอนิเตอร์ยอดเยี่ยม แขกของเราชอบที่รู้ว่าเราใช้โซลาร์',
           name: 'James T.',
           role: 'ผู้จัดการรีสอร์ท ท้องนายปาน',
           stars: 5,
@@ -939,7 +939,7 @@ const th = {
         },
         {
           question: 'ต้องขออนุญาต กฟภ. ไหมในการติดตั้งโซลาร์?',
-          answer: 'ใช่ ระบบโซลาร์ที่เชื่อมต่อกริดทุกระบบต้องได้รับอนุมัติจาก กฟภ. TM Energy จัดการกระบวนการรับใบอนุญาตทั้งหมดให้คุณ ตั้งแต่การยื่นคำร้องจนถึงการตรวจสอบและเชื่อมต่อกริด',
+          answer: 'ใช่ ระบบโซลาร์ที่เชื่อมต่อกริดทุกระบบต้องได้รับอนุมัติจาก กฟภ. Bustan Energy จัดการกระบวนการรับใบอนุญาตทั้งหมดให้คุณ ตั้งแต่การยื่นคำร้องจนถึงการตรวจสอบและเชื่อมต่อกริด',
         },
         {
           question: 'ติดตั้งโซลาร์เซลล์ใช้เวลานานแค่ไหน?',
@@ -947,7 +947,7 @@ const th = {
         },
         {
           question: 'มีการรับประกันอะไรบ้าง?',
-          answer: 'ใบเสนอราคาทุกฉบับระบุการรับประกันของอุปกรณ์ที่เลือกและการรับประกันงานติดตั้งของ TM Energy เป็นลายลักษณ์อักษร เงื่อนไขแตกต่างตามรุ่นแผง อินเวอร์เตอร์ และแบตเตอรี่',
+          answer: 'ใบเสนอราคาทุกฉบับระบุการรับประกันของอุปกรณ์ที่เลือกและการรับประกันงานติดตั้งของ Bustan Energy เป็นลายลักษณ์อักษร เงื่อนไขแตกต่างตามรุ่นแผง อินเวอร์เตอร์ และแบตเตอรี่',
         },
       ],
     },
@@ -1142,7 +1142,7 @@ const th = {
         {
           question: 'มีการรับประกันอะไรบ้าง?',
           answer:
-            'ใบเสนอราคาทุกฉบับระบุการรับประกันของอุปกรณ์ที่เลือกและการรับประกันงานติดตั้งของ TM Energy เป็นลายลักษณ์อักษร เงื่อนไขแตกต่างตามรุ่นแผง อินเวอร์เตอร์ และแบตเตอรี่',
+            'ใบเสนอราคาทุกฉบับระบุการรับประกันของอุปกรณ์ที่เลือกและการรับประกันงานติดตั้งของ Bustan Energy เป็นลายลักษณ์อักษร เงื่อนไขแตกต่างตามรุ่นแผง อินเวอร์เตอร์ และแบตเตอรี่',
         },
       ],
     },
@@ -1220,13 +1220,13 @@ const th = {
 
   about: {
     hero: {
-      tag: 'เกี่ยวกับ TM Energy',
+      tag: 'เกี่ยวกับ Bustan Energy',
       title: 'โซลาร์ที่ออกแบบสำหรับงานบนเกาะ',
     },
     story: {
       title: 'เรื่องราวของเรา',
       paragraphs: [
-        'TM Energy เกิดจากการสังเกตเห็นสิ่งง่ายๆ: เกาะพะงันได้รับแสงอาทิตย์มากกว่า 1,800 ชั่วโมงต่อปี แต่ส่วนใหญ่ของเกาะยังคงพึ่งพาไฟฟ้าที่ผลิตจากดีเซลที่มีราคาแพงซึ่งขนส่งมาจากแผ่นดินใหญ่ เราตั้งใจจะเปลี่ยนแปลงสิ่งนั้น',
+        'Bustan Energy เกิดจากการสังเกตเห็นสิ่งง่ายๆ: เกาะพะงันได้รับแสงอาทิตย์มากกว่า 1,800 ชั่วโมงต่อปี แต่ส่วนใหญ่ของเกาะยังคงพึ่งพาไฟฟ้าที่ผลิตจากดีเซลที่มีราคาแพงซึ่งขนส่งมาจากแผ่นดินใหญ่ เราตั้งใจจะเปลี่ยนแปลงสิ่งนั้น',
         'ก่อตั้งโดยวิศวกรโซลาร์และชาวเกาะ เราผสมผสานความเชี่ยวชาญทางเทคนิคเชิงลึกกับความรู้ท้องถิ่น เรารู้จักทุกหมู่บ้าน ทุกจุดเชื่อมต่อกริด และทุกกฎระเบียบของ PEA นั่นคือเหตุผลที่เรากลายเป็นผู้ติดตั้งโซลาร์ที่ได้รับความไว้วางใจมากที่สุดบนเกาะ',
       ],
     },
@@ -1464,46 +1464,46 @@ const th = {
 
   seo: {
     home: {
-      title: 'TM Energy — ติดตั้งโซลาร์เซลล์เกาะพะงัน อันดับ 1 | แผงโซลาร์ สุราษฎร์ธานี',
+      title: 'Bustan Energy — ติดตั้งโซลาร์เซลล์เกาะพะงัน อันดับ 1 | แผงโซลาร์ สุราษฎร์ธานี',
       description:
         'บริการโซลาร์ EPC, PPA, เอกสาร กฟภ. และ O&M สำหรับบ้าน วิลล่า รีสอร์ท ธุรกิจ และโครงการที่ดินบนเกาะพะงันและสุราษฎร์ธานี',
     },
     services: {
       title:
-        'บริการติดตั้งโซลาร์เซลล์ เกาะพะงัน — บ้าน รีสอร์ท ฟาร์มโซลาร์ | TM Energy',
+        'บริการติดตั้งโซลาร์เซลล์ เกาะพะงัน — บ้าน รีสอร์ท ฟาร์มโซลาร์ | Bustan Energy',
       description:
         'บริการติดตั้งโซลาร์เซลล์ครบวงจรบนเกาะพะงัน สุราษฎร์ธานี หลังคาโซลาร์บ้านพัก โซลาร์เชิงพาณิชย์ และฟาร์มโซลาร์ขนาดใหญ่ ปรึกษาฟรีไม่มีค่าใช้จ่าย',
     },
     howItWorks: {
-      title: 'ขั้นตอนการติดตั้งโซลาร์เซลล์ | TM Energy เกาะพะงัน',
+      title: 'ขั้นตอนการติดตั้งโซลาร์เซลล์ | Bustan Energy เกาะพะงัน',
       description:
-        'ตั้งแต่ปรึกษาฟรีจนถึงมอนิเตอร์ระบบ 4 ขั้นตอนง่ายๆ สู่พลังงานแสงอาทิตย์ ดูว่า TM Energy ติดตั้งโซลาร์เซลล์บนเกาะพะงัน สุราษฎร์ธานี อย่างไร',
+        'ตั้งแต่ปรึกษาฟรีจนถึงมอนิเตอร์ระบบ 4 ขั้นตอนง่ายๆ สู่พลังงานแสงอาทิตย์ ดูว่า Bustan Energy ติดตั้งโซลาร์เซลล์บนเกาะพะงัน สุราษฎร์ธานี อย่างไร',
     },
     pricing: {
-      title: 'ราคาติดตั้งโซลาร์เซลล์ เกาะพะงัน — EPC และ PPA | TM Energy',
+      title: 'ราคาติดตั้งโซลาร์เซลล์ เกาะพะงัน — EPC และ PPA | Bustan Energy',
       description:
         'ราคาโซลาร์เซลล์โปร่งใสสำหรับเกาะพะงัน เลือก EPC (ซื้อขาด) หรือ PPA (ไม่ต้องลงทุน) ตั้งแต่ 3kW ถึง 100kW ไม่มีค่าธรรมเนียมแอบแฝง ประหยัดค่าไฟฟ้าทันที',
     },
     projects: {
       title:
-        'ผลงานติดตั้งโซลาร์เซลล์ | โครงการ TM Energy เกาะพะงัน สุราษฎร์ธานี',
+        'ผลงานติดตั้งโซลาร์เซลล์ | โครงการ Bustan Energy เกาะพะงัน สุราษฎร์ธานี',
       description:
         'ดูประเภทโครงการโซลาร์บนเกาะพะงัน ทั้งวิลล่า รีสอร์ท ธุรกิจ และการศึกษาความเป็นไปได้ของที่ดิน พร้อมตัวเลือก EPC และ PPA',
     },
     about: {
-      title: 'เกี่ยวกับ TM Energy — Solar EPC และ PPA สำหรับเกาะพะงัน',
+      title: 'เกี่ยวกับ Bustan Energy — Solar EPC และ PPA สำหรับเกาะพะงัน',
       description:
-        'TM Energy ช่วยโครงการโซลาร์บนเกาะพะงันตั้งแต่วิเคราะห์บิล สำรวจหน้างาน ใบเสนอราคา EPC/PPA เอกสาร กฟภ. จัดซื้อ ติดตั้ง และ O&M',
+        'Bustan Energy ช่วยโครงการโซลาร์บนเกาะพะงันตั้งแต่วิเคราะห์บิล สำรวจหน้างาน ใบเสนอราคา EPC/PPA เอกสาร กฟภ. จัดซื้อ ติดตั้ง และ O&M',
     },
     blog: {
-      title: 'บทความโซลาร์เซลล์ คู่มือพลังงานแสงอาทิตย์ในไทย | TM Energy',
+      title: 'บทความโซลาร์เซลล์ คู่มือพลังงานแสงอาทิตย์ในไทย | Bustan Energy',
       description:
         'บทความจากผู้เชี่ยวชาญเรื่องโซลาร์เซลล์ในประเทศไทย กฎระเบียบ VSPP เปรียบเทียบ EPC vs PPA แบตเตอรี่กักเก็บพลังงาน และข้อมูล ROI จริงจากเกาะพะงัน',
     },
     contact: {
-      title: 'ติดต่อ TM Energy — ปรึกษาโซลาร์ฟรี เกาะพะงัน สุราษฎร์ธานี',
+      title: 'ติดต่อ Bustan Energy — ปรึกษาโซลาร์ฟรี เกาะพะงัน สุราษฎร์ธานี',
       description:
-        'ขอคำปรึกษาโซลาร์เซลล์ฟรีบนเกาะพะงัน ติดต่อ TM Energy ทาง WhatsApp LINE หรืออีเมล สำนักงานที่ทองสาลา สุราษฎร์ธานี จันทร์–เสาร์ 08:00–18:00 น.',
+        'ขอคำปรึกษาโซลาร์เซลล์ฟรีบนเกาะพะงัน ติดต่อ Bustan Energy ทาง WhatsApp LINE หรืออีเมล สำนักงานที่ทองสาลา สุราษฎร์ธานี จันทร์–เสาร์ 08:00–18:00 น.',
     },
   },
 } as const

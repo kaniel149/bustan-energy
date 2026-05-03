@@ -2,16 +2,29 @@
 
 @theme {
   --font-serif: 'Instrument Serif', serif;
-  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --color-ocean: #0A3D5C;
-  --color-ocean-light: #0E4D73;
-  --color-gold: #E8A820;
-  --color-gold-light: #F0C04A;
-  --color-green: #1B5E20;
-  --color-green-light: #2E7D32;
-  --color-sand: #FFF8E7;
-  --color-dark: #0D1117;
-  --color-navy: #0D2137;
+  --font-sans: 'DM Sans', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif;
+  --color-ocean: #006f6b;
+  --color-ocean-light: #008f8a;
+  --color-gold: #f2b84b;
+  --color-gold-light: #ffd27a;
+  --color-green: #24463e;
+  --color-green-light: #2f5d52;
+  --color-sand: #f4ead8;
+  --color-dark: #27342f;
+  --color-navy: #24463e;
+}
+
+:root {
+  --bustan-ink: #27342f;
+  --bustan-grove: #24463e;
+  --bustan-canopy: #2f5d52;
+  --bustan-lagoon: #006f6b;
+  --bustan-lagoon-bright: #008f8a;
+  --bustan-sun: #f2b84b;
+  --bustan-papaya: #ff6b4a;
+  --bustan-paper: #f4ead8;
+  --bustan-shell: #fff4e2;
+  --bustan-mist: #d8ece8;
 }
 
 html {
@@ -24,8 +37,64 @@ html, body, #root {
   min-height: 100%;
   width: 100%;
   font-family: var(--font-sans);
-  background: var(--color-dark);
-  color: white;
+  background: var(--bustan-paper);
+  color: var(--bustan-ink);
+}
+
+.bustan-admin-main {
+  background:
+    linear-gradient(140deg, rgba(216, 236, 232, 0.55), transparent 34%),
+    linear-gradient(20deg, rgba(242, 184, 75, 0.15), transparent 42%),
+    var(--bustan-paper);
+  color: var(--bustan-ink);
+}
+
+.bustan-admin-main .text-white { color: var(--bustan-ink) !important; }
+.bustan-admin-main .text-white\/80 { color: rgba(39, 52, 47, 0.8) !important; }
+.bustan-admin-main .text-white\/70 { color: rgba(39, 52, 47, 0.72) !important; }
+.bustan-admin-main .text-white\/60 { color: rgba(39, 52, 47, 0.64) !important; }
+.bustan-admin-main .text-white\/55 { color: rgba(39, 52, 47, 0.58) !important; }
+.bustan-admin-main .text-white\/50 { color: rgba(39, 52, 47, 0.54) !important; }
+.bustan-admin-main .text-white\/45 { color: rgba(39, 52, 47, 0.5) !important; }
+.bustan-admin-main .text-white\/40 { color: rgba(39, 52, 47, 0.46) !important; }
+.bustan-admin-main .text-white\/35 { color: rgba(39, 52, 47, 0.4) !important; }
+.bustan-admin-main .text-white\/30 { color: rgba(39, 52, 47, 0.36) !important; }
+.bustan-admin-main .text-white\/25 { color: rgba(39, 52, 47, 0.32) !important; }
+.bustan-admin-main .text-white\/20 { color: rgba(39, 52, 47, 0.28) !important; }
+.bustan-admin-main .placeholder\:text-white\/30::placeholder,
+.bustan-admin-main .placeholder-white\/25::placeholder,
+.bustan-admin-main .placeholder-white\/20::placeholder {
+  color: rgba(39, 52, 47, 0.34) !important;
+}
+.bustan-admin-main .bg-white\/5,
+.bustan-admin-main .bg-white\/\[0\.03\],
+.bustan-admin-main .bg-white\/\[0\.07\] {
+  background: rgba(255, 244, 226, 0.76) !important;
+}
+.bustan-admin-main .hover\:bg-white\/10:hover,
+.bustan-admin-main .hover\:bg-white\/\[0\.03\]:hover,
+.bustan-admin-main .hover\:bg-white\/\[0\.07\]:hover {
+  background: rgba(216, 236, 232, 0.7) !important;
+}
+.bustan-admin-main .border-white\/10,
+.bustan-admin-main .border-white\/\[0\.06\],
+.bustan-admin-main .border-white\/5 {
+  border-color: rgba(36, 70, 62, 0.14) !important;
+}
+.bustan-admin-main .divide-white\/5 > :not(:last-child) {
+  border-color: rgba(36, 70, 62, 0.12) !important;
+}
+.bustan-admin-main .bg-black\/15,
+.bustan-admin-main .bg-black\/30 {
+  background: rgba(36, 70, 62, 0.1) !important;
+}
+.bustan-admin-main .from-\[\#E8A820\] {
+  --tw-gradient-from: var(--bustan-lagoon) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(0 111 107 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.bustan-admin-main .to-\[\#E85D3A\] {
+  --tw-gradient-to: var(--bustan-papaya) var(--tw-gradient-to-position) !important;
 }
 
 /* Platform page (GIS) needs fixed dimensions */

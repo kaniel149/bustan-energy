@@ -285,23 +285,23 @@ function _esc(v: string | null | undefined): string {
   return v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
-/** Generate a next sequential ref like TM-2026-0042 */
+/** Generate a next sequential ref like BU-2026-0042 */
 export async function generateRef(): Promise<string> {
-  if (!supabase) return `TM-${new Date().getFullYear()}-0001`
+  if (!supabase) return `BU-${new Date().getFullYear()}-0001`
 
   const year = new Date().getFullYear()
   const { data } = await supabase
     .from('proposals')
     .select('ref_number')
-    .like('ref_number', `TM-${year}-%`)
+    .like('ref_number', `BU-${year}-%`)
     .order('created_at', { ascending: false })
     .limit(1)
 
-  if (!data || data.length === 0) return `TM-${year}-0001`
+  if (!data || data.length === 0) return `BU-${year}-0001`
 
   const last = data[0].ref_number as string
   const parts = last.split('-')
   const num = parseInt(parts[2] ?? '0', 10)
   const next = (num + 1).toString().padStart(4, '0')
-  return `TM-${year}-${next}`
+  return `BU-${year}-${next}`
 }

@@ -5,7 +5,7 @@ const BASE_URL = 'https://energy-tm.com'
 const DEFAULT_OG_IMAGE = `${BASE_URL}/assets/images/og-default.jpg`
 
 interface SEOHeadProps {
-  /** Page title — will be appended with " | TM Energy" */
+  /** Page title — will be appended with " | Bustan Energy" */
   title: string
   /** Meta description — aim for 150–160 characters */
   description: string
@@ -36,7 +36,7 @@ interface SEOHeadProps {
  * @example
  * <SEOHead
  *   title="Solar Panel Installation Ko Phangan"
- *   description="TM Energy installs residential and commercial solar..."
+ *   description="Bustan Energy installs residential and commercial solar..."
  *   path="/services"
  *   lang="en"
  *   schema={serviceSchema('en')}
@@ -57,7 +57,7 @@ export function SEOHead({
   const enUrl = `${BASE_URL}${path}`
   const thUrl = `${BASE_URL}/th${path}`
 
-  const pageTitle = `${title} | TM Energy`
+  const pageTitle = `${title} | Bustan Energy`
   const ogImageUrl = ogImage ?? DEFAULT_OG_IMAGE
   const ogLocale = lang === 'th' ? 'th_TH' : 'en_US'
   const ogType = isArticle ? 'article' : 'website'
@@ -93,7 +93,7 @@ export function SEOHead({
 
       {/* Open Graph */}
       <meta property="og:type" content={ogType} />
-      <meta property="og:site_name" content="TM Energy" />
+      <meta property="og:site_name" content="Bustan Energy" />
       <meta property="og:locale" content={ogLocale} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={pageTitle} />

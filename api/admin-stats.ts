@@ -4,11 +4,11 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { isAllowedAdmin } from './_lib/admin-access.js'
+
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA = ['k@kanielt.com']
-const allowed = (e: string) => e.endsWith(ADMIN_DOMAIN) || EXTRA.includes(e)
+const allowed = isAllowedAdmin
 
 interface AuthUser {
   email?: string

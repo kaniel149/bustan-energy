@@ -1,4 +1,4 @@
-/* TM Energy — Central Translation Dictionary
+/* Bustan Energy — Central Translation Dictionary
    Hebrew → English + Thai for all presentations and documents */
 (function() {
 var _existing = window.PAGE_TRANSLATIONS || {};
@@ -7,8 +7,8 @@ var _central = {
   "הבא ←":{en:"Next →",th:"ถัดไป →"},
   "→ הקודם":{en:"← Previous",th:"← ก่อนหน้า"},
   "תוכן עניינים":{en:"Table of Contents",th:"สารบัญ"},
-  "TM Energy — מרץ 2026":{en:"TM Energy — March 2026",th:"TM Energy — มีนาคม 2026"},
-  "על TM Energy":{en:"About TM Energy",th:"เกี่ยวกับ TM Energy"},
+  "Bustan Energy — מרץ 2026":{en:"Bustan Energy — March 2026",th:"Bustan Energy — มีนาคม 2026"},
+  "על Bustan Energy":{en:"About Bustan Energy",th:"เกี่ยวกับ Bustan Energy"},
   "חזרה לנכסים":{en:"Back to Assets",th:"กลับไปที่สินทรัพย์"},
   "הדפס / PDF":{en:"Print / PDF",th:"พิมพ์ / PDF"},
 
@@ -381,7 +381,7 @@ var _central = {
 
   // ===== ASSETS INDEX =====
   "כל הנכסים":{en:"All Assets",th:"สินทรัพย์ทั้งหมด"},
-  "מצגות, כלים, מסמכים וקישורים | TM Energy":{en:"Presentations, Tools, Documents & Links | TM Energy",th:"การนำเสนอ เครื่องมือ เอกสาร และลิงก์ | TM Energy"},
+  "מצגות, כלים, מסמכים וקישורים | Bustan Energy":{en:"Presentations, Tools, Documents & Links | Bustan Energy",th:"การนำเสนอ เครื่องมือ เอกสาร และลิงก์ | Bustan Energy"},
   "מצגות + כלים":{en:"Presentations + Tools",th:"การนำเสนอ + เครื่องมือ"},
   "לידים ב-CRM":{en:"Leads in CRM",th:"ลีดใน CRM"},
   "מודעות":{en:"Ads",th:"โฆษณา"},
@@ -401,7 +401,7 @@ var _central = {
   "תוכנית שיווק":{en:"Marketing Plan",th:"แผนการตลาด"},
 
   // ===== BRAND KIT =====
-  "לוגו TM Energy":{en:"TM Energy Logo",th:"โลโก้ TM Energy"},
+  "לוגו Bustan Energy":{en:"Bustan Energy Logo",th:"โลโก้ Bustan Energy"},
   "פלטת צבעים":{en:"Color Palette",th:"จานสี"},
   "טיפוגרפיה":{en:"Typography",th:"ตัวอักษร"},
   "אסטים למיתוג":{en:"Branding Assets",th:"สินทรัพย์แบรนด์"},

@@ -59,7 +59,7 @@ interface BOMResponse {
 
 const thb = (n: number) => '฿' + n.toLocaleString('en-US')
 
-// Heuristic: map BOM category names to TM Energy supplier names
+// Heuristic: map BOM category names to Bustan Energy supplier names
 const CATEGORY_SUPPLIER: Record<string, string> = {
   'Solar Panels':  'Integra Renewable Energy',
   Panels:          'Integra Renewable Energy',
@@ -329,7 +329,7 @@ export default function BOMPage() {
               onChange={(e) => setProposalRef(e.target.value)}
               className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-base text-white min-h-[44px]"
               dir="ltr"
-              placeholder="TM-2026-XXXX"
+              placeholder="BU-2026-XXXX"
             />
           </div>
           <div>

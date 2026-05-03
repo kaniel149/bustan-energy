@@ -54,7 +54,7 @@ export const BrandFooter: React.FC<BrandFooterProps> = ({
           letterSpacing: 2,
         }}
       >
-        TM ENERGY
+        BUSTAN ENERGY
       </div>
       <div
         style={{

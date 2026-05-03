@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Supabase REST payloads here are schemaless until generated DB types are wired in. */
 // ============================================================
 // /api/admin-pea-package
 // POST { project_id } → assembles PEA submission package.
@@ -8,13 +9,12 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
+import { isAllowedAdmin } from './_lib/admin-access.js'
 import { calculatePeaReadiness } from '../src/lib/pea-readiness.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const ADMIN_DOMAIN = '@energy-tm.com'
-const EXTRA = ['k@kanielt.com']
-const allowed = (e: string) => e.endsWith(ADMIN_DOMAIN) || EXTRA.includes(e)
+const allowed = isAllowedAdmin
 
 async function verifyAdmin(req: Request): Promise<string | null> {
   const auth = req.headers.get('authorization')
@@ -148,7 +148,7 @@ function baseHead(title: string, drawingNo: string): string {
 }
 
 function baseFoot(p: PEAParams): string {
-  return `<div class="engineer-sig"><div><label>Designed By</label><div class="slot"></div><div style="margin-top:2mm;font-size:8pt">TM Energy · Koh Phangan</div></div><div><label>Engineer Approval (วิศวกร) / Licensed PE Stamp</label><div class="slot"></div><div style="margin-top:2mm;font-size:8pt">License No: _______________&nbsp;&nbsp;Date: _________</div></div></div><div class="footer"><span>Ref: ${p.ref} · Client: ${p.client_name}</span><span>Preliminary package · Requires licensed PE review/stamp before PEA submission</span></div></body></html>`
+  return `<div class="engineer-sig"><div><label>Designed By</label><div class="slot"></div><div style="margin-top:2mm;font-size:8pt">Bustan Energy · Koh Phangan</div></div><div><label>Engineer Approval (วิศวกร) / Licensed PE Stamp</label><div class="slot"></div><div style="margin-top:2mm;font-size:8pt">License No: _______________&nbsp;&nbsp;Date: _________</div></div></div><div class="footer"><span>Ref: ${p.ref} · Client: ${p.client_name}</span><span>Preliminary package · Requires licensed PE review/stamp before PEA submission</span></div></body></html>`
 }
 
 function renderSLD(p: PEAParams): string {

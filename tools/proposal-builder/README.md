@@ -1,4 +1,4 @@
-# 🌞 TM Energy Proposal Builder
+# 🌞 Bustan Energy Proposal Builder
 
 Generate password-protected HTML + PDF proposals with view tracking.
 

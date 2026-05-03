@@ -1,9 +1,9 @@
-# TM Energy Website — Full Build Brief
+# Bustan Energy Website — Full Build Brief
 
 ## Domain: energy-tm.com
 ## Stack: React + TypeScript + Vite + Tailwind + Framer Motion + Zustand
 ## Deploy: Vercel (project: solar-intelligence)
-## Supabase: trvgpgpsqvvdsudpgwpm (TM Energy)
+## Supabase: trvgpgpsqvvdsudpgwpm (Bustan Energy)
 
 ---
 
@@ -58,7 +58,7 @@ Path: `~/Desktop/projects/copenhagen-solar` (618 files)
 - kp-solar-pro.html
 
 ### Assets Available
-- `/avatars/` — 6 brand logos (TM Energy logo: 792 KB)
+- `/avatars/` — 6 brand logos (Bustan Energy logo: 792 KB)
 - `/visuals/` — 53 high-quality images (financial, installation, legal, monitoring, products)
 - `/ads-pro/` — 8 Facebook/Instagram ad creatives
 - `/brand-kit/` — 19 merchandise mockups (t-shirts, caps, banners, vehicle wraps)
@@ -67,7 +67,7 @@ Path: `~/Desktop/projects/copenhagen-solar` (618 files)
 - `/proposals/` — 3 language versions (EN/HE/TH)
 
 ### Brand Identity
-- **Company:** TM Energy (Ko Phangan Solar)
+- **Company:** Bustan Energy (Bustan Energy)
 - **Colors:** Ocean blue (#0A3D5C), Sun gold (#E8A820), Palm green (#1B5E20), Sand (#FFF8E7)
 - **Fonts:** Instrument Serif (headers), DM Sans (body)
 - **Vibe:** Premium, tropical, tech-forward, trustworthy

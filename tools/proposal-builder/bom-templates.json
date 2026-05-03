@@ -1,8 +1,8 @@
 {
   "$schema_version": "1.1",
-  "description": "BOM (Bill of Materials) templates for TM Energy proposals. Quantities use formulas — see tools/proposal-builder/bom-calc.mjs.",
+  "description": "BOM (Bill of Materials) templates for Bustan Energy proposals. Quantities use formulas — see tools/proposal-builder/bom-calc.mjs.",
   "last_updated": "2026-04-23",
-  "author": "TM Energy",
+  "author": "Bustan Energy",
 
   "_formulas": {
     "panels": "number of solar modules (input)",

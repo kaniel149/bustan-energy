@@ -1,4 +1,4 @@
-# TM Energy — Value Chain Blueprint
+# Bustan Energy — Value Chain Blueprint
 ## שרשרת הערך המלאה: מליד ועד O&M
 
 > כל שלב = מודול בתוך Solar OS CRM
@@ -226,7 +226,7 @@ sld_documents: id, project_id, design_id, version,
   - מודל PPA: הנחה מ-PEA, חיסכון חודשי, חוזה שנים
   - השוואה: EPC vs PPA side-by-side
   - תמונת layout על הגג
-  - Branding: TM Energy
+  - Branding: Bustan Energy
 - **מודלים כלכליים**:
   - EPC: Total cost, margin, payback years, NPV, IRR
   - PPA: Monthly rate, escalation, contract years, IRR, NPV

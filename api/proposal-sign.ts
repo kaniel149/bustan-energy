@@ -6,11 +6,12 @@ export const config = { runtime: 'edge' }
 import { sha256hex } from './_lib/crypto.js'
 import { escapeHtml } from './_lib/html.js'
 import { fmt } from './_lib/fmt.js'
+import { getProposalSessionCookie, verifyProposalSession } from './_lib/proposal-session.js'
 import { supaGet, supaPost, supaPatch } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
-const FROM = process.env.RESEND_FROM || 'TM Energy Contracts <contracts@energy-tm.com>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy Contracts <contracts@energy-tm.com>'
 
 interface ProposalSignRow {
   ref_number: string
@@ -94,11 +95,11 @@ function clientEmail(p: ProposalSignRow, s: SignatureRow) {
 <div style="font-family:system-ui;max-width:620px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:32px;border-radius:16px 16px 0 0;color:white;text-align:center;">
     <h1 style="margin:0;font-size:26px;color:#E8A820;">&#x2713; Agreement Signed</h1>
-    <p style="margin:8px 0 0 0;opacity:.8;">TM Energy · Phangan</p>
+    <p style="margin:8px 0 0 0;opacity:.8;">Bustan Energy · Phangan</p>
   </div>
   <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;">
     <p>Dear ${escapeHtml(s.signer_name)},</p>
-    <p>Thank you for choosing TM Energy. This confirms your signed agreement for proposal <b>${escapeHtml(p.ref_number)}</b>.</p>
+    <p>Thank you for choosing Bustan Energy. This confirms your signed agreement for proposal <b>${escapeHtml(p.ref_number)}</b>.</p>
     <table style="width:100%;border-collapse:collapse;margin:16px 0;">
       <tr><td style="padding:6px 0;color:#666;">System</td><td><b>${escapeHtml(p.system_size_kwp)} kWp</b></td></tr>
       <tr><td style="padding:6px 0;color:#666;">Total</td><td><b>฿${fmt(p.total_price_thb)}</b></td></tr>
@@ -127,6 +128,19 @@ export default async function handler(req: Request): Promise<Response> {
 
     if (!ref || !signer_name || !signature_base64) {
       return Response.json({ ok: false, error: 'missing_fields' }, { status: 400 })
+    }
+    if (!/^[a-z0-9][a-z0-9._-]{1,80}$/i.test(ref)) {
+      return Response.json({ ok: false, error: 'invalid_ref' }, { status: 400 })
+    }
+    const verifiedSession = await verifyProposalSession(getProposalSessionCookie(req), ref)
+    if (!verifiedSession) {
+      return Response.json({ ok: false, error: 'proposal_session_required' }, { status: 403 })
+    }
+    if (signer_name.length > 120 || (signer_email && signer_email.length > 180) || (signer_phone && signer_phone.length > 60)) {
+      return Response.json({ ok: false, error: 'field_too_long' }, { status: 400 })
+    }
+    if (!/^data:image\/png;base64,[a-z0-9+/=]+$/i.test(signature_base64) || signature_base64.length > 350_000) {
+      return Response.json({ ok: false, error: 'invalid_signature' }, { status: 400 })
     }
 
     const proposal = await supaGet<ProposalSignRow>(`proposals?ref_number=eq.${encodeURIComponent(ref)}&select=*`)
@@ -190,7 +204,7 @@ export default async function handler(req: Request): Promise<Response> {
     const teamSubject = `🎉 חתימה התקבלה · ${proposal.client_name || proposal.ref_number} · ${ref}`
     sendEmail(NOTIFY, teamSubject, teamEmail(proposal, s)).catch(() => {})
     if (signer_email) {
-      sendEmail([signer_email], `&#x2713; Agreement signed · TM Energy · ${ref}`, clientEmail(proposal, s)).catch(() => {})
+      sendEmail([signer_email], `&#x2713; Agreement signed · Bustan Energy · ${ref}`, clientEmail(proposal, s)).catch(() => {})
     }
 
     return Response.json({ ok: true, signature_id: s.id, hash })

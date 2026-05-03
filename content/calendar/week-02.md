@@ -48,7 +48,7 @@
   > Step 3: Permits and approvals — we handle everything.
   > Step 4: Installation — typically 2-3 days.
   > Step 5: You start saving — from day one.
-  > Five steps. Zero hassle. TM Energy.
+  > Five steps. Zero hassle. Bustan Energy.
 - **Duration:** 25 seconds
 - **Hashtags:** #SolarInstallation #HowItWorks #SolarProcess #KohPhangan #Thailand #SolarPanels #CleanEnergy #SolarPower #RenewableEnergy #GreenLiving
 

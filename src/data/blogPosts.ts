@@ -1,5 +1,5 @@
 // ─── data/blogPosts.ts ─────────────────────────────────────────────────────
-// Full blog post content for TM Energy (Ko Phangan, Thailand)
+// Full blog post content for Bustan Energy (Ko Phangan, Thailand)
 // Each post uses Markdown-style HTML content rendered in BlogPostPage.tsx
 
 export interface BlogPost {
@@ -77,7 +77,7 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Inspection and commissioning</strong> — After installation, PEA inspects the system and approves self-consumption mode or an export/net-billing arrangement where applicable.</li>
 </ol>
 
-<p>The entire process takes 4–8 weeks from application to commissioning. A good installer handles all the paperwork for you. At <a href="/services">TM Energy</a>, we manage the complete PEA process as part of every installation.</p>
+<p>The entire process takes 4–8 weeks from application to commissioning. A good installer handles all the paperwork for you. At <a href="/services">Bustan Energy</a>, we manage the complete PEA process as part of every installation.</p>
 
 <h2>Solar Performance During Monsoon Season</h2>
 
@@ -109,13 +109,13 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Transparent pricing</strong> — Avoid installers who quote suspiciously low prices. A quality installation with Tier-1 equipment has a real cost. Low bids often mean cheap panels, thin wiring, or corners cut on mounting.</li>
 </ul>
 
-<p>TM Energy designs and delivers solar systems for Ko Phangan properties, using bankable equipment selected for each project and supporting PEA documentation, monitoring, and maintenance. Check out our <a href="/pricing">pricing page</a> for transparent costs, or <a href="/contact">contact us</a> for a free consultation.</p>
+<p>Bustan Energy designs and delivers solar systems for Ko Phangan properties, using bankable equipment selected for each project and supporting PEA documentation, monitoring, and maintenance. Check out our <a href="/pricing">pricing page</a> for transparent costs, or <a href="/contact">contact us</a> for a free consultation.</p>
 
 <h2>Ready to Go Solar?</h2>
 
 <p>Solar energy on Koh Phangan is not a future promise — it is a present reality. Hundreds of homes, villas, and businesses on the island already benefit from lower electricity bills, energy independence, and clean power. Whether you are building a new property or retrofitting an existing one, there has never been a better time to go solar.</p>
 
-<p><strong><a href="/contact">Contact TM Energy today for a free, no-obligation consultation.</a></strong> We will assess your property, design the optimal system, and give you a clear picture of costs and savings — all before you commit to anything.</p>
+<p><strong><a href="/contact">Contact Bustan Energy today for a free, no-obligation consultation.</a></strong> We will assess your property, design the optimal system, and give you a clear picture of costs and savings — all before you commit to anything.</p>
 `,
   },
 
@@ -210,7 +210,7 @@ export const blogPosts: BlogPost[] = [
 <p>When comparing solar quotes, watch out for these commonly overlooked costs:</p>
 
 <ul>
-  <li><strong>PEA meter and connection fees</strong> — Some installers quote the system only and add PEA fees separately. At TM Energy, this is always included in our quote.</li>
+  <li><strong>PEA meter and connection fees</strong> — Some installers quote the system only and add PEA fees separately. At Bustan Energy, this is always included in our quote.</li>
   <li><strong>Roof reinforcement</strong> — Older or lightweight roofs may need structural reinforcement before panels can be installed. This should be assessed during the site survey.</li>
   <li><strong>Electrical panel upgrade</strong> — If your property has an outdated electrical panel, it may need upgrading to safely handle the solar system. Budget ฿5,000–15,000 if needed.</li>
   <li><strong>Ongoing maintenance</strong> — Solar panels need cleaning 2–4 times per year and an annual technical inspection. Budget ฿3,000–8,000/year for professional maintenance, or choose an installer that includes it.</li>
@@ -222,7 +222,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>Get a Free Quote</h2>
 
-<p>Want to know exactly what solar would cost for your specific property? <strong><a href="/contact">Contact TM Energy for a free, no-obligation consultation and quote.</a></strong> We will assess your roof, analyze your electricity bills, and design a system that maximizes your savings — with completely transparent pricing.</p>
+<p>Want to know exactly what solar would cost for your specific property? <strong><a href="/contact">Contact Bustan Energy for a free, no-obligation consultation and quote.</a></strong> We will assess your roof, analyze your electricity bills, and design a system that maximizes your savings — with completely transparent pricing.</p>
 `,
   },
 
@@ -236,7 +236,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Guide',
     excerpt: 'A practical guide to off-grid and hybrid solar systems on Ko Phangan — batteries, sizing, costs, and why the island is ideal for it.',
     content: `
-<p>Ko Phangan is one of the most beautiful islands in Thailand — but its electricity grid is far from perfect. Power outages are a regular occurrence, and some parts of the island have weak or nonexistent grid connections. That is why <strong>off-grid solar on Koh Phangan</strong> has become one of the fastest-growing segments of our business at TM Energy.</p>
+<p>Ko Phangan is one of the most beautiful islands in Thailand — but its electricity grid is far from perfect. Power outages are a regular occurrence, and some parts of the island have weak or nonexistent grid connections. That is why <strong>off-grid solar on Koh Phangan</strong> has become one of the fastest-growing segments of our business at Bustan Energy.</p>
 
 <p>Whether you are building a remote hillside villa, running a beachfront resort, or simply tired of losing power every time there is a storm, this guide covers everything you need to know about going off-grid (or hybrid) with solar on Ko Phangan.</p>
 
@@ -357,13 +357,13 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Wiring and mounting</strong> — Annual visual inspection for corrosion (important on Ko Phangan due to salt air). Use marine-grade hardware and stainless steel fasteners.</li>
 </ul>
 
-<p>At <a href="/services/maintenance">TM Energy</a>, we offer maintenance packages that include quarterly cleaning, annual inspection, real-time monitoring, and priority response for any issues.</p>
+<p>At <a href="/services/maintenance">Bustan Energy</a>, we offer maintenance packages that include quarterly cleaning, annual inspection, real-time monitoring, and priority response for any issues.</p>
 
 <h2>Ready to Go Off-Grid?</h2>
 
 <p>Whether you want a hybrid system for outage protection or a full off-grid setup for true energy independence, Ko Phangan is one of the best places in Thailand to do it. The combination of high electricity costs, unreliable grid, and excellent solar irradiance makes the business case compelling.</p>
 
-<p><strong><a href="/contact">Contact TM Energy for a free off-grid consultation.</a></strong> We will visit your property, assess your energy needs, and design a system that keeps your lights on — rain or shine, grid or no grid.</p>
+<p><strong><a href="/contact">Contact Bustan Energy for a free off-grid consultation.</a></strong> We will visit your property, assess your energy needs, and design a system that keeps your lights on — rain or shine, grid or no grid.</p>
 `,
   },
 
@@ -450,7 +450,7 @@ export const blogPosts: BlogPost[] = [
 <p>The best time to install solar with battery backup is before the next outage — not during it. Here is how to get started:</p>
 
 <ol>
-  <li><strong>Contact us</strong> — <a href="/contact">Reach out to TM Energy</a> for a free, no-obligation consultation. We will discuss your power needs and outage experience.</li>
+  <li><strong>Contact us</strong> — <a href="/contact">Reach out to Bustan Energy</a> for a free, no-obligation consultation. We will discuss your power needs and outage experience.</li>
   <li><strong>Site assessment</strong> — We visit your property, assess your roof, review your PEA bills, and design an optimal system.</li>
   <li><strong>Transparent quote</strong> — We provide a clear, all-inclusive quote with no hidden fees. <a href="/pricing">See our pricing page</a> for general ranges.</li>
   <li><strong>Installation</strong> — Our team installs the system in 2–5 days depending on size. We handle all PEA paperwork and permits.</li>
@@ -459,7 +459,7 @@ export const blogPosts: BlogPost[] = [
 
 <p>Ko Phangan's power outages are not going away anytime soon. The island's grid infrastructure is improving, but slowly. Meanwhile, solar + battery technology is getting better and more affordable every year. The question is not whether you should go solar — it is how long you are willing to keep dealing with the problem.</p>
 
-<p><strong><a href="/contact">Contact TM Energy today for a free consultation.</a></strong> Let us show you exactly how solar can solve your power problems — and save you money in the process.</p>
+<p><strong><a href="/contact">Contact Bustan Energy today for a free consultation.</a></strong> Let us show you exactly how solar can solve your power problems — and save you money in the process.</p>
 `,
   },
 
@@ -475,7 +475,7 @@ export const blogPosts: BlogPost[] = [
     content: `
 <p>If you are planning a grid-connected solar installation in Thailand, you will need approval from the <strong>Provincial Electricity Authority (PEA)</strong>. The <strong>PEA solar permit process</strong> trips up a lot of property owners — not because it is impossible, but because the requirements are specific and the process varies slightly between local PEA offices. Get it right and your system is commissioned in 4–8 weeks. Get it wrong and you could be waiting months.</p>
 
-<p>This guide walks you through the complete PEA permit process for solar in Thailand, based on our experience handling hundreds of permit applications at TM Energy on Ko Phangan.</p>
+<p>This guide walks you through the complete PEA permit process for solar in Thailand, based on our experience handling hundreds of permit applications at Bustan Energy on Ko Phangan.</p>
 
 <h2>Why You Need PEA Approval</h2>
 
@@ -493,7 +493,7 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Roof plan and panel layout</strong> — A drawing showing where panels will be installed, their orientation, and total system capacity.</li>
   <li><strong>Load calculation</strong> — Documentation of your current electricity consumption, used to determine appropriate system sizing relative to your PEA meter capacity.</li>
 </ul>
-<p>This engineering work is done by your installer. At TM Energy, our in-house engineering team prepares the full technical package as part of every installation — no separate engineering fee.</p>
+<p>This engineering work is done by your installer. At Bustan Energy, our in-house engineering team prepares the full technical package as part of every installation — no separate engineering fee.</p>
 
 <h3>Step 2 — Application Submission to the Local PEA Office</h3>
 <p>The application is submitted to the PEA district office that covers your property. For Ko Phangan, this is the PEA office in Thong Sala. You will need:</p>
@@ -576,7 +576,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>Let Us Handle It for You</h2>
 
-<p>At TM Energy, we manage the complete PEA permit process for every installation we do on Ko Phangan and throughout Surat Thani Province. We prepare all engineering documents, submit the application, follow up with PEA, manage the inspection, and get your system commissioned — without you needing to visit the PEA office once.</p>
+<p>At Bustan Energy, we manage the complete PEA permit process for every installation we do on Ko Phangan and throughout Surat Thani Province. We prepare all engineering documents, submit the application, follow up with PEA, manage the inspection, and get your system commissioned — without you needing to visit the PEA office once.</p>
 
 <p><strong><a href="/contact">Contact us for a free consultation.</a></strong> We will assess your property, confirm PEA requirements, and walk you through exactly what to expect before you commit to anything.</p>
 `,
@@ -721,7 +721,7 @@ export const blogPosts: BlogPost[] = [
 
 <p>The app pays for itself within the first maintenance issue it helps you catch early. A cracked panel found during monitoring-triggered inspection costs ฿3,000 to fix. The same cracked panel, discovered 12 months later after causing a string fault, might require replacing a whole string and repairing inverter damage — ฿30,000+.</p>
 
-<h2>TM Energy Maintenance Packages</h2>
+<h2>Bustan Energy Maintenance Packages</h2>
 
 <p>We offer annual maintenance packages for all systems we install, as well as for systems installed by other contractors. Our packages include quarterly cleaning, annual technical inspection with report, 24/7 remote monitoring with alert response, and priority scheduling for repairs.</p>
 
@@ -741,7 +741,7 @@ export const blogPosts: BlogPost[] = [
     content: `
 <p>When businesses on Ko Phangan ask us about solar, the first question is always the same: "What is my return on investment?" It is the right question. Unlike homeowners, who weigh solar partly on environmental values or grid independence, businesses need the numbers to work. And on Ko Phangan — with its high island electricity tariffs, year-round solar irradiance, and growing tourist demand for sustainability — <strong>commercial solar ROI in Thailand</strong> is often compelling beyond what owners expect.</p>
 
-<p>This article presents three anonymized case studies from real TM Energy commercial installations, with full before/after bill analysis, system specifications, and ROI calculations.</p>
+<p>This article presents three anonymized case studies from real Bustan Energy commercial installations, with full before/after bill analysis, system specifications, and ROI calculations.</p>
 
 <h2>The Commercial Solar Advantage in Thailand</h2>
 
@@ -878,14 +878,14 @@ export const blogPosts: BlogPost[] = [
 
 <h2>PPA Option: Zero-Upfront Commercial Solar</h2>
 
-<p>Not all businesses have ฿1–2.5 million in capital to invest in solar, even when the ROI is excellent. That is why TM Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
+<p>Not all businesses have ฿1–2.5 million in capital to invest in solar, even when the ROI is excellent. That is why Bustan Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
 
 <p>How it works:</p>
 <ul>
-  <li><strong>Zero upfront investment</strong> — TM Energy owns and installs the solar system at no cost to you.</li>
+  <li><strong>Zero upfront investment</strong> — Bustan Energy owns and installs the solar system at no cost to you.</li>
   <li><strong>Fixed electricity rate</strong> — You buy the solar electricity at a rate 15–25% below your current PEA tariff, locked in for 10–15 years.</li>
   <li><strong>Immediate savings</strong> — Your electricity bill drops from day one, with no capital outlay.</li>
-  <li><strong>TM Energy handles everything</strong> — Maintenance, monitoring, repairs, and insurance are all included.</li>
+  <li><strong>Bustan Energy handles everything</strong> — Maintenance, monitoring, repairs, and insurance are all included.</li>
   <li><strong>Purchase option</strong> — You can buy the system at fair market value at the end of the agreement if you choose.</li>
 </ul>
 
@@ -903,7 +903,7 @@ export const blogPosts: BlogPost[] = [
 
 <p>If you meet these criteria, we can almost certainly show you a compelling business case. Our consultations are free, no-obligation, and include a preliminary financial model based on your actual electricity bills.</p>
 
-<p><strong><a href="/contact">Contact TM Energy for a free commercial solar consultation.</a></strong> We will analyse your bills, assess your property, and give you a clear picture of what solar can do for your bottom line.</p>
+<p><strong><a href="/contact">Contact Bustan Energy for a free commercial solar consultation.</a></strong> We will analyse your bills, assess your property, and give you a clear picture of what solar can do for your bottom line.</p>
 `,
   },
 ]
