@@ -23,6 +23,45 @@ export interface GridProximity {
   estimatedConnectionCost: number
 }
 
+export interface OwnerDecisionLayer {
+  legalOwnerName?: string
+  tenantName?: string
+  occupierName?: string
+  decisionMakerName?: string
+  decisionMakerRole?: string
+  decisionMakerPhone?: string
+  decisionMakerEmail?: string
+  decisionMakerLinkedIn?: string
+  companyWebsite?: string
+  ownerConfidence?: string
+  decisionMakerConfidence?: string
+  sourceName?: string
+  sourceUrl?: string
+  lastResearchedAt?: string
+  researchStatus?: string
+  operationalContactName?: string
+  operationalContactRole?: string
+  operationalContactPhone?: string
+  operationalContactEmail?: string
+  existingSolarInstallerName?: string
+  existingSolarDeveloperName?: string
+  existingSolarSourceName?: string
+  existingSolarSourceUrl?: string
+}
+
+export interface LeadResearchMetadata {
+  source?: string
+  sourceId?: string
+  latitude?: number
+  longitude?: number
+  publicTags?: Record<string, string>
+  scrapeGraphAI?: Record<string, string>
+  roofAreaNote?: string
+  salesReason?: string
+  outreachAngle?: string
+  recommendedNextStep?: string
+}
+
 export interface Property {
   id: string
   type: PropertyType
@@ -54,6 +93,10 @@ export interface Property {
   phone?: string
   website?: string
   email?: string
+  ownerDecision?: OwnerDecisionLayer
+  leadResearch?: LeadResearchMetadata
+  ownerResearchStatus?: string
+  sourceUrl?: string
   // Grid proximity (calculated)
   gridProximity?: GridProximity
   // Solar calc (calculated)

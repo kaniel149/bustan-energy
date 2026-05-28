@@ -24,15 +24,50 @@ function normalizeProject(project: CrmProject): CrmProject {
   return { ...project, status, step_number: statusInfo.step }
 }
 
+const clean = (value: unknown) => (typeof value === 'string' ? value.trim() : '')
+const firstValue = (...values: unknown[]) => values.map(clean).find(Boolean) || undefined
+
+function ownerDecisionNotes(property: Property): string[] {
+  const layer = property.ownerDecision
+  const research = property.leadResearch
+  if (!layer && !research) return []
+
+  return [
+    layer?.tenantName ? `Operator / tenant: ${layer.tenantName}` : '',
+    layer?.legalOwnerName ? `Legal owner: ${layer.legalOwnerName}` : '',
+    layer?.decisionMakerName ? `Decision maker: ${layer.decisionMakerName}` : '',
+    layer?.decisionMakerRole ? `Decision-maker role: ${layer.decisionMakerRole}` : '',
+    layer?.researchStatus ? `Owner research status: ${layer.researchStatus}` : '',
+    layer?.sourceName ? `Owner source: ${layer.sourceName}` : '',
+    layer?.sourceUrl ? `Owner source URL: ${layer.sourceUrl}` : '',
+    research?.salesReason ? `Sales reason: ${research.salesReason}` : '',
+    research?.outreachAngle ? `Outreach angle: ${research.outreachAngle}` : '',
+    research?.recommendedNextStep ? `Recommended next step: ${research.recommendedNextStep}` : '',
+  ].filter(Boolean)
+}
+
 // ── Push building from scanner to CRM ──
 export async function pushToCrm(property: Property): Promise<CrmProject | null> {
   if (!supabase) return null
 
+  const layer = property.ownerDecision
+  const clientName = firstValue(
+    layer?.decisionMakerName,
+    property.ownerName,
+    layer?.tenantName,
+    layer?.occupierName,
+    property.title,
+    `Building at ${property.lat.toFixed(4)}, ${property.lng.toFixed(4)}`
+  )
+  const clientPhone = firstValue(property.phone, layer?.decisionMakerPhone, layer?.operationalContactPhone)
+  const clientEmail = firstValue(property.email, layer?.decisionMakerEmail, layer?.operationalContactEmail)
+  const source = layer ? 'solar_intelligence_owner_layer' : 'scanner'
+
   const insert: CrmProjectInsert = {
-    client_name: property.ownerName || property.title || `Building at ${property.lat.toFixed(4)}, ${property.lng.toFixed(4)}`,
+    client_name: clientName || property.title,
     business_type: property.category || undefined,
-    client_phone: property.phone || undefined,
-    client_email: property.email || undefined,
+    client_phone: clientPhone,
+    client_email: clientEmail,
     property_address: property.location || undefined,
     building_id: property.id,
     lat: property.lat,
@@ -44,12 +79,14 @@ export async function pushToCrm(property: Property): Promise<CrmProject | null> 
     panel_count: property.panelCount ?? undefined,
     roof_area_m2: property.area ?? undefined,
     usable_area_m2: property.area != null ? property.area * 0.7 : undefined,
-    source: 'scanner',
+    source,
     notes: [
       `Source: Solar Intelligence Scanner`,
+      layer ? `Layer: Owner & Decision Maker` : '',
       `Region: ${property.region}`,
       property.solarScore ? `Solar Score: ${property.solarScore}/100` : '',
       property.gridProximity ? `Grid: ${property.gridProximity.grade} (${property.gridProximity.distanceMeters.toFixed(0)}m)` : '',
+      ...ownerDecisionNotes(property),
     ].filter(Boolean).join('\n'),
   }
 
@@ -66,8 +103,9 @@ export async function pushToCrm(property: Property): Promise<CrmProject | null> 
 
   if (data) {
     await logActivity(data.id, 'lead_created', {
-      source: 'scanner',
+      source,
       building_id: property.id,
+      owner_research_status: layer?.researchStatus,
     })
   }
 
