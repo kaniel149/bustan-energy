@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { FilterState, Property, Region, ActiveTab, PlatformView } from '../types'
+import type { FilterState, Property, Region, ActiveTab, PlatformView, ScanRequest } from '../types'
 import type { CrmProject } from '../types/crm'
 import type { User } from '@supabase/supabase-js'
 
@@ -40,6 +40,10 @@ interface AppState {
   removeRoofCandidate: (id: string) => void
   reviewCandidate: Property | null
   setReviewCandidate: (candidate: Property | null) => void
+
+  // On-demand scan requests (P4)
+  scanRequests: ScanRequest[]
+  setScanRequests: (requests: ScanRequest[]) => void
 
   // Map
   mapStyle: 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
@@ -142,6 +146,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => ({ roofCandidates: state.roofCandidates.filter((c) => c.id !== id) })),
   reviewCandidate: null,
   setReviewCandidate: (candidate) => set({ reviewCandidate: candidate }),
+
+  scanRequests: [],
+  setScanRequests: (requests) => set({ scanRequests: requests }),
 
   mapStyle: readStoredMapStyle(),
   setMapStyle: (style) => {

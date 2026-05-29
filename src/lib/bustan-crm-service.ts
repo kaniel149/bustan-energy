@@ -24,7 +24,7 @@ import {
   type OwnerDecisionDisplay,
   type PropertyInput,
 } from './owner-decision-layer'
-import type { Property } from '../types'
+import type { Property, ScanRequest } from '../types'
 
 export interface BustanPropertyRow {
   id: string
@@ -303,6 +303,46 @@ export async function confirmDetectedRoof(c: Property): Promise<WriteResult & { 
   })
   if (error) return { ok: false, error: error.message }
   return { ok: true, id: typeof data === 'string' ? data : c.id }
+}
+
+// --- On-demand scan engine (P4) --------------------------------------------
+
+export interface ScanFilters {
+  propertyType?: string
+  minRoofM2?: number
+  commercialOnly?: boolean
+}
+
+/**
+ * Queue an on-demand area scan (role-checked admin/sales/engineer via the
+ * create_scan_request RPC). A worker picks up the 'queued' row, acquires
+ * buildings in the bbox, scores/dedups/enriches, and upserts leads.
+ */
+export async function createScanRequest(
+  area: GeoJSON.Polygon,
+  bbox: number[],
+  filters: ScanFilters = {},
+): Promise<WriteResult & { id?: string }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { data, error } = await bustanSupabase.rpc('create_scan_request', {
+    p_area: area as unknown as Record<string, unknown>,
+    p_bbox: bbox,
+    p_filters: filters as unknown as Record<string, unknown>,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true, id: typeof data === 'string' ? data : undefined }
+}
+
+/** Recent scan requests (newest first) for the status panel. */
+export async function fetchScanRequests(): Promise<ScanRequest[]> {
+  if (!bustanSupabase) return []
+  const { data, error } = await bustanSupabase
+    .from('scan_requests')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(20)
+  if (error) throw error
+  return (data ?? []) as ScanRequest[]
 }
 
 // --- Site survey (engineer/admin) -----------------------------------------

@@ -6,8 +6,10 @@ import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { REGIONS } from '../../lib/regions'
 import { computeEstimatedKwp } from '../../lib/owner-decision-layer'
-import { updateRoofGeom, confirmDetectedRoof } from '../../lib/bustan-crm-service'
+import { updateRoofGeom, confirmDetectedRoof, createScanRequest, fetchScanRequests } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
+import { useBustanStore } from '../../lib/bustan-store'
+import { can } from '../../lib/bustan-permissions'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
@@ -124,6 +126,9 @@ export function SolarMap() {
   const setReviewCandidate = useAppStore((s) => s.setReviewCandidate)
   const removeRoofCandidate = useAppStore((s) => s.removeRoofCandidate)
   const showToast = useToastStore((s) => s.showToast)
+  const setScanRequests = useAppStore((s) => s.setScanRequests)
+  const role = useBustanStore((s) => s.role)
+  const canScan = can(role, 'survey.edit') || can(role, 'crm.edit')
   const filteredProperties = useFilteredProperties()
   const fittedRegion = useRef<string | null>(null)
   const isDrawingRef = useRef(false)
@@ -131,6 +136,26 @@ export function SolarMap() {
   const [drawVertexCount, setDrawVertexCount] = useState(0)
   const [savingRoof, setSavingRoof] = useState(false)
   const [confirmingCand, setConfirmingCand] = useState(false)
+  const [scanning, setScanning] = useState(false)
+
+  const handleScanArea = async () => {
+    const m = map.current
+    if (!m) return
+    const b = m.getBounds()
+    const sw = b.getSouthWest()
+    const ne = b.getNorthEast()
+    const bbox = [sw.lng, sw.lat, ne.lng, ne.lat]
+    const area: GeoJSON.Polygon = {
+      type: 'Polygon',
+      coordinates: [[[sw.lng, sw.lat], [ne.lng, sw.lat], [ne.lng, ne.lat], [sw.lng, ne.lat], [sw.lng, sw.lat]]],
+    }
+    setScanning(true)
+    const res = await createScanRequest(area, bbox, {})
+    setScanning(false)
+    if (!res.ok) { showToast(res.error || 'Failed to queue scan', 'error'); return }
+    showToast('Scan queued — leads appear as the worker runs', 'success')
+    fetchScanRequests().then(setScanRequests).catch(() => { /* ignore */ })
+  }
 
   const handleConfirmCandidate = async () => {
     if (!reviewCandidate) return
@@ -829,6 +854,16 @@ export function SolarMap() {
   return (
     <>
       <div ref={mapContainer} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+      {canScan && !drawRoofFor && !reviewCandidate && (
+        <button
+          onClick={handleScanArea}
+          disabled={scanning}
+          title="Queue a scan of the current map view"
+          className="absolute top-16 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#3B82F6]/40 text-[#60A5FA] text-xs font-semibold flex items-center gap-2 hover:bg-[#3B82F6]/20 transition-colors disabled:opacity-50 shadow-lg"
+        >
+          {scanning ? 'Queuing…' : '⊕ Scan this area'}
+        </button>
+      )}
       {drawRoofFor && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#00E676]/30 px-4 py-2.5 flex items-center gap-3 shadow-xl">
           <span className="text-white/80 text-xs">

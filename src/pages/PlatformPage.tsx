@@ -5,7 +5,7 @@ import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
 import { isBustanConnected } from '../lib/bustan-supabase'
-import { fetchBustanLeads, mapLeadToProperty } from '../lib/bustan-crm-service'
+import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests } from '../lib/bustan-crm-service'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
 import { Toast } from '../components/Toast'
@@ -28,6 +28,13 @@ const MobileBottomNav = lazy(() => import('../components/MobileNav/MobileBottomN
 const CRMDashboard = lazy(() => import('../components/CRM/Dashboard'))
 const CRMPipeline = lazy(() => import('../components/CRM/Pipeline'))
 
+const SCAN_STATUS_STYLE: Record<string, string> = {
+  queued: 'bg-white/10 text-white/60',
+  running: 'bg-[#3B82F6]/20 text-[#60A5FA]',
+  done: 'bg-[#2ED89A]/20 text-[#2ED89A]',
+  failed: 'bg-red-500/20 text-red-400',
+}
+
 function ViewLoader() {
   return (
     <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628] flex items-center justify-center">
@@ -41,6 +48,8 @@ function ViewLoader() {
 
 export default function PlatformPage() {
   const setProperties = useAppStore((s) => s.setProperties)
+  const setScanRequests = useAppStore((s) => s.setScanRequests)
+  const scanRequests = useAppStore((s) => s.scanRequests)
   const setGridData = useAppStore((s) => s.setGridData)
   const setUser = useAppStore((s) => s.setUser)
   const setCrmProjects = useAppStore((s) => s.setCrmProjects)
@@ -149,10 +158,11 @@ export default function PlatformPage() {
         setDataStatus('loaded')
       })
       .catch((err) => console.error('Failed to load Bustan leads:', err))
+    fetchScanRequests().then((r) => { if (!cancelled) setScanRequests(r) }).catch(() => { /* ignore */ })
     return () => {
       cancelled = true
     }
-  }, [user, setProperties, setBustanLeads, setBustanRole])
+  }, [user, setProperties, setBustanLeads, setBustanRole, setScanRequests])
 
   const isMapView = platformView === 'map'
 
@@ -264,6 +274,30 @@ export default function PlatformPage() {
         <div className="absolute bottom-4 right-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-red-500/30 px-4 py-2 flex items-center gap-2 md:bottom-4 bottom-16">
           <span className="text-red-400 text-xs">Data loading failed — map only mode</span>
           <button onClick={() => window.location.reload()} className="text-[10px] text-[#E8A820] hover:underline">Retry</button>
+        </div>
+      )}
+
+      {/* Scan status — only in map view, when there are scans */}
+      {isMapView && scanRequests.length > 0 && (
+        <div className="absolute top-16 right-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 w-56 md:top-16">
+          <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Area Scans</h4>
+          <div className="space-y-1.5 max-h-48 overflow-y-auto">
+            {scanRequests.slice(0, 8).map((s) => (
+              <div key={s.id} className="flex items-center justify-between gap-2 text-[11px]">
+                <span className="text-white/60 truncate">
+                  {new Date(s.created_at).toLocaleDateString()} {new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                <span className="flex items-center gap-1 shrink-0">
+                  {typeof s.counts?.inserted === 'number' && (
+                    <span className="text-white/40">+{s.counts.inserted}</span>
+                  )}
+                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${SCAN_STATUS_STYLE[s.status]}`}>
+                    {s.status}
+                  </span>
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
