@@ -6,7 +6,7 @@ import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { REGIONS } from '../../lib/regions'
 import { computeEstimatedKwp } from '../../lib/owner-decision-layer'
-import { updateRoofGeom } from '../../lib/bustan-crm-service'
+import { updateRoofGeom, confirmDetectedRoof } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
@@ -119,6 +119,10 @@ export function SolarMap() {
   const drawRoofFor = useAppStore((s) => s.drawRoofFor)
   const setDrawRoofFor = useAppStore((s) => s.setDrawRoofFor)
   const setProperties = useAppStore((s) => s.setProperties)
+  const roofCandidates = useAppStore((s) => s.roofCandidates)
+  const reviewCandidate = useAppStore((s) => s.reviewCandidate)
+  const setReviewCandidate = useAppStore((s) => s.setReviewCandidate)
+  const removeRoofCandidate = useAppStore((s) => s.removeRoofCandidate)
   const showToast = useToastStore((s) => s.showToast)
   const filteredProperties = useFilteredProperties()
   const fittedRegion = useRef<string | null>(null)
@@ -126,6 +130,25 @@ export function SolarMap() {
   const finishRef = useRef<null | (() => void)>(null)
   const [drawVertexCount, setDrawVertexCount] = useState(0)
   const [savingRoof, setSavingRoof] = useState(false)
+  const [confirmingCand, setConfirmingCand] = useState(false)
+
+  const handleConfirmCandidate = async () => {
+    if (!reviewCandidate) return
+    setConfirmingCand(true)
+    const res = await confirmDetectedRoof(reviewCandidate)
+    setConfirmingCand(false)
+    if (!res.ok) { showToast(res.error || 'Failed to confirm roof', 'error'); return }
+    const promoted = { ...reviewCandidate, id: res.id || reviewCandidate.id }
+    setProperties([...useAppStore.getState().properties, promoted])
+    removeRoofCandidate(reviewCandidate.id)
+    setReviewCandidate(null)
+    showToast('Roof confirmed — lead created', 'success')
+  }
+  const handleRejectCandidate = () => {
+    if (!reviewCandidate) return
+    removeRoofCandidate(reviewCandidate.id)
+    setReviewCandidate(null)
+  }
 
   const regionConfig = REGIONS[filters.region]
 
@@ -436,6 +459,64 @@ export function SolarMap() {
       roofHandlers.current = []
     }
   }, [filteredProperties, filters.showRoofDetection, properties, setSelectedProperty])
+
+  // Detected-roof candidate layer (review) — P3
+  const candHandlers = useRef<Array<{ type: LayerMouseEventType; layer: string; handler: LayerMouseHandler }>>([])
+  useEffect(() => {
+    const m = map.current
+    if (!m) return
+
+    const CAND_LAYERS = ['cand-fill', 'cand-outline']
+
+    const setup = () => {
+      for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
+      candHandlers.current = []
+      for (const id of CAND_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('cand-src')) m.removeSource('cand-src')
+
+      if (!filters.showRoofDetection || roofCandidates.length === 0) return
+
+      const features = roofCandidates
+        .map((c) => buildRoofFeature(c))
+        .filter((f): f is GeoJSON.Feature => f !== null)
+      if (features.length === 0) return
+
+      m.addSource('cand-src', { type: 'geojson', data: { type: 'FeatureCollection', features } })
+      const beforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters'].find((id) => m.getLayer(id))
+      m.addLayer({
+        id: 'cand-fill', type: 'fill', source: 'cand-src',
+        paint: { 'fill-color': '#C026D3', 'fill-opacity': 0.3 },
+      }, beforeId)
+      m.addLayer({
+        id: 'cand-outline', type: 'line', source: 'cand-src',
+        paint: { 'line-color': '#E879F9', 'line-width': 1.5, 'line-dasharray': [2, 2] },
+      }, beforeId)
+
+      const on = (type: LayerMouseEventType, layer: string, handler: LayerMouseHandler) => {
+        m.on(type, layer, handler)
+        candHandlers.current.push({ type, layer, handler })
+      }
+      on('mouseenter', 'cand-fill', () => { m.getCanvas().style.cursor = 'pointer' })
+      on('mouseleave', 'cand-fill', () => { m.getCanvas().style.cursor = '' })
+      on('click', 'cand-fill', (e: maplibregl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+        if (isDrawingRef.current) return
+        const f = e.features?.[0]
+        if (!f) return
+        const id = (f.properties as Record<string, string>).id
+        const cand = useAppStore.getState().roofCandidates.find((c) => c.id === id)
+        if (cand) setReviewCandidate(cand)
+      })
+    }
+
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    return () => {
+      if (!m) return
+      for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
+      candHandlers.current = []
+    }
+  }, [roofCandidates, filters.showRoofDetection, setReviewCandidate])
 
   // Roof draw mode — P2 (custom polygon: click vertices, double-click/Finish to save)
   useEffect(() => {
@@ -766,6 +847,29 @@ export function SolarMap() {
             className="px-3 py-1 rounded-lg bg-white/5 text-white/60 text-xs hover:bg-white/10 transition-colors"
           >
             Cancel
+          </button>
+        </div>
+      )}
+      {reviewCandidate && !drawRoofFor && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#C026D3]/40 px-4 py-2.5 flex items-center gap-3 shadow-xl">
+          <span className="text-white/80 text-xs max-w-[220px] truncate">
+            Detected: <strong className="text-[#E879F9]">{reviewCandidate.title}</strong>
+            {reviewCandidate.area ? <span className="text-white/40"> · {Math.round(reviewCandidate.area).toLocaleString()} m²</span> : null}
+            {reviewCandidate.capacityKwp ? <span className="text-white/40"> · {Math.round(reviewCandidate.capacityKwp)} kWp</span> : null}
+          </span>
+          <button
+            onClick={handleConfirmCandidate}
+            disabled={confirmingCand}
+            className="px-3 py-1 rounded-lg bg-[#C026D3]/25 text-[#E879F9] text-xs font-semibold disabled:opacity-40 hover:bg-[#C026D3]/35 transition-colors"
+          >
+            {confirmingCand ? 'Saving…' : 'Confirm'}
+          </button>
+          <button
+            onClick={handleRejectCandidate}
+            disabled={confirmingCand}
+            className="px-3 py-1 rounded-lg bg-white/5 text-white/60 text-xs hover:bg-white/10 transition-colors disabled:opacity-40"
+          >
+            Reject
           </button>
         </div>
       )}

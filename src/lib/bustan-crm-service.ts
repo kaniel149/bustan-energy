@@ -277,6 +277,34 @@ export async function updateRoofGeom(
   return { ok: true }
 }
 
+/**
+ * Confirm an offline-detected roof candidate → insert a new lead (property +
+ * 'new' pipeline row + pending owner_decision) via the role-checked
+ * SECURITY DEFINER RPC `bustan.insert_detected_roof` (admin/sales/engineer).
+ * Idempotent on the candidate id. See bustan-migrations/003.
+ */
+export async function confirmDetectedRoof(c: Property): Promise<WriteResult & { id?: string }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const payload = {
+    id: c.id,
+    title: c.title,
+    location: c.location,
+    category: c.category,
+    area: c.area,
+    solarScore: c.solarScore,
+    lat: c.lat,
+    lng: c.lng,
+    capacityKwp: c.capacityKwp,
+    priority: c.priority,
+    roofGeom: c.roofGeom ?? null,
+  }
+  const { data, error } = await bustanSupabase.rpc('insert_detected_roof', {
+    p: payload as unknown as Record<string, unknown>,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true, id: typeof data === 'string' ? data : c.id }
+}
+
 // --- Site survey (engineer/admin) -----------------------------------------
 
 export interface SiteSurvey {

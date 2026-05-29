@@ -113,6 +113,21 @@ export default function PlatformPage() {
     init()
   }, [setProperties, setGridData])
 
+  // Load offline-detector roof candidates (best-effort; file may be absent).
+  // Reviewed/confirmed on the map (P3) — confirming inserts a real lead.
+  const setRoofCandidates = useAppStore((s) => s.setRoofCandidates)
+  useEffect(() => {
+    let cancelled = false
+    fetch('/data/roof-candidates.json')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows) => {
+        if (cancelled || !Array.isArray(rows)) return
+        setRoofCandidates(rows.map((r) => ({ ...r, type: 'roof', status: 'private' })))
+      })
+      .catch(() => { /* no candidate file — fine */ })
+    return () => { cancelled = true }
+  }, [setRoofCandidates])
+
   // Load the live Bustan CRM leads (bustan schema) once authenticated.
   // Additive + reversible: RLS returns nothing when unauthenticated, so the
   // static demo data above is preserved; real 85 leads replace it on sign-in.

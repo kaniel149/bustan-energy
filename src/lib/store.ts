@@ -34,6 +34,13 @@ interface AppState {
   drawRoofFor: string | null
   setDrawRoofFor: (propertyId: string | null) => void
 
+  // Detected-roof review (P3): candidates from the offline detector + the one under review
+  roofCandidates: Property[]
+  setRoofCandidates: (candidates: Property[]) => void
+  removeRoofCandidate: (id: string) => void
+  reviewCandidate: Property | null
+  setReviewCandidate: (candidate: Property | null) => void
+
   // Map
   mapStyle: 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
   setMapStyle: (style: AppState['mapStyle']) => void
@@ -128,6 +135,13 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   drawRoofFor: null,
   setDrawRoofFor: (propertyId) => set({ drawRoofFor: propertyId }),
+
+  roofCandidates: [],
+  setRoofCandidates: (candidates) => set({ roofCandidates: candidates }),
+  removeRoofCandidate: (id) =>
+    set((state) => ({ roofCandidates: state.roofCandidates.filter((c) => c.id !== id) })),
+  reviewCandidate: null,
+  setReviewCandidate: (candidate) => set({ reviewCandidate: candidate }),
 
   mapStyle: readStoredMapStyle(),
   setMapStyle: (style) => {
