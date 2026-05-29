@@ -257,8 +257,11 @@ export default function PlatformPage() {
         <div className="absolute bottom-4 left-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 md:bottom-4 bottom-16">
           <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Legend</h4>
           <div className="space-y-1.5">
-            <LegendItem shape="square" color="#2ED89A" label="Roof (Solar Potential)" />
-            <LegendItem shape="circle" color="#E8A820" label="Land (For Sale)" />
+            <LegendItem shape="circle" color="#00E676" label="Roof — Priority A" />
+            <LegendItem shape="circle" color="#FFD600" label="Roof — Priority B" />
+            <LegendItem shape="circle" color="#FF9100" label="Roof — Priority C" />
+            <LegendItem shape="circle" color="#FF3D00" label="Roof — Priority D" />
+            <LegendItem shape="square" color="#E8A820" label="Land (grid-grade colored)" />
             <LegendItem shape="line" color="#ff4444" label="Substation" />
             <LegendItem shape="line" color="#ff8800" label="Transmission Line" />
             <LegendItem shape="line" color="#ffcc00" label="Distribution Line" />

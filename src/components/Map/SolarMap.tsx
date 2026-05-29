@@ -76,8 +76,10 @@ export function SolarMap() {
   const mapStyle = useAppStore((s) => s.mapStyle)
   const gridData = useAppStore((s) => s.gridData)
   const properties = useAppStore((s) => s.properties)
+  const selectedProperty = useAppStore((s) => s.selectedProperty)
   const setSelectedProperty = useAppStore((s) => s.setSelectedProperty)
   const filteredProperties = useFilteredProperties()
+  const fittedRegion = useRef<string | null>(null)
 
   const regionConfig = REGIONS[filters.region]
 
@@ -130,6 +132,34 @@ export function SolarMap() {
   useEffect(() => {
     map.current?.flyTo({ center: regionConfig.center, zoom: regionConfig.zoom, duration: 1500 })
   }, [regionConfig])
+
+  // Fit map to all visible leads once per region (after data loads)
+  useEffect(() => {
+    const m = map.current
+    if (!m || filteredProperties.length === 0) return
+    if (fittedRegion.current === filters.region) return
+    const fit = () => {
+      const bounds = new maplibregl.LngLatBounds()
+      for (const p of filteredProperties) bounds.extend([p.lng, p.lat])
+      if (!bounds.isEmpty()) {
+        m.fitBounds(bounds, { padding: 80, maxZoom: 15, duration: 1000 })
+        fittedRegion.current = filters.region
+      }
+    }
+    if (m.isStyleLoaded()) fit()
+    else m.once('load', fit)
+  }, [filteredProperties, filters.region])
+
+  // Fly to the selected property (list/sidebar ↔ map sync)
+  useEffect(() => {
+    const m = map.current
+    if (!m || !selectedProperty) return
+    m.flyTo({
+      center: [selectedProperty.lng, selectedProperty.lat],
+      zoom: Math.max(m.getZoom(), 16),
+      duration: 1200,
+    })
+  }, [selectedProperty])
 
   // Buffer zones layer (below grid + properties)
   useEffect(() => {

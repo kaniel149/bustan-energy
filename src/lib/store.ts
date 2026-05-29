@@ -3,6 +3,22 @@ import type { FilterState, Property, Region, ActiveTab, PlatformView } from '../
 import type { CrmProject } from '../types/crm'
 import type { User } from '@supabase/supabase-js'
 
+type MapStyleId = 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
+const MAP_STYLE_KEY = 'bustan:mapStyle'
+const MAP_STYLES: MapStyleId[] = ['sentinel2024', 'satellite', 'mapbox', 'esri', 'street']
+
+function readStoredMapStyle(): MapStyleId {
+  try {
+    const v = localStorage.getItem(MAP_STYLE_KEY) as MapStyleId | null
+    if (v && MAP_STYLES.includes(v)) return v
+  } catch { /* SSR / private mode */ }
+  return 'sentinel2024'
+}
+
+function persistMapStyle(style: MapStyleId): void {
+  try { localStorage.setItem(MAP_STYLE_KEY, style) } catch { /* ignore */ }
+}
+
 interface AppState {
   // Filters
   filters: FilterState
@@ -105,13 +121,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   selectedProperty: null,
   setSelectedProperty: (property) => set({ selectedProperty: property }),
 
-  mapStyle: 'sentinel2024',
-  setMapStyle: (style) => set({ mapStyle: style }),
+  mapStyle: readStoredMapStyle(),
+  setMapStyle: (style) => {
+    persistMapStyle(style)
+    set({ mapStyle: style })
+  },
   cycleMapStyle: () =>
     set((state) => {
-      const order: AppState['mapStyle'][] = ['sentinel2024', 'mapbox', 'satellite', 'esri', 'street']
-      const idx = order.indexOf(state.mapStyle)
-      return { mapStyle: order[(idx + 1) % order.length] }
+      const idx = MAP_STYLES.indexOf(state.mapStyle)
+      const next = MAP_STYLES[(idx + 1) % MAP_STYLES.length]
+      persistMapStyle(next)
+      return { mapStyle: next }
     }),
 
   properties: [],
