@@ -72,7 +72,7 @@ Branch `feat/platform-bustan-crm` (off clean `main`). 39 tests, typecheck + buil
 ### Remaining
 - **Phase 4 follow-on** — optional: export the Quote as a branded PDF (jspdf via `generate-proposal.ts`); attach roof photos to surveys (storage).
 - **Phase 5** — Dashboards (funnel/win-rate/pipeline/reachability) on bustan data; activity-log view; WhatsApp/email alerts; search/filter/bulk. Decide: re-point `Pipeline`/`Dashboard`/`CRMPanel` (currently `crm_projects`) to the bustan model, or build bustan dashboards fresh from `summarizeCrmRecords`.
-- **Phase 6** — i18n HE/EN/TH; mobile; enrichment; 505-lead reseed.
+- ✅ **i18n HE/EN/TH DONE** (`c01b727`) — framework extended: `Lang=en|th|he`, RTL (`<html dir>`), deep-merge EN fallback (no MT of the Thai marketing body), `crm` namespace (en+he), `/he` routes + `/he/platform`, 3-way switch + platform toggle. CRM components render Hebrew RTL. Stage labels + survey field micro-labels left English (follow-up). Remaining Phase 6: enrichment; 505-lead reseed.
 - ✅ **Phase 7 DONE** (bustan-energy repo PR #1, commit `d8fad6b`) — retired old static `/crm`: vercel redirect `/crm`→`/platform`, removed build copyEntry (kept shared assets), archived UI to `archive/crm-ui/`, updated all `/crm` links → `/platform`. Backend/data + `/platform` untouched.
 
 ## Verification gate (every phase, per handoff §6)
