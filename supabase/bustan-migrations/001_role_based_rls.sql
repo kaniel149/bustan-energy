@@ -14,10 +14,11 @@
 -- Reads stay open to any authenticated user. activity_log stays read-only from
 -- the client (written by the trg_log_crm_change trigger, SECURITY DEFINER).
 --
--- ⚠️ BEFORE APPLYING: app_users is currently empty. Role-based writes require the
--- caller to have an app_users row. The signup trigger creates it (k@kanielt.com →
--- admin). Apply this together with a real login test so admin writes are confirmed
--- working before relying on the restriction.
+-- ✅ APPLIED + VERIFIED 2026-05-29 (Supabase migration `bustan_role_based_rls`).
+-- Verified end-to-end via the Auth REST API with a throwaway test user (since
+-- deleted): viewer → reads 85 / write blocked (0 rows); admin → write allowed +
+-- activity_log captured actor=auth.uid(). app_users is empty until first signup;
+-- the trigger creates the row (k@kanielt.com → admin, others → viewer).
 
 -- Helper: the current user's role (null if no app_users row yet).
 create or replace function bustan.current_role()

@@ -57,9 +57,14 @@ Branch `feat/platform-bustan-crm` (off clean `main`). 39 tests, typecheck + buil
 - ✅ **Phase 4** `1657ca7` — lead detail: service fetch/upsert for `site_surveys` + `om_sites`; `BustanLeadEditor` → tabbed panel (CRM | Quote | Survey | O&M-when-won). Quote tab reuses tested `bom.ts` (line items + equipment + labor + total). DB-verified: site_surveys upsert.
 - ✅ **Phase 5** `42502da` — `fetchActivityLog`; `BustanDashboard` (KPIs, stage funnel, reachability, top areas, activity feed) from the bustan store; rendered in the dashboard view when live leads are loaded. WhatsApp/email alerts deferred (need an edge function/cron — not a client concern).
 
-**Still pending in-browser verification (needs a login):** sign-in → 85 on map; stage change → activity_log row with actor; viewer edit blocked. The DB + mapping sides are proven; only the authenticated client round-trip is unconfirmed.
+**✅ Authenticated round-trip VERIFIED (2026-05-29)** via the Auth REST API with a throwaway test user (signup → JWT → PostgREST, the same path the SPA uses; user since deleted, demo lead + activity_log restored):
+- viewer login → reads **85 leads** (`content-range 0-84/85`); anonymous blocked
+- stage change as admin → `crm_pipeline` updated → `activity_log` row with **actor = auth.uid()**
+- **viewer write blocked** (0 rows) after the RLS migration; viewer reads still work
 
-**⚠️ RLS gap found (verified via pg_policies):** RLS is enabled on all 7 bustan tables; **reads** are restricted to `authenticated` (anon blocked ✅). But **writes** currently allow ANY authenticated user — the role matrix is NOT enforced server-side, only by the client `can()` gate. So a `viewer` could bypass the UI and write. Fix prepared as `supabase/bustan-migrations/001_role_based_rls.sql` (role-based write policies via a `bustan.current_role()` helper). **Not applied** — it changes production security on the shared DB and should be applied together with a login test (app_users is empty until first signup; role-based writes need an app_users row). Until applied, "viewer read-only" is client-side only.
+**✅ RLS role enforcement APPLIED** (`supabase/bustan-migrations/001_role_based_rls.sql`, Supabase migration `bustan_role_based_rls`). Before: writes allowed any authenticated user (role gap — only the client `can()` gated it). Now: role-based write policies via `bustan.current_role()` enforce the matrix server-side (admin=all, sales=crm/owner, engineer=survey/om, viewer=read-only). Reads unchanged. Verified as above.
+
+**Remaining browser-only nicety:** confirming the same flow through the actual SPA UI in a browser (the data/auth/RLS layers are now proven; the UI calls the identical client paths).
 
 **Architecture note for Phase 4+:** the existing `Pipeline`/`Dashboard`/`CRMPanel` use a *separate* `crm_projects` model (TM Energy, `crm-service.ts`). The bustan leads currently flow through `properties` + `BustanLeadEditor` (map sidebar). Re-pointing the Pipeline board + Dashboard to the bustan model is the main Phase 4/5 task and is a sizeable refactor — decide whether to migrate those components or keep the map-sidebar CRM.
 
