@@ -12,6 +12,7 @@ import { Toast } from '../components/Toast'
 const BustanLeadEditor = lazy(() =>
   import('../components/CRM/BustanLeadEditor').then((m) => ({ default: m.BustanLeadEditor })),
 )
+const BustanDashboard = lazy(() => import('../components/CRM/BustanDashboard'))
 
 const SolarMap = lazy(() => import('../components/Map/SolarMap').then((m) => ({ default: m.SolarMap })))
 const FilterBar = lazy(() => import('../components/FilterBar/FilterBar').then((m) => ({ default: m.FilterBar })))
@@ -113,6 +114,7 @@ export default function PlatformPage() {
   // static demo data above is preserved; real 85 leads replace it on sign-in.
   const setBustanLeads = useBustanStore((s) => s.setLeads)
   const setBustanRole = useBustanStore((s) => s.setRole)
+  const hasBustanLeads = useBustanStore((s) => Object.keys(s.leadsById).length > 0)
   useEffect(() => {
     if (!user || !isBustanConnected()) return
     let cancelled = false
@@ -178,11 +180,11 @@ export default function PlatformPage() {
         </div>
       )}
 
-      {/* Dashboard view */}
+      {/* Dashboard view — Bustan dashboard when live leads are loaded, else legacy */}
       {platformView === 'dashboard' && (
         <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628] overflow-y-auto">
           <Suspense fallback={<ViewLoader />}>
-            <CRMDashboard />
+            {hasBustanLeads ? <BustanDashboard /> : <CRMDashboard />}
           </Suspense>
         </div>
       )}

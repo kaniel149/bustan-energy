@@ -313,3 +313,28 @@ export async function upsertOmSite(site: OmSite): Promise<WriteResult> {
   if (error) return { ok: false, error: error.message }
   return { ok: true }
 }
+
+// --- Activity log (read-only audit trail) ---------------------------------
+
+export interface ActivityRow {
+  id: number
+  property_id: string
+  actor: string | null
+  action: string
+  field: string | null
+  old_value: string | null
+  new_value: string | null
+  at: string
+}
+
+/** Most recent activity_log entries (append-only, written by the DB trigger). */
+export async function fetchActivityLog(limit = 50): Promise<ActivityRow[]> {
+  if (!bustanSupabase) return []
+  const { data, error } = await bustanSupabase
+    .from('activity_log')
+    .select('*')
+    .order('at', { ascending: false })
+    .limit(limit)
+  if (error || !data) return []
+  return data as ActivityRow[]
+}
