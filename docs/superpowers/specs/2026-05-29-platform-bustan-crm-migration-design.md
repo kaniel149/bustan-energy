@@ -55,6 +55,7 @@ Branch `feat/platform-bustan-crm` (off clean `main`). 39 tests, typecheck + buil
 - ✅ **Phase 2b** `d7d96bf` — PlatformPage loads live leads on sign-in (additive/reversible).
 - ✅ **Phase 3** `2d66a02` — `bustan-permissions` (role matrix + can, 6 tests), write service (updateLeadPipeline/Stage/assignLead), toast-store + Toast, bustan-store, `BustanLeadEditor` (role-gated, optimistic). DB-verified: stage change → `trg_log_crm_change` → activity_log.
 - ✅ **Phase 4** `1657ca7` — lead detail: service fetch/upsert for `site_surveys` + `om_sites`; `BustanLeadEditor` → tabbed panel (CRM | Quote | Survey | O&M-when-won). Quote tab reuses tested `bom.ts` (line items + equipment + labor + total). DB-verified: site_surveys upsert.
+- ✅ **Phase 5** `42502da` — `fetchActivityLog`; `BustanDashboard` (KPIs, stage funnel, reachability, top areas, activity feed) from the bustan store; rendered in the dashboard view when live leads are loaded. WhatsApp/email alerts deferred (need an edge function/cron — not a client concern).
 
 **Still pending in-browser verification (needs a login):** sign-in → 85 on map; stage change → activity_log row with actor; viewer edit blocked. The DB + mapping sides are proven; only the authenticated client round-trip is unconfirmed.
 
