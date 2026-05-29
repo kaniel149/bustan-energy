@@ -117,7 +117,7 @@ export function BustanLeadEditor() {
   ]
 
   return (
-    <div className="absolute top-4 right-4 z-30 w-[320px] max-h-[85vh] overflow-y-auto rounded-2xl bg-[#0A1929]/95 backdrop-blur-xl border border-white/10 shadow-2xl p-4 space-y-3">
+    <div className="fixed inset-x-2 bottom-2 top-auto sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-4 sm:right-4 z-30 w-auto sm:w-[320px] max-h-[70vh] sm:max-h-[85vh] overflow-y-auto rounded-2xl bg-[#0A1929]/95 backdrop-blur-xl border border-white/10 shadow-2xl p-4 space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-white truncate">{selected.title}</h3>
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60">

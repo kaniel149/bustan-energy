@@ -13,6 +13,7 @@ const BustanLeadEditor = lazy(() =>
   import('../components/CRM/BustanLeadEditor').then((m) => ({ default: m.BustanLeadEditor })),
 )
 const BustanDashboard = lazy(() => import('../components/CRM/BustanDashboard'))
+const BustanLeadsTable = lazy(() => import('../components/CRM/BustanLeadsTable'))
 
 const SolarMap = lazy(() => import('../components/Map/SolarMap').then((m) => ({ default: m.SolarMap })))
 const FilterBar = lazy(() => import('../components/FilterBar/FilterBar').then((m) => ({ default: m.FilterBar })))
@@ -164,11 +165,19 @@ export default function PlatformPage() {
       {/* Global toast (CRM writes) */}
       <Toast />
 
-      {/* Scanner view */}
+      {/* Scanner view — Bustan leads table when live leads loaded, else legacy scanner */}
       {platformView === 'scanner' && (
-        <Suspense fallback={<ViewLoader />}>
-          <Scanner />
-        </Suspense>
+        hasBustanLeads ? (
+          <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628]">
+            <Suspense fallback={<ViewLoader />}>
+              <BustanLeadsTable />
+            </Suspense>
+          </div>
+        ) : (
+          <Suspense fallback={<ViewLoader />}>
+            <Scanner />
+          </Suspense>
+        )
       )}
 
       {/* Pipeline view */}
