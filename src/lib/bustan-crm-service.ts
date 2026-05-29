@@ -251,3 +251,65 @@ export function updateLeadStage(propertyId: string, stage: string): Promise<Writ
 export function assignLead(propertyId: string, assignedTo: string | null): Promise<WriteResult> {
   return updateLeadPipeline(propertyId, { assigned_to: assignedTo })
 }
+
+// --- Site survey (engineer/admin) -----------------------------------------
+
+export interface SiteSurvey {
+  property_id: string
+  roof_photos: boolean
+  pea_bill: boolean
+  battery_space: boolean
+  shading: string
+  access: string
+  main_board: string
+  notes: string
+  recommendation: 'go' | 'maybe' | 'no-go' | ''
+}
+
+export async function fetchSurvey(propertyId: string): Promise<SiteSurvey | null> {
+  if (!bustanSupabase) return null
+  const { data, error } = await bustanSupabase
+    .from('site_surveys')
+    .select('*')
+    .eq('property_id', propertyId)
+    .maybeSingle()
+  if (error || !data) return null
+  return data as SiteSurvey
+}
+
+export async function upsertSurvey(survey: SiteSurvey): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.from('site_surveys').upsert(survey, { onConflict: 'property_id' })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
+}
+
+// --- O&M monitoring (engineer/admin, stage=won) ---------------------------
+
+export interface OmSite {
+  property_id: string
+  commissioned_at: string | null
+  monitoring_status: 'online' | 'offline' | 'alert' | ''
+  last_reading_kwh: number | null
+  performance_ratio: number | null
+  next_maintenance: string | null
+  notes: string
+}
+
+export async function fetchOmSite(propertyId: string): Promise<OmSite | null> {
+  if (!bustanSupabase) return null
+  const { data, error } = await bustanSupabase
+    .from('om_sites')
+    .select('*')
+    .eq('property_id', propertyId)
+    .maybeSingle()
+  if (error || !data) return null
+  return data as OmSite
+}
+
+export async function upsertOmSite(site: OmSite): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.from('om_sites').upsert(site, { onConflict: 'property_id' })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
+}
