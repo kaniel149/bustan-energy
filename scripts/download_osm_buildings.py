@@ -215,6 +215,13 @@ def build_record(el: Dict) -> Optional[Dict]:
     osm_type = el.get("type", "way")
     osm_id = el.get("id", 0)
 
+    # Footprint polygon (GeoJSON ring, [lng,lat], closed) — surfaced as a
+    # reviewable roof candidate on the /platform map (P3).
+    ring = [[round(pt["lon"], 7), round(pt["lat"], 7)] for pt in geom if "lon" in pt and "lat" in pt]
+    if len(ring) >= 3 and ring[0] != ring[-1]:
+        ring.append(ring[0])
+    roof_geom = {"type": "Polygon", "coordinates": [ring]} if len(ring) >= 4 else None
+
     return {
         "id": random_id(),
         "osmId": f"{osm_type}/{osm_id}",
@@ -226,6 +233,7 @@ def build_record(el: Dict) -> Optional[Dict]:
         "lat": round(lat, 7),
         "lng": round(lng, 7),
         "area": round(area, 1),
+        "roofGeom": roof_geom,
         "usableArea": usable,
         "capacityKwp": kwp,
         "panelCount": panels,

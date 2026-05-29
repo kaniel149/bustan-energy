@@ -1,9 +1,15 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { area as turfArea } from '@turf/area'
 import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { REGIONS } from '../../lib/regions'
+import { computeEstimatedKwp } from '../../lib/owner-decision-layer'
+import { updateRoofGeom, confirmDetectedRoof, createScanRequest, fetchScanRequests } from '../../lib/bustan-crm-service'
+import { useToastStore } from '../../lib/toast-store'
+import { useBustanStore } from '../../lib/bustan-store'
+import { can } from '../../lib/bustan-permissions'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
@@ -67,6 +73,40 @@ function buildBufferFeatures(
   return { type: 'FeatureCollection', features: circles }
 }
 
+// Build a roof footprint feature for a property.
+// Uses persisted roofGeom (P2+) when present; otherwise synthesizes a square
+// footprint sized by roof area (m²) centered on the property — an interim
+// read-only overlay until real geometry is drawn/detected.
+function buildRoofFeature(p: {
+  id: string; lat: number; lng: number; area?: number; solarScore?: number
+  priority?: string; title: string; roofGeom?: GeoJSON.Polygon | GeoJSON.MultiPolygon
+}): GeoJSON.Feature | null {
+  const props = {
+    id: p.id,
+    title: p.title,
+    solarScore: p.solarScore || 0,
+    priority: p.priority || 'B',
+    synthetic: p.roofGeom ? 0 : 1,
+  }
+  if (p.roofGeom) {
+    return { type: 'Feature', geometry: p.roofGeom, properties: props }
+  }
+  const area = Number(p.area)
+  if (!Number.isFinite(p.lat) || !Number.isFinite(p.lng)) return null
+  const side = Math.sqrt(Number.isFinite(area) && area > 0 ? area : 100) // m; default ~10x10m
+  const half = side / 2
+  const dLat = half / 110574
+  const dLng = half / (111320 * Math.cos((p.lat * Math.PI) / 180))
+  const ring: [number, number][] = [
+    [p.lng - dLng, p.lat - dLat],
+    [p.lng + dLng, p.lat - dLat],
+    [p.lng + dLng, p.lat + dLat],
+    [p.lng - dLng, p.lat + dLat],
+    [p.lng - dLng, p.lat - dLat],
+  ]
+  return { type: 'Feature', geometry: { type: 'Polygon', coordinates: [ring] }, properties: props }
+}
+
 export function SolarMap() {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<maplibregl.Map | null>(null)
@@ -76,8 +116,64 @@ export function SolarMap() {
   const mapStyle = useAppStore((s) => s.mapStyle)
   const gridData = useAppStore((s) => s.gridData)
   const properties = useAppStore((s) => s.properties)
+  const selectedProperty = useAppStore((s) => s.selectedProperty)
   const setSelectedProperty = useAppStore((s) => s.setSelectedProperty)
+  const drawRoofFor = useAppStore((s) => s.drawRoofFor)
+  const setDrawRoofFor = useAppStore((s) => s.setDrawRoofFor)
+  const setProperties = useAppStore((s) => s.setProperties)
+  const roofCandidates = useAppStore((s) => s.roofCandidates)
+  const reviewCandidate = useAppStore((s) => s.reviewCandidate)
+  const setReviewCandidate = useAppStore((s) => s.setReviewCandidate)
+  const removeRoofCandidate = useAppStore((s) => s.removeRoofCandidate)
+  const showToast = useToastStore((s) => s.showToast)
+  const setScanRequests = useAppStore((s) => s.setScanRequests)
+  const role = useBustanStore((s) => s.role)
+  const canScan = can(role, 'survey.edit') || can(role, 'crm.edit')
   const filteredProperties = useFilteredProperties()
+  const fittedRegion = useRef<string | null>(null)
+  const isDrawingRef = useRef(false)
+  const finishRef = useRef<null | (() => void)>(null)
+  const [drawVertexCount, setDrawVertexCount] = useState(0)
+  const [savingRoof, setSavingRoof] = useState(false)
+  const [confirmingCand, setConfirmingCand] = useState(false)
+  const [scanning, setScanning] = useState(false)
+
+  const handleScanArea = async () => {
+    const m = map.current
+    if (!m) return
+    const b = m.getBounds()
+    const sw = b.getSouthWest()
+    const ne = b.getNorthEast()
+    const bbox = [sw.lng, sw.lat, ne.lng, ne.lat]
+    const area: GeoJSON.Polygon = {
+      type: 'Polygon',
+      coordinates: [[[sw.lng, sw.lat], [ne.lng, sw.lat], [ne.lng, ne.lat], [sw.lng, ne.lat], [sw.lng, sw.lat]]],
+    }
+    setScanning(true)
+    const res = await createScanRequest(area, bbox, {})
+    setScanning(false)
+    if (!res.ok) { showToast(res.error || 'Failed to queue scan', 'error'); return }
+    showToast('Scan queued — leads appear as the worker runs', 'success')
+    fetchScanRequests().then(setScanRequests).catch(() => { /* ignore */ })
+  }
+
+  const handleConfirmCandidate = async () => {
+    if (!reviewCandidate) return
+    setConfirmingCand(true)
+    const res = await confirmDetectedRoof(reviewCandidate)
+    setConfirmingCand(false)
+    if (!res.ok) { showToast(res.error || 'Failed to confirm roof', 'error'); return }
+    const promoted = { ...reviewCandidate, id: res.id || reviewCandidate.id }
+    setProperties([...useAppStore.getState().properties, promoted])
+    removeRoofCandidate(reviewCandidate.id)
+    setReviewCandidate(null)
+    showToast('Roof confirmed — lead created', 'success')
+  }
+  const handleRejectCandidate = () => {
+    if (!reviewCandidate) return
+    removeRoofCandidate(reviewCandidate.id)
+    setReviewCandidate(null)
+  }
 
   const regionConfig = REGIONS[filters.region]
 
@@ -130,6 +226,34 @@ export function SolarMap() {
   useEffect(() => {
     map.current?.flyTo({ center: regionConfig.center, zoom: regionConfig.zoom, duration: 1500 })
   }, [regionConfig])
+
+  // Fit map to all visible leads once per region (after data loads)
+  useEffect(() => {
+    const m = map.current
+    if (!m || filteredProperties.length === 0) return
+    if (fittedRegion.current === filters.region) return
+    const fit = () => {
+      const bounds = new maplibregl.LngLatBounds()
+      for (const p of filteredProperties) bounds.extend([p.lng, p.lat])
+      if (!bounds.isEmpty()) {
+        m.fitBounds(bounds, { padding: 80, maxZoom: 15, duration: 1000 })
+        fittedRegion.current = filters.region
+      }
+    }
+    if (m.isStyleLoaded()) fit()
+    else m.once('load', fit)
+  }, [filteredProperties, filters.region])
+
+  // Fly to the selected property (list/sidebar ↔ map sync)
+  useEffect(() => {
+    const m = map.current
+    if (!m || !selectedProperty) return
+    m.flyTo({
+      center: [selectedProperty.lng, selectedProperty.lat],
+      zoom: Math.max(m.getZoom(), 16),
+      duration: 1200,
+    })
+  }, [selectedProperty])
 
   // Buffer zones layer (below grid + properties)
   useEffect(() => {
@@ -281,6 +405,230 @@ export function SolarMap() {
     if (m.isStyleLoaded()) addGrid()
     else m.on('load', addGrid)
   }, [gridData, filters.showGrid, filters.region])
+
+  // Roof-polygon overlay (read-only) — P1
+  const roofHandlers = useRef<Array<{ type: LayerMouseEventType; layer: string; handler: LayerMouseHandler }>>([])
+  useEffect(() => {
+    const m = map.current
+    if (!m) return
+
+    const ROOF_LAYERS = ['roofs-fill', 'roofs-outline', 'roofs-outline-synthetic']
+
+    const setup = () => {
+      // Cleanup previous layers/source + handlers
+      for (const { type, layer, handler } of roofHandlers.current) m.off(type, layer, handler)
+      roofHandlers.current = []
+      for (const id of ROOF_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('roofs-src')) m.removeSource('roofs-src')
+
+      if (!filters.showRoofDetection) return
+
+      const features = filteredProperties
+        .filter((p) => p.type === 'roof')
+        .map((p) => buildRoofFeature(p))
+        .filter((f): f is GeoJSON.Feature => f !== null)
+
+      if (features.length === 0) return
+
+      m.addSource('roofs-src', { type: 'geojson', data: { type: 'FeatureCollection', features } })
+
+      // Keep roof polygons beneath the lead markers / clusters
+      const beforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters']
+        .find((id) => m.getLayer(id))
+
+      // Fill — color ramp by solar potential score (0..100)
+      m.addLayer({
+        id: 'roofs-fill', type: 'fill', source: 'roofs-src',
+        paint: {
+          'fill-color': ['interpolate', ['linear'], ['get', 'solarScore'],
+            0, '#FF3D00', 50, '#FF9100', 75, '#FFD600', 90, '#00E676'],
+          'fill-opacity': 0.35,
+        },
+      }, beforeId)
+
+      // Outline — solid for real geometry, dashed for synthetic interim footprints
+      // (line-dasharray is not data-driven in MapLibre, so use two filtered layers)
+      m.addLayer({
+        id: 'roofs-outline', type: 'line', source: 'roofs-src',
+        filter: ['==', ['get', 'synthetic'], 0],
+        paint: { 'line-color': '#ffffff', 'line-width': 1.5, 'line-opacity': 0.85 },
+      }, beforeId)
+      m.addLayer({
+        id: 'roofs-outline-synthetic', type: 'line', source: 'roofs-src',
+        filter: ['==', ['get', 'synthetic'], 1],
+        paint: { 'line-color': '#ffffff', 'line-width': 1.5, 'line-opacity': 0.7, 'line-dasharray': [2, 2] },
+      }, beforeId)
+
+      const on = (type: LayerMouseEventType, layer: string, handler: LayerMouseHandler) => {
+        m.on(type, layer, handler)
+        roofHandlers.current.push({ type, layer, handler })
+      }
+      on('mouseenter', 'roofs-fill', () => { m.getCanvas().style.cursor = 'pointer' })
+      on('mouseleave', 'roofs-fill', () => { m.getCanvas().style.cursor = '' })
+      on('click', 'roofs-fill', (e: maplibregl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+        if (isDrawingRef.current) return
+        const f = e.features?.[0]
+        if (!f) return
+        const propId = (f.properties as Record<string, string>).id
+        const property = properties.find((p) => p.id === propId)
+        if (property) setSelectedProperty(property)
+      })
+    }
+
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    return () => {
+      if (!m) return
+      for (const { type, layer, handler } of roofHandlers.current) m.off(type, layer, handler)
+      roofHandlers.current = []
+    }
+  }, [filteredProperties, filters.showRoofDetection, properties, setSelectedProperty])
+
+  // Detected-roof candidate layer (review) — P3
+  const candHandlers = useRef<Array<{ type: LayerMouseEventType; layer: string; handler: LayerMouseHandler }>>([])
+  useEffect(() => {
+    const m = map.current
+    if (!m) return
+
+    const CAND_LAYERS = ['cand-fill', 'cand-outline']
+
+    const setup = () => {
+      for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
+      candHandlers.current = []
+      for (const id of CAND_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('cand-src')) m.removeSource('cand-src')
+
+      if (!filters.showRoofDetection || roofCandidates.length === 0) return
+
+      const features = roofCandidates
+        .map((c) => buildRoofFeature(c))
+        .filter((f): f is GeoJSON.Feature => f !== null)
+      if (features.length === 0) return
+
+      m.addSource('cand-src', { type: 'geojson', data: { type: 'FeatureCollection', features } })
+      const beforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters'].find((id) => m.getLayer(id))
+      m.addLayer({
+        id: 'cand-fill', type: 'fill', source: 'cand-src',
+        paint: { 'fill-color': '#C026D3', 'fill-opacity': 0.3 },
+      }, beforeId)
+      m.addLayer({
+        id: 'cand-outline', type: 'line', source: 'cand-src',
+        paint: { 'line-color': '#E879F9', 'line-width': 1.5, 'line-dasharray': [2, 2] },
+      }, beforeId)
+
+      const on = (type: LayerMouseEventType, layer: string, handler: LayerMouseHandler) => {
+        m.on(type, layer, handler)
+        candHandlers.current.push({ type, layer, handler })
+      }
+      on('mouseenter', 'cand-fill', () => { m.getCanvas().style.cursor = 'pointer' })
+      on('mouseleave', 'cand-fill', () => { m.getCanvas().style.cursor = '' })
+      on('click', 'cand-fill', (e: maplibregl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+        if (isDrawingRef.current) return
+        const f = e.features?.[0]
+        if (!f) return
+        const id = (f.properties as Record<string, string>).id
+        const cand = useAppStore.getState().roofCandidates.find((c) => c.id === id)
+        if (cand) setReviewCandidate(cand)
+      })
+    }
+
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    return () => {
+      if (!m) return
+      for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
+      candHandlers.current = []
+    }
+  }, [roofCandidates, filters.showRoofDetection, setReviewCandidate])
+
+  // Roof draw mode — P2 (custom polygon: click vertices, double-click/Finish to save)
+  useEffect(() => {
+    const m = map.current
+    if (!m || !drawRoofFor) { isDrawingRef.current = false; return }
+
+    const propertyId = drawRoofFor
+    const vertices: [number, number][] = []
+    isDrawingRef.current = true
+    setDrawVertexCount(0)
+
+    const DRAW_LAYERS = ['draw-fill', 'draw-line', 'draw-vertices']
+
+    const render = () => {
+      const features: GeoJSON.Feature[] = []
+      if (vertices.length >= 2) {
+        features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: vertices }, properties: {} })
+      }
+      if (vertices.length >= 3) {
+        features.push({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [[...vertices, vertices[0]]] }, properties: {} })
+      }
+      for (const v of vertices) {
+        features.push({ type: 'Feature', geometry: { type: 'Point', coordinates: v }, properties: {} })
+      }
+      const src = m.getSource('draw-src') as maplibregl.GeoJSONSource | undefined
+      if (src) src.setData({ type: 'FeatureCollection', features })
+    }
+
+    const finish = async () => {
+      if (vertices.length < 3) { showToast('Add at least 3 points to form a roof', 'info'); return }
+      const polygon: GeoJSON.Polygon = { type: 'Polygon', coordinates: [[...vertices, vertices[0]]] }
+      const areaSqm = Math.round(turfArea({ type: 'Feature', geometry: polygon, properties: {} }))
+      const kwp = computeEstimatedKwp({ roofAreaSqm: areaSqm })
+      setSavingRoof(true)
+      const res = await updateRoofGeom(propertyId, polygon, areaSqm, kwp)
+      setSavingRoof(false)
+      if (!res.ok) { showToast(res.error || 'Failed to save roof', 'error'); return }
+      const updated = useAppStore.getState().properties.map((p) =>
+        p.id === propertyId ? { ...p, roofGeom: polygon, area: areaSqm, capacityKwp: kwp } : p)
+      setProperties(updated)
+      showToast(`Roof saved · ${areaSqm.toLocaleString()} m² · ${kwp} kWp`, 'success')
+      setDrawRoofFor(null)
+    }
+
+    const onClick = (e: maplibregl.MapMouseEvent) => {
+      vertices.push([e.lngLat.lng, e.lngLat.lat])
+      setDrawVertexCount(vertices.length)
+      render()
+    }
+    const onDblClick = (e: maplibregl.MapMouseEvent) => { e.preventDefault(); void finish() }
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape') setDrawRoofFor(null)
+      else if (ev.key === 'Enter') void finish()
+    }
+    // expose finish for the on-map "Finish" button via a ref hook
+    finishRef.current = finish
+
+    const setup = () => {
+      for (const id of DRAW_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('draw-src')) m.removeSource('draw-src')
+      m.addSource('draw-src', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
+      m.addLayer({ id: 'draw-fill', type: 'fill', source: 'draw-src', filter: ['==', ['geometry-type'], 'Polygon'], paint: { 'fill-color': '#00E676', 'fill-opacity': 0.25 } })
+      m.addLayer({ id: 'draw-line', type: 'line', source: 'draw-src', filter: ['==', ['geometry-type'], 'LineString'], paint: { 'line-color': '#00E676', 'line-width': 2 } })
+      m.addLayer({ id: 'draw-vertices', type: 'circle', source: 'draw-src', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-radius': 5, 'circle-color': '#ffffff', 'circle-stroke-color': '#00E676', 'circle-stroke-width': 2 } })
+    }
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    m.doubleClickZoom.disable()
+    m.getCanvas().style.cursor = 'crosshair'
+    m.on('click', onClick)
+    m.on('dblclick', onDblClick)
+    window.addEventListener('keydown', onKey)
+
+    return () => {
+      isDrawingRef.current = false
+      finishRef.current = null
+      m.off('click', onClick)
+      m.off('dblclick', onDblClick)
+      window.removeEventListener('keydown', onKey)
+      m.doubleClickZoom.enable()
+      m.getCanvas().style.cursor = ''
+      for (const id of DRAW_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('draw-src')) m.removeSource('draw-src')
+      setDrawVertexCount(0)
+    }
+  }, [drawRoofFor, setProperties, setDrawRoofFor, showToast])
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)
@@ -477,6 +825,7 @@ export function SolarMap() {
         })
 
         on('click', layerId, (e: maplibregl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+          if (isDrawingRef.current) return
           const f = e.features?.[0]
           if (!f) return
           const propId = (f.properties as Record<string, string>).id
@@ -503,6 +852,62 @@ export function SolarMap() {
   }, [filteredProperties, properties, setSelectedProperty])
 
   return (
-    <div ref={mapContainer} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+    <>
+      <div ref={mapContainer} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+      {canScan && !drawRoofFor && !reviewCandidate && (
+        <button
+          onClick={handleScanArea}
+          disabled={scanning}
+          title="Queue a scan of the current map view"
+          className="absolute top-16 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#3B82F6]/40 text-[#60A5FA] text-xs font-semibold flex items-center gap-2 hover:bg-[#3B82F6]/20 transition-colors disabled:opacity-50 shadow-lg"
+        >
+          {scanning ? 'Queuing…' : '⊕ Scan this area'}
+        </button>
+      )}
+      {drawRoofFor && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#00E676]/30 px-4 py-2.5 flex items-center gap-3 shadow-xl">
+          <span className="text-white/80 text-xs">
+            Drawing roof · <strong className="text-[#00E676]">{drawVertexCount}</strong> point{drawVertexCount === 1 ? '' : 's'}
+            <span className="text-white/40"> — click to add, double-click / Enter to finish</span>
+          </span>
+          <button
+            onClick={() => finishRef.current?.()}
+            disabled={savingRoof || drawVertexCount < 3}
+            className="px-3 py-1 rounded-lg bg-[#00E676]/20 text-[#00E676] text-xs font-semibold disabled:opacity-40 hover:bg-[#00E676]/30 transition-colors"
+          >
+            {savingRoof ? 'Saving…' : 'Finish'}
+          </button>
+          <button
+            onClick={() => setDrawRoofFor(null)}
+            className="px-3 py-1 rounded-lg bg-white/5 text-white/60 text-xs hover:bg-white/10 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+      {reviewCandidate && !drawRoofFor && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#C026D3]/40 px-4 py-2.5 flex items-center gap-3 shadow-xl">
+          <span className="text-white/80 text-xs max-w-[220px] truncate">
+            Detected: <strong className="text-[#E879F9]">{reviewCandidate.title}</strong>
+            {reviewCandidate.area ? <span className="text-white/40"> · {Math.round(reviewCandidate.area).toLocaleString()} m²</span> : null}
+            {reviewCandidate.capacityKwp ? <span className="text-white/40"> · {Math.round(reviewCandidate.capacityKwp)} kWp</span> : null}
+          </span>
+          <button
+            onClick={handleConfirmCandidate}
+            disabled={confirmingCand}
+            className="px-3 py-1 rounded-lg bg-[#C026D3]/25 text-[#E879F9] text-xs font-semibold disabled:opacity-40 hover:bg-[#C026D3]/35 transition-colors"
+          >
+            {confirmingCand ? 'Saving…' : 'Confirm'}
+          </button>
+          <button
+            onClick={handleRejectCandidate}
+            disabled={confirmingCand}
+            className="px-3 py-1 rounded-lg bg-white/5 text-white/60 text-xs hover:bg-white/10 transition-colors disabled:opacity-40"
+          >
+            Reject
+          </button>
+        </div>
+      )}
+    </>
   )
 }

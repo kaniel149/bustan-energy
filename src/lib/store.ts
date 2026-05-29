@@ -1,7 +1,23 @@
 import { create } from 'zustand'
-import type { FilterState, Property, Region, ActiveTab, PlatformView } from '../types'
+import type { FilterState, Property, Region, ActiveTab, PlatformView, ScanRequest } from '../types'
 import type { CrmProject } from '../types/crm'
 import type { User } from '@supabase/supabase-js'
+
+type MapStyleId = 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
+const MAP_STYLE_KEY = 'bustan:mapStyle'
+const MAP_STYLES: MapStyleId[] = ['sentinel2024', 'satellite', 'mapbox', 'esri', 'street']
+
+function readStoredMapStyle(): MapStyleId {
+  try {
+    const v = localStorage.getItem(MAP_STYLE_KEY) as MapStyleId | null
+    if (v && MAP_STYLES.includes(v)) return v
+  } catch { /* SSR / private mode */ }
+  return 'sentinel2024'
+}
+
+function persistMapStyle(style: MapStyleId): void {
+  try { localStorage.setItem(MAP_STYLE_KEY, style) } catch { /* ignore */ }
+}
 
 interface AppState {
   // Filters
@@ -13,6 +29,21 @@ interface AppState {
   // Selection
   selectedProperty: Property | null
   setSelectedProperty: (property: Property | null) => void
+
+  // Roof draw mode — id of the property whose roof is being drawn (null = off)
+  drawRoofFor: string | null
+  setDrawRoofFor: (propertyId: string | null) => void
+
+  // Detected-roof review (P3): candidates from the offline detector + the one under review
+  roofCandidates: Property[]
+  setRoofCandidates: (candidates: Property[]) => void
+  removeRoofCandidate: (id: string) => void
+  reviewCandidate: Property | null
+  setReviewCandidate: (candidate: Property | null) => void
+
+  // On-demand scan requests (P4)
+  scanRequests: ScanRequest[]
+  setScanRequests: (requests: ScanRequest[]) => void
 
   // Map
   mapStyle: 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
@@ -74,6 +105,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     minSolarScore: 0,
     showGrid: true,
     showBufferZones: true,
+    showRoofDetection: false,
     searchQuery: '',
   },
 
@@ -105,13 +137,30 @@ export const useAppStore = create<AppState>((set, get) => ({
   selectedProperty: null,
   setSelectedProperty: (property) => set({ selectedProperty: property }),
 
-  mapStyle: 'sentinel2024',
-  setMapStyle: (style) => set({ mapStyle: style }),
+  drawRoofFor: null,
+  setDrawRoofFor: (propertyId) => set({ drawRoofFor: propertyId }),
+
+  roofCandidates: [],
+  setRoofCandidates: (candidates) => set({ roofCandidates: candidates }),
+  removeRoofCandidate: (id) =>
+    set((state) => ({ roofCandidates: state.roofCandidates.filter((c) => c.id !== id) })),
+  reviewCandidate: null,
+  setReviewCandidate: (candidate) => set({ reviewCandidate: candidate }),
+
+  scanRequests: [],
+  setScanRequests: (requests) => set({ scanRequests: requests }),
+
+  mapStyle: readStoredMapStyle(),
+  setMapStyle: (style) => {
+    persistMapStyle(style)
+    set({ mapStyle: style })
+  },
   cycleMapStyle: () =>
     set((state) => {
-      const order: AppState['mapStyle'][] = ['sentinel2024', 'mapbox', 'satellite', 'esri', 'street']
-      const idx = order.indexOf(state.mapStyle)
-      return { mapStyle: order[(idx + 1) % order.length] }
+      const idx = MAP_STYLES.indexOf(state.mapStyle)
+      const next = MAP_STYLES[(idx + 1) % MAP_STYLES.length]
+      persistMapStyle(next)
+      return { mapStyle: next }
     }),
 
   properties: [],

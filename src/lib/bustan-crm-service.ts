@@ -24,7 +24,7 @@ import {
   type OwnerDecisionDisplay,
   type PropertyInput,
 } from './owner-decision-layer'
-import type { Property } from '../types'
+import type { Property, ScanRequest } from '../types'
 
 export interface BustanPropertyRow {
   id: string
@@ -38,6 +38,7 @@ export interface BustanPropertyRow {
   map_y: number | null
   lat: number | null
   lon: number | null
+  roof_geom: GeoJSON.Polygon | GeoJSON.MultiPolygon | null
 }
 
 export interface BustanOwnerRow {
@@ -166,6 +167,7 @@ export function mapLeadToProperty(lead: BustanLead): Property {
     lat: num(p.lat) ?? 0,
     lng: num(p.lon) ?? 0,
     area: num(p.roof_area_sqm),
+    roofGeom: p.roof_geom ?? undefined,
     capacityKwp: lead.crm.estimated_kWp || undefined,
     solarScore: num(p.solar_potential_score),
     priority,
@@ -250,6 +252,97 @@ export function updateLeadStage(propertyId: string, stage: string): Promise<Writ
 /** Reassign a lead's owner (assigned_to). Pass null to unassign. */
 export function assignLead(propertyId: string, assignedTo: string | null): Promise<WriteResult> {
   return updateLeadPipeline(propertyId, { assigned_to: assignedTo })
+}
+
+/**
+ * Persist a drawn/edited roof footprint. Writes roof_geom + recomputed
+ * roof_area_sqm (m²) + crm_pipeline.estimated_kwp via the role-checked
+ * SECURITY DEFINER RPC `bustan.save_roof_geom` (admin/sales/engineer only;
+ * RLS/role errors are returned, never swallowed). See bustan-migrations/002.
+ */
+export async function updateRoofGeom(
+  propertyId: string,
+  geom: GeoJSON.Polygon | GeoJSON.MultiPolygon,
+  areaSqm: number,
+  estimatedKwp: number,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.rpc('save_roof_geom', {
+    p_id: propertyId,
+    p_geom: geom as unknown as Record<string, unknown>,
+    p_area: areaSqm,
+    p_kwp: estimatedKwp,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
+}
+
+/**
+ * Confirm an offline-detected roof candidate → insert a new lead (property +
+ * 'new' pipeline row + pending owner_decision) via the role-checked
+ * SECURITY DEFINER RPC `bustan.insert_detected_roof` (admin/sales/engineer).
+ * Idempotent on the candidate id. See bustan-migrations/003.
+ */
+export async function confirmDetectedRoof(c: Property): Promise<WriteResult & { id?: string }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const payload = {
+    id: c.id,
+    title: c.title,
+    location: c.location,
+    category: c.category,
+    area: c.area,
+    solarScore: c.solarScore,
+    lat: c.lat,
+    lng: c.lng,
+    capacityKwp: c.capacityKwp,
+    priority: c.priority,
+    roofGeom: c.roofGeom ?? null,
+  }
+  const { data, error } = await bustanSupabase.rpc('insert_detected_roof', {
+    p: payload as unknown as Record<string, unknown>,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true, id: typeof data === 'string' ? data : c.id }
+}
+
+// --- On-demand scan engine (P4) --------------------------------------------
+
+export interface ScanFilters {
+  propertyType?: string
+  minRoofM2?: number
+  commercialOnly?: boolean
+}
+
+/**
+ * Queue an on-demand area scan (role-checked admin/sales/engineer via the
+ * create_scan_request RPC). A worker picks up the 'queued' row, acquires
+ * buildings in the bbox, scores/dedups/enriches, and upserts leads.
+ */
+export async function createScanRequest(
+  area: GeoJSON.Polygon,
+  bbox: number[],
+  filters: ScanFilters = {},
+): Promise<WriteResult & { id?: string }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { data, error } = await bustanSupabase.rpc('create_scan_request', {
+    p_area: area as unknown as Record<string, unknown>,
+    p_bbox: bbox,
+    p_filters: filters as unknown as Record<string, unknown>,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true, id: typeof data === 'string' ? data : undefined }
+}
+
+/** Recent scan requests (newest first) for the status panel. */
+export async function fetchScanRequests(): Promise<ScanRequest[]> {
+  if (!bustanSupabase) return []
+  const { data, error } = await bustanSupabase
+    .from('scan_requests')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(20)
+  if (error) throw error
+  return (data ?? []) as ScanRequest[]
 }
 
 // --- Site survey (engineer/admin) -----------------------------------------

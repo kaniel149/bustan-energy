@@ -74,6 +74,7 @@ export interface Property {
   // Roof-specific
   area?: number
   usableArea?: number
+  roofGeom?: GeoJSON.Polygon | GeoJSON.MultiPolygon
   capacityKwp?: number
   panelCount?: number
   annualKwh?: number
@@ -119,6 +120,19 @@ export type PlatformView = 'map' | 'scanner' | 'pipeline' | 'dashboard'
 export type SystemSizeRange = 'all' | 'micro' | 'small' | 'medium' | 'large' | 'utility'
 export type CategoryFilter = 'all' | 'residential' | 'commercial' | 'hospitality' | 'mixed' | 'other'
 
+export type ScanStatus = 'queued' | 'running' | 'done' | 'failed'
+
+export interface ScanRequest {
+  id: string
+  area_geojson: GeoJSON.Polygon
+  bbox: number[] | null
+  filters: Record<string, unknown>
+  status: ScanStatus
+  counts: Record<string, number>
+  error: string | null
+  created_at: string
+}
+
 export interface FilterState {
   activeTab: ActiveTab
   region: Region
@@ -135,6 +149,7 @@ export interface FilterState {
   minSolarScore: number
   showGrid: boolean
   showBufferZones: boolean
+  showRoofDetection: boolean
   searchQuery: string
 }
 

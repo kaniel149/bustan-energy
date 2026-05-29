@@ -1,4 +1,4 @@
-import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download } from 'lucide-react'
+import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download, Home } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppStore } from '../../lib/store'
@@ -177,6 +177,15 @@ export function FilterBar() {
               title="Toggle Buffer Zones"
             >
               <Circle size={14} />
+            </button>
+            <button
+              onClick={() => setFilter('showRoofDetection', !filters.showRoofDetection)}
+              className={`px-3 py-2.5 transition-colors ${
+                filters.showRoofDetection ? 'text-[#00E676]' : 'text-white/40 hover:text-white'
+              }`}
+              title="Toggle Roof Detection"
+            >
+              <Home size={14} />
             </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
