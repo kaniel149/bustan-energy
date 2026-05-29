@@ -203,3 +203,51 @@ export async function fetchBustanProperties(): Promise<Property[]> {
   const leads = await fetchBustanLeads()
   return leads.map(mapLeadToProperty)
 }
+
+// ---------------------------------------------------------------------------
+// Writes — update crm_pipeline. The `trg_log_crm_change` trigger writes an
+// activity_log row (actor = auth.uid()) automatically on every change, so the
+// client never writes the audit trail itself. RLS enforces who may write.
+// ---------------------------------------------------------------------------
+
+export interface WriteResult {
+  ok: boolean
+  error?: string
+}
+
+const NOT_CONNECTED: WriteResult = { ok: false, error: 'Not connected to the Bustan database' }
+
+/** Fields a user may edit on a lead's pipeline row. */
+export interface CrmPipelinePatch {
+  stage?: string
+  priority?: string
+  next_action?: string
+  assigned_to?: string | null
+  estimated_kwp?: number
+  estimated_annual_thb?: number
+  source_confidence?: string
+}
+
+/**
+ * Apply a patch to a lead's crm_pipeline row. Errors are returned (never
+ * swallowed) so the caller can surface a toast.
+ */
+export async function updateLeadPipeline(
+  propertyId: string,
+  patch: CrmPipelinePatch,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.from('crm_pipeline').update(patch).eq('property_id', propertyId)
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
+}
+
+/** Move a lead to a new pipeline stage (logs a stage_change activity row). */
+export function updateLeadStage(propertyId: string, stage: string): Promise<WriteResult> {
+  return updateLeadPipeline(propertyId, { stage })
+}
+
+/** Reassign a lead's owner (assigned_to). Pass null to unassign. */
+export function assignLead(propertyId: string, assignedTo: string | null): Promise<WriteResult> {
+  return updateLeadPipeline(propertyId, { assigned_to: assignedTo })
+}

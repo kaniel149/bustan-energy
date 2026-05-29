@@ -5,7 +5,13 @@ import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
 import { isBustanConnected } from '../lib/bustan-supabase'
-import { fetchBustanProperties } from '../lib/bustan-crm-service'
+import { fetchBustanLeads, mapLeadToProperty } from '../lib/bustan-crm-service'
+import { fetchCurrentRole } from '../lib/bustan-permissions'
+import { useBustanStore } from '../lib/bustan-store'
+import { Toast } from '../components/Toast'
+const BustanLeadEditor = lazy(() =>
+  import('../components/CRM/BustanLeadEditor').then((m) => ({ default: m.BustanLeadEditor })),
+)
 
 const SolarMap = lazy(() => import('../components/Map/SolarMap').then((m) => ({ default: m.SolarMap })))
 const FilterBar = lazy(() => import('../components/FilterBar/FilterBar').then((m) => ({ default: m.FilterBar })))
@@ -105,20 +111,24 @@ export default function PlatformPage() {
   // Load the live Bustan CRM leads (bustan schema) once authenticated.
   // Additive + reversible: RLS returns nothing when unauthenticated, so the
   // static demo data above is preserved; real 85 leads replace it on sign-in.
+  const setBustanLeads = useBustanStore((s) => s.setLeads)
+  const setBustanRole = useBustanStore((s) => s.setRole)
   useEffect(() => {
     if (!user || !isBustanConnected()) return
     let cancelled = false
-    fetchBustanProperties()
-      .then((leads) => {
+    Promise.all([fetchBustanLeads(), fetchCurrentRole()])
+      .then(([leads, role]) => {
         if (cancelled || leads.length === 0) return
-        setProperties(leads)
+        setBustanLeads(leads)
+        setBustanRole(role)
+        setProperties(leads.map(mapLeadToProperty))
         setDataStatus('loaded')
       })
       .catch((err) => console.error('Failed to load Bustan leads:', err))
     return () => {
       cancelled = true
     }
-  }, [user, setProperties])
+  }, [user, setProperties, setBustanLeads, setBustanRole])
 
   const isMapView = platformView === 'map'
 
@@ -141,6 +151,16 @@ export default function PlatformPage() {
       <Suspense fallback={null}>
         <FilterBar />
       </Suspense>
+
+      {/* Bustan CRM lead editor — shows for the selected live lead (map/scanner) */}
+      {selectedProperty && (isMapView || platformView === 'scanner') && (
+        <Suspense fallback={null}>
+          <BustanLeadEditor />
+        </Suspense>
+      )}
+
+      {/* Global toast (CRM writes) */}
+      <Toast />
 
       {/* Scanner view */}
       {platformView === 'scanner' && (
