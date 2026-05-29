@@ -59,6 +59,8 @@ Branch `feat/platform-bustan-crm` (off clean `main`). 39 tests, typecheck + buil
 
 **Still pending in-browser verification (needs a login):** sign-in → 85 on map; stage change → activity_log row with actor; viewer edit blocked. The DB + mapping sides are proven; only the authenticated client round-trip is unconfirmed.
 
+**⚠️ RLS gap found (verified via pg_policies):** RLS is enabled on all 7 bustan tables; **reads** are restricted to `authenticated` (anon blocked ✅). But **writes** currently allow ANY authenticated user — the role matrix is NOT enforced server-side, only by the client `can()` gate. So a `viewer` could bypass the UI and write. Fix prepared as `supabase/bustan-migrations/001_role_based_rls.sql` (role-based write policies via a `bustan.current_role()` helper). **Not applied** — it changes production security on the shared DB and should be applied together with a login test (app_users is empty until first signup; role-based writes need an app_users row). Until applied, "viewer read-only" is client-side only.
+
 **Architecture note for Phase 4+:** the existing `Pipeline`/`Dashboard`/`CRMPanel` use a *separate* `crm_projects` model (TM Energy, `crm-service.ts`). The bustan leads currently flow through `properties` + `BustanLeadEditor` (map sidebar). Re-pointing the Pipeline board + Dashboard to the bustan model is the main Phase 4/5 task and is a sizeable refactor — decide whether to migrate those components or keep the map-sidebar CRM.
 
 ### Remaining
