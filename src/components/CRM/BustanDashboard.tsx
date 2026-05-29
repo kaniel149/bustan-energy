@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useBustanStore } from '../../lib/bustan-store'
 import { fetchActivityLog, type ActivityRow } from '../../lib/bustan-crm-service'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
+import { useTranslation } from '../../i18n/useTranslation'
 
 const thb = (n: number) => `฿${Math.round(n).toLocaleString('en-US')}`
 
@@ -18,6 +19,7 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub?: string
 /** Live CRM dashboard built from the bustan leads in the store. */
 export default function BustanDashboard() {
   const leadsById = useBustanStore((s) => s.leadsById)
+  const d = useTranslation().t.crm.dash
   const [activity, setActivity] = useState<ActivityRow[]>([])
 
   useEffect(() => {
@@ -57,9 +59,7 @@ export default function BustanDashboard() {
 
   if (m.total === 0) {
     return (
-      <div className="p-8 text-center text-white/40 text-sm">
-        No Bustan leads loaded. Sign in to load the live pipeline.
-      </div>
+      <div className="p-8 text-center text-white/40 text-sm">{d.noLeads}</div>
     )
   }
 
@@ -67,19 +67,19 @@ export default function BustanDashboard() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <h1 className="text-lg font-semibold text-white">Bustan CRM — Pipeline</h1>
+      <h1 className="text-lg font-semibold text-white">{d.title}</h1>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Kpi label="Leads" value={String(m.total)} sub={`A ${m.byPriority.A} · B ${m.byPriority.B} · C ${m.byPriority.C}`} />
-        <Kpi label="Pipeline" value={`${Math.round(m.pipelineKwp).toLocaleString()} kWp`} sub="non-lost" />
-        <Kpi label="Annual value" value={thb(m.pipelineValue)} sub="est. savings/yr" />
-        <Kpi label="Win rate" value={`${m.winRate}%`} sub={`${m.byStage.won || 0} won · ${m.byStage.lost || 0} lost`} />
+        <Kpi label={d.leads} value={String(m.total)} sub={`A ${m.byPriority.A} · B ${m.byPriority.B} · C ${m.byPriority.C}`} />
+        <Kpi label={d.pipeline} value={`${Math.round(m.pipelineKwp).toLocaleString()} kWp`} sub={d.nonLost} />
+        <Kpi label={d.annualValue} value={thb(m.pipelineValue)} sub={d.savingsYr} />
+        <Kpi label={d.winRate} value={`${m.winRate}%`} sub={`${m.byStage.won || 0} ${d.won} · ${m.byStage.lost || 0} ${d.lost}`} />
       </div>
 
       {/* Funnel */}
       <div className="rounded-xl bg-[#0D2137] border border-white/10 p-4">
-        <h2 className="text-sm font-medium text-white mb-3">Funnel by stage</h2>
+        <h2 className="text-sm font-medium text-white mb-3">{d.funnel}</h2>
         <div className="space-y-2">
           {CRM_PIPELINE_STAGES.map((s) => {
             const count = m.byStage[s.key] || 0
@@ -102,7 +102,7 @@ export default function BustanDashboard() {
       <div className="grid md:grid-cols-2 gap-4">
         {/* Reachability */}
         <div className="rounded-xl bg-[#0D2137] border border-white/10 p-4">
-          <h2 className="text-sm font-medium text-white mb-3">Reachability</h2>
+          <h2 className="text-sm font-medium text-white mb-3">{d.reachability}</h2>
           {(['contactable', 'partial', 'cold'] as const).map((k) => (
             <div key={k} className="flex items-center justify-between text-xs py-1">
               <span className="text-white/60 capitalize">{k}</span>
@@ -113,7 +113,7 @@ export default function BustanDashboard() {
 
         {/* Top areas */}
         <div className="rounded-xl bg-[#0D2137] border border-white/10 p-4">
-          <h2 className="text-sm font-medium text-white mb-3">Top areas</h2>
+          <h2 className="text-sm font-medium text-white mb-3">{d.topAreas}</h2>
           {m.topAreas.map(([area, count]) => (
             <div key={area} className="flex items-center justify-between text-xs py-1">
               <span className="text-white/60 truncate">{area}</span>
@@ -125,9 +125,9 @@ export default function BustanDashboard() {
 
       {/* Activity log */}
       <div className="rounded-xl bg-[#0D2137] border border-white/10 p-4">
-        <h2 className="text-sm font-medium text-white mb-3">Recent activity</h2>
+        <h2 className="text-sm font-medium text-white mb-3">{d.recentActivity}</h2>
         {activity.length === 0 ? (
-          <p className="text-xs text-white/40">No activity yet.</p>
+          <p className="text-xs text-white/40">{d.noActivity}</p>
         ) : (
           <div className="space-y-1.5 max-h-72 overflow-y-auto">
             {activity.map((a) => (

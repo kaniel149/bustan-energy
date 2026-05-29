@@ -142,11 +142,18 @@ export default function App() {
               {/* Preview scroll animation */}
               <Route path="/preview-scroll" element={<PreviewScroll />} />
 
-              {/* Internal platform */}
+              {/* Internal platform — language set by URL prefix (en/th/he, RTL for he) */}
               <Route path="/platform" element={<PlatformPage />} />
+              <Route path="/th/platform" element={<PlatformPage />} />
+              <Route path="/he/platform" element={<PlatformPage />} />
 
               {/* Thai routes */}
               <Route path="/th" element={<Layout />}>
+                {PageRoutes()}
+              </Route>
+
+              {/* Hebrew routes (RTL; marketing falls back to English where untranslated) */}
+              <Route path="/he" element={<Layout />}>
                 {PageRoutes()}
               </Route>
 

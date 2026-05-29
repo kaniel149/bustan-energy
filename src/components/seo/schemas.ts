@@ -7,6 +7,7 @@
  *   TH: โซลาร์เซลล์ เกาะพะงัน, ติดตั้งโซลาร์เซลล์ สุราษฎร์ธานี,
  *       โซลาร์เซลล์ ราคา, โซลาร์ฟาร์ม ไทย
  */
+import type { Lang } from '../../i18n/translations'
 
 export const BASE_URL = 'https://energy-tm.com'
 const BUSINESS_ID = `${BASE_URL}/#business`
@@ -14,7 +15,7 @@ const BUSINESS_ID = `${BASE_URL}/#business`
 // ─── LocalBusiness ────────────────────────────────────────────────────────────
 // Included on every page via SEOHead. Gives Google the core entity signal.
 
-export function localBusinessSchema(lang: 'en' | 'th') {
+export function localBusinessSchema(lang: Lang) {
   return {
     '@context': 'https://schema.org',
     '@type': ['LocalBusiness', 'SolarEnergyCompany'],
@@ -96,7 +97,7 @@ export function websiteSchema() {
 // ─── Service ──────────────────────────────────────────────────────────────────
 // Used on /services and /how-it-works pages.
 
-export function serviceSchema(lang: 'en' | 'th') {
+export function serviceSchema(lang: Lang) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -274,7 +275,7 @@ export interface ArticleSchemaInput {
   slug: string
   datePublished: string
   dateModified?: string
-  lang: 'en' | 'th'
+  lang: Lang
   imageUrl?: string
 }
 
@@ -335,7 +336,7 @@ export function breadcrumbSchema(items: BreadcrumbItem[]) {
 
 // Breadcrumb preset builders for each route
 
-export function homeBreadcrumb(lang: 'en' | 'th'): BreadcrumbItem[] {
+export function homeBreadcrumb(lang: Lang): BreadcrumbItem[] {
   return [
     {
       name: lang === 'th' ? 'หน้าหลัก' : 'Home',
@@ -345,7 +346,7 @@ export function homeBreadcrumb(lang: 'en' | 'th'): BreadcrumbItem[] {
 }
 
 export function pageBreadcrumb(
-  lang: 'en' | 'th',
+  lang: Lang,
   pageName: string,
   path: string
 ): BreadcrumbItem[] {
@@ -429,7 +430,7 @@ export function webPageSchema(opts: {
   name: string
   description: string
   url: string
-  lang: 'en' | 'th'
+  lang: Lang
 }) {
   return {
     '@context': 'https://schema.org',

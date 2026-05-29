@@ -95,6 +95,8 @@ export default function ServicesPage() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
   const { t, lang } = useTranslation()
   const { langPath } = useLanguage()
+  // SEO stays EN/TH (Hebrew is operator-facing, not a public SEO target).
+  const seoLang: 'en' | 'th' = lang === 'th' ? 'th' : 'en'
 
   return (
     <>
@@ -102,10 +104,10 @@ export default function ServicesPage() {
         title={t.seo.services.title}
         description={t.seo.services.description}
         path="/services"
-        lang={lang}
+        lang={seoLang}
         schema={[
-          serviceSchema(lang),
-          breadcrumbSchema(pageBreadcrumb(lang, t.nav.services, '/services')),
+          serviceSchema(seoLang),
+          breadcrumbSchema(pageBreadcrumb(seoLang, t.nav.services, '/services')),
         ]}
       />
       <div className="min-h-screen bg-[var(--color-dark)]">

@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { localBusinessSchema } from './schemas'
+import type { Lang } from '../../i18n/translations'
 
 const BASE_URL = 'https://energy-tm.com'
 const DEFAULT_OG_IMAGE = `${BASE_URL}/assets/images/og-default.jpg`
@@ -11,8 +12,8 @@ interface SEOHeadProps {
   description: string
   /** Path without language prefix, e.g. "/services" or "/" */
   path: string
-  /** Active language of this page */
-  lang: 'en' | 'th'
+  /** Active language of this page (he → English meta; not a public SEO locale) */
+  lang: Lang
   /**
    * Additional JSON-LD schema objects to inject alongside the always-present
    * LocalBusiness schema.  Pass a single object or an array.

@@ -174,6 +174,8 @@ export default function ToolsPage() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
   const { lang } = useTranslation()
   const { langPath } = useLanguage()
+  // SEO stays EN/TH (Hebrew is operator-facing, not a public SEO target).
+  const seoLang: 'en' | 'th' = lang === 'th' ? 'th' : 'en'
 
   const tools = lang === 'th' ? TOOLS_TH : TOOLS_EN
 
@@ -192,10 +194,10 @@ export default function ToolsPage() {
         title={title}
         description={description}
         path="/tools"
-        lang={lang}
+        lang={seoLang}
         schema={[
-          webPageSchema({ name: title, description, url: pageUrl, lang }),
-          breadcrumbSchema(pageBreadcrumb(lang, lang === 'th' ? 'เครื่องมือ' : 'Tools', '/tools')),
+          webPageSchema({ name: title, description, url: pageUrl, lang: seoLang }),
+          breadcrumbSchema(pageBreadcrumb(seoLang, lang === 'th' ? 'เครื่องมือ' : 'Tools', '/tools')),
         ]}
       />
 

@@ -18,6 +18,7 @@ import {
 } from '../../lib/bustan-crm-service'
 import { autoBuildSystem } from '../../lib/bom'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
+import { useTranslation } from '../../i18n/useTranslation'
 
 const thb = (n: number) => `฿${Math.round(n).toLocaleString('en-US')}`
 const inputCls =
@@ -56,6 +57,7 @@ export function BustanLeadEditor() {
   const role = useBustanStore((s) => s.role)
   const patchCrm = useBustanStore((s) => s.patchCrm)
   const showToast = useToastStore((s) => s.showToast)
+  const c = useTranslation().t.crm
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState<'crm' | 'quote' | 'survey' | 'om'>('crm')
 
@@ -95,7 +97,7 @@ export function BustanLeadEditor() {
     successMsg: string,
   ) => {
     if (!allowed) {
-      showToast('Your role cannot perform this action', 'info')
+      showToast(c.roleCannot, 'info')
       return
     }
     setSaving(true)
@@ -105,15 +107,15 @@ export function BustanLeadEditor() {
       onOk()
       showToast(successMsg, 'success')
     } else {
-      showToast(res.error || 'Save failed', 'error')
+      showToast(res.error || c.saveFailed, 'error')
     }
   }
 
   const tabs: { key: typeof tab; label: string; icon: ReactNode; show: boolean }[] = [
-    { key: 'crm', label: 'CRM', icon: <ClipboardCheck size={12} />, show: true },
-    { key: 'quote', label: 'Quote', icon: <FileText size={12} />, show: canQuote },
-    { key: 'survey', label: 'Survey', icon: <ClipboardCheck size={12} />, show: true },
-    { key: 'om', label: 'O&M', icon: <Activity size={12} />, show: isWon },
+    { key: 'crm', label: c.tabs.crm, icon: <ClipboardCheck size={12} />, show: true },
+    { key: 'quote', label: c.tabs.quote, icon: <FileText size={12} />, show: canQuote },
+    { key: 'survey', label: c.tabs.survey, icon: <ClipboardCheck size={12} />, show: true },
+    { key: 'om', label: c.tabs.om, icon: <Activity size={12} />, show: isWon },
   ]
 
   return (
@@ -121,12 +123,12 @@ export function BustanLeadEditor() {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-white truncate">{selected.title}</h3>
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60">
-          {crm.priority} · {crm.reachability}
+          {crm.priority} · {c.reach[crm.reachability]}
         </span>
       </div>
       <div className="text-[11px] text-white/50">
-        Lead score <span className="text-white/80 font-medium">{crm.lead_score}</span> ·{' '}
-        {crm.estimated_kWp} kWp · {thb(crm.estimated_annual_thb)}/yr
+        {c.leadScore} <span className="text-white/80 font-medium">{crm.lead_score}</span> ·{' '}
+        {crm.estimated_kWp} kWp · {thb(crm.estimated_annual_thb)}{c.perYear}
       </div>
       {phone && (
         <a href={`tel:${phone}`} className="flex items-center gap-2 text-xs text-emerald-300 hover:text-emerald-200">
@@ -151,7 +153,7 @@ export function BustanLeadEditor() {
 
       {tab === 'crm' && (
         <div className="space-y-2">
-          <label className="block text-[10px] uppercase tracking-wide text-white/40">Stage</label>
+          <label className="block text-[10px] uppercase tracking-wide text-white/40">{c.stage}</label>
           <select
             value={crm.crm_stage}
             disabled={!canCrm || saving}
@@ -173,12 +175,12 @@ export function BustanLeadEditor() {
             ))}
           </select>
 
-          <label className="block text-[10px] uppercase tracking-wide text-white/40">Assigned to</label>
+          <label className="block text-[10px] uppercase tracking-wide text-white/40">{c.assignedTo}</label>
           <input
             type="text"
             defaultValue={crm.assigned_to}
             disabled={!canCrm || saving}
-            placeholder="unassigned"
+            placeholder={c.unassigned}
             onBlur={(e) => {
               const v = e.target.value.trim()
               if (v === (crm.assigned_to || '')) return
@@ -192,7 +194,7 @@ export function BustanLeadEditor() {
             className={inputCls}
           />
 
-          <label className="block text-[10px] uppercase tracking-wide text-white/40">Next action</label>
+          <label className="block text-[10px] uppercase tracking-wide text-white/40">{c.nextAction}</label>
           <input
             type="text"
             defaultValue={crm.next_action}
@@ -211,7 +213,7 @@ export function BustanLeadEditor() {
           />
           {!canCrm && (
             <p className="flex items-center gap-1.5 text-[11px] text-white/40">
-              <Lock size={11} /> Read-only ({role})
+              <Lock size={11} /> {c.readonly} ({role})
             </p>
           )}
         </div>
@@ -220,7 +222,7 @@ export function BustanLeadEditor() {
       {tab === 'quote' && canQuote && (
         <div className="space-y-2 text-xs">
           <p className="text-white/60">
-            {quote.kWp} kWp · {quote.panels} panels · {quote.inverterUnits} inverter(s)
+            {quote.kWp} kWp · {quote.panels} {c.quote.panels} · {quote.inverterUnits} {c.quote.inverters}
           </p>
           <div className="max-h-48 overflow-y-auto rounded-lg border border-white/10 divide-y divide-white/5">
             {quote.lines.map((l) => (
@@ -234,15 +236,15 @@ export function BustanLeadEditor() {
           </div>
           <div className="space-y-1 text-white/70">
             <div className="flex justify-between">
-              <span>Equipment</span>
+              <span>{c.quote.equipment}</span>
               <span>{thb(quote.equipmentCostThb)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Labor (฿4,500/kWp)</span>
+              <span>{c.quote.labor} (฿4,500/kWp)</span>
               <span>{thb(quote.laborCostThb)}</span>
             </div>
             <div className="flex justify-between font-semibold text-white border-t border-white/10 pt-1">
-              <span>Total (cost)</span>
+              <span>{c.quote.total}</span>
               <span>{thb(quote.equipmentCostThb + quote.laborCostThb)}</span>
             </div>
           </div>
@@ -279,21 +281,21 @@ export function BustanLeadEditor() {
             onChange={(e) => setSurvey({ ...survey, recommendation: e.target.value as SiteSurvey['recommendation'] })}
             className={inputCls}
           >
-            <option value="">recommendation…</option>
-            <option value="go">Go</option>
-            <option value="maybe">Maybe</option>
-            <option value="no-go">No-go</option>
+            <option value="">{c.survey.recommendation}</option>
+            <option value="go">{c.survey.go}</option>
+            <option value="maybe">{c.survey.maybe}</option>
+            <option value="no-go">{c.survey.nogo}</option>
           </select>
           <button
             disabled={!canSurvey || saving}
-            onClick={() => void runWrite(() => upsertSurvey(survey), canSurvey, () => {}, 'Survey saved')}
+            onClick={() => void runWrite(() => upsertSurvey(survey), canSurvey, () => {}, c.survey.save)}
             className="w-full bg-[#6366f1] hover:bg-[#6366f1]/80 disabled:opacity-40 rounded-lg py-1.5 text-white text-sm"
           >
-            Save survey
+            {c.survey.save}
           </button>
           {!canSurvey && (
             <p className="flex items-center gap-1.5 text-[11px] text-white/40">
-              <Lock size={11} /> Read-only ({role})
+              <Lock size={11} /> {c.readonly} ({role})
             </p>
           )}
         </div>
@@ -307,10 +309,10 @@ export function BustanLeadEditor() {
             onChange={(e) => setOm({ ...om, monitoring_status: e.target.value as OmSite['monitoring_status'] })}
             className={inputCls}
           >
-            <option value="">monitoring status…</option>
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
-            <option value="alert">Alert</option>
+            <option value="">{c.om.status}</option>
+            <option value="online">{c.om.online}</option>
+            <option value="offline">{c.om.offline}</option>
+            <option value="alert">{c.om.alert}</option>
           </select>
           <input
             type="number"
@@ -339,14 +341,14 @@ export function BustanLeadEditor() {
           />
           <button
             disabled={!canOm || saving}
-            onClick={() => void runWrite(() => upsertOmSite(om), canOm, () => {}, 'O&M saved')}
+            onClick={() => void runWrite(() => upsertOmSite(om), canOm, () => {}, c.om.save)}
             className="w-full bg-[#6366f1] hover:bg-[#6366f1]/80 disabled:opacity-40 rounded-lg py-1.5 text-white text-sm"
           >
-            Save O&M
+            {c.om.save}
           </button>
           {!canOm && (
             <p className="flex items-center gap-1.5 text-[11px] text-white/40">
-              <Lock size={11} /> Read-only ({role})
+              <Lock size={11} /> {c.readonly} ({role})
             </p>
           )}
         </div>
@@ -354,7 +356,7 @@ export function BustanLeadEditor() {
 
       {saving && (
         <p className="flex items-center gap-1.5 text-[11px] text-blue-300">
-          <Loader2 size={11} className="animate-spin" /> Saving…
+          <Loader2 size={11} className="animate-spin" /> {c.saving}
         </p>
       )}
     </div>

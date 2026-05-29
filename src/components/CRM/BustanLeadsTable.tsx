@@ -6,6 +6,7 @@ import { useToastStore } from '../../lib/toast-store'
 import { can } from '../../lib/bustan-permissions'
 import { updateLeadStage, mapLeadToProperty } from '../../lib/bustan-crm-service'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
+import { useTranslation } from '../../i18n/useTranslation'
 
 const PRIORITY_COLOR: Record<string, string> = {
   A: 'text-emerald-400 bg-emerald-400/10',
@@ -26,6 +27,7 @@ export default function BustanLeadsTable() {
   const patchCrm = useBustanStore((s) => s.patchCrm)
   const setSelectedProperty = useAppStore((s) => s.setSelectedProperty)
   const showToast = useToastStore((s) => s.showToast)
+  const c = useTranslation().t.crm
 
   const [search, setSearch] = useState('')
   const [fPriority, setFPriority] = useState('all')
@@ -77,7 +79,7 @@ export default function BustanLeadsTable() {
     }
     setBusy(false)
     setSelected(new Set())
-    showToast(`${ok} moved to ${stageLabel(bulkStage)}${fail ? `, ${fail} failed` : ''}`, fail ? 'error' : 'success')
+    showToast(`${ok} ${c.table.moved} ${stageLabel(bulkStage)}${fail ? `, ${fail} ${c.table.failed}` : ''}`, fail ? 'error' : 'success')
   }
 
   return (
@@ -89,37 +91,37 @@ export default function BustanLeadsTable() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name / area…"
+            placeholder={c.table.search}
             className="w-full bg-[#0D2137] border border-white/10 rounded-lg pl-7 pr-2 py-1.5 text-sm"
           />
         </div>
         <select value={fPriority} onChange={(e) => setFPriority(e.target.value)} className="bg-[#0D2137] border border-white/10 rounded-lg px-2 py-1.5 text-sm">
-          <option value="all">All priorities</option>
-          {['A', 'B', 'C'].map((p) => <option key={p} value={p}>Priority {p}</option>)}
+          <option value="all">{c.table.allPriorities}</option>
+          {['A', 'B', 'C'].map((p) => <option key={p} value={p}>{c.priority} {p}</option>)}
         </select>
         <select value={fStage} onChange={(e) => setFStage(e.target.value)} className="bg-[#0D2137] border border-white/10 rounded-lg px-2 py-1.5 text-sm">
-          <option value="all">All stages</option>
+          <option value="all">{c.table.allStages}</option>
           {CRM_PIPELINE_STAGES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
         </select>
         <select value={fReach} onChange={(e) => setFReach(e.target.value)} className="bg-[#0D2137] border border-white/10 rounded-lg px-2 py-1.5 text-sm">
-          <option value="all">All reach</option>
-          {['contactable', 'partial', 'cold'].map((r) => <option key={r} value={r}>{r}</option>)}
+          <option value="all">{c.table.allReach}</option>
+          {(['contactable', 'partial', 'cold'] as const).map((r) => <option key={r} value={r}>{c.reach[r]}</option>)}
         </select>
-        <span className="text-xs text-white/40">{rows.length} leads</span>
+        <span className="text-xs text-white/40">{rows.length} {c.table.leads}</span>
       </div>
 
       {/* Bulk bar */}
       {canEdit && selected.size > 0 && (
         <div className="px-3 py-2 bg-[#6366f1]/10 border-b border-white/10 flex items-center gap-2 text-sm">
-          <span className="text-white/70">{selected.size} selected</span>
+          <span className="text-white/70">{selected.size} {c.table.selected}</span>
           <select value={bulkStage} onChange={(e) => setBulkStage(e.target.value)} className="bg-[#0D2137] border border-white/10 rounded-lg px-2 py-1 text-sm">
-            <option value="">Set stage…</option>
+            <option value="">{c.table.setStage}</option>
             {CRM_PIPELINE_STAGES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
           </select>
           <button onClick={() => void applyBulkStage()} disabled={!bulkStage || busy} className="bg-[#6366f1] hover:bg-[#6366f1]/80 disabled:opacity-40 rounded-lg px-3 py-1 text-white text-xs">
-            Apply
+            {c.table.apply}
           </button>
-          <button onClick={() => setSelected(new Set())} className="text-white/50 hover:text-white/80 text-xs">Clear</button>
+          <button onClick={() => setSelected(new Set())} className="text-white/50 hover:text-white/80 text-xs">{c.table.clear}</button>
         </div>
       )}
 
@@ -135,12 +137,12 @@ export default function BustanLeadsTable() {
                   </button>
                 )}
               </th>
-              <th className="text-left p-2">Lead</th>
-              <th className="text-left p-2 hidden sm:table-cell">Area</th>
+              <th className="text-left p-2">{c.table.lead}</th>
+              <th className="text-left p-2 hidden sm:table-cell">{c.table.area}</th>
               <th className="text-right p-2">kWp</th>
-              <th className="text-left p-2">Stage</th>
-              <th className="text-left p-2 hidden sm:table-cell">Reach</th>
-              <th className="text-left p-2">Phone</th>
+              <th className="text-left p-2">{c.stage}</th>
+              <th className="text-left p-2 hidden sm:table-cell">{c.dash.reachability}</th>
+              <th className="text-left p-2">{c.table.phone}</th>
             </tr>
           </thead>
           <tbody>
@@ -165,7 +167,7 @@ export default function BustanLeadsTable() {
                   <td className="p-2 text-white/50 hidden sm:table-cell truncate max-w-[160px]">{l.property.area_name}</td>
                   <td className="p-2 text-right text-white/70">{l.crm.estimated_kWp}</td>
                   <td className="p-2 text-white/70">{stageLabel(l.crm.crm_stage)}</td>
-                  <td className={`p-2 hidden sm:table-cell ${REACH_COLOR[l.crm.reachability]}`}>{l.crm.reachability}</td>
+                  <td className={`p-2 hidden sm:table-cell ${REACH_COLOR[l.crm.reachability]}`}>{c.reach[l.crm.reachability]}</td>
                   <td className="p-2">
                     {phone ? (
                       <a href={`tel:${phone}`} className="flex items-center gap-1 text-emerald-300 hover:text-emerald-200" onClick={(e) => e.stopPropagation()}>
@@ -180,7 +182,7 @@ export default function BustanLeadsTable() {
             })}
           </tbody>
         </table>
-        {rows.length === 0 && <p className="p-6 text-center text-white/40 text-sm">No leads match the filters.</p>}
+        {rows.length === 0 && <p className="p-6 text-center text-white/40 text-sm">{c.table.noMatch}</p>}
       </div>
     </div>
   )

@@ -9,6 +9,9 @@ import { fetchBustanLeads, mapLeadToProperty } from '../lib/bustan-crm-service'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
 import { Toast } from '../components/Toast'
+import { useNavigate } from 'react-router-dom'
+import { useLanguage } from '../i18n/useLanguage'
+import { useTranslation } from '../i18n/useTranslation'
 const BustanLeadEditor = lazy(() =>
   import('../components/CRM/BustanLeadEditor').then((m) => ({ default: m.BustanLeadEditor })),
 )
@@ -116,6 +119,9 @@ export default function PlatformPage() {
   const setBustanLeads = useBustanStore((s) => s.setLeads)
   const setBustanRole = useBustanStore((s) => s.setRole)
   const hasBustanLeads = useBustanStore((s) => Object.keys(s.leadsById).length > 0)
+  const navigate = useNavigate()
+  const { switchLangPath } = useLanguage()
+  const switchLangLabel = useTranslation().t.crm.switchLang
   useEffect(() => {
     if (!user || !isBustanConnected()) return
     let cancelled = false
@@ -161,6 +167,15 @@ export default function PlatformPage() {
           <BustanLeadEditor />
         </Suspense>
       )}
+
+      {/* Language toggle — cycles en → th → he (RTL) */}
+      <button
+        onClick={() => navigate(switchLangPath())}
+        className="fixed top-2 left-2 z-40 px-2.5 py-1 rounded-lg text-xs bg-[#0D2137]/90 backdrop-blur border border-white/10 text-white/70 hover:text-white"
+        aria-label="Switch language"
+      >
+        {switchLangLabel}
+      </button>
 
       {/* Global toast (CRM writes) */}
       <Toast />
