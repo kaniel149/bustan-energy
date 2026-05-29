@@ -44,6 +44,27 @@ Live data: 85 properties · 64 phones · A=17/B=61/C=7 · ~6,925 kWp · reachabi
 - O&M live monitoring (SolarEdge/Huawei/Sungrow) deferred — needs API keys, only after real installs exist.
 - Service-side keys (if any) go to env only, never committed; publishable key in client is fine.
 
+## Progress log
+
+Branch `feat/platform-bustan-crm` (off clean `main`). 39 tests, typecheck + build green.
+
+- ✅ **Phase 0** `ea5ab90` — dedicated bustan client; data confirmed 85/A17/B61/C7.
+- ✅ **Phase 1a** `b2838f4` — `owner-decision-layer.ts` ported (15 tests).
+- ✅ **Phase 1b** `a6d7599` — `bom.ts` auto-BOM (7 tests).
+- ✅ **Phase 2a** `5c99864` — `bustan-crm-service.ts` read layer; verified vs real 85-lead fixture (priorities exact, 64 phones, ~6.9 MWp; reachability **1/64/20** vs handoff's stale 1/66/18 — 2 leads drifted).
+- ✅ **Phase 2b** `d7d96bf` — PlatformPage loads live leads on sign-in (additive/reversible).
+- ✅ **Phase 3** `2d66a02` — `bustan-permissions` (role matrix + can, 6 tests), write service (updateLeadPipeline/Stage/assignLead), toast-store + Toast, bustan-store, `BustanLeadEditor` (role-gated, optimistic). DB-verified: stage change → `trg_log_crm_change` → activity_log.
+
+**Still pending in-browser verification (needs a login):** sign-in → 85 on map; stage change → activity_log row with actor; viewer edit blocked. The DB + mapping sides are proven; only the authenticated client round-trip is unconfirmed.
+
+**Architecture note for Phase 4+:** the existing `Pipeline`/`Dashboard`/`CRMPanel` use a *separate* `crm_projects` model (TM Energy, `crm-service.ts`). The bustan leads currently flow through `properties` + `BustanLeadEditor` (map sidebar). Re-pointing the Pipeline board + Dashboard to the bustan model is the main Phase 4/5 task and is a sizeable refactor — decide whether to migrate those components or keep the map-sidebar CRM.
+
+### Remaining
+- **Phase 4** — LeadDetail: owner/decision-maker, editable fields, survey workflow (`site_surveys`), O&M block (won) (`om_sites`); quote desk + auto-BOM PDF (jspdf).
+- **Phase 5** — Dashboards (funnel/win-rate/pipeline/reachability) on bustan data; activity-log view; WhatsApp/email alerts; search/filter/bulk.
+- **Phase 6** — i18n HE/EN/TH; mobile; enrichment; 505-lead reseed.
+- **Phase 7** — retire old `/crm` (redirect, build-script, landing link) — only after full migration + user confirm.
+
 ## Verification gate (every phase, per handoff §6)
 
 Sign in → 85 properties on the map · change a stage → `activity_log` row appears · edit blocked for `viewer` · phone numbers visible on enriched leads · client uses publishable key (RLS) · no server keys committed.
