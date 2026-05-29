@@ -4,6 +4,19 @@ import { supabase } from '../lib/supabase'
 import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
+import { isBustanConnected } from '../lib/bustan-supabase'
+import { fetchBustanLeads, mapLeadToProperty } from '../lib/bustan-crm-service'
+import { fetchCurrentRole } from '../lib/bustan-permissions'
+import { useBustanStore } from '../lib/bustan-store'
+import { Toast } from '../components/Toast'
+import { useNavigate } from 'react-router-dom'
+import { useLanguage } from '../i18n/useLanguage'
+import { useTranslation } from '../i18n/useTranslation'
+const BustanLeadEditor = lazy(() =>
+  import('../components/CRM/BustanLeadEditor').then((m) => ({ default: m.BustanLeadEditor })),
+)
+const BustanDashboard = lazy(() => import('../components/CRM/BustanDashboard'))
+const BustanLeadsTable = lazy(() => import('../components/CRM/BustanLeadsTable'))
 
 const SolarMap = lazy(() => import('../components/Map/SolarMap').then((m) => ({ default: m.SolarMap })))
 const FilterBar = lazy(() => import('../components/FilterBar/FilterBar').then((m) => ({ default: m.FilterBar })))
@@ -100,6 +113,32 @@ export default function PlatformPage() {
     init()
   }, [setProperties, setGridData])
 
+  // Load the live Bustan CRM leads (bustan schema) once authenticated.
+  // Additive + reversible: RLS returns nothing when unauthenticated, so the
+  // static demo data above is preserved; real 85 leads replace it on sign-in.
+  const setBustanLeads = useBustanStore((s) => s.setLeads)
+  const setBustanRole = useBustanStore((s) => s.setRole)
+  const hasBustanLeads = useBustanStore((s) => Object.keys(s.leadsById).length > 0)
+  const navigate = useNavigate()
+  const { switchLangPath } = useLanguage()
+  const switchLangLabel = useTranslation().t.crm.switchLang
+  useEffect(() => {
+    if (!user || !isBustanConnected()) return
+    let cancelled = false
+    Promise.all([fetchBustanLeads(), fetchCurrentRole()])
+      .then(([leads, role]) => {
+        if (cancelled || leads.length === 0) return
+        setBustanLeads(leads)
+        setBustanRole(role)
+        setProperties(leads.map(mapLeadToProperty))
+        setDataStatus('loaded')
+      })
+      .catch((err) => console.error('Failed to load Bustan leads:', err))
+    return () => {
+      cancelled = true
+    }
+  }, [user, setProperties, setBustanLeads, setBustanRole])
+
   const isMapView = platformView === 'map'
 
   useEffect(() => {
@@ -122,11 +161,38 @@ export default function PlatformPage() {
         <FilterBar />
       </Suspense>
 
-      {/* Scanner view */}
-      {platformView === 'scanner' && (
-        <Suspense fallback={<ViewLoader />}>
-          <Scanner />
+      {/* Bustan CRM lead editor — shows for the selected live lead (map/scanner) */}
+      {selectedProperty && (isMapView || platformView === 'scanner') && (
+        <Suspense fallback={null}>
+          <BustanLeadEditor />
         </Suspense>
+      )}
+
+      {/* Language toggle — cycles en → th → he (RTL) */}
+      <button
+        onClick={() => navigate(switchLangPath())}
+        className="fixed top-2 left-2 z-40 px-2.5 py-1 rounded-lg text-xs bg-[#0D2137]/90 backdrop-blur border border-white/10 text-white/70 hover:text-white"
+        aria-label="Switch language"
+      >
+        {switchLangLabel}
+      </button>
+
+      {/* Global toast (CRM writes) */}
+      <Toast />
+
+      {/* Scanner view — Bustan leads table when live leads loaded, else legacy scanner */}
+      {platformView === 'scanner' && (
+        hasBustanLeads ? (
+          <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628]">
+            <Suspense fallback={<ViewLoader />}>
+              <BustanLeadsTable />
+            </Suspense>
+          </div>
+        ) : (
+          <Suspense fallback={<ViewLoader />}>
+            <Scanner />
+          </Suspense>
+        )
       )}
 
       {/* Pipeline view */}
@@ -138,11 +204,11 @@ export default function PlatformPage() {
         </div>
       )}
 
-      {/* Dashboard view */}
+      {/* Dashboard view — Bustan dashboard when live leads are loaded, else legacy */}
       {platformView === 'dashboard' && (
         <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628] overflow-y-auto">
           <Suspense fallback={<ViewLoader />}>
-            <CRMDashboard />
+            {hasBustanLeads ? <BustanDashboard /> : <CRMDashboard />}
           </Suspense>
         </div>
       )}

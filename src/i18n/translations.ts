@@ -1,8 +1,12 @@
 // ─── i18n/translations.ts ─────────────────────────────────────────────────────
-// Full bilingual content for Bustan Energy marketing site (Ko Phangan, Thailand)
-// English + Thai — all pages covered
+// Content for Bustan Energy marketing site (Ko Phangan, Thailand) + the /platform CRM.
+// English + Thai (full) + Hebrew (operator/CRM-facing; falls back to English elsewhere).
 
-export type Lang = 'en' | 'th'
+export type Lang = 'en' | 'th' | 'he'
+
+/** Languages that render right-to-left. */
+export const RTL_LANGS: Lang[] = ['he']
+export const isRTL = (lang: Lang): boolean => RTL_LANGS.includes(lang)
 
 // ─── ENGLISH ──────────────────────────────────────────────────────────────────
 const en = {
@@ -732,6 +736,47 @@ const en = {
       title: 'Contact Bustan Energy — Free Solar Consultation Ko Phangan',
       description:
         'Get a free solar consultation in Ko Phangan. Contact Bustan Energy via WhatsApp, LINE, or email. Office in Thong Sala, Surat Thani. Mon–Sat 8am–6pm.',
+    },
+  },
+
+  // CRM / Solar Intelligence platform (operator-facing).
+  crm: {
+    switchLang: 'ภาษาไทย',
+    priority: 'Priority',
+    reach: { contactable: 'contactable', partial: 'partial', cold: 'cold' },
+    leadScore: 'Lead score',
+    perYear: '/yr',
+    stage: 'Stage',
+    assignedTo: 'Assigned to',
+    unassigned: 'unassigned',
+    nextAction: 'Next action',
+    readonly: 'Read-only',
+    saving: 'Saving…',
+    roleCannot: 'Your role cannot perform this action',
+    saveFailed: 'Save failed',
+    tabs: { crm: 'CRM', quote: 'Quote', survey: 'Survey', om: 'O&M' },
+    quote: { panels: 'panels', inverters: 'inverter(s)', equipment: 'Equipment', labor: 'Labor', total: 'Total (cost)' },
+    survey: {
+      roofPhotos: 'roof photos', peaBill: 'pea bill', batterySpace: 'battery space',
+      shading: 'shading', access: 'access', mainBoard: 'main board', notes: 'notes',
+      recommendation: 'recommendation…', go: 'Go', maybe: 'Maybe', nogo: 'No-go', save: 'Save survey',
+    },
+    om: {
+      status: 'monitoring status…', online: 'Online', offline: 'Offline', alert: 'Alert',
+      lastReading: 'last reading kWh', performanceRatio: 'performance ratio', notes: 'notes', save: 'Save O&M',
+    },
+    table: {
+      search: 'Search name / area…', allPriorities: 'All priorities', allStages: 'All stages',
+      allReach: 'All reach', leads: 'leads', selected: 'selected', setStage: 'Set stage…',
+      apply: 'Apply', clear: 'Clear', lead: 'Lead', area: 'Area', phone: 'Phone',
+      noMatch: 'No leads match the filters.', moved: 'moved to', failed: 'failed',
+    },
+    dash: {
+      title: 'Bustan CRM — Pipeline', leads: 'Leads', pipeline: 'Pipeline', annualValue: 'Annual value',
+      winRate: 'Win rate', funnel: 'Funnel by stage', reachability: 'Reachability', topAreas: 'Top areas',
+      recentActivity: 'Recent activity', noActivity: 'No activity yet.',
+      noLeads: 'No Bustan leads loaded. Sign in to load the live pipeline.',
+      won: 'won', lost: 'lost', nonLost: 'non-lost', savingsYr: 'est. savings/yr',
     },
   },
 } as const
@@ -1508,10 +1553,79 @@ const th = {
   },
 } as const
 
+// ─── HEBREW (operator / CRM-facing; falls back to English elsewhere) ────────────
+// Only the keys translated here override English; everything else falls back to
+// `en` via deepMerge, so the marketing body stays English until translated.
+const he = {
+  nav: {
+    services: 'שירותים',
+    howItWorks: 'איך זה עובד',
+    pricing: 'תמחור',
+    projects: 'פרויקטים',
+    about: 'אודות',
+    blog: 'בלוג',
+    contact: 'צור קשר',
+    getQuote: 'קבל הצעה',
+    switchLang: 'English',
+  },
+  crm: {
+    switchLang: 'English',
+    priority: 'עדיפות',
+    reach: { contactable: 'נגיש', partial: 'חלקי', cold: 'קר' },
+    leadScore: 'ציון ליד',
+    perYear: '/שנה',
+    stage: 'שלב',
+    assignedTo: 'משויך ל',
+    unassigned: 'לא משויך',
+    nextAction: 'פעולה הבאה',
+    readonly: 'קריאה בלבד',
+    saving: 'שומר…',
+    roleCannot: 'התפקיד שלך לא מורשה לפעולה זו',
+    saveFailed: 'השמירה נכשלה',
+    tabs: { crm: 'CRM', quote: 'הצעה', survey: 'סקר', om: 'תחזוקה' },
+    quote: { panels: 'פאנלים', inverters: 'ממירים', equipment: 'ציוד', labor: 'עבודה', total: 'סה״כ (עלות)' },
+    survey: {
+      roofPhotos: 'תמונות גג', peaBill: 'חשבון PEA', batterySpace: 'מקום לסוללה',
+      shading: 'הצללה', access: 'גישה', mainBoard: 'לוח ראשי', notes: 'הערות',
+      recommendation: 'המלצה…', go: 'מתאים', maybe: 'אולי', nogo: 'לא מתאים', save: 'שמור סקר',
+    },
+    om: {
+      status: 'סטטוס ניטור…', online: 'מחובר', offline: 'מנותק', alert: 'התראה',
+      lastReading: 'קריאה אחרונה kWh', performanceRatio: 'יחס ביצועים', notes: 'הערות', save: 'שמור תחזוקה',
+    },
+    table: {
+      search: 'חיפוש שם / אזור…', allPriorities: 'כל העדיפויות', allStages: 'כל השלבים',
+      allReach: 'כל הנגישות', leads: 'לידים', selected: 'נבחרו', setStage: 'קבע שלב…',
+      apply: 'החל', clear: 'נקה', lead: 'ליד', area: 'אזור', phone: 'טלפון',
+      noMatch: 'אין לידים שתואמים את הסינון.', moved: 'הועברו ל', failed: 'נכשלו',
+    },
+    dash: {
+      title: 'Bustan CRM — צנרת מכירות', leads: 'לידים', pipeline: 'צנרת', annualValue: 'ערך שנתי',
+      winRate: 'אחוז סגירה', funnel: 'משפך לפי שלב', reachability: 'נגישות', topAreas: 'אזורים מובילים',
+      recentActivity: 'פעילות אחרונה', noActivity: 'אין פעילות עדיין.',
+      noLeads: 'לא נטענו לידים. התחבר כדי לטעון את הצנרת החיה.',
+      won: 'נסגרו', lost: 'אבדו', nonLost: 'לא-אבודים', savingsYr: 'חיסכון משוער/שנה',
+    },
+  },
+}
+
 // ─── EXPORTS ──────────────────────────────────────────────────────────────────
-// `satisfies` validates structural compatibility without widening the type.
-// This means translations[lang] always returns the full `typeof en` shape.
-const _th = th as unknown as typeof en
-export const translations: Record<Lang, typeof en> = { en, th: _th }
+type Dict = { [k: string]: unknown }
+/** Deep-merge `override` onto a clone of `base`; missing keys fall back to base. */
+function deepMerge<T extends Dict>(base: T, override: Dict): T {
+  const out: Dict = Array.isArray(base) ? [...(base as unknown[])] as unknown as Dict : { ...base }
+  for (const key of Object.keys(override)) {
+    const o = override[key]
+    const b = out[key]
+    out[key] = o && b && typeof o === 'object' && typeof b === 'object' && !Array.isArray(o)
+      ? deepMerge(b as Dict, o as Dict)
+      : o
+  }
+  return out as T
+}
+
+const _th = deepMerge(en as unknown as Dict, th as unknown as Dict) as unknown as typeof en
+const _he = deepMerge(en as unknown as Dict, he as unknown as Dict) as unknown as typeof en
+export const translations: Record<Lang, typeof en> = { en, th: _th, he: _he }
 
 export type Translations = typeof en
