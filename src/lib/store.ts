@@ -90,6 +90,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     minSolarScore: 0,
     showGrid: true,
     showBufferZones: true,
+    showRoofDetection: false,
     searchQuery: '',
   },
 

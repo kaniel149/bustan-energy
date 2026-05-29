@@ -74,6 +74,7 @@ export interface Property {
   // Roof-specific
   area?: number
   usableArea?: number
+  roofGeom?: GeoJSON.Polygon | GeoJSON.MultiPolygon
   capacityKwp?: number
   panelCount?: number
   annualKwh?: number
@@ -135,6 +136,7 @@ export interface FilterState {
   minSolarScore: number
   showGrid: boolean
   showBufferZones: boolean
+  showRoofDetection: boolean
   searchQuery: string
 }
 

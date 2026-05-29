@@ -67,6 +67,40 @@ function buildBufferFeatures(
   return { type: 'FeatureCollection', features: circles }
 }
 
+// Build a roof footprint feature for a property.
+// Uses persisted roofGeom (P2+) when present; otherwise synthesizes a square
+// footprint sized by roof area (m²) centered on the property — an interim
+// read-only overlay until real geometry is drawn/detected.
+function buildRoofFeature(p: {
+  id: string; lat: number; lng: number; area?: number; solarScore?: number
+  priority?: string; title: string; roofGeom?: GeoJSON.Polygon | GeoJSON.MultiPolygon
+}): GeoJSON.Feature | null {
+  const props = {
+    id: p.id,
+    title: p.title,
+    solarScore: p.solarScore || 0,
+    priority: p.priority || 'B',
+    synthetic: p.roofGeom ? 0 : 1,
+  }
+  if (p.roofGeom) {
+    return { type: 'Feature', geometry: p.roofGeom, properties: props }
+  }
+  const area = Number(p.area)
+  if (!Number.isFinite(p.lat) || !Number.isFinite(p.lng)) return null
+  const side = Math.sqrt(Number.isFinite(area) && area > 0 ? area : 100) // m; default ~10x10m
+  const half = side / 2
+  const dLat = half / 110574
+  const dLng = half / (111320 * Math.cos((p.lat * Math.PI) / 180))
+  const ring: [number, number][] = [
+    [p.lng - dLng, p.lat - dLat],
+    [p.lng + dLng, p.lat - dLat],
+    [p.lng + dLng, p.lat + dLat],
+    [p.lng - dLng, p.lat + dLat],
+    [p.lng - dLng, p.lat - dLat],
+  ]
+  return { type: 'Feature', geometry: { type: 'Polygon', coordinates: [ring] }, properties: props }
+}
+
 export function SolarMap() {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<maplibregl.Map | null>(null)
@@ -311,6 +345,84 @@ export function SolarMap() {
     if (m.isStyleLoaded()) addGrid()
     else m.on('load', addGrid)
   }, [gridData, filters.showGrid, filters.region])
+
+  // Roof-polygon overlay (read-only) — P1
+  const roofHandlers = useRef<Array<{ type: LayerMouseEventType; layer: string; handler: LayerMouseHandler }>>([])
+  useEffect(() => {
+    const m = map.current
+    if (!m) return
+
+    const ROOF_LAYERS = ['roofs-fill', 'roofs-outline', 'roofs-outline-synthetic']
+
+    const setup = () => {
+      // Cleanup previous layers/source + handlers
+      for (const { type, layer, handler } of roofHandlers.current) m.off(type, layer, handler)
+      roofHandlers.current = []
+      for (const id of ROOF_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('roofs-src')) m.removeSource('roofs-src')
+
+      if (!filters.showRoofDetection) return
+
+      const features = filteredProperties
+        .filter((p) => p.type === 'roof')
+        .map((p) => buildRoofFeature(p))
+        .filter((f): f is GeoJSON.Feature => f !== null)
+
+      if (features.length === 0) return
+
+      m.addSource('roofs-src', { type: 'geojson', data: { type: 'FeatureCollection', features } })
+
+      // Keep roof polygons beneath the lead markers / clusters
+      const beforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters']
+        .find((id) => m.getLayer(id))
+
+      // Fill — color ramp by solar potential score (0..100)
+      m.addLayer({
+        id: 'roofs-fill', type: 'fill', source: 'roofs-src',
+        paint: {
+          'fill-color': ['interpolate', ['linear'], ['get', 'solarScore'],
+            0, '#FF3D00', 50, '#FF9100', 75, '#FFD600', 90, '#00E676'],
+          'fill-opacity': 0.35,
+        },
+      }, beforeId)
+
+      // Outline — solid for real geometry, dashed for synthetic interim footprints
+      // (line-dasharray is not data-driven in MapLibre, so use two filtered layers)
+      m.addLayer({
+        id: 'roofs-outline', type: 'line', source: 'roofs-src',
+        filter: ['==', ['get', 'synthetic'], 0],
+        paint: { 'line-color': '#ffffff', 'line-width': 1.5, 'line-opacity': 0.85 },
+      }, beforeId)
+      m.addLayer({
+        id: 'roofs-outline-synthetic', type: 'line', source: 'roofs-src',
+        filter: ['==', ['get', 'synthetic'], 1],
+        paint: { 'line-color': '#ffffff', 'line-width': 1.5, 'line-opacity': 0.7, 'line-dasharray': [2, 2] },
+      }, beforeId)
+
+      const on = (type: LayerMouseEventType, layer: string, handler: LayerMouseHandler) => {
+        m.on(type, layer, handler)
+        roofHandlers.current.push({ type, layer, handler })
+      }
+      on('mouseenter', 'roofs-fill', () => { m.getCanvas().style.cursor = 'pointer' })
+      on('mouseleave', 'roofs-fill', () => { m.getCanvas().style.cursor = '' })
+      on('click', 'roofs-fill', (e: maplibregl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+        const f = e.features?.[0]
+        if (!f) return
+        const propId = (f.properties as Record<string, string>).id
+        const property = properties.find((p) => p.id === propId)
+        if (property) setSelectedProperty(property)
+      })
+    }
+
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    return () => {
+      if (!m) return
+      for (const { type, layer, handler } of roofHandlers.current) m.off(type, layer, handler)
+      roofHandlers.current = []
+    }
+  }, [filteredProperties, filters.showRoofDetection, properties, setSelectedProperty])
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)
