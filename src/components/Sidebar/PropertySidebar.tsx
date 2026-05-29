@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers } from 'lucide-react'
+import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers, PenLine } from 'lucide-react'
+import { useBustanStore } from '../../lib/bustan-store'
+import { can } from '../../lib/bustan-permissions'
 import { ProposalModal } from '../Proposal/ProposalModal'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '../../lib/store'
@@ -32,8 +34,11 @@ const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 export function PropertySidebar() {
   const property = useAppStore((s) => s.selectedProperty)
   const setSelected = useAppStore((s) => s.setSelectedProperty)
+  const setDrawRoofFor = useAppStore((s) => s.setDrawRoofFor)
   const region = useAppStore((s) => s.filters.region)
   const regionConfig = REGIONS[region]
+  const role = useBustanStore((s) => s.role)
+  const canEditRoof = can(role, 'survey.edit') || can(role, 'crm.edit')
 
   const [nasaData, setNasaData] = useState<NasaPowerData | null>(null)
   const [financial, setFinancial] = useState<FinancialAnalysis | null>(null)
@@ -200,6 +205,17 @@ export function PropertySidebar() {
               </>
             )}
           </div>
+
+          {/* Draw / edit roof footprint — engineer/sales/admin only */}
+          {isRoof && canEditRoof && (
+            <button
+              onClick={() => setDrawRoofFor(property.id)}
+              className="w-full py-2.5 rounded-xl bg-[#00E676]/15 border border-[#00E676]/30 text-[#00E676] text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#00E676]/25 transition-colors"
+            >
+              <PenLine size={14} />
+              {property.roofGeom ? 'Edit Roof Footprint' : 'Draw Roof Footprint'}
+            </button>
+          )}
 
           {/* NASA POWER Data Badge */}
           {(nasaLoading || nasaData || nasaError) && (

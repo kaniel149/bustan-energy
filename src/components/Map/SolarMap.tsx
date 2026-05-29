@@ -1,9 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { area as turfArea } from '@turf/area'
 import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { REGIONS } from '../../lib/regions'
+import { computeEstimatedKwp } from '../../lib/owner-decision-layer'
+import { updateRoofGeom } from '../../lib/bustan-crm-service'
+import { useToastStore } from '../../lib/toast-store'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
@@ -112,8 +116,16 @@ export function SolarMap() {
   const properties = useAppStore((s) => s.properties)
   const selectedProperty = useAppStore((s) => s.selectedProperty)
   const setSelectedProperty = useAppStore((s) => s.setSelectedProperty)
+  const drawRoofFor = useAppStore((s) => s.drawRoofFor)
+  const setDrawRoofFor = useAppStore((s) => s.setDrawRoofFor)
+  const setProperties = useAppStore((s) => s.setProperties)
+  const showToast = useToastStore((s) => s.showToast)
   const filteredProperties = useFilteredProperties()
   const fittedRegion = useRef<string | null>(null)
+  const isDrawingRef = useRef(false)
+  const finishRef = useRef<null | (() => void)>(null)
+  const [drawVertexCount, setDrawVertexCount] = useState(0)
+  const [savingRoof, setSavingRoof] = useState(false)
 
   const regionConfig = REGIONS[filters.region]
 
@@ -406,6 +418,7 @@ export function SolarMap() {
       on('mouseenter', 'roofs-fill', () => { m.getCanvas().style.cursor = 'pointer' })
       on('mouseleave', 'roofs-fill', () => { m.getCanvas().style.cursor = '' })
       on('click', 'roofs-fill', (e: maplibregl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+        if (isDrawingRef.current) return
         const f = e.features?.[0]
         if (!f) return
         const propId = (f.properties as Record<string, string>).id
@@ -423,6 +436,93 @@ export function SolarMap() {
       roofHandlers.current = []
     }
   }, [filteredProperties, filters.showRoofDetection, properties, setSelectedProperty])
+
+  // Roof draw mode — P2 (custom polygon: click vertices, double-click/Finish to save)
+  useEffect(() => {
+    const m = map.current
+    if (!m || !drawRoofFor) { isDrawingRef.current = false; return }
+
+    const propertyId = drawRoofFor
+    const vertices: [number, number][] = []
+    isDrawingRef.current = true
+    setDrawVertexCount(0)
+
+    const DRAW_LAYERS = ['draw-fill', 'draw-line', 'draw-vertices']
+
+    const render = () => {
+      const features: GeoJSON.Feature[] = []
+      if (vertices.length >= 2) {
+        features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: vertices }, properties: {} })
+      }
+      if (vertices.length >= 3) {
+        features.push({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [[...vertices, vertices[0]]] }, properties: {} })
+      }
+      for (const v of vertices) {
+        features.push({ type: 'Feature', geometry: { type: 'Point', coordinates: v }, properties: {} })
+      }
+      const src = m.getSource('draw-src') as maplibregl.GeoJSONSource | undefined
+      if (src) src.setData({ type: 'FeatureCollection', features })
+    }
+
+    const finish = async () => {
+      if (vertices.length < 3) { showToast('Add at least 3 points to form a roof', 'info'); return }
+      const polygon: GeoJSON.Polygon = { type: 'Polygon', coordinates: [[...vertices, vertices[0]]] }
+      const areaSqm = Math.round(turfArea({ type: 'Feature', geometry: polygon, properties: {} }))
+      const kwp = computeEstimatedKwp({ roofAreaSqm: areaSqm })
+      setSavingRoof(true)
+      const res = await updateRoofGeom(propertyId, polygon, areaSqm, kwp)
+      setSavingRoof(false)
+      if (!res.ok) { showToast(res.error || 'Failed to save roof', 'error'); return }
+      const updated = useAppStore.getState().properties.map((p) =>
+        p.id === propertyId ? { ...p, roofGeom: polygon, area: areaSqm, capacityKwp: kwp } : p)
+      setProperties(updated)
+      showToast(`Roof saved · ${areaSqm.toLocaleString()} m² · ${kwp} kWp`, 'success')
+      setDrawRoofFor(null)
+    }
+
+    const onClick = (e: maplibregl.MapMouseEvent) => {
+      vertices.push([e.lngLat.lng, e.lngLat.lat])
+      setDrawVertexCount(vertices.length)
+      render()
+    }
+    const onDblClick = (e: maplibregl.MapMouseEvent) => { e.preventDefault(); void finish() }
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape') setDrawRoofFor(null)
+      else if (ev.key === 'Enter') void finish()
+    }
+    // expose finish for the on-map "Finish" button via a ref hook
+    finishRef.current = finish
+
+    const setup = () => {
+      for (const id of DRAW_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('draw-src')) m.removeSource('draw-src')
+      m.addSource('draw-src', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
+      m.addLayer({ id: 'draw-fill', type: 'fill', source: 'draw-src', filter: ['==', ['geometry-type'], 'Polygon'], paint: { 'fill-color': '#00E676', 'fill-opacity': 0.25 } })
+      m.addLayer({ id: 'draw-line', type: 'line', source: 'draw-src', filter: ['==', ['geometry-type'], 'LineString'], paint: { 'line-color': '#00E676', 'line-width': 2 } })
+      m.addLayer({ id: 'draw-vertices', type: 'circle', source: 'draw-src', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-radius': 5, 'circle-color': '#ffffff', 'circle-stroke-color': '#00E676', 'circle-stroke-width': 2 } })
+    }
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    m.doubleClickZoom.disable()
+    m.getCanvas().style.cursor = 'crosshair'
+    m.on('click', onClick)
+    m.on('dblclick', onDblClick)
+    window.addEventListener('keydown', onKey)
+
+    return () => {
+      isDrawingRef.current = false
+      finishRef.current = null
+      m.off('click', onClick)
+      m.off('dblclick', onDblClick)
+      window.removeEventListener('keydown', onKey)
+      m.doubleClickZoom.enable()
+      m.getCanvas().style.cursor = ''
+      for (const id of DRAW_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('draw-src')) m.removeSource('draw-src')
+      setDrawVertexCount(0)
+    }
+  }, [drawRoofFor, setProperties, setDrawRoofFor, showToast])
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)
@@ -619,6 +719,7 @@ export function SolarMap() {
         })
 
         on('click', layerId, (e: maplibregl.MapMouseEvent & { features?: GeoJSON.Feature[] }) => {
+          if (isDrawingRef.current) return
           const f = e.features?.[0]
           if (!f) return
           const propId = (f.properties as Record<string, string>).id
@@ -645,6 +746,29 @@ export function SolarMap() {
   }, [filteredProperties, properties, setSelectedProperty])
 
   return (
-    <div ref={mapContainer} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+    <>
+      <div ref={mapContainer} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+      {drawRoofFor && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#00E676]/30 px-4 py-2.5 flex items-center gap-3 shadow-xl">
+          <span className="text-white/80 text-xs">
+            Drawing roof · <strong className="text-[#00E676]">{drawVertexCount}</strong> point{drawVertexCount === 1 ? '' : 's'}
+            <span className="text-white/40"> — click to add, double-click / Enter to finish</span>
+          </span>
+          <button
+            onClick={() => finishRef.current?.()}
+            disabled={savingRoof || drawVertexCount < 3}
+            className="px-3 py-1 rounded-lg bg-[#00E676]/20 text-[#00E676] text-xs font-semibold disabled:opacity-40 hover:bg-[#00E676]/30 transition-colors"
+          >
+            {savingRoof ? 'Saving…' : 'Finish'}
+          </button>
+          <button
+            onClick={() => setDrawRoofFor(null)}
+            className="px-3 py-1 rounded-lg bg-white/5 text-white/60 text-xs hover:bg-white/10 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+    </>
   )
 }

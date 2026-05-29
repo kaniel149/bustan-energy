@@ -30,6 +30,10 @@ interface AppState {
   selectedProperty: Property | null
   setSelectedProperty: (property: Property | null) => void
 
+  // Roof draw mode — id of the property whose roof is being drawn (null = off)
+  drawRoofFor: string | null
+  setDrawRoofFor: (propertyId: string | null) => void
+
   // Map
   mapStyle: 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
   setMapStyle: (style: AppState['mapStyle']) => void
@@ -121,6 +125,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   selectedProperty: null,
   setSelectedProperty: (property) => set({ selectedProperty: property }),
+
+  drawRoofFor: null,
+  setDrawRoofFor: (propertyId) => set({ drawRoofFor: propertyId }),
 
   mapStyle: readStoredMapStyle(),
   setMapStyle: (style) => {

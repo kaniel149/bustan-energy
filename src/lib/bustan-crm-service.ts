@@ -38,6 +38,7 @@ export interface BustanPropertyRow {
   map_y: number | null
   lat: number | null
   lon: number | null
+  roof_geom: GeoJSON.Polygon | GeoJSON.MultiPolygon | null
 }
 
 export interface BustanOwnerRow {
@@ -166,6 +167,7 @@ export function mapLeadToProperty(lead: BustanLead): Property {
     lat: num(p.lat) ?? 0,
     lng: num(p.lon) ?? 0,
     area: num(p.roof_area_sqm),
+    roofGeom: p.roof_geom ?? undefined,
     capacityKwp: lead.crm.estimated_kWp || undefined,
     solarScore: num(p.solar_potential_score),
     priority,
@@ -250,6 +252,29 @@ export function updateLeadStage(propertyId: string, stage: string): Promise<Writ
 /** Reassign a lead's owner (assigned_to). Pass null to unassign. */
 export function assignLead(propertyId: string, assignedTo: string | null): Promise<WriteResult> {
   return updateLeadPipeline(propertyId, { assigned_to: assignedTo })
+}
+
+/**
+ * Persist a drawn/edited roof footprint. Writes roof_geom + recomputed
+ * roof_area_sqm (m²) + crm_pipeline.estimated_kwp via the role-checked
+ * SECURITY DEFINER RPC `bustan.save_roof_geom` (admin/sales/engineer only;
+ * RLS/role errors are returned, never swallowed). See bustan-migrations/002.
+ */
+export async function updateRoofGeom(
+  propertyId: string,
+  geom: GeoJSON.Polygon | GeoJSON.MultiPolygon,
+  areaSqm: number,
+  estimatedKwp: number,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.rpc('save_roof_geom', {
+    p_id: propertyId,
+    p_geom: geom as unknown as Record<string, unknown>,
+    p_area: areaSqm,
+    p_kwp: estimatedKwp,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
 }
 
 // --- Site survey (engineer/admin) -----------------------------------------
