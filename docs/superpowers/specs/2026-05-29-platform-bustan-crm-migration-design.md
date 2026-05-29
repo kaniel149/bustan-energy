@@ -54,14 +54,15 @@ Branch `feat/platform-bustan-crm` (off clean `main`). 39 tests, typecheck + buil
 - ✅ **Phase 2a** `5c99864` — `bustan-crm-service.ts` read layer; verified vs real 85-lead fixture (priorities exact, 64 phones, ~6.9 MWp; reachability **1/64/20** vs handoff's stale 1/66/18 — 2 leads drifted).
 - ✅ **Phase 2b** `d7d96bf` — PlatformPage loads live leads on sign-in (additive/reversible).
 - ✅ **Phase 3** `2d66a02` — `bustan-permissions` (role matrix + can, 6 tests), write service (updateLeadPipeline/Stage/assignLead), toast-store + Toast, bustan-store, `BustanLeadEditor` (role-gated, optimistic). DB-verified: stage change → `trg_log_crm_change` → activity_log.
+- ✅ **Phase 4** `1657ca7` — lead detail: service fetch/upsert for `site_surveys` + `om_sites`; `BustanLeadEditor` → tabbed panel (CRM | Quote | Survey | O&M-when-won). Quote tab reuses tested `bom.ts` (line items + equipment + labor + total). DB-verified: site_surveys upsert.
 
 **Still pending in-browser verification (needs a login):** sign-in → 85 on map; stage change → activity_log row with actor; viewer edit blocked. The DB + mapping sides are proven; only the authenticated client round-trip is unconfirmed.
 
 **Architecture note for Phase 4+:** the existing `Pipeline`/`Dashboard`/`CRMPanel` use a *separate* `crm_projects` model (TM Energy, `crm-service.ts`). The bustan leads currently flow through `properties` + `BustanLeadEditor` (map sidebar). Re-pointing the Pipeline board + Dashboard to the bustan model is the main Phase 4/5 task and is a sizeable refactor — decide whether to migrate those components or keep the map-sidebar CRM.
 
 ### Remaining
-- **Phase 4** — LeadDetail: owner/decision-maker, editable fields, survey workflow (`site_surveys`), O&M block (won) (`om_sites`); quote desk + auto-BOM PDF (jspdf).
-- **Phase 5** — Dashboards (funnel/win-rate/pipeline/reachability) on bustan data; activity-log view; WhatsApp/email alerts; search/filter/bulk.
+- **Phase 4 follow-on** — optional: export the Quote as a branded PDF (jspdf via `generate-proposal.ts`); attach roof photos to surveys (storage).
+- **Phase 5** — Dashboards (funnel/win-rate/pipeline/reachability) on bustan data; activity-log view; WhatsApp/email alerts; search/filter/bulk. Decide: re-point `Pipeline`/`Dashboard`/`CRMPanel` (currently `crm_projects`) to the bustan model, or build bustan dashboards fresh from `summarizeCrmRecords`.
 - **Phase 6** — i18n HE/EN/TH; mobile; enrichment; 505-lead reseed.
 - **Phase 7** — retire old `/crm` (redirect, build-script, landing link) — only after full migration + user confirm.
 
