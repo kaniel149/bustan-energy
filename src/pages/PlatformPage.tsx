@@ -4,6 +4,8 @@ import { supabase } from '../lib/supabase'
 import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
+import { isBustanConnected } from '../lib/bustan-supabase'
+import { fetchBustanProperties } from '../lib/bustan-crm-service'
 
 const SolarMap = lazy(() => import('../components/Map/SolarMap').then((m) => ({ default: m.SolarMap })))
 const FilterBar = lazy(() => import('../components/FilterBar/FilterBar').then((m) => ({ default: m.FilterBar })))
@@ -99,6 +101,24 @@ export default function PlatformPage() {
     }
     init()
   }, [setProperties, setGridData])
+
+  // Load the live Bustan CRM leads (bustan schema) once authenticated.
+  // Additive + reversible: RLS returns nothing when unauthenticated, so the
+  // static demo data above is preserved; real 85 leads replace it on sign-in.
+  useEffect(() => {
+    if (!user || !isBustanConnected()) return
+    let cancelled = false
+    fetchBustanProperties()
+      .then((leads) => {
+        if (cancelled || leads.length === 0) return
+        setProperties(leads)
+        setDataStatus('loaded')
+      })
+      .catch((err) => console.error('Failed to load Bustan leads:', err))
+    return () => {
+      cancelled = true
+    }
+  }, [user, setProperties])
 
   const isMapView = platformView === 'map'
 
