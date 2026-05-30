@@ -45,6 +45,10 @@ export function isBustanConnected(): boolean {
  * Best-effort: never throws; logs via console.warn only.
  */
 export async function syncBustanPassword(email: string, password: string): Promise<boolean> {
+  // Bound the worst case: a cold/slow serverless function must never stall the
+  // main login (signInBustan is awaited before setUser). Abort after 6s.
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), 6000)
   try {
     const res = await fetch('/api/bustan-sync-password', {
       method: 'POST',
@@ -52,6 +56,7 @@ export async function syncBustanPassword(email: string, password: string): Promi
       // Password is sent over HTTPS to our own serverless function only;
       // the function never logs or echoes it.
       body: JSON.stringify({ email, password }),
+      signal: ctrl.signal,
     })
     if (!res.ok) {
       const body = await res.json().catch(() => ({})) as { error?: string }
@@ -62,6 +67,8 @@ export async function syncBustanPassword(email: string, password: string): Promi
   } catch (e) {
     console.warn('[bustan] sync-password error', e)
     return false
+  } finally {
+    clearTimeout(timer)
   }
 }
 

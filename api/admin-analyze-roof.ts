@@ -195,7 +195,11 @@ export default async function handler(req: Request): Promise<Response> {
         estimated_annual_kwh: annualKwh,
         panel_watt_used: panel_watt,
         panel_area_m2: panelArea,
-        has_existing_solar: Boolean(analysis.has_existing_solar),
+        // String-aware: a model-emitted "false" must NOT coerce to true (Boolean("false")===true).
+        has_existing_solar:
+          analysis.has_existing_solar === true ||
+          (typeof analysis.has_existing_solar === 'string' &&
+            ['true', '1', 'yes'].includes(analysis.has_existing_solar.trim().toLowerCase())),
       },
       _timing: { fetch_ms: tFetch, gemini_ms: tGemini, total_ms: Date.now() - t0 },
     })

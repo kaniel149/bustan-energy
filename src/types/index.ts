@@ -83,6 +83,8 @@ export interface Property {
   roofShading?: string
   roofUsableAreaSqm?: number
   roofAnalysisConfidence?: number
+  /** Existing PV detected on the roof (Gemini has_existing_solar). Deprioritizes EPC leads. */
+  existingSolar?: boolean
   annualKwh?: number
   annualSavings?: number
   epcCost?: number

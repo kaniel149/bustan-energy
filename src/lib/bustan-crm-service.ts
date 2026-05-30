@@ -180,6 +180,7 @@ export function mapLeadToProperty(lead: BustanLead): Property {
       ? Math.round(lead.crm.estimated_kWp * 1000 / 580)
       : undefined,
     solarScore: num(p.solar_potential_score),
+    existingSolar: Boolean(p.existing_solar),
     priority,
     category: p.property_type ?? undefined,
     ownerName: lead.display.legalOwner !== NEEDS_RESEARCH ? lead.display.legalOwner : undefined,
