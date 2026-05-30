@@ -151,11 +151,16 @@ export default function PlatformPage() {
     let cancelled = false
     Promise.all([fetchBustanLeads(), fetchCurrentRole()])
       .then(([leads, role]) => {
-        if (cancelled || leads.length === 0) return
-        setBustanLeads(leads)
+        if (cancelled) return
+        // Always apply the role so role-gated UI (admin actions etc.) is never
+        // suppressed by an empty lead list. The role comes from bustan.app_users
+        // and is independent of how many leads are currently in the pipeline.
         setBustanRole(role)
-        setProperties(leads.map(mapLeadToProperty))
-        setDataStatus('loaded')
+        if (leads.length > 0) {
+          setBustanLeads(leads)
+          setProperties(leads.map(mapLeadToProperty))
+          setDataStatus('loaded')
+        }
       })
       .catch((err) => console.error('Failed to load Bustan leads:', err))
     fetchScanRequests().then((r) => { if (!cancelled) setScanRequests(r) }).catch(() => { /* ignore */ })

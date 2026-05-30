@@ -38,18 +38,58 @@ export function isBustanConnected(): boolean {
 }
 
 /**
+ * Self-heal: when the bustan project password has drifted from the main one,
+ * POST to /api/bustan-sync-password which verifies the password against the
+ * main project server-side, then uses the bustan service-role key to reset it.
+ * Returns true if the sync succeeded (safe to retry sign-in immediately).
+ * Best-effort: never throws; logs via console.warn only.
+ */
+export async function syncBustanPassword(email: string, password: string): Promise<boolean> {
+  try {
+    const res = await fetch('/api/bustan-sync-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // Password is sent over HTTPS to our own serverless function only;
+      // the function never logs or echoes it.
+      body: JSON.stringify({ email, password }),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({})) as { error?: string }
+      console.warn('[bustan] sync-password failed:', body.error ?? res.status)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.warn('[bustan] sync-password error', e)
+    return false
+  }
+}
+
+/**
  * Dual-auth: the platform login authenticates the main (TM Energy) project, but
  * the CRM data lives in the SEPARATE bustan project with its own client/session.
  * After the main sign-in we mirror the credentials into the bustan client so the
- * 85 leads + role actually load. Best-effort + non-blocking: if the bustan
- * password differs, we log and continue (the main session still works).
+ * 85 leads + role actually load.
+ *
+ * Self-heal: if the first sign-in attempt fails (stale/drifted password), we
+ * transparently reset the bustan password via the server-side sync endpoint, then
+ * retry once. The main session is never affected regardless of outcome.
  */
 export async function signInBustan(email: string, password: string): Promise<boolean> {
   if (!bustanSupabase) return false
   try {
     const { error } = await bustanSupabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      console.warn('[bustan] dual sign-in failed — set the bustan password to match your main one:', error.message)
+    if (!error) return true
+
+    // First attempt failed — password may have drifted. Try to self-heal.
+    console.warn('[bustan] dual sign-in failed, attempting self-heal:', error.message)
+    const synced = await syncBustanPassword(email, password)
+    if (!synced) return false
+
+    // Retry once after the bustan password has been reset
+    const { error: retryError } = await bustanSupabase.auth.signInWithPassword({ email, password })
+    if (retryError) {
+      console.warn('[bustan] sign-in still failed after self-heal:', retryError.message)
       return false
     }
     return true
