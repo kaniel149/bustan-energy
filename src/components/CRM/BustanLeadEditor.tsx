@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity } from 'lucide-react'
+import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity, Search, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { useToastStore } from '../../lib/toast-store'
@@ -8,6 +8,7 @@ import {
   updateLeadStage,
   assignLead,
   updateLeadPipeline,
+  updateOwnerDecision,
   fetchSurvey,
   upsertSurvey,
   fetchOmSite,
@@ -16,6 +17,7 @@ import {
   type OmSite,
   type WriteResult,
 } from '../../lib/bustan-crm-service'
+import { buildOwnerResearchLinks } from '../../lib/owner-resolution'
 import { autoBuildSystem } from '../../lib/bom'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
 import { useTranslation } from '../../i18n/useTranslation'
@@ -61,6 +63,15 @@ export function BustanLeadEditor() {
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState<'crm' | 'quote' | 'survey' | 'om'>('crm')
 
+  // --- Owner-research accelerator state ------------------------------------
+  /** Whether the research panel is expanded. */
+  const [ownerPanelOpen, setOwnerPanelOpen] = useState(false)
+  /** Resolved address returned from /api/resolve-owner. */
+  const [resolvedAddress, setResolvedAddress] = useState<string | null>(null)
+  /** Loading state for the Nominatim reverse-geocode call. */
+  const [geocoding, setGeocoding] = useState(false)
+  // -------------------------------------------------------------------------
+
   const propertyId = selected?.id ?? ''
   const [survey, setSurvey] = useState<SiteSurvey>(emptySurvey(propertyId))
   const [om, setOm] = useState<OmSite>(emptyOm(propertyId))
@@ -77,6 +88,13 @@ export function BustanLeadEditor() {
     }
   }, [propertyId])
 
+  // Reset owner research panel when a different lead is selected.
+  useEffect(() => {
+    setOwnerPanelOpen(false)
+    setResolvedAddress(null)
+    setGeocoding(false)
+  }, [propertyId])
+
   const quote = useMemo(() => autoBuildSystem(lead?.crm.estimated_kWp ?? 0), [lead?.crm.estimated_kWp])
 
   if (!selected || !lead) return null
@@ -89,6 +107,73 @@ export function BustanLeadEditor() {
   const canSurvey = can(role, 'survey.edit')
   const canOm = can(role, 'om.edit')
   const isWon = crm.crm_stage === 'won'
+
+  // Coordinates for reverse-geocode + deep-links.
+  const lat = lead.property.lat ?? undefined
+  const lng = lead.property.lon ?? undefined
+  const ownerName = data.legalOwnerName as string | undefined
+
+  /**
+   * Build deep-links (pure, no network) and POST to /api/resolve-owner for a
+   * real address. Stamps research_status = 'needs_research' on the owner row to
+   * signal to other reps that someone has opened the research panel for this lead.
+   * Uses the editor's existing runWrite mechanism so saves/errors surface as toasts.
+   */
+  const handleOpenResearch = async () => {
+    setOwnerPanelOpen(true)
+
+    // Stamp research_status to 'needs_research' via the existing write path so
+    // the activity-log trigger fires and other reps see this lead is being worked.
+    // Only stamp if status is currently 'pending' or 'unknown' (don't downgrade).
+    const currentStatus = lead.owner?.research_status ?? ''
+    if (currentStatus === 'pending' || currentStatus === '' || currentStatus === 'unknown') {
+      void runWrite(
+        () => updateOwnerDecision(selected.id, { research_status: 'needs_research' }),
+        canCrm,
+        () => {},
+        'Research status → needs_research',
+      )
+    }
+
+    // Reverse-geocode the rooftop — single on-demand call per panel open.
+    if (lat != null && lng != null && resolvedAddress === null && !geocoding) {
+      setGeocoding(true)
+      try {
+        const res = await fetch('/api/resolve-owner', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lng }),
+        })
+        const json = (await res.json()) as { address?: string; error?: string }
+        if (json.address) {
+          setResolvedAddress(json.address)
+        } else {
+          setResolvedAddress(json.error ?? 'No address found')
+        }
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Network error'
+        setResolvedAddress(`Geocode failed: ${message}`)
+      } finally {
+        setGeocoding(false)
+      }
+    }
+  }
+
+  /** Stamp sourceUrl on the owner row when rep clicks a registry deep-link. */
+  const handleLinkClick = (url: string) => {
+    if (!canCrm) return
+    void updateOwnerDecision(selected.id, { source_url: url })
+  }
+
+  // Build registry deep-links (pure — no network, runs synchronously).
+  const researchLinks = buildOwnerResearchLinks({
+    lat,
+    lng,
+    name: ownerName || (lead.property.name ?? undefined),
+    address: resolvedAddress ?? undefined,
+    region: 'koh_phangan',
+    propertyType: lead.property.property_type ?? undefined,
+  })
 
   const runWrite = async (
     fn: () => Promise<WriteResult>,
@@ -216,6 +301,86 @@ export function BustanLeadEditor() {
               <Lock size={11} /> {c.readonly} ({role})
             </p>
           )}
+
+          {/* ----------------------------------------------------------------
+              Owner-research accelerator
+              Automates the free/legal parts of owner resolution:
+              reverse-geocode the rooftop address + deep-links to Thai
+              registries (DBD juristic persons + Land Dept).
+              Owner NAME resolution stays manual by design — PDPA B.E. 2562.
+          ---------------------------------------------------------------- */}
+          <div className="border-t border-white/10 pt-2 mt-1">
+            <button
+              onClick={() => {
+                if (!ownerPanelOpen) {
+                  void handleOpenResearch()
+                } else {
+                  setOwnerPanelOpen(false)
+                }
+              }}
+              className="flex items-center gap-1.5 w-full text-left text-[11px] text-indigo-300 hover:text-indigo-200 font-medium py-1"
+              aria-expanded={ownerPanelOpen}
+              aria-controls="owner-research-panel"
+            >
+              <Search size={11} />
+              {ownerPanelOpen ? 'Hide' : 'Resolve owner'} / חקור בעלים
+              {ownerPanelOpen ? <ChevronUp size={11} className="ml-auto" /> : <ChevronDown size={11} className="ml-auto" />}
+            </button>
+
+            {ownerPanelOpen && (
+              <div id="owner-research-panel" className="space-y-2 mt-1">
+                {/* Resolved address from Nominatim */}
+                <div className="rounded-lg bg-white/5 border border-white/10 p-2 space-y-1">
+                  <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    Reverse-geocoded address
+                  </p>
+                  {geocoding && (
+                    <p className="flex items-center gap-1 text-[11px] text-white/50">
+                      <Loader2 size={10} className="animate-spin" /> Geocoding…
+                    </p>
+                  )}
+                  {!geocoding && resolvedAddress && (
+                    <p
+                      className="text-[11px] text-white/80 cursor-pointer select-all"
+                      title="Click to select — copy into owner fields"
+                    >
+                      {resolvedAddress}
+                    </p>
+                  )}
+                  {!geocoding && !resolvedAddress && lat == null && (
+                    <p className="text-[11px] text-white/40 italic">No coordinates on this lead</p>
+                  )}
+                </div>
+
+                {/* Registry deep-links */}
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase tracking-wide text-white/40">
+                    {researchLinks.registryName}
+                  </p>
+                  {researchLinks.links.map((link) => (
+                    <a
+                      key={link.url}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleLinkClick(link.url)}
+                      className="flex items-center gap-1.5 text-[11px] text-sky-300 hover:text-sky-200 truncate"
+                      title={link.url}
+                    >
+                      <ExternalLink size={10} className="shrink-0" />
+                      <span className="truncate">{link.label}</span>
+                    </a>
+                  ))}
+                </div>
+
+                {/* PDPA/legal note */}
+                <p className="text-[10px] text-amber-400/70 leading-relaxed">
+                  {researchLinks.note}
+                </p>
+              </div>
+            )}
+          </div>
+          {/* end owner-research accelerator */}
         </div>
       )}
 

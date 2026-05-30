@@ -37,6 +37,7 @@ export interface RoofAnalysis {
   tilt_deg_estimate: number
   confidence: number
   notes: string
+  has_existing_solar: boolean
 }
 
 // Panel dimensions by wattage (Jinko Tiger Neo / N-Type mono spec)
@@ -58,8 +59,10 @@ Panel spec: ${panelWatt}W, each ~${panelArea}m² (Jinko mono).
 Site: Thailand. PSH=5.0, PR=0.78.
 Usable fraction: target ${usablePct}% of total roof (typical commercial flat/low-pitch roofs can reach 75-85%; residential with obstacles 55-70%).
 
+Detect whether solar panels are ALREADY visibly installed on any roof in the image (true/false).
+
 Return ONLY JSON:
-{"roof_area_m2":int,"usable_area_m2":int,"suggested_panel_count":int,"suggested_system_kwp":float,"estimated_annual_kwh":int,"roof_type":"concrete"|"tile"|"metal"|"mixed"|"unknown","orientation":"south"|"east"|"west"|"east-west"|"mixed"|"unknown","shading":"none"|"partial"|"heavy","tilt_deg_estimate":int,"confidence":0-1,"notes":"3 short Hebrew sentences: total area counting, building count, any constraints"}`
+{"roof_area_m2":int,"usable_area_m2":int,"suggested_panel_count":int,"suggested_system_kwp":float,"estimated_annual_kwh":int,"roof_type":"concrete"|"tile"|"metal"|"mixed"|"unknown","orientation":"south"|"east"|"west"|"east-west"|"mixed"|"unknown","shading":"none"|"partial"|"heavy","tilt_deg_estimate":int,"confidence":0-1,"notes":"3 short Hebrew sentences: total area counting, building count, any constraints","has_existing_solar":true|false}`
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -192,6 +195,7 @@ export default async function handler(req: Request): Promise<Response> {
         estimated_annual_kwh: annualKwh,
         panel_watt_used: panel_watt,
         panel_area_m2: panelArea,
+        has_existing_solar: Boolean(analysis.has_existing_solar),
       },
       _timing: { fetch_ms: tFetch, gemini_ms: tGemini, total_ms: Date.now() - t0 },
     })

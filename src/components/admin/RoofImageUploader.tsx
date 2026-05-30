@@ -17,6 +17,7 @@ export interface RoofAnalysisResult {
   tilt_deg_estimate: number
   confidence: number
   notes: string
+  has_existing_solar: boolean
 }
 
 interface RoofImageUploaderProps {

@@ -282,6 +282,10 @@ export interface RoofAnalysisInput {
   shading: string
   usable_area_m2: number
   confidence: number
+  /** Whether solar panels are already visibly installed on the roof (from Gemini).
+   *  Persisted to bustan.properties.existing_solar via 006_existing_solar migration.
+   *  Optional for backward compatibility — defaults to null (no-op on the column). */
+  has_existing_solar?: boolean
   // The full analysis blob is stored as-is in roof_analysis_json; callers may
   // pass a richer object (e.g. RoofAnalysisResult) — extra fields are preserved.
 }
@@ -310,6 +314,7 @@ export async function saveRoofMeta(
     p_usable: analysis.usable_area_m2 ?? null,
     p_confidence: analysis.confidence ?? null,
     p_json: analysis as unknown as Record<string, unknown>,
+    p_existing_solar: analysis.has_existing_solar ?? null,
   })
   if (error) return { ok: false, error: error.message }
   return { ok: true }
@@ -479,6 +484,39 @@ export interface ActivityRow {
   old_value: string | null
   new_value: string | null
   at: string
+}
+
+// --- Owner-decision writes ---------------------------------------------------
+
+/**
+ * Patch the owner_decision row for a property.
+ *
+ * Only the fields passed in the patch are written; unspecified fields are
+ * untouched (Supabase upsert with onConflict='property_id').
+ *
+ * Used by the owner-research accelerator to stamp `research_status` and
+ * `source_url` when a rep starts manual registry research. Owner NAME fields
+ * (legal_owner_name, decision_maker_name) stay editable by the rep directly
+ * in the CRM; this function does not touch them unless explicitly passed.
+ */
+export interface OwnerDecisionPatch {
+  research_status?: string
+  source_url?: string
+  legal_owner_name?: string
+  decision_maker_name?: string
+  data?: Record<string, unknown>
+}
+
+export async function updateOwnerDecision(
+  propertyId: string,
+  patch: OwnerDecisionPatch,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase
+    .from('owner_decision')
+    .upsert({ property_id: propertyId, ...patch }, { onConflict: 'property_id' })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
 }
 
 /** Most recent activity_log entries (append-only, written by the DB trigger). */
