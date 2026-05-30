@@ -36,3 +36,35 @@ export const bustanSupabase =
 export function isBustanConnected(): boolean {
   return bustanSupabase !== null
 }
+
+/**
+ * Dual-auth: the platform login authenticates the main (TM Energy) project, but
+ * the CRM data lives in the SEPARATE bustan project with its own client/session.
+ * After the main sign-in we mirror the credentials into the bustan client so the
+ * 85 leads + role actually load. Best-effort + non-blocking: if the bustan
+ * password differs, we log and continue (the main session still works).
+ */
+export async function signInBustan(email: string, password: string): Promise<boolean> {
+  if (!bustanSupabase) return false
+  try {
+    const { error } = await bustanSupabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      console.warn('[bustan] dual sign-in failed — set the bustan password to match your main one:', error.message)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.warn('[bustan] dual sign-in error', e)
+    return false
+  }
+}
+
+export async function signUpBustan(email: string, password: string): Promise<void> {
+  if (!bustanSupabase) return
+  try { await bustanSupabase.auth.signUp({ email, password }) } catch (e) { console.warn('[bustan] sign-up', e) }
+}
+
+export async function signOutBustan(): Promise<void> {
+  if (!bustanSupabase) return
+  try { await bustanSupabase.auth.signOut() } catch { /* ignore */ }
+}

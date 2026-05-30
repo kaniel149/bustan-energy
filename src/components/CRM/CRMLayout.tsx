@@ -2,6 +2,7 @@ import { NavLink, Outlet, Link } from 'react-router-dom'
 import { LayoutDashboard, GitBranch, LogOut, Map } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { supabase } from '../../lib/supabase'
+import { signOutBustan } from '../../lib/bustan-supabase'
 
 const NAV_ITEMS = [
   { to: '/crm', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -13,6 +14,7 @@ export default function CRMLayout() {
 
   const handleSignOut = async () => {
     await supabase?.auth.signOut()
+    await signOutBustan()
   }
 
   return (
