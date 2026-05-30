@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
+import { signInBustan, signUpBustan } from '../lib/bustan-supabase'
 import { getCrmProjects } from '../lib/crm-service'
 import { identifyUser, resetAnalytics } from '../lib/analytics'
 import CRMLayout from '../components/CRM/CRMLayout'
@@ -25,7 +26,11 @@ function CRMLoginScreen() {
     if (authError) {
       setError(authError.message)
       setLoading(false)
+      return
     }
+    // Mirror creds into the bustan client so CRM data + role load.
+    if (isSignUp) await signUpBustan(email, password)
+    else await signInBustan(email, password)
     // Auth listener in useEffect will pick up the session
   }
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, LogIn } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { signInBustan, signUpBustan } from '../../lib/bustan-supabase'
 import { useAppStore } from '../../lib/store'
 
 export function LoginModal() {
@@ -31,6 +32,7 @@ export function LoginModal() {
         const { data, error: err } = await supabase.auth.signUp({ email, password })
         if (err) throw err
         if (data.user) {
+          await signUpBustan(email, password)
           setUser(data.user)
           setShowLoginModal(false)
         }
@@ -38,6 +40,9 @@ export function LoginModal() {
         const { data, error: err } = await supabase.auth.signInWithPassword({ email, password })
         if (err) throw err
         if (data.user) {
+          // Mirror creds into the bustan client BEFORE setUser so the leads-fetch
+          // effect (keyed on user) finds an authenticated bustan session.
+          await signInBustan(email, password)
           setUser(data.user)
           setShowLoginModal(false)
         }

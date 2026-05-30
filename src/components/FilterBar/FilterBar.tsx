@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppStore } from '../../lib/store'
 import { supabase } from '../../lib/supabase'
+import { signOutBustan } from '../../lib/bustan-supabase'
 import { isCrmConnected } from '../../lib/crm-service'
 import { REGIONS } from '../../lib/regions'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
@@ -229,6 +230,7 @@ export function FilterBar() {
             <button
               onClick={async () => {
                 await supabase?.auth.signOut()
+                await signOutBustan()
               }}
               className="px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1.5"
               title="Sign Out"
