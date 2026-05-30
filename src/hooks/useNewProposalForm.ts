@@ -51,6 +51,11 @@ const DEFAULTS: Omit<NewProposalForm, 'ref'> = {
   price_markup: 1.35,       // client price = direct BOM cost × target gross margin buffer
   bom_cost_thb: 0,          // auto-populated from BOM calc
   language: 'he' as ProposalLanguage,
+  // roof geometry carried from map draw — null until a property is selected via property_id
+  roof_polygon: null,
+  roof_lat: null,
+  roof_lng: null,
+  roof_area_sqm: null,
 }
 
 function calcDerived(form: NewProposalForm): Partial<NewProposalForm> {

@@ -2,6 +2,8 @@ import { useState, useRef } from 'react'
 import { Upload, Sparkles, Loader2, Image as ImageIcon, X, Wand2 } from 'lucide-react'
 import { uploadProposalImage, proposalImagePath, resizeImage } from '../../lib/storage'
 import { useAdminStore } from '../../lib/admin-store'
+import { saveRoofMeta } from '../../lib/bustan-crm-service'
+import { generatePanelOverlay } from '../../lib/roof-overlay'
 
 export interface RoofAnalysisResult {
   roof_area_m2: number
@@ -26,6 +28,9 @@ interface RoofImageUploaderProps {
   onOriginalChange: (url: string) => void
   onPanelsChange: (url: string) => void
   onAnalysis?: (analysis: RoofAnalysisResult) => void
+  /** bustan.properties uuid — when provided, analysis is persisted best-effort
+   *  via saveRoofMeta() (requires 005_roof_meta migration to be applied). */
+  propertyId?: string
 }
 
 export function RoofImageUploader({
@@ -37,6 +42,7 @@ export function RoofImageUploader({
   onOriginalChange,
   onPanelsChange,
   onAnalysis,
+  propertyId,
 }: RoofImageUploaderProps) {
   const showToast = useAdminStore((s) => s.showToast)
   const [uploadingOriginal, setUploadingOriginal] = useState(false)
@@ -44,6 +50,7 @@ export function RoofImageUploader({
   const [analyzing, setAnalyzing] = useState(false)
   const [aiNotes, setAiNotes] = useState('')
   const [lastAnalysis, setLastAnalysis] = useState<RoofAnalysisResult | null>(null)
+  const [metaSaveStatus, setMetaSaveStatus] = useState<'idle' | 'saved' | 'failed'>('idle')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,6 +139,23 @@ export function RoofImageUploader({
         `✨ ${data.analysis.suggested_panel_count} פאנלים · ${data.analysis.suggested_system_kwp} kWp · ${(data.analysis.confidence * 100).toFixed(0)}% ביטחון`,
         'success'
       )
+
+      // Best-effort persistence — non-blocking, does not affect the UI flow.
+      // Requires propertyId prop + 005_roof_meta migration applied to ygoiaabzkuvdsyyduvhv.
+      if (propertyId) {
+        setMetaSaveStatus('idle')
+        saveRoofMeta(propertyId, data.analysis).then((result) => {
+          if (result.ok) {
+            setMetaSaveStatus('saved')
+          } else {
+            setMetaSaveStatus('failed')
+            console.warn('[RoofImageUploader] saveRoofMeta failed (migration pending?):', result.error)
+          }
+        }).catch((err) => {
+          setMetaSaveStatus('failed')
+          console.warn('[RoofImageUploader] saveRoofMeta threw (migration pending?):', err)
+        })
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       console.error('Analyze failed:', err)
@@ -149,57 +173,13 @@ export function RoofImageUploader({
 
     setGeneratingPanels(true)
     try {
-      const session = await import('../../lib/admin-auth').then((m) => m.getSession())
-      const token = session?.access_token
-      if (!token) {
-        throw new Error('לא מחובר — התחבר מחדש לאדמין')
-      }
-
-      // Fetch the original, resize to 768px (aggressive — speed > quality for AI)
-      // and re-upload as a "small" variant just for AI use
-      const response = await fetch(originalUrl)
-      const origBlob = await response.blob()
-      const origFile = new File([origBlob], 'roof.jpg', { type: origBlob.type || 'image/jpeg' })
-      const smallFile = await resizeImage(origFile, 768, 0.80)
-      const smallPath = proposalImagePath(proposalRef || 'draft', 'original') + '-ai-small'
-      const smallUrl = await uploadProposalImage(smallFile, smallPath)
-
-      const res = await fetch('/api/admin-overlay-panels', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          image_url: smallUrl,
-          panel_count: panelCount,
-          notes: aiNotes,
-        }),
+      const panelsStorageUrl = await generatePanelOverlay({
+        imageUrl: originalUrl,
+        proposalRef,
+        panelCount,
+        notes: aiNotes,
       })
-
-      // Handle non-JSON responses (e.g. 413)
-      const rawText = await res.text()
-      let data: { ok: boolean; image_base64?: string; error?: string; detail?: string }
-      try {
-        data = JSON.parse(rawText)
-      } catch {
-        throw new Error(`HTTP ${res.status}: ${rawText.slice(0, 120)}`)
-      }
-      if (!data.ok || !data.image_base64) {
-        throw new Error(data.error || data.detail || `נכשל (HTTP ${res.status})`)
-      }
-
-      // Convert base64 to blob and upload
-      const byteChars = atob(data.image_base64)
-      const bytes = new Uint8Array(byteChars.length)
-      for (let i = 0; i < byteChars.length; i++) {
-        bytes[i] = byteChars.charCodeAt(i)
-      }
-      const panelBlob = new Blob([bytes], { type: 'image/jpeg' })
-      const panelFile = new File([panelBlob], 'panels.jpg', { type: 'image/jpeg' })
-      const path = proposalImagePath(proposalRef || 'draft', 'panels')
-      const panelsUrl = await uploadProposalImage(panelFile, path)
-      onPanelsChange(panelsUrl)
+      onPanelsChange(panelsStorageUrl)
       showToast('תמונת פאנלים נוצרה בהצלחה', 'success')
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'שגיאה ב-AI'
@@ -308,6 +288,12 @@ export function RoofImageUploader({
                 <span>שיפוע: <b className="text-white">{lastAnalysis.tilt_deg_estimate}°</b></span>
               </div>
               {lastAnalysis.notes && <p className="text-white/60 leading-relaxed">{lastAnalysis.notes}</p>}
+              {propertyId && metaSaveStatus === 'saved' && (
+                <p className="mt-1.5 text-emerald-400/70">ניתוח נשמר בסיס הנתונים</p>
+              )}
+              {propertyId && metaSaveStatus === 'failed' && (
+                <p className="mt-1.5 text-amber-400/70">שמירה נכשלה (migration pending)</p>
+              )}
             </div>
           )}
 

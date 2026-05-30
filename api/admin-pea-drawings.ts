@@ -12,6 +12,7 @@ export const config = { runtime: 'edge' }
 
 import { isAllowedAdmin } from './_lib/admin-access.js'
 import { calculatePeaReadiness } from '../src/lib/pea-readiness.js'
+import { computePanelLayout } from '../src/lib/panel-layout.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -49,6 +50,8 @@ interface PEAParams {
   roof_load_kg_m2?: number
   phase?: 'single' | 'three' | 'unknown'
   export_program?: 'self_consumption' | 'residential_buyback' | 'unknown'
+  /** GeoJSON roof polygon from the proposal/map draw — used to compute real panel positions. */
+  roof_polygon?: GeoJSON.Polygon | GeoJSON.MultiPolygon
 }
 
 // ========== COMMON HEADER ==========
@@ -127,6 +130,95 @@ function baseFoot(params: PEAParams): string {
 </body></html>`
 }
 
+// ========== Helpers for real panel grid in PV ARRAY box ==========
+
+/**
+ * Build SVG <rect> elements for the panel grid icon inside the PV ARRAY box.
+ *
+ * Strategy:
+ *   1. If roof_polygon is present → run computePanelLayout to get the real
+ *      panel positions, then project them into the drawing's icon area using
+ *      a normalised bounding-box transform.
+ *   2. If no polygon → derive rows/cols from p.panels (sqrt heuristic) and
+ *      render a proportional grid — still sized to the real count, NOT fixed 16.
+ *
+ * The icon area inside the PV ARRAY SVG box is roughly:
+ *   x: 50 … 220  (width ≈ 170)
+ *   y: 215 … 295 (height ≈ 80)
+ */
+function buildPanelGridSvg(p: PEAParams): string {
+  const ICON_X = 50, ICON_Y = 218, ICON_W = 170, ICON_H = 78
+
+  // ── Path 1: real polygon ─────────────────────────────────────────────────
+  if (p.roof_polygon) {
+    try {
+      const layout = computePanelLayout(p.roof_polygon)
+      if (layout.count > 0) {
+        // Collect all panel centres to normalise coordinates
+        const lngs = layout.panels.flatMap((pnl) => pnl.polygon.coordinates[0].map((c) => c[0]))
+        const lats = layout.panels.flatMap((pnl) => pnl.polygon.coordinates[0].map((c) => c[1]))
+        const minLng = Math.min(...lngs), maxLng = Math.max(...lngs)
+        const minLat = Math.min(...lats), maxLat = Math.max(...lats)
+        const spanLng = maxLng - minLng || 1
+        const spanLat = maxLat - minLat || 1
+
+        // Map normalised [0,1] → icon pixel space, flip Y (lat↑ = y↓ in SVG)
+        const toIconX = (lng: number) => ICON_X + ((lng - minLng) / spanLng) * ICON_W
+        const toIconY = (lat: number) => ICON_Y + ICON_H - ((lat - minLat) / spanLat) * ICON_H
+
+        // Estimate a representative panel half-size in icon pixels
+        // Use the first panel's width in normalised space
+        const firstRing = layout.panels[0].polygon.coordinates[0]
+        const panelLngSpan = Math.abs(firstRing[1][0] - firstRing[0][0])
+        const panelLatSpan = Math.abs(firstRing[2][1] - firstRing[0][1])
+        const panelPxW = Math.max(2, (panelLngSpan / spanLng) * ICON_W * 0.85)
+        const panelPxH = Math.max(1.5, (panelLatSpan / spanLat) * ICON_H * 0.85)
+
+        const colors = ['#1e3a5f', '#2d5a8a', '#3b7cb5', '#4a9ee0', '#2a6f4a', '#3d8a60', '#50a676', '#63c28c']
+        const panelsPerString = Math.ceil(layout.count / p.strings)
+
+        const rects = layout.panels.map((pnl, idx) => {
+          const [cLng, cLat] = pnl.center
+          const cx = toIconX(cLng)
+          const cy = toIconY(cLat)
+          const stringIdx = Math.floor(idx / panelsPerString)
+          const fill = colors[stringIdx % colors.length]
+          return `<rect x="${(cx - panelPxW / 2).toFixed(1)}" y="${(cy - panelPxH / 2).toFixed(1)}" width="${panelPxW.toFixed(1)}" height="${panelPxH.toFixed(1)}" fill="${fill}" stroke="#000" stroke-width="0.3"/>`
+        }).join('')
+
+        return rects
+      }
+    } catch {
+      // fall through to grid fallback
+    }
+  }
+
+  // ── Path 2: count-derived grid (no polygon) ──────────────────────────────
+  const cols = Math.ceil(Math.sqrt(p.panels * 1.6))
+  const rows = Math.ceil(p.panels / cols)
+  const panelW = Math.max(4, Math.floor(ICON_W / cols) - 2)
+  const panelH = Math.max(3, Math.floor(ICON_H / rows) - 2)
+  const gapX = cols > 1 ? (ICON_W - cols * panelW) / (cols - 1) : 0
+  const gapY = rows > 1 ? (ICON_H - rows * panelH) / (rows - 1) : 0
+
+  const colors = ['#1e3a5f', '#2d5a8a', '#3b7cb5', '#4a9ee0', '#2a6f4a', '#3d8a60', '#50a676', '#63c28c']
+  const panelsPerString = Math.ceil(p.panels / p.strings)
+  const rects: string[] = []
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c
+      if (idx >= p.panels) break
+      const x = ICON_X + c * (panelW + gapX)
+      const y = ICON_Y + r * (panelH + gapY)
+      const stringIdx = Math.floor(idx / panelsPerString)
+      const fill = colors[stringIdx % colors.length]
+      rects.push(`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${panelW}" height="${panelH}" fill="${fill}" stroke="#000" stroke-width="0.3"/>`)
+    }
+  }
+  return rects.join('')
+}
+
 // ========== DRAWING 1: SLD ==========
 function renderSLD(p: PEAParams): string {
   return baseHead('Single-Line Diagram (SLD)', `${p.ref}-SLD-01`) + `
@@ -146,10 +238,8 @@ function renderSLD(p: PEAParams): string {
     <text x="130" y="175" text-anchor="middle" font-size="10" fill="#666">${p.panel_model}</text>
     <text x="130" y="200" text-anchor="middle" font-size="10">${p.strings} strings</text>
 
-    <!-- panels grid icon -->
-    ${Array.from({ length: 8 }).map((_, i) =>
-      `<rect x="${50 + (i % 4) * 42}" y="${220 + Math.floor(i / 4) * 28}" width="38" height="24" fill="#1e3a5f" stroke="#000" stroke-width="0.5"/>`
-    ).join('')}
+    <!-- panels grid icon: real positions from roof polygon (or count-derived grid) -->
+    ${buildPanelGridSvg(p)}
 
     <!-- Arrow to combiner -->
     <line x1="230" y1="190" x2="290" y2="190" stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
@@ -341,61 +431,129 @@ function renderElectricalPlan(p: PEAParams): string {
 
 // ========== DRAWING 3: Layout Plan ==========
 function renderLayoutPlan(p: PEAParams): string {
-  // Simple panel grid layout: best fit per string group
-  const panelsPerRow = Math.ceil(Math.sqrt(p.panels * 1.5))
-  const rows = Math.ceil(p.panels / panelsPerRow)
-  const panelW = 40, panelH = 22, gap = 3
-  const totalW = panelsPerRow * (panelW + gap) + 80
-  const totalH = rows * (panelH + gap) + 80
+  // ── Attempt polygon-based real layout first ───────────────────────────────
+  let layoutSvgContent = ''
+  let actualRows = 0
+  let actualCols = 0
+  let actualCount = p.panels
+  let svgViewBox = ''
+  let hasRealLayout = false
 
-  const panels = Array.from({ length: p.panels }).map((_, i) => {
-    const col = i % panelsPerRow
-    const row = Math.floor(i / panelsPerRow)
-    const x = 40 + col * (panelW + gap)
-    const y = 40 + row * (panelH + gap)
-    // Color by string group (approximately 13 panels per string)
-    const stringIdx = Math.floor(i / Math.ceil(p.panels / p.strings))
+  if (p.roof_polygon) {
+    try {
+      const layout = computePanelLayout(p.roof_polygon)
+      if (layout.count > 0) {
+        hasRealLayout = true
+        actualRows = layout.rows
+        actualCols = layout.cols
+        actualCount = layout.count
+        // Re-project panel positions into our fixed drawing canvas
+        const allLngs = layout.panels.flatMap((pnl) => pnl.polygon.coordinates[0].map((c) => c[0]))
+        const allLats = layout.panels.flatMap((pnl) => pnl.polygon.coordinates[0].map((c) => c[1]))
+        const minLng = Math.min(...allLngs), maxLng = Math.max(...allLngs)
+        const minLat = Math.min(...allLats), maxLat = Math.max(...allLats)
+        const spanLng = maxLng - minLng || 1
+        const spanLat = maxLat - minLat || 1
+
+        // Canvas: 600 × 400 with 30px padding
+        const CANVAS_W = 600, CANVAS_H = 400, PAD = 30
+        const drawW = CANVAS_W - 2 * PAD, drawH = CANVAS_H - 2 * PAD
+        svgViewBox = `0 0 ${CANVAS_W} ${CANVAS_H}`
+
+        const toX = (lng: number) => PAD + ((lng - minLng) / spanLng) * drawW
+        const toY = (lat: number) => PAD + drawH - ((lat - minLat) / spanLat) * drawH
+
+        // First panel to estimate pixel size
+        const sampleRing = layout.panels[0].polygon.coordinates[0]
+        const panelPxW = Math.max(3, Math.abs(toX(sampleRing[1][0]) - toX(sampleRing[0][0])) * 0.92)
+        const panelPxH = Math.max(2, Math.abs(toY(sampleRing[0][1]) - toY(sampleRing[2][1])) * 0.92)
+
+        const colors = ['#1e3a5f', '#2d5a8a', '#3b7cb5', '#4a9ee0', '#2a6f4a', '#3d8a60', '#50a676', '#63c28c', '#7a4a8a', '#8d5fa5']
+        const panelsPerString = Math.ceil(layout.count / p.strings)
+
+        const panelRects = layout.panels.map((pnl, idx) => {
+          const [cLng, cLat] = pnl.center
+          const cx = toX(cLng)
+          const cy = toY(cLat)
+          const stringIdx = Math.floor(idx / panelsPerString)
+          return `<rect x="${(cx - panelPxW / 2).toFixed(1)}" y="${(cy - panelPxH / 2).toFixed(1)}" width="${panelPxW.toFixed(1)}" height="${panelPxH.toFixed(1)}" fill="${colors[stringIdx % colors.length]}" stroke="#000" stroke-width="0.3"/>`
+        }).join('')
+
+        layoutSvgContent = `
+          <rect width="${CANVAS_W}" height="${CANVAS_H}" fill="#f8f8f4"/>
+          <text x="${PAD}" y="16" font-size="9" fill="#999">Roof outline (setback applied) · From drawn polygon</text>
+          ${panelRects}
+          <!-- North arrow -->
+          <g transform="translate(${CANVAS_W - 40}, 40)">
+            <circle cx="0" cy="0" r="16" fill="white" stroke="#000" stroke-width="1"/>
+            <path d="M 0 -12 L -5 8 L 0 4 L 5 8 Z" fill="#E8A820" stroke="#000" stroke-width="0.5"/>
+            <text x="0" y="-16" text-anchor="middle" font-size="9" font-weight="700">N</text>
+          </g>
+          <text x="${CANVAS_W / 2}" y="${CANVAS_H - 8}" text-anchor="middle" font-size="8" fill="#555">Orientation: South · Tilt: 10-15° · Azimuth: 180° · ${p.strings} strings (colour-coded)</text>`
+      }
+    } catch {
+      // fall through to rectangular fallback
+    }
+  }
+
+  // ── Fallback: rectangular grid sized to real panel count ─────────────────
+  if (!hasRealLayout) {
+    const panelsPerRow = Math.ceil(Math.sqrt(p.panels * 1.5))
+    actualRows = Math.ceil(p.panels / panelsPerRow)
+    actualCols = panelsPerRow
+    const panelW = 40, panelH = 22, gap = 3
+    const totalW = panelsPerRow * (panelW + gap) + 80
+    const totalH = actualRows * (panelH + gap) + 80
+    svgViewBox = `0 0 ${totalW} ${totalH}`
+
     const colors = ['#1e3a5f', '#2d5a8a', '#3b7cb5', '#4a9ee0', '#2a6f4a', '#3d8a60', '#50a676', '#63c28c', '#7a4a8a', '#8d5fa5']
-    return `<rect x="${x}" y="${y}" width="${panelW}" height="${panelH}" fill="${colors[stringIdx % colors.length]}" stroke="#000" stroke-width="0.3"/>`
-  }).join('')
+    const panelRects = Array.from({ length: p.panels }).map((_, i) => {
+      const col = i % panelsPerRow
+      const row = Math.floor(i / panelsPerRow)
+      const x = 40 + col * (panelW + gap)
+      const y = 40 + row * (panelH + gap)
+      const stringIdx = Math.floor(i / Math.ceil(p.panels / p.strings))
+      return `<rect x="${x}" y="${y}" width="${panelW}" height="${panelH}" fill="${colors[stringIdx % colors.length]}" stroke="#000" stroke-width="0.3"/>`
+    }).join('')
+
+    layoutSvgContent = `
+      <!-- Roof outline with setbacks -->
+      <rect x="20" y="20" width="${parseInt(svgViewBox.split(' ')[2]) - 40}" height="${parseInt(svgViewBox.split(' ')[3]) - 40}" fill="none" stroke="#999" stroke-dasharray="3,3"/>
+      <text x="30" y="15" font-size="8" fill="#999">40cm setback (estimated footprint — no polygon available)</text>
+      ${panelRects}
+      <!-- North arrow -->
+      <g transform="translate(${parseInt(svgViewBox.split(' ')[2]) - 50}, 30)">
+        <circle cx="0" cy="0" r="18" fill="white" stroke="#000" stroke-width="1"/>
+        <path d="M 0 -15 L -6 10 L 0 5 L 6 10 Z" fill="#E8A820" stroke="#000" stroke-width="0.5"/>
+        <text x="0" y="-20" text-anchor="middle" font-size="9" font-weight="700">N</text>
+      </g>
+      <g transform="translate(20, ${parseInt(svgViewBox.split(' ')[3]) - 15})">
+        <text font-size="8" fill="#333">Orientation: South · Tilt: 10-15° · Azimuth: 180°</text>
+      </g>`
+  }
 
   return baseHead('Layout Plan — Roof Panel Arrangement', `${p.ref}-LYT-03`) + `
 <div class="drawing-box">
   <div style="display:grid;grid-template-columns:2fr 1fr;gap:8mm">
     <div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalW} ${totalH}" style="width:100%;height:auto;border:1px solid #666">
-        <!-- Roof outline with setbacks -->
-        <rect x="20" y="20" width="${totalW - 40}" height="${totalH - 40}" fill="none" stroke="#999" stroke-dasharray="3,3"/>
-        <text x="30" y="15" font-size="8" fill="#999">40cm setback</text>
-
-        <!-- Panels -->
-        ${panels}
-
-        <!-- North arrow -->
-        <g transform="translate(${totalW - 50}, 30)">
-          <circle cx="0" cy="0" r="18" fill="white" stroke="#000" stroke-width="1"/>
-          <path d="M 0 -15 L -6 10 L 0 5 L 6 10 Z" fill="#E8A820" stroke="#000" stroke-width="0.5"/>
-          <text x="0" y="-20" text-anchor="middle" font-size="9" font-weight="700">N</text>
-        </g>
-
-        <!-- Legend -->
-        <g transform="translate(20, ${totalH - 15})">
-          <text font-size="8" fill="#333">Orientation: South · Tilt: 10-15° · Azimuth: 180°</text>
-        </g>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="${svgViewBox}" style="width:100%;height:auto;border:1px solid #666">
+        ${layoutSvgContent}
       </svg>
 
       <p style="margin-top:3mm;font-size:9pt;color:#666;text-align:center">
-        ${p.panels} panels arranged in ${rows} rows × ${panelsPerRow} cols · ${p.strings} strings (color-coded) · 40cm edge setback · 60cm walkway per 8-panel block
+        ${actualCount} panels arranged in ${actualRows} rows × ${actualCols} cols · ${p.strings} strings (color-coded) · 40cm edge setback · 60cm walkway per 8-panel block
+        ${hasRealLayout ? ' · <strong>Positions derived from drawn roof polygon</strong>' : ' · Rectangular fallback (no roof polygon provided)'}
       </p>
     </div>
 
     <div>
       <h4 style="font-size:10pt;margin-bottom:3mm">Installation Details</h4>
       <table style="font-size:8.5pt">
-        <tr><td><strong>Panels total</strong></td><td>${p.panels}</td></tr>
+        <tr><td><strong>Panels total</strong></td><td>${actualCount}${actualCount !== p.panels ? ` (nominal: ${p.panels})` : ''}</td></tr>
         <tr><td>Panel size</td><td>1.80 × 1.13 m</td></tr>
-        <tr><td>Array footprint</td><td>~${Math.round(p.panels * 2.28)} m²</td></tr>
-        <tr><td>Rows × Cols</td><td>${rows} × ${panelsPerRow}</td></tr>
+        <tr><td>Array footprint</td><td>~${Math.round(actualCount * 2.28)} m²</td></tr>
+        <tr><td>Rows × Cols</td><td>${actualRows} × ${actualCols}</td></tr>
+        <tr><td>Layout source</td><td>${hasRealLayout ? 'Roof polygon' : 'Estimated'}</td></tr>
         <tr><td>Strings</td><td>${p.strings}</td></tr>
         <tr><td>Orientation</td><td>South (optimal)</td></tr>
         <tr><td>Tilt</td><td>10-15° (roof pitch)</td></tr>

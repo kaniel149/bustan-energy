@@ -5,11 +5,11 @@ import { area as turfArea } from '@turf/area'
 import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { REGIONS } from '../../lib/regions'
-import { computeEstimatedKwp } from '../../lib/owner-decision-layer'
 import { updateRoofGeom, confirmDetectedRoof, createScanRequest, fetchScanRequests } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
+import { computePanelLayout, panelsToFeatureCollection } from '../../lib/panel-layout'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
@@ -137,6 +137,7 @@ export function SolarMap() {
   const [savingRoof, setSavingRoof] = useState(false)
   const [confirmingCand, setConfirmingCand] = useState(false)
   const [scanning, setScanning] = useState(false)
+  const [showPanelLayout, setShowPanelLayout] = useState(true)
 
   const handleScanArea = async () => {
     const m = map.current
@@ -568,21 +569,74 @@ export function SolarMap() {
       }
       const src = m.getSource('draw-src') as maplibregl.GeoJSONSource | undefined
       if (src) src.setData({ type: 'FeatureCollection', features })
+
+      // Live panel-layout preview while drawing (only when >= 3 vertices)
+      const plSrc = m.getSource('panel-layout-src') as maplibregl.GeoJSONSource | undefined
+      if (plSrc && vertices.length >= 3) {
+        try {
+          const drawPoly: GeoJSON.Polygon = { type: 'Polygon', coordinates: [[...vertices, vertices[0]]] }
+          const fc = panelsToFeatureCollection(computePanelLayout(drawPoly))
+          plSrc.setData(fc)
+        } catch {
+          plSrc.setData({ type: 'FeatureCollection', features: [] })
+        }
+      } else if (plSrc) {
+        plSrc.setData({ type: 'FeatureCollection', features: [] })
+      }
     }
 
     const finish = async () => {
-      if (vertices.length < 3) { showToast('Add at least 3 points to form a roof', 'info'); return }
+      // ── P1: Polygon validation ──────────────────────────────────────────
+      if (vertices.length < 3) {
+        showToast('Add at least 3 points to form a roof', 'info')
+        return
+      }
+
+      // Deduplicate: count distinct vertices (rounded to ~1 cm precision)
+      const key = ([lng, lat]: [number, number]) =>
+        `${lng.toFixed(7)},${lat.toFixed(7)}`
+      const distinctCount = new Set(vertices.map(key)).size
+      if (distinctCount < 3) {
+        showToast('Polygon has fewer than 3 distinct vertices — redraw the roof', 'error')
+        return
+      }
+
       const polygon: GeoJSON.Polygon = { type: 'Polygon', coordinates: [[...vertices, vertices[0]]] }
       const areaSqm = Math.round(turfArea({ type: 'Feature', geometry: polygon, properties: {} }))
-      const kwp = computeEstimatedKwp({ roofAreaSqm: areaSqm })
+
+      // Reject slivers and degenerate shapes (< 4 m²)
+      if (areaSqm < 4) {
+        showToast('Polygon area is too small — draw a larger roof outline', 'error')
+        return
+      }
+
+      // ── P2: Geometry-aware capacity via fitted panel count ──────────────
+      let fittedKwp = 0
+      let fittedCount = 0
+      try {
+        const layout = computePanelLayout(polygon)
+        fittedCount = layout.count
+        // capacityKwp is count × 0.58 kWp (580 W panels, from panel-layout.ts)
+        fittedKwp = parseFloat(layout.capacityKwp.toFixed(2))
+      } catch {
+        // Degenerate polygon that passes area check — fall back to area estimate
+        fittedKwp = Math.round(areaSqm * 0.10)
+        fittedCount = 0
+      }
+
       setSavingRoof(true)
-      const res = await updateRoofGeom(propertyId, polygon, areaSqm, kwp)
+      const res = await updateRoofGeom(propertyId, polygon, areaSqm, fittedKwp)
       setSavingRoof(false)
       if (!res.ok) { showToast(res.error || 'Failed to save roof', 'error'); return }
+
       const updated = useAppStore.getState().properties.map((p) =>
-        p.id === propertyId ? { ...p, roofGeom: polygon, area: areaSqm, capacityKwp: kwp } : p)
+        p.id === propertyId
+          ? { ...p, roofGeom: polygon, area: areaSqm, capacityKwp: fittedKwp, panelCount: fittedCount }
+          : p)
       setProperties(updated)
-      showToast(`Roof saved · ${areaSqm.toLocaleString()} m² · ${kwp} kWp`, 'success')
+
+      const countLabel = fittedCount > 0 ? ` · ${fittedCount} panels` : ''
+      showToast(`Roof saved · ${areaSqm.toLocaleString()} m²${countLabel} · ${fittedKwp} kWp`, 'success')
       setDrawRoofFor(null)
     }
 
@@ -610,6 +664,15 @@ export function SolarMap() {
     if (m.isStyleLoaded()) setup()
     else m.once('load', setup)
 
+    // Clear any existing panel-layout data that may have been set for a selected
+    // property — the render() function will repopulate it live as vertices are added.
+    const clearLayoutSrc = () => {
+      const plSrc = m.getSource('panel-layout-src') as maplibregl.GeoJSONSource | undefined
+      if (plSrc) plSrc.setData({ type: 'FeatureCollection', features: [] })
+    }
+    if (m.isStyleLoaded()) clearLayoutSrc()
+    else m.once('load', clearLayoutSrc)
+
     m.doubleClickZoom.disable()
     m.getCanvas().style.cursor = 'crosshair'
     m.on('click', onClick)
@@ -629,6 +692,82 @@ export function SolarMap() {
       setDrawVertexCount(0)
     }
   }, [drawRoofFor, setProperties, setDrawRoofFor, showToast])
+
+  // ── Panel-layout preview overlay ─────────────────────────────────────────
+  // Renders filled panel rectangles on the selected property's roof polygon.
+  // Source: 'panel-layout-src'  Layers: 'panel-layout-fill', 'panel-layout-outline'
+  // Scoped to the single selected property only (never all properties).
+  // During draw mode the draw-mode render() feeds this source live; on selection
+  // change we recompute from the persisted roofGeom.
+  useEffect(() => {
+    const m = map.current
+    if (!m) return
+
+    const PANEL_LAYERS = ['panel-layout-fill', 'panel-layout-outline']
+
+    const setup = () => {
+      // Always tear down first to handle style reloads cleanly
+      for (const id of PANEL_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('panel-layout-src')) m.removeSource('panel-layout-src')
+
+      // Add source with an empty collection — data is set below
+      m.addSource('panel-layout-src', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+      })
+
+      // Semi-transparent dark-blue fill for each panel rectangle
+      m.addLayer({
+        id: 'panel-layout-fill',
+        type: 'fill',
+        source: 'panel-layout-src',
+        layout: { visibility: showPanelLayout ? 'visible' : 'none' },
+        paint: {
+          'fill-color': '#1E40AF',
+          'fill-opacity': 0.55,
+        },
+      })
+
+      // Thin bright-blue border around each panel
+      m.addLayer({
+        id: 'panel-layout-outline',
+        type: 'line',
+        source: 'panel-layout-src',
+        layout: { visibility: showPanelLayout ? 'visible' : 'none' },
+        paint: {
+          'line-color': '#60A5FA',
+          'line-width': 0.8,
+          'line-opacity': 0.9,
+        },
+      })
+
+      // Populate from the selected property's persisted roofGeom (if any)
+      // Skip when draw mode is active — render() feeds the source live instead
+      if (!drawRoofFor && selectedProperty?.roofGeom) {
+        try {
+          const fc = panelsToFeatureCollection(
+            computePanelLayout(selectedProperty.roofGeom),
+          )
+          ;(m.getSource('panel-layout-src') as maplibregl.GeoJSONSource).setData(fc)
+        } catch {
+          // Degenerate geometry — leave source empty (no crash)
+        }
+      }
+    }
+
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    // Re-run setup on style reload (raster tile switches clear all sources/layers)
+    m.on('style.load', setup)
+
+    return () => {
+      m.off('style.load', setup)
+      if (!m) return
+      for (const id of PANEL_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('panel-layout-src')) m.removeSource('panel-layout-src')
+    }
+  }, [selectedProperty, showPanelLayout, drawRoofFor])
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)
@@ -884,6 +1023,21 @@ export function SolarMap() {
             Cancel
           </button>
         </div>
+      )}
+      {/* Panel-layout toggle — visible when a property with a roof polygon is selected */}
+      {selectedProperty?.roofGeom && !drawRoofFor && !reviewCandidate && (
+        <button
+          onClick={() => setShowPanelLayout((v) => !v)}
+          title={showPanelLayout ? 'Hide panel layout' : 'Show panel layout'}
+          aria-pressed={showPanelLayout}
+          className={`absolute top-28 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border text-xs font-semibold flex items-center gap-2 shadow-lg transition-colors ${
+            showPanelLayout
+              ? 'border-[#1E40AF]/70 text-[#60A5FA] hover:bg-[#1E40AF]/20'
+              : 'border-white/10 text-white/40 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          {showPanelLayout ? 'Panels on' : 'Panels off'}
+        </button>
       )}
       {reviewCandidate && !drawRoofFor && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#C026D3]/40 px-4 py-2.5 flex items-center gap-3 shadow-xl">

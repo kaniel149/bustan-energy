@@ -77,6 +77,12 @@ export interface Property {
   roofGeom?: GeoJSON.Polygon | GeoJSON.MultiPolygon
   capacityKwp?: number
   panelCount?: number
+  // Roof-analysis metadata (populated once bustan 005_roof_meta migration runs)
+  roofOrientation?: string
+  roofTiltDeg?: number
+  roofShading?: string
+  roofUsableAreaSqm?: number
+  roofAnalysisConfidence?: number
   annualKwh?: number
   annualSavings?: number
   epcCost?: number

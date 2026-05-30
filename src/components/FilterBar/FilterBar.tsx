@@ -8,6 +8,7 @@ import { isCrmConnected } from '../../lib/crm-service'
 import { REGIONS } from '../../lib/regions'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { exportLeadsCSV } from '../../lib/csv-export'
+import { useTranslation } from '../../i18n/useTranslation'
 import type { GridGrade, RoofPriority, SystemSizeRange, CategoryFilter, PlatformView } from '../../types'
 
 const PRIORITY_CONFIG: Record<RoofPriority, { label: string; color: string; bg: string }> = {
@@ -35,11 +36,11 @@ const CATEGORY_CONFIG: Record<CategoryFilter, { label: string; icon: string }> =
   other: { label: 'Other', icon: '📍' },
 }
 
-const VIEW_TABS: { view: PlatformView; icon: typeof Map; label: string }[] = [
-  { view: 'map', icon: Map, label: 'Map' },
-  { view: 'scanner', icon: Grid3X3, label: 'Scanner' },
-  { view: 'pipeline', icon: Kanban, label: 'Pipeline' },
-  { view: 'dashboard', icon: BarChart3, label: 'Dashboard' },
+const VIEW_TAB_DEFS: { view: PlatformView; icon: typeof Map; key: 'map' | 'scanner' | 'pipeline' | 'dashboard' }[] = [
+  { view: 'map', icon: Map, key: 'map' },
+  { view: 'scanner', icon: Grid3X3, key: 'scanner' },
+  { view: 'pipeline', icon: Kanban, key: 'pipeline' },
+  { view: 'dashboard', icon: BarChart3, key: 'dashboard' },
 ]
 
 export function FilterBar() {
@@ -57,6 +58,8 @@ export function FilterBar() {
   const crmProjects = useAppStore((s) => s.crmProjects)
   const filteredProperties = useFilteredProperties()
   const [showFilters, setShowFilters] = useState(false)
+  const { t } = useTranslation()
+  const tf = t.crm.filter
 
   const hasActiveFilters = filters.priority !== 'all' || filters.systemSize !== 'all' || filters.categoryFilter !== 'all'
   const filteredCount = filteredProperties.length
@@ -74,14 +77,14 @@ export function FilterBar() {
             ☀
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-sm font-semibold text-white leading-tight">Solar Intelligence</h1>
-            <p className="text-[10px] text-white/50">Bustan Energy Platform</p>
+            <h1 className="text-sm font-semibold text-white leading-tight">{tf.solarIntelligence}</h1>
+            <p className="text-[10px] text-white/50">{tf.bustanPlatform}</p>
           </div>
         </div>
 
         {/* View Tabs (desktop) */}
         <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden hidden md:flex">
-          {VIEW_TABS.map(({ view, icon: Icon, label }) => (
+          {VIEW_TAB_DEFS.map(({ view, icon: Icon, key }) => (
             <button
               key={view}
               onClick={() => setPlatformView(view)}
@@ -92,7 +95,7 @@ export function FilterBar() {
               }`}
             >
               <Icon size={14} />
-              {label}
+              {tf[key]}
             </button>
           ))}
         </div>
@@ -104,13 +107,13 @@ export function FilterBar() {
               active={filters.activeTab === 'rooftops'}
               onClick={() => setActiveTab('rooftops')}
               icon="🏠"
-              label="Rooftops"
+              label={tf.rooftops}
             />
             <TabButton
               active={filters.activeTab === 'community-solar'}
               onClick={() => setActiveTab('community-solar')}
               icon="🌾"
-              label="Land"
+              label={tf.land}
             />
           </div>
         )}
@@ -140,7 +143,7 @@ export function FilterBar() {
             <Search size={14} className="text-white/40" />
             <input
               type="text"
-              placeholder="Search properties..."
+              placeholder={tf.searchProperties}
               value={filters.searchQuery}
               onChange={(e) => setFilter('searchQuery', e.target.value)}
               className="bg-transparent text-white text-xs py-2.5 w-full outline-none placeholder:text-white/30"
@@ -210,7 +213,7 @@ export function FilterBar() {
             className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 px-3 py-2.5 text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors"
           >
             <Download size={14} />
-            Export
+            {tf.export}
           </button>
         )}
 
@@ -242,10 +245,10 @@ export function FilterBar() {
             <button
               onClick={() => setShowLoginModal(true)}
               className="px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1.5"
-              title="Sign In"
+              title={tf.signIn}
             >
               <LogIn size={14} />
-              <span className="text-[11px] font-medium hidden sm:inline">Sign In</span>
+              <span className="text-[11px] font-medium hidden sm:inline">{tf.signIn}</span>
             </button>
           )}
         </div>
@@ -254,18 +257,18 @@ export function FilterBar() {
       {/* Stats bar — only for map view */}
       {isMapView && (
         <div className="pointer-events-auto mx-4 mt-2 bg-[#0D2137]/80 backdrop-blur-xl rounded-xl border border-white/10 px-4 py-2 flex items-center gap-6">
-          <Stat label="Showing" value={filteredCount} />
-          <Stat label="Roofs" value={stats.totalRoofs} color="#2ED89A" />
-          <Stat label="Land Plots" value={stats.totalLands} color="#E8A820" />
-          <Stat label="For Sale" value={stats.forSale} color="#00aaff" />
+          <Stat label={tf.showing} value={filteredCount} />
+          <Stat label={tf.roofs} value={stats.totalRoofs} color="#2ED89A" />
+          <Stat label={tf.landPlots} value={stats.totalLands} color="#E8A820" />
+          <Stat label={tf.forSale} value={stats.forSale} color="#00aaff" />
           {stats.totalMwp > 0 && (
-            <Stat label="Total MWp" value={stats.totalMwp} color="#ff8800" />
+            <Stat label={tf.totalMwp} value={stats.totalMwp} color="#ff8800" />
           )}
 
           {/* Quick priority badges for rooftops */}
           {filters.activeTab === 'rooftops' && (
             <div className="ml-auto flex items-center gap-1.5">
-              <span className="text-[10px] text-white/40 uppercase tracking-wider mr-1">Lead Quality:</span>
+              <span className="text-[10px] text-white/40 uppercase tracking-wider mr-1">{tf.leadQualityShort}</span>
               {(['all', 'A', 'B', 'C', 'D'] as const).map((grade) => (
                 <button
                   key={grade}
@@ -301,7 +304,7 @@ export function FilterBar() {
           {/* Grid grade for community solar */}
           {filters.activeTab === 'community-solar' && (
             <div className="ml-auto flex items-center gap-2">
-              <span className="text-[10px] text-white/40 uppercase tracking-wider">Grid Grade:</span>
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">{tf.gridGrade}</span>
               {(['all', 'A', 'B', 'C', 'D'] as const).map((grade) => (
                 <button
                   key={grade}
@@ -334,7 +337,7 @@ export function FilterBar() {
       {showFilters && isMapView && filters.activeTab === 'rooftops' && (
         <div className="pointer-events-auto mx-4 mt-2 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-semibold text-white/70 uppercase tracking-wider">Advanced Filters</h3>
+            <h3 className="text-xs font-semibold text-white/70 uppercase tracking-wider">{tf.advancedFilters}</h3>
             <div className="flex items-center gap-2">
               {hasActiveFilters && (
                 <button
@@ -345,7 +348,7 @@ export function FilterBar() {
                   }}
                   className="text-[10px] text-[#E85D3A] hover:text-[#E85D3A]/80 transition-colors flex items-center gap-1"
                 >
-                  <X size={10} /> Clear all
+                  <X size={10} /> {tf.clearAll}
                 </button>
               )}
               <button
@@ -361,7 +364,7 @@ export function FilterBar() {
             {/* System Size */}
             <div>
               <label className="text-[10px] text-white/50 uppercase tracking-wider mb-2 block">
-                System Size (kWp)
+                {tf.systemSizeKwp}
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {(Object.entries(SIZE_CONFIG) as [SystemSizeRange, typeof SIZE_CONFIG['all']][]).map(
@@ -386,7 +389,7 @@ export function FilterBar() {
             {/* Category */}
             <div>
               <label className="text-[10px] text-white/50 uppercase tracking-wider mb-2 block">
-                Building Type
+                {tf.buildingType}
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {(Object.entries(CATEGORY_CONFIG) as [CategoryFilter, typeof CATEGORY_CONFIG['all']][]).map(
@@ -411,7 +414,7 @@ export function FilterBar() {
             {/* Lead Quality (bigger version with labels) */}
             <div>
               <label className="text-[10px] text-white/50 uppercase tracking-wider mb-2 block">
-                Lead Quality
+                {tf.leadQuality}
               </label>
               <div className="flex flex-col gap-1">
                 {(Object.entries(PRIORITY_CONFIG) as [RoofPriority, typeof PRIORITY_CONFIG['A']][]).map(

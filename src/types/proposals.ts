@@ -110,6 +110,12 @@ export interface NewProposalForm {
   savings_10yr_thb: number
   // meta
   language: ProposalLanguage
+  // roof geometry — carried from the map draw (PropertySidebar → NewProposalPage).
+  // Null when the proposal is created without a drawn roof.
+  roof_polygon: GeoJSON.Polygon | GeoJSON.MultiPolygon | null
+  roof_lat: number | null
+  roof_lng: number | null
+  roof_area_sqm: number | null
 }
 
 export const LOCATION_PRESETS: Record<string, { he: string; en: string; short: string; psh: string }> = {
