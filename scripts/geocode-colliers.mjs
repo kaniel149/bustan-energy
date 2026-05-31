@@ -16,6 +16,20 @@ const locs = [...md.matchAll(/^- Location\/address:\s*(.+)$/gim)].map((m) => m[1
 const unique = [...new Set(locs)].filter((s) => s && !/^unknown/i.test(s))
 console.log(`Unique locations to geocode: ${unique.length}`)
 
+// Clean a locationRaw into a Nominatim-friendly query. Returns null for
+// malformed source lines (e.g. a stray "- URL:" value) which can't be geocoded.
+// Strips a building-name prefix before an em/en-dash so Nominatim resolves the
+// district, e.g. "Athenee Tower — Lumphini, Pathum Wan, Bangkok" → "Lumphini, Pathum Wan, Bangkok".
+function cleanForQuery(loc) {
+  if (/https?:\/\/|^-?\s*URL/i.test(loc)) return null
+  let s = loc
+  const dash = s.match(/[—–]\s*(.+)$/) // text after an em/en-dash = the real location
+  if (dash) s = dash[1]
+  s = s.trim().replace(/\s+/g, ' ')
+  if (!s) return null
+  return /thailand/i.test(s) ? s : `${s}, Thailand`
+}
+
 // Reuse any prior run so re-runs are incremental.
 let out = {}
 try { out = JSON.parse(readFileSync(OUT, 'utf8')) } catch { /* fresh */ }
@@ -23,7 +37,9 @@ try { out = JSON.parse(readFileSync(OUT, 'utf8')) } catch { /* fresh */ }
 let done = 0, hit = 0
 for (const loc of unique) {
   if (out[loc]) { done++; hit++; continue }
-  const q = encodeURIComponent(/thailand/i.test(loc) ? loc : `${loc}, Thailand`)
+  const cleaned = cleanForQuery(loc)
+  if (!cleaned) { done++; console.log('  skip (malformed):', loc); continue }
+  const q = encodeURIComponent(cleaned)
   const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${q}&limit=1&countrycodes=th`
   try {
     const r = await fetch(url, { headers: { 'User-Agent': 'solar-intelligence/1.0 (k@kanielt.com)', 'Accept-Language': 'en' } })

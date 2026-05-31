@@ -118,5 +118,29 @@
   "Phra Khanong Nuea, Watthana, Bangkok": {
     "lat": 13.715028,
     "lng": 100.5948222
+  },
+  "Jubilee Prestige Tower — Din Daeng, Din Daeng, Bangkok": {
+    "lat": 13.7603529,
+    "lng": 100.5550665
+  },
+  "Lake Ratchada Office Complex — Khlong Toei, Khlong Toei, Bangkok": {
+    "lat": 13.7221264,
+    "lng": 100.5543696
+  },
+  "Interchange 21 — Khlong Toei Nuea, Watthana, Bangkok": {
+    "lat": 13.7403856,
+    "lng": 100.5619061
+  },
+  "Athenee Tower — Lumphini, Pathum Wan, Bangkok": {
+    "lat": 13.7256066,
+    "lng": 100.5457249
+  },
+  "Nong Prue, Pattaya, Chon Buri": {
+    "lat": 12.9276,
+    "lng": 100.882
+  },
+  "Ta Sit, Pluak Daeng, Rayong": {
+    "lat": 12.97,
+    "lng": 101.18
   }
 }
