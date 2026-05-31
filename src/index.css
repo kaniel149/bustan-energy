@@ -213,6 +213,15 @@ html, body, #root {
   width: 4px;
 }
 
+/* Hide scrollbar visually while keeping scroll behaviour (used on region tab group) */
+.scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }

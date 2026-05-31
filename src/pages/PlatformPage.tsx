@@ -346,7 +346,7 @@ export default function PlatformPage() {
 
       {/* Scan status — only in map view, when there are scans */}
       {isMapView && scanRequests.length > 0 && (
-        <div className="absolute top-16 right-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 w-56 md:top-16">
+        <div className="absolute top-20 right-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 w-56">
           <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Area Scans</h4>
           <div className="space-y-1.5 max-h-48 overflow-y-auto">
             {scanRequests.slice(0, 8).map((s) => (
