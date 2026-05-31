@@ -1,8 +1,11 @@
 // ============================================================
 // /api/cron-process-scans  — P4 on-demand scan worker (light tier)
 // Polls bustan.scan_requests for 'queued' rows, acquires buildings from OSM
-// Overpass in the bbox, scores + dedups them, and upserts new leads
-// (properties + crm_pipeline + owner_decision) into the `bustan` schema.
+// Overpass in the bbox, scores + dedups them, and writes CANDIDATES to
+// bustan.scan_candidates (status='pending') for operator review.
+//
+// Candidates are NOT inserted as leads automatically. An operator reviews them
+// on the map (frontend agent) and calls set_scan_candidate_status / confirmDetectedRoof.
 //
 // Heavy CV roof-detection + paid owner enrichment are intentionally NOT done
 // here — that's the separate Python worker (scripts/roof_detector.py,
@@ -126,9 +129,31 @@ function priority(kwp: number): string {
   return 'D'
 }
 
+// ---------------------------------------------------------------------------
+// Ray-cast point-in-polygon (no deps). Handles GeoJSON Polygon outer ring.
+// Coordinates are [lng, lat] pairs (GeoJSON order).
+// Returns true when [lng, lat] lies inside the polygon (or on its boundary).
+// If ring is degenerate (< 3 points) falls through to true so the caller
+// accepts the building — same behaviour as the bbox-only path.
+// ---------------------------------------------------------------------------
+function pointInPolygon(lng: number, lat: number, polygon: { type: string; coordinates: number[][][] } | null | undefined): boolean {
+  if (!polygon || polygon.type !== 'Polygon' || !polygon.coordinates?.[0]) return true
+  const ring = polygon.coordinates[0]
+  if (ring.length < 3) return true
+  let inside = false
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1]
+    const xj = ring[j][0], yj = ring[j][1]
+    const intersect = ((yi > lat) !== (yj > lat)) && (lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi)
+    if (intersect) inside = !inside
+  }
+  return inside
+}
+
 interface ScanRow {
   id: string
   bbox: number[] | null
+  area_geojson: { type: string; coordinates: number[][][] } | null
   filters: { propertyType?: string; minRoofM2?: number; commercialOnly?: boolean } | null
   attempts?: number
 }
@@ -143,6 +168,7 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
     throw new Error(`area too large (max ${MAX_BBOX_DEG}° per side)`)
   }
   const filters = scan.filters || {}
+  const polygon = scan.area_geojson  // GeoJSON Polygon — may be null if old row
 
   // 1. ACQUIRE — OSM Overpass buildings in bbox (south,west,north,east), with mirror failover
   const q = `[out:json][timeout:60];(way["building"](${minLat},${minLng},${maxLat},${maxLng});relation["building"](${minLat},${minLng},${maxLat},${maxLng}););out geom;`
@@ -151,8 +177,8 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   const found = elements.length
   const skipped = Math.max(0, found - MAX_BUILDINGS)
 
-  // 2. SCORE + filter
-  const candidates = []
+  // 2. SCORE + filter (+ polygon containment check)
+  const scored = []
   for (const el of elements.slice(0, MAX_BUILDINGS)) {
     const geom = el.geometry as LngLat[]
     const area = shoelaceAreaM2(geom)
@@ -164,9 +190,12 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
     const category = COMMERCIAL.has(tag) ? tag : 'other'
     if (filters.commercialOnly && !COMMERCIAL.has(tag)) continue
     const [lat, lon] = centroid(geom)
+    // Polygon containment: centroid must lie inside the drawn area (when present).
+    // Graceful: if polygon is missing/invalid, pointInPolygon returns true.
+    if (!pointInPolygon(lon, lat, polygon)) continue
     const ring = geom.map((g) => [Number(g.lon.toFixed(7)), Number(g.lat.toFixed(7))])
     if (ring.length >= 3 && (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1])) ring.push(ring[0])
-    candidates.push({
+    scored.push({
       id: crypto.randomUUID(),
       name: el.tags?.['name:en'] || el.tags?.name || `Building (${Math.round(area)}m²)`,
       area_name: 'Scan', property_type: category,
@@ -177,34 +206,50 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
       _kwp: kwp, _priority: priority(kwp),
     })
   }
-  const kept = candidates.length
+  const kept = scored.length
 
-  // 3. DEDUP — drop buildings near an existing lead (or each other)
-  const existing = await bGet<{ lat: number; lon: number }>(
-    `properties?select=lat,lon&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
-  )
+  // 3. DEDUP — drop buildings near an existing lead OR an existing pending candidate
+  const [existing, existingCandidates] = await Promise.all([
+    bGet<{ lat: number; lon: number }>(
+      `properties?select=lat,lon&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
+    ),
+    bGet<{ lat: number; lon: number }>(
+      `scan_candidates?select=lat,lon&status=eq.pending&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
+    ),
+  ])
   const near = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
     Math.abs(a.lat - b.lat) < DEDUP_DEG && Math.abs(a.lon - b.lon) < DEDUP_DEG
-  const accepted: typeof candidates = []
-  for (const c of candidates) {
+  const accepted: typeof scored = []
+  for (const c of scored) {
     const dupExisting = existing.some((e) => near(e, c))
+    const dupCandidate = existingCandidates.some((e) => near(e, c))
     const dupSelf = accepted.some((a) => near(a, c))
-    if (dupExisting || dupSelf) continue
+    if (dupExisting || dupCandidate || dupSelf) continue
     accepted.push(c)
   }
   const deduped = kept - accepted.length
 
-  // 4. UPSERT — properties + 'new' pipeline + pending owner_decision
-  const props = accepted.map((c) => ({
-    id: c.id, name: c.name, area_name: c.area_name, property_type: c.property_type,
-    roof_area_sqm: c.roof_area_sqm, solar_potential_score: c.solar_potential_score,
-    lat: c.lat, lon: c.lon, roof_geom: c.roof_geom,
+  // 4. INSERT candidates (status='pending') — NO auto-lead insert.
+  // An operator reviews these on the map and calls set_scan_candidate_status /
+  // confirmDetectedRoof to promote to a lead or reject.
+  const candidateRows = accepted.map((c) => ({
+    id: c.id,
+    scan_request_id: scan.id,
+    name: c.name,
+    area_name: c.area_name,
+    property_type: c.property_type,
+    lat: c.lat,
+    lon: c.lon,
+    roof_geom: c.roof_geom,
+    roof_area_sqm: c.roof_area_sqm,
+    solar_potential_score: c.solar_potential_score,
+    estimated_kwp: c._kwp,
+    priority: c._priority,
+    status: 'pending',
   }))
-  await bInsert('properties', props)
-  await bInsert('crm_pipeline', accepted.map((c) => ({ property_id: c.id, stage: 'new', priority: c._priority, estimated_kwp: c._kwp })))
-  await bInsert('owner_decision', accepted.map((c) => ({ property_id: c.id, research_status: 'pending', data: {} })))
+  await bInsert('scan_candidates', candidateRows)
 
-  return { found, kept, deduped, inserted: accepted.length, skipped }
+  return { found, kept, deduped, candidates: accepted.length, skipped }
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -218,7 +263,7 @@ export default async function handler(req: Request): Promise<Response> {
   // and 'running' scans that went stale (a prior run timed out mid-flight).
   const staleBefore = new Date(Date.now() - STALE_RUNNING_MS).toISOString()
   const filter = `or=(status.eq.queued,and(status.eq.failed,attempts.lt.${MAX_ATTEMPTS}),and(status.eq.running,attempts.lt.${MAX_ATTEMPTS},updated_at.lt.${staleBefore}))`
-  const queued = await bGet<ScanRow>(`scan_requests?${filter}&order=created_at.asc&limit=${SCANS_PER_RUN}&select=id,bbox,filters,attempts`)
+  const queued = await bGet<ScanRow>(`scan_requests?${filter}&order=created_at.asc&limit=${SCANS_PER_RUN}&select=id,bbox,area_geojson,filters,attempts`)
   if (queued.length === 0) return Response.json({ ok: true, processed: 0, message: 'no queued scans' })
 
   const results: Array<Record<string, unknown>> = []

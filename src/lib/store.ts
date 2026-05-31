@@ -34,6 +34,10 @@ interface AppState {
   drawRoofFor: string | null
   setDrawRoofFor: (propertyId: string | null) => void
 
+  // Scan-area draw mode — user draws a polygon to define the scan bbox (null = off)
+  scanAreaDrawing: boolean
+  setScanAreaDrawing: (drawing: boolean) => void
+
   // Detected-roof review (P3): candidates from the offline detector + the one under review
   roofCandidates: Property[]
   setRoofCandidates: (candidates: Property[]) => void
@@ -142,6 +146,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   drawRoofFor: null,
   setDrawRoofFor: (propertyId) => set({ drawRoofFor: propertyId }),
+
+  scanAreaDrawing: false,
+  setScanAreaDrawing: (drawing) => set({ scanAreaDrawing: drawing }),
 
   roofCandidates: [],
   setRoofCandidates: (candidates) => set({ roofCandidates: candidates }),

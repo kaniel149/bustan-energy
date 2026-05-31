@@ -5,7 +5,7 @@ import { area as turfArea } from '@turf/area'
 import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { REGIONS } from '../../lib/regions'
-import { updateRoofGeom, confirmDetectedRoof, createScanRequest, fetchScanRequests } from '../../lib/bustan-crm-service'
+import { updateRoofGeom, confirmDetectedRoof, createScanRequest, fetchScanRequests, setScanCandidateStatus } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
@@ -120,6 +120,8 @@ export function SolarMap() {
   const setSelectedProperty = useAppStore((s) => s.setSelectedProperty)
   const drawRoofFor = useAppStore((s) => s.drawRoofFor)
   const setDrawRoofFor = useAppStore((s) => s.setDrawRoofFor)
+  const scanAreaDrawing = useAppStore((s) => s.scanAreaDrawing)
+  const setScanAreaDrawing = useAppStore((s) => s.setScanAreaDrawing)
   const setProperties = useAppStore((s) => s.setProperties)
   const roofCandidates = useAppStore((s) => s.roofCandidates)
   const reviewCandidate = useAppStore((s) => s.reviewCandidate)
@@ -133,34 +135,28 @@ export function SolarMap() {
   const fittedRegion = useRef<string | null>(null)
   const isDrawingRef = useRef(false)
   const finishRef = useRef<null | (() => void)>(null)
+  // Separate finish ref for the scan-area draw mode
+  const scanFinishRef = useRef<null | (() => void)>(null)
   const [drawVertexCount, setDrawVertexCount] = useState(0)
+  const [scanAreaVertexCount, setScanAreaVertexCount] = useState(0)
   const [savingRoof, setSavingRoof] = useState(false)
   const [confirmingCand, setConfirmingCand] = useState(false)
   const [scanning, setScanning] = useState(false)
   const [showPanelLayout, setShowPanelLayout] = useState(true)
 
-  const handleScanArea = async () => {
-    const m = map.current
-    if (!m) return
-    const b = m.getBounds()
-    const sw = b.getSouthWest()
-    const ne = b.getNorthEast()
-    const bbox = [sw.lng, sw.lat, ne.lng, ne.lat]
-    const area: GeoJSON.Polygon = {
-      type: 'Polygon',
-      coordinates: [[[sw.lng, sw.lat], [ne.lng, sw.lat], [ne.lng, ne.lat], [sw.lng, ne.lat], [sw.lng, sw.lat]]],
-    }
-    setScanning(true)
-    const res = await createScanRequest(area, bbox, {})
-    setScanning(false)
-    if (!res.ok) { showToast(res.error || 'Failed to queue scan', 'error'); return }
-    showToast('Scan queued — leads appear as the worker runs', 'success')
-    fetchScanRequests().then(setScanRequests).catch(() => { /* ignore */ })
+  // Enters the draw-scan-area mode — the user draws a polygon, then on finish
+  // we build the GeoJSON + bbox and queue the scan. The actual scan submission
+  // happens inside the useEffect that drives this mode (scanAreaDrawing === true).
+  const handleScanArea = () => {
+    if (!map.current) return
+    setScanAreaDrawing(true)
   }
 
   const handleConfirmCandidate = async () => {
     if (!reviewCandidate) return
     setConfirmingCand(true)
+    // Mark candidate as 'added' before promoting — best-effort, non-blocking
+    setScanCandidateStatus(reviewCandidate.id, 'added').catch(() => { /* ignore */ })
     const res = await confirmDetectedRoof(reviewCandidate)
     setConfirmingCand(false)
     if (!res.ok) { showToast(res.error || 'Failed to confirm roof', 'error'); return }
@@ -168,10 +164,12 @@ export function SolarMap() {
     setProperties([...useAppStore.getState().properties, promoted])
     removeRoofCandidate(reviewCandidate.id)
     setReviewCandidate(null)
-    showToast('Roof confirmed — lead created', 'success')
+    showToast('Lead created — open it to find the owner', 'success')
   }
-  const handleRejectCandidate = () => {
+  const handleRejectCandidate = async () => {
     if (!reviewCandidate) return
+    // Mark candidate as 'rejected' in the DB before removing from the review queue
+    await setScanCandidateStatus(reviewCandidate.id, 'rejected').catch(() => { /* ignore */ })
     removeRoofCandidate(reviewCandidate.id)
     setReviewCandidate(null)
   }
@@ -693,6 +691,147 @@ export function SolarMap() {
     }
   }, [drawRoofFor, setProperties, setDrawRoofFor, showToast])
 
+  // ── Scan-area draw mode ────────────────────────────────────────────────────
+  // Mirrors the roof-draw machinery but finalises into a createScanRequest call.
+  // Source/layers use 'scan-draw-src', 'scan-draw-fill', 'scan-draw-line',
+  // 'scan-draw-vertices' to avoid colliding with the roof draw mode.
+  // The user clicks vertices, double-clicks or presses Enter to finish (>=3 pts),
+  // or presses Esc / clicks Cancel to abort.
+  useEffect(() => {
+    const m = map.current
+    if (!m || !scanAreaDrawing) return
+
+    const vertices: [number, number][] = []
+    // Mark a generic "some draw mode is active" so map click handlers on leads/candidates
+    // don't fire during vertex placement.
+    isDrawingRef.current = true
+    setScanAreaVertexCount(0)
+
+    const SCAN_DRAW_LAYERS = ['scan-draw-fill', 'scan-draw-line', 'scan-draw-vertices']
+
+    const render = () => {
+      const features: GeoJSON.Feature[] = []
+      if (vertices.length >= 2) {
+        features.push({
+          type: 'Feature',
+          geometry: { type: 'LineString', coordinates: vertices },
+          properties: {},
+        })
+      }
+      if (vertices.length >= 3) {
+        features.push({
+          type: 'Feature',
+          geometry: { type: 'Polygon', coordinates: [[...vertices, vertices[0]]] },
+          properties: {},
+        })
+      }
+      for (const v of vertices) {
+        features.push({ type: 'Feature', geometry: { type: 'Point', coordinates: v }, properties: {} })
+      }
+      const src = m.getSource('scan-draw-src') as maplibregl.GeoJSONSource | undefined
+      if (src) src.setData({ type: 'FeatureCollection', features })
+    }
+
+    const finish = async () => {
+      if (vertices.length < 3) {
+        showToast('Add at least 3 points to define the scan area', 'info')
+        return
+      }
+
+      const polygon: GeoJSON.Polygon = {
+        type: 'Polygon',
+        coordinates: [[...vertices, vertices[0]]],
+      }
+
+      // Compute bbox [minLng, minLat, maxLng, maxLat]
+      let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity
+      for (const [lng, lat] of vertices) {
+        if (lng < minLng) minLng = lng
+        if (lat < minLat) minLat = lat
+        if (lng > maxLng) maxLng = lng
+        if (lat > maxLat) maxLat = lat
+      }
+      const bbox = [minLng, minLat, maxLng, maxLat]
+
+      setScanning(true)
+      const res = await createScanRequest(polygon, bbox, {})
+      setScanning(false)
+
+      // Exit draw mode before showing feedback
+      setScanAreaDrawing(false)
+
+      if (!res.ok) {
+        showToast(res.error || 'Failed to queue scan', 'error')
+        return
+      }
+      showToast('Scan queued — candidates appear for review (up to 10 min)', 'success')
+      fetchScanRequests().then(setScanRequests).catch(() => { /* ignore */ })
+    }
+
+    scanFinishRef.current = finish
+
+    const onClick = (e: maplibregl.MapMouseEvent) => {
+      vertices.push([e.lngLat.lng, e.lngLat.lat])
+      setScanAreaVertexCount(vertices.length)
+      render()
+    }
+    const onDblClick = (e: maplibregl.MapMouseEvent) => {
+      e.preventDefault()
+      void finish()
+    }
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape') setScanAreaDrawing(false)
+      else if (ev.key === 'Enter') void finish()
+    }
+
+    const setup = () => {
+      for (const id of SCAN_DRAW_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('scan-draw-src')) m.removeSource('scan-draw-src')
+      m.addSource('scan-draw-src', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
+      // Orange/amber palette to visually distinguish scan-area draw from the green roof-draw
+      m.addLayer({
+        id: 'scan-draw-fill', type: 'fill', source: 'scan-draw-src',
+        filter: ['==', ['geometry-type'], 'Polygon'],
+        paint: { 'fill-color': '#F59E0B', 'fill-opacity': 0.15 },
+      })
+      m.addLayer({
+        id: 'scan-draw-line', type: 'line', source: 'scan-draw-src',
+        filter: ['==', ['geometry-type'], 'LineString'],
+        paint: { 'line-color': '#F59E0B', 'line-width': 2, 'line-dasharray': [4, 2] },
+      })
+      m.addLayer({
+        id: 'scan-draw-vertices', type: 'circle', source: 'scan-draw-src',
+        filter: ['==', ['geometry-type'], 'Point'],
+        paint: {
+          'circle-radius': 5, 'circle-color': '#ffffff',
+          'circle-stroke-color': '#F59E0B', 'circle-stroke-width': 2,
+        },
+      })
+    }
+
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+
+    m.doubleClickZoom.disable()
+    m.getCanvas().style.cursor = 'crosshair'
+    m.on('click', onClick)
+    m.on('dblclick', onDblClick)
+    window.addEventListener('keydown', onKey)
+
+    return () => {
+      isDrawingRef.current = false
+      scanFinishRef.current = null
+      m.off('click', onClick)
+      m.off('dblclick', onDblClick)
+      window.removeEventListener('keydown', onKey)
+      m.doubleClickZoom.enable()
+      m.getCanvas().style.cursor = ''
+      for (const id of SCAN_DRAW_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      if (m.getSource('scan-draw-src')) m.removeSource('scan-draw-src')
+      setScanAreaVertexCount(0)
+    }
+  }, [scanAreaDrawing, setScanAreaDrawing, setScanRequests, showToast])
+
   // ── Panel-layout preview overlay ─────────────────────────────────────────
   // Renders filled panel rectangles on the selected property's roof polygon.
   // Source: 'panel-layout-src'  Layers: 'panel-layout-fill', 'panel-layout-outline'
@@ -999,15 +1138,37 @@ export function SolarMap() {
   return (
     <>
       <div ref={mapContainer} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
-      {canScan && !drawRoofFor && !reviewCandidate && (
+      {canScan && !drawRoofFor && !scanAreaDrawing && !reviewCandidate && (
         <button
           onClick={handleScanArea}
           disabled={scanning}
-          title="Queue a scan of the current map view"
-          className="absolute top-16 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#3B82F6]/40 text-[#60A5FA] text-xs font-semibold flex items-center gap-2 hover:bg-[#3B82F6]/20 transition-colors disabled:opacity-50 shadow-lg"
+          title="Draw a polygon to define the area to scan for rooftops"
+          aria-label="Draw scan area"
+          className="absolute top-16 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#F59E0B]/40 text-[#FCD34D] text-xs font-semibold flex items-center gap-2 hover:bg-[#F59E0B]/15 transition-colors disabled:opacity-50 shadow-lg"
         >
-          {scanning ? 'Queuing…' : '⊕ Scan this area'}
+          {scanning ? 'Queuing…' : '⊕ Draw scan area'}
         </button>
+      )}
+      {scanAreaDrawing && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#F59E0B]/40 px-4 py-2.5 flex items-center gap-3 shadow-xl">
+          <span className="text-white/80 text-xs">
+            Scan area · <strong className="text-[#FCD34D]">{scanAreaVertexCount}</strong> point{scanAreaVertexCount === 1 ? '' : 's'}
+            <span className="text-white/40"> — click to add vertices, double-click / Enter to finish</span>
+          </span>
+          <button
+            onClick={() => scanFinishRef.current?.()}
+            disabled={scanning || scanAreaVertexCount < 3}
+            className="px-3 py-1 rounded-lg bg-[#F59E0B]/20 text-[#FCD34D] text-xs font-semibold disabled:opacity-40 hover:bg-[#F59E0B]/30 transition-colors"
+          >
+            {scanning ? 'Queuing…' : 'Scan'}
+          </button>
+          <button
+            onClick={() => setScanAreaDrawing(false)}
+            className="px-3 py-1 rounded-lg bg-white/5 text-white/60 text-xs hover:bg-white/10 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
       )}
       {drawRoofFor && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#00E676]/30 px-4 py-2.5 flex items-center gap-3 shadow-xl">
@@ -1031,7 +1192,7 @@ export function SolarMap() {
         </div>
       )}
       {/* Panel-layout toggle — visible when a property with a roof polygon is selected */}
-      {selectedProperty?.roofGeom && !drawRoofFor && !reviewCandidate && (
+      {selectedProperty?.roofGeom && !drawRoofFor && !scanAreaDrawing && !reviewCandidate && (
         <button
           onClick={() => setShowPanelLayout((v) => !v)}
           title={showPanelLayout ? 'Hide panel layout' : 'Show panel layout'}
@@ -1045,10 +1206,10 @@ export function SolarMap() {
           {showPanelLayout ? 'Panels on' : 'Panels off'}
         </button>
       )}
-      {reviewCandidate && !drawRoofFor && (
+      {reviewCandidate && !drawRoofFor && !scanAreaDrawing && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#C026D3]/40 px-4 py-2.5 flex items-center gap-3 shadow-xl">
           <span className="text-white/80 text-xs max-w-[220px] truncate">
-            Detected: <strong className="text-[#E879F9]">{reviewCandidate.title}</strong>
+            Candidate: <strong className="text-[#E879F9]">{reviewCandidate.title}</strong>
             {reviewCandidate.area ? <span className="text-white/40"> · {Math.round(reviewCandidate.area).toLocaleString()} m²</span> : null}
             {reviewCandidate.capacityKwp ? <span className="text-white/40"> · {Math.round(reviewCandidate.capacityKwp)} kWp</span> : null}
           </span>
@@ -1057,10 +1218,10 @@ export function SolarMap() {
             disabled={confirmingCand}
             className="px-3 py-1 rounded-lg bg-[#C026D3]/25 text-[#E879F9] text-xs font-semibold disabled:opacity-40 hover:bg-[#C026D3]/35 transition-colors"
           >
-            {confirmingCand ? 'Saving…' : 'Confirm'}
+            {confirmingCand ? 'Saving…' : 'Add lead'}
           </button>
           <button
-            onClick={handleRejectCandidate}
+            onClick={() => void handleRejectCandidate()}
             disabled={confirmingCand}
             className="px-3 py-1 rounded-lg bg-white/5 text-white/60 text-xs hover:bg-white/10 transition-colors disabled:opacity-40"
           >
