@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useSearchParams, useParams } from 'react-router-dom'
-import { Loader2, ChevronLeft, Info } from 'lucide-react'
+import { Loader2, ChevronLeft, Info, RefreshCw, AlertTriangle } from 'lucide-react'
 import { useNewProposalForm } from '../../hooks/useNewProposalForm'
 import { useAdminStore } from '../../lib/admin-store'
 import { getSession } from '../../lib/admin-auth'
@@ -9,10 +9,14 @@ import { PANEL_MODELS, INVERTER_MODELS, BATTERY_MODELS, groupInverters, groupPan
 import { FormField, Input, Select } from '../../components/admin/FormField'
 import { RoofImageUploader } from '../../components/admin/RoofImageUploader'
 import type { RoofAnalysisResult } from '../../components/admin/RoofImageUploader'
+import { generatePanelOverlay } from '../../lib/roof-overlay'
 import { ProposalSuccessModal } from '../../components/admin/ProposalSuccessModal'
 import { supabase } from '../../lib/supabase'
 import type { CrmProject } from '../../types/crm'
 import { fetchProposal } from '../../lib/admin-service'
+import { fetchBustanLeads, mapLeadToProperty } from '../../lib/bustan-crm-service'
+import { getSatelliteImageUrl } from '../../lib/enrich-building'
+import { computePanelLayout, layoutToSvg } from '../../lib/panel-layout'
 
 function SectionTitle({ number, title }: { number: string; title: string }) {
   return (
@@ -91,6 +95,34 @@ function boolFromMetadata(metadata: Record<string, unknown> | null, key: string,
   return typeof value === 'boolean' ? value : fallback
 }
 
+/**
+ * FIX 3 — derive a [lng, lat] centroid from a GeoJSON Polygon or MultiPolygon.
+ * For MultiPolygon, uses the largest ring (by coordinate count) as representative.
+ * Returns null if the geometry is invalid or empty.
+ */
+function polygonCentroid(
+  geom: GeoJSON.Polygon | GeoJSON.MultiPolygon,
+): [number, number] | null {
+  let ring: number[][] | null = null
+
+  if (geom.type === 'Polygon') {
+    ring = (geom.coordinates[0] as number[][]) ?? null
+  } else if (geom.type === 'MultiPolygon') {
+    // Pick the outer ring of the largest polygon (most coordinates)
+    let maxLen = 0
+    for (const poly of geom.coordinates) {
+      const outer = poly[0] as number[][]
+      if (outer && outer.length > maxLen) { maxLen = outer.length; ring = outer }
+    }
+  }
+
+  if (!ring || ring.length === 0) return null
+
+  let sumLng = 0, sumLat = 0
+  for (const coord of ring) { sumLng += coord[0]; sumLat += coord[1] }
+  return [sumLng / ring.length, sumLat / ring.length]
+}
+
 function monthlyLoanPayment(principal: number, annualInterestPct: number, years: number): number {
   const months = Math.max(1, Math.round(years * 12))
   const monthlyRate = Math.max(0, annualInterestPct) / 100 / 12
@@ -106,7 +138,11 @@ export default function NewProposalPage() {
   const { ref: editRef } = useParams<{ ref?: string }>()
   const isEditMode = Boolean(editRef)
   const showToast = useAdminStore((s) => s.showToast)
-  const { form, update, replaceForm, validate, errors, reset, draftRestored } = useNewProposalForm({ draftEnabled: !isEditMode })
+  // Disable localStorage draft-restore whenever the form is hydrated from a
+  // source (edit ref / property_id / lead_id). Otherwise a stale cross-tab
+  // draft can race and clobber the hydrated panel_count → wrong system size.
+  const isHydratedFromSource = isEditMode || Boolean(searchParams.get('property_id')) || Boolean(searchParams.get('lead_id'))
+  const { form, update, replaceForm, validate, errors, reset, draftRestored } = useNewProposalForm({ draftEnabled: !isHydratedFromSource })
 
   const [submitting, setSubmitting] = useState(false)
   const [successResult, setSuccessResult] = useState<SuccessResult | null>(null)
@@ -115,6 +151,18 @@ export default function NewProposalPage() {
   const [bomPriceBasis, setBomPriceBasis] = useState<BomSupplierSummary | null>(null)
   const [bomPriceSnapshot, setBomPriceSnapshot] = useState<Record<string, unknown> | null>(null)
   const [editLoading, setEditLoading] = useState(isEditMode)
+
+  // ── On-roof preview generator state ────────────────────────────────────────
+  // 'idle'     = waiting for roof coords to arrive (or already has panels url)
+  // 'pending'  = satellite fetch + Gemini call in-flight (~30-60s)
+  // 'done'     = completed successfully
+  // 'fallback' = Gemini timed-out / errored — showing schematic SVG + retry hint
+  // 'no_coords'= no roof_lat/lng available — nothing to auto-generate
+  type PreviewStatus = 'idle' | 'pending' | 'done' | 'fallback' | 'no_coords'
+  const [previewStatus, setPreviewStatus] = useState<PreviewStatus>('idle')
+  const [previewError, setPreviewError] = useState('')
+  // Guard: run auto-trigger at most once per page load
+  const autoTriggeredRef = useRef(false)
 
   // Warn user before leaving with unsaved work
   useEffect(() => {
@@ -273,6 +321,210 @@ export default function NewProposalPage() {
     }
   }, [isEditMode]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Hydrate from a full Property when property_id is in the URL.
+  // This is the canonical path from PropertySidebar — it carries roofGeom,
+  // authoritative kWp (from crm_pipeline), area, and centroid coords.
+  // Falls back gracefully to the scalar params already applied above if the
+  // fetch fails (e.g. Bustan not configured / auth missing).
+  useEffect(() => {
+    if (isEditMode) return
+    const propertyId = searchParams.get('property_id')
+    if (!propertyId) return
+
+    let cancelled = false
+    fetchBustanLeads()
+      .then((leads) => {
+        if (cancelled) return
+        const lead = leads.find((l) => l.property.id === propertyId)
+        if (!lead) {
+          console.warn('[NewProposalPage] property_id not found in Bustan leads — using scalar params fallback', propertyId)
+          return
+        }
+        const prop = mapLeadToProperty(lead)
+
+        // Build location fields from the property
+        const locationFields = inferLocationFields(prop.location)
+
+        // FIX 1: system_size_kwp is DERIVED (calcDerived recomputes it from
+        // panel_count × panel_watt on every replaceForm/update), so setting it
+        // directly is futile — it is always overwritten.  Drive from panel_count
+        // instead.  If panelCount is absent, derive it from capacityKwp.
+        const effectivePanelCount = prop.panelCount != null
+          ? prop.panelCount
+          : prop.capacityKwp != null
+            ? Math.round((prop.capacityKwp * 1000) / 580)
+            : null
+
+        // FIX 3: If lat or lng is 0 (unset) but we have a roof polygon, derive
+        // the centroid from the outer ring rather than embedding a (0,0) coord.
+        let roofLat: number | null = (prop.lat && prop.lat !== 0) ? prop.lat : null
+        let roofLng: number | null = (prop.lng && prop.lng !== 0) ? prop.lng : null
+
+        if ((!roofLat || !roofLng) && prop.roofGeom) {
+          try {
+            const centroid = polygonCentroid(prop.roofGeom)
+            if (centroid) { roofLat = centroid[1]; roofLng = centroid[0] }
+          } catch (centroidErr) {
+            console.warn('[NewProposalPage] centroid derivation failed', centroidErr)
+          }
+        }
+
+        replaceForm({
+          client_name: prop.ownerName || '',
+          client_phone: prop.phone || '',
+          client_email: prop.email || '',
+          ...locationFields,
+          // Drive system_size_kwp via panel_count so calcDerived reproduces it.
+          // Do NOT set system_size_kwp directly — calcDerived will override it.
+          ...(effectivePanelCount != null ? { panel_count: effectivePanelCount } : {}),
+          // Roof geometry carried forward
+          roof_polygon: prop.roofGeom ?? null,
+          roof_lat: roofLat,
+          roof_lng: roofLng,
+          roof_area_sqm: prop.area ?? null,
+        })
+
+        // FIX 1 (divergence check): after replaceForm, calcDerived will set
+        // system_size_kwp = panel_count × panel_watt / 1000.  Verify this is
+        // within 5% of the authoritative capacityKwp from CRM; warn if not.
+        if (prop.capacityKwp != null && effectivePanelCount != null) {
+          const derivedKwp = Math.round((effectivePanelCount * 580) / 1000 * 100) / 100
+          const pct = Math.abs(derivedKwp - prop.capacityKwp) / prop.capacityKwp
+          if (pct > 0.05) {
+            console.warn(
+              `[NewProposalPage] kWp divergence > 5%: panel_count-derived ${derivedKwp} kWp vs CRM authoritative ${prop.capacityKwp} kWp (${(pct * 100).toFixed(1)}%). Using panel_count-driven value.`,
+            )
+          }
+        }
+      })
+      .catch((err: unknown) => {
+        console.warn('[NewProposalPage] property_id fetch failed — using scalar params fallback', err)
+      })
+
+    return () => { cancelled = true }
+  }, [isEditMode]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Shared generator: satellite image → Gemini overlay → storage URL ────────
+  // Exported as a stable reference so the manual "Generate" button and the
+  // auto-trigger both share the identical code path.
+  const generateRoofPreview = async () => {
+    // Require lat/lng — cannot proceed without coordinates
+    if (!form.roof_lat || !form.roof_lng) {
+      setPreviewStatus('no_coords')
+      return
+    }
+
+    // FIX 4 + FIX 6: getSatelliteImageUrl returns a placeholder URL when
+    // VITE_GOOGLE_PLACES_API_KEY is not set.  A placeholder URL:
+    //   (a) would be written to roof_original_url and embedded in the
+    //       client-rendered proposal (security — key-bearing URL in the HTML).
+    //   (b) is CORS-blocked on the client (googleapis/mapbox).
+    //   (c) costs a Gemini/GPU call for no useful image.
+    // Short-circuit: skip the photorealistic path and jump to the schematic SVG.
+    const satelliteUrl = getSatelliteImageUrl(form.roof_lat, form.roof_lng, 20, '600x400')
+    const isPlaceholder = satelliteUrl.includes('placeholder')
+
+    if (isPlaceholder) {
+      // FIX 6: no usable satellite key — go straight to schematic fallback without
+      // attempting a 30-60s Gemini pipeline call.
+      if (form.roof_polygon) {
+        setPreviewStatus('pending')
+        setPreviewError('')
+        try {
+          const layout = computePanelLayout(form.roof_polygon, { wattage: form.panel_watt || 580 })
+          if (layout.count > 0) {
+            const svgStr = layoutToSvg(layout, { width: 600, height: 400 })
+            const svgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStr)}`
+            update('roof_panels_url', svgDataUri)
+            setPreviewStatus('fallback')
+            setPreviewError('No satellite API key — showing schematic layout')
+          } else {
+            setPreviewStatus('no_coords')
+          }
+        } catch {
+          setPreviewStatus('no_coords')
+        }
+      } else {
+        setPreviewStatus('no_coords')
+      }
+      return
+    }
+
+    setPreviewStatus('pending')
+    setPreviewError('')
+
+    try {
+      // Derive panel count: use form.panel_count if already set, else infer from kWp.
+      const effectivePanelCount =
+        form.panel_count > 0
+          ? form.panel_count
+          : Math.max(1, Math.round((form.system_size_kwp * 1000) / (form.panel_watt || 580)))
+
+      // FIX 4: Do NOT write the satellite provider URL to roof_original_url.
+      // That would embed a key-bearing/provider URL into the persisted proposal
+      // HTML (<img {{roof_original_url}}>) which is a security issue.
+      // Instead, pass the satellite URL to generatePanelOverlay with serverFetch:true
+      // so the server fetches it (no CORS, API key stays server-side) and the
+      // returned panels URL is a clean storage URL that we set as roof_panels_url.
+      const panelsStorageUrl = await generatePanelOverlay({
+        imageUrl: satelliteUrl,
+        proposalRef: form.ref || 'draft',
+        panelCount: effectivePanelCount,
+        // serverFetch: true — server fetches the satellite URL (CORS-safe, key
+        // never exposed in client storage or proposal HTML).
+        serverFetch: true,
+      })
+
+      // Only set roof_original_url if we have a clean storage URL from the server.
+      // (The server may return a URL it uploaded after fetching from the provider.)
+      // For now we leave roof_original_url empty — the panels slot is sufficient.
+      update('roof_panels_url', panelsStorageUrl)
+      setPreviewStatus('done')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setPreviewError(msg)
+
+      // Graceful schematic fallback: if roof_polygon is available, render
+      // an SVG layout and use it as a data-URI for the panels slot.
+      if (form.roof_polygon) {
+        try {
+          const layout = computePanelLayout(form.roof_polygon, {
+            wattage: form.panel_watt || 580,
+          })
+          if (layout.count > 0) {
+            const svgStr = layoutToSvg(layout, { width: 600, height: 400 })
+            const svgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStr)}`
+            update('roof_panels_url', svgDataUri)
+          }
+        } catch {
+          // SVG fallback also failed — leave roof_panels_url blank, just show hint
+        }
+      }
+
+      setPreviewStatus('fallback')
+    }
+  }
+
+  // ── Auto-trigger: run ONCE after roof_lat/lng arrive (from property_id hydration).
+  //   Guards:
+  //   1. Only in create mode (not edit)
+  //   2. Only once per mount (autoTriggeredRef)
+  //   3. Skip if roof_panels_url already set (edit mode reload, or user already
+  //      uploaded manually)
+  //   Watches form.roof_lat because the property_id effect sets it asynchronously.
+  useEffect(() => {
+    if (isEditMode) return
+    if (autoTriggeredRef.current) return
+    if (!form.roof_lat || !form.roof_lng) return
+    // If panels URL is already set (draft restore or edit), skip auto-gen
+    if (form.roof_panels_url) {
+      setPreviewStatus('done')
+      return
+    }
+    autoTriggeredRef.current = true
+    void generateRoofPreview()
+  }, [form.roof_lat, form.roof_lng]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const resolvedLocation = () => {
     if (form.location_preset === 'custom') return form.location_custom
     const preset = LOCATION_PRESETS[form.location_preset]
@@ -380,6 +632,14 @@ export default function NewProposalPage() {
         bom_price_snapshot: bomPriceSnapshot || undefined,
         // AI roof analysis (if available)
         ai_analysis: aiAnalysis || undefined,
+        // Roof geometry from the map draw — used by a later phase to auto-generate
+        // the on-roof panel layout visual server-side. Server does not act on these yet.
+        roof: (form.roof_polygon != null || form.roof_lat != null) ? {
+          polygon: form.roof_polygon ?? undefined,
+          lat: form.roof_lat ?? undefined,
+          lng: form.roof_lng ?? undefined,
+          area_sqm: form.roof_area_sqm ?? undefined,
+        } : undefined,
       }
 
       const res = await fetch('/api/admin-create-proposal', {
@@ -593,6 +853,7 @@ export default function NewProposalPage() {
           </div>
           <RoofImageUploader
             proposalRef={form.ref}
+            propertyId={searchParams.get('property_id') || undefined}
             panelCount={form.panel_count}
             panelWatt={form.panel_watt}
             originalUrl={form.roof_original_url}
@@ -608,6 +869,80 @@ export default function NewProposalPage() {
               setAiAnalysis(a)
             }}
           />
+
+          {/* On-roof preview status banner — shown only when map coords are present */}
+          {(form.roof_lat != null || previewStatus !== 'idle') && (
+            <div className="mt-4">
+              {previewStatus === 'pending' && (
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#E8A820]/8 border border-[#E8A820]/20">
+                  <Loader2 size={15} className="animate-spin text-[#E8A820] shrink-0" />
+                  <p className="text-sm text-[#E8A820]/80">
+                    מייצר תמונת גג עם פאנלים מהלוויין... (30-60 שניות)
+                  </p>
+                </div>
+              )}
+
+              {previewStatus === 'done' && (
+                <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-emerald-500/8 border border-emerald-500/20">
+                  <p className="text-sm text-emerald-300">תמונת גג עם פאנלים נוצרה מהלוויין</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      autoTriggeredRef.current = false
+                      update('roof_panels_url', '')
+                      void generateRoofPreview()
+                    }}
+                    className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    <RefreshCw size={11} />
+                    צור מחדש
+                  </button>
+                </div>
+              )}
+
+              {previewStatus === 'fallback' && (
+                <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-500/8 border border-amber-500/20">
+                  <AlertTriangle size={15} className="text-amber-400 shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-amber-300 mb-1">
+                      לא ניתן לייצר תמונה פוטוריאליסטית
+                      {form.roof_panels_url ? ' — מוצג תכנון סכמטי במקום' : ''}
+                    </p>
+                    {previewError && (
+                      <p className="text-xs text-white/40 truncate" title={previewError}>{previewError.slice(0, 100)}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      autoTriggeredRef.current = false
+                      update('roof_panels_url', '')
+                      void generateRoofPreview()
+                    }}
+                    className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-colors shrink-0"
+                  >
+                    <RefreshCw size={11} />
+                    נסה שוב
+                  </button>
+                </div>
+              )}
+
+              {/* Manual trigger button — shown when coords exist but no auto-trigger has run yet */}
+              {previewStatus === 'idle' && form.roof_lat != null && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    autoTriggeredRef.current = true
+                    void generateRoofPreview()
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#E8A820]/10 border border-[#E8A820]/20 text-[#E8A820] text-sm font-medium hover:bg-[#E8A820]/15 transition-colors"
+                >
+                  <RefreshCw size={14} />
+                  צור תצוגה מקדימה של פאנלים על הגג
+                </button>
+              )}
+            </div>
+          )}
         </Section>
 
         {/* Section C — System Specs */}

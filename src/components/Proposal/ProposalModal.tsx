@@ -40,10 +40,24 @@ export function ProposalModal({ property, financial, onClose }: ProposalModalPro
 
   const proposalRef = `BU-${property.id.slice(0, 6).toUpperCase()}`
 
-  // PPA rate: 20% above LCOE but still below grid (~4.5 THB/kWh)
-  const ppaRate = (financial.lcoe * 1.2).toFixed(2)
+  // Render a number with toFixed, falling back to '—' when the value is not finite.
+  function safeFmt(value: number, digits: number, suffix = ''): string {
+    if (!Number.isFinite(value)) return '—'
+    return `${value.toFixed(digits)}${suffix}`
+  }
+
+  // PPA rate: 20% above LCOE but still below grid (~4.5 THB/kWh).
+  // If LCOE is not a real computed value (non-finite or <= 0), show '—' for both
+  // PPA Rate and Day-1 Savings — never fabricate a client-facing price.
+  const lcoeKnown = Number.isFinite(financial.lcoe) && financial.lcoe > 0
+  const ppaRateNum = lcoeKnown ? financial.lcoe * 1.2 : NaN
+  const ppaRate = lcoeKnown ? ppaRateNum.toFixed(2) : '—'
   const gridRate = 4.5
-  const ppaSavings = ((gridRate - parseFloat(ppaRate)) / gridRate * 100).toFixed(0)
+  const ppaSavingsNum = lcoeKnown ? (gridRate - ppaRateNum) / gridRate * 100 : NaN
+  // Guard ppaSavings: must be in [0, 100] to be meaningful
+  const ppaSavings = (Number.isFinite(ppaSavingsNum) && ppaSavingsNum > 0)
+    ? ppaSavingsNum.toFixed(0)
+    : '—'
 
   // Lease: 10-year term, 15% markup over EPC
   const leaseTerm = 10
@@ -132,9 +146,9 @@ export function ProposalModal({ property, financial, onClose }: ProposalModalPro
               <div className="grid grid-cols-2 gap-3">
                 <ProposalStat label="System Cost" value={`฿${(financial.epcCost / 1000000).toFixed(2)}M`} />
                 <ProposalStat label="Monthly Savings" value={`฿${(financial.annualSavingsYear1 / 12000).toFixed(0)}K`} color="#2ED89A" />
-                <ProposalStat label="Payback Period" value={`${financial.paybackYears.toFixed(1)} years`} color={financial.paybackYears < 7 ? '#2ED89A' : '#E8A820'} />
-                <ProposalStat label="25-Year ROI" value={`${financial.roi25Year.toFixed(0)}%`} color="#E8A820" />
-                <ProposalStat label="IRR" value={`${(financial.irr * 100).toFixed(1)}%`} />
+                <ProposalStat label="Payback Period" value={safeFmt(financial.paybackYears, 1, ' years')} color={financial.paybackYears < 7 ? '#2ED89A' : '#E8A820'} />
+                <ProposalStat label="25-Year ROI" value={safeFmt(financial.roi25Year, 0, '%')} color="#E8A820" />
+                <ProposalStat label="IRR" value={Number.isFinite(financial.irr) ? `${(financial.irr * 100).toFixed(1)}%` : '—'} />
                 <ProposalStat label="Lifetime Savings" value={`฿${(financial.lifetimeSavings / 1000000).toFixed(1)}M`} color="#2ED89A" />
               </div>
             </div>
@@ -148,9 +162,9 @@ export function ProposalModal({ property, financial, onClose }: ProposalModalPro
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <ProposalStat label="Upfront Cost" value="฿0" color="#2ED89A" />
-                <ProposalStat label="PPA Rate" value={`฿${ppaRate}/kWh`} color="#E8A820" />
+                <ProposalStat label="PPA Rate" value={lcoeKnown ? `฿${ppaRate}/kWh` : '—'} color={lcoeKnown ? "#E8A820" : undefined} />
                 <ProposalStat label="Grid Rate" value={`฿${gridRate.toFixed(2)}/kWh`} />
-                <ProposalStat label="Day-1 Savings" value={`${ppaSavings}%`} color="#2ED89A" />
+                <ProposalStat label="Day-1 Savings" value={ppaSavings === '—' ? '—' : `${ppaSavings}%`} color="#2ED89A" />
                 <ProposalStat label="Contract Term" value="25 years" />
                 <ProposalStat label="Escalation" value="2% / year" />
               </div>

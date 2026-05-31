@@ -77,6 +77,14 @@ export interface Property {
   roofGeom?: GeoJSON.Polygon | GeoJSON.MultiPolygon
   capacityKwp?: number
   panelCount?: number
+  // Roof-analysis metadata (populated once bustan 005_roof_meta migration runs)
+  roofOrientation?: string
+  roofTiltDeg?: number
+  roofShading?: string
+  roofUsableAreaSqm?: number
+  roofAnalysisConfidence?: number
+  /** Existing PV detected on the roof (Gemini has_existing_solar). Deprioritizes EPC leads. */
+  existingSolar?: boolean
   annualKwh?: number
   annualSavings?: number
   epcCost?: number

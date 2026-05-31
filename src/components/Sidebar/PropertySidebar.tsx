@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers, PenLine } from 'lucide-react'
+import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers, PenLine, Lock } from 'lucide-react'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import { ProposalModal } from '../Proposal/ProposalModal'
@@ -15,6 +15,7 @@ import { calculateFinancials, type FinancialAnalysis } from '../../lib/financial
 import { generateProposal } from '../../lib/generate-proposal'
 import { enrichFromPlaces, isEnrichmentAvailable } from '../../lib/enrich-building'
 import { openLineChat, buildProposalMessage, isLineConfigured } from '../../lib/line-service'
+import { useTranslation } from '../../i18n/useTranslation'
 
 const GRADE_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   A: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Excellent — minimal infrastructure' },
@@ -39,12 +40,16 @@ export function PropertySidebar() {
   const regionConfig = REGIONS[region]
   const role = useBustanStore((s) => s.role)
   const canEditRoof = can(role, 'survey.edit') || can(role, 'crm.edit')
+  const canQuote = can(role, 'crm.quote')
+  const { t } = useTranslation()
+  const tm = t.crm.map
 
   const [nasaData, setNasaData] = useState<NasaPowerData | null>(null)
   const [financial, setFinancial] = useState<FinancialAnalysis | null>(null)
   const [nasaLoading, setNasaLoading] = useState(false)
   const [nasaError, setNasaError] = useState<string | null>(null)
   const [showProposalModal, setShowProposalModal] = useState(false)
+  const [pdfError, setPdfError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -56,6 +61,7 @@ export function PropertySidebar() {
         setFinancial(null)
         setNasaError(null)
         setNasaLoading(false)
+        setPdfError(null)
       })
       return
     }
@@ -66,6 +72,7 @@ export function PropertySidebar() {
       setFinancial(null)
       setNasaError(null)
       setNasaLoading(true)
+      setPdfError(null)
     })
 
     fetchSolarIrradiance(property.lat, property.lng)
@@ -213,7 +220,7 @@ export function PropertySidebar() {
               className="w-full py-2.5 rounded-xl bg-[#00E676]/15 border border-[#00E676]/30 text-[#00E676] text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#00E676]/25 transition-colors"
             >
               <PenLine size={14} />
-              {property.roofGeom ? 'Edit Roof Footprint' : 'Draw Roof Footprint'}
+              {property.roofGeom ? tm.editRoofFootprint : tm.drawRoofFootprint}
             </button>
           )}
 
@@ -450,74 +457,105 @@ export function PropertySidebar() {
             </div>
           )}
 
-          {/* Generate Proposal */}
+          {/* Generate Proposal — gated to crm.quote permission (sales + admin) */}
           {financial && !nasaLoading && (
             <div className="flex flex-col gap-2">
-              <button
-                onClick={() => setShowProposalModal(true)}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#00D68F] to-[#00B377] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-              >
-                <Layers size={16} />
-                Compare Options (EPC / PPA / Lease)
-              </button>
-              <button
-                onClick={() => {
-                  openProposal({
-                    property,
-                    financial,
-                    regionId: region,
-                  })
-                  // Log to CRM in background
-                  logProposalSent(property, 'full_proposal', 'web', {
-                    capacityKwp: financial.capacityKwp,
-                    annualSavings: financial.annualSavingsYear1,
-                    paybackYears: financial.paybackYears,
-                    dealValue: financial.epcCost,
-                  }).then(() => getCrmProjects().then(p => useAppStore.getState().setCrmProjects(p)))
-                }}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#E85D3A] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-              >
-                <Send size={16} />
-                Full Sales Proposal
-              </button>
-              <button
-                onClick={() => {
-                  generateProposal({
-                    property,
-                    financial,
-                    nasaData: nasaData ?? undefined,
-                    regionName: regionConfig.nameEn,
-                  })
-                  // Log to CRM in background
-                  logProposalSent(property, 'pdf_report', 'download', {
-                    capacityKwp: financial.capacityKwp,
-                    annualSavings: financial.annualSavingsYear1,
-                    paybackYears: financial.paybackYears,
-                    dealValue: financial.epcCost,
-                  }).then(() => getCrmProjects().then(p => useAppStore.getState().setCrmProjects(p)))
-                }}
-                className="w-full py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 text-xs flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
-              >
-                <FileDown size={14} />
-                Quick Report (PDF)
-              </button>
-              <button
-                onClick={() => {
-                  const params = new URLSearchParams({
-                    client_name: property.ownerName || '',
-                    location: `${regionConfig.nameEn}`,
-                    system_size_kwp: String(financial.capacityKwp || ''),
-                    total_price_thb: String(financial.epcCost || ''),
-                    annual_savings_thb: String(financial.annualSavingsYear1 || ''),
-                    payback_years: String(financial.paybackYears || ''),
-                  })
-                  window.open(`/admin/proposals/new?${params.toString()}`, '_blank')
-                }}
-                className="w-full py-2.5 rounded-xl bg-[#1A7A5A] text-white text-sm flex items-center justify-center gap-2 hover:bg-[#11604B] transition-colors font-semibold"
-              >
-                <Send size={14} />
-                Create Branded Proposal (Admin)
-              </button>
+              {canQuote ? (
+                <>
+                  <button
+                    onClick={() => setShowProposalModal(true)}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#00D68F] to-[#00B377] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  >
+                    <Layers size={16} />
+                    {tm.compareOptions}
+                  </button>
+                  <button
+                    onClick={() => {
+                      openProposal({
+                        property,
+                        financial,
+                        regionId: region,
+                      })
+                      // Log to CRM in background
+                      logProposalSent(property, 'full_proposal', 'web', {
+                        capacityKwp: financial.capacityKwp,
+                        annualSavings: financial.annualSavingsYear1,
+                        paybackYears: financial.paybackYears,
+                        dealValue: financial.epcCost,
+                      }).then(() => getCrmProjects().then(p => useAppStore.getState().setCrmProjects(p)))
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#E85D3A] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  >
+                    <Send size={16} />
+                    {tm.fullSalesProposal}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await generateProposal({
+                          property,
+                          financial,
+                          nasaData: nasaData ?? undefined,
+                          regionName: regionConfig.nameEn,
+                        })
+                      } catch (e) {
+                        const msg = e instanceof Error ? e.message : 'PDF generation failed'
+                        setPdfError(msg)
+                        console.error('[PropertySidebar] generateProposal failed', e)
+                        return
+                      }
+                      setPdfError(null)
+                      // Log to CRM only after successful generation
+                      logProposalSent(property, 'pdf_report', 'download', {
+                        capacityKwp: financial.capacityKwp,
+                        annualSavings: financial.annualSavingsYear1,
+                        paybackYears: financial.paybackYears,
+                        dealValue: financial.epcCost,
+                      }).then(() => getCrmProjects().then(p => useAppStore.getState().setCrmProjects(p)))
+                    }}
+                    className="w-full py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 text-xs flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                  >
+                    <FileDown size={14} />
+                    {tm.quickReportPdf}
+                  </button>
+                  {pdfError && (
+                    <p className="text-[#E85D3A] text-[10px] text-center px-1">{pdfError}</p>
+                  )}
+                  <button
+                    onClick={() => {
+                      // property_id is the canonical path — the page will fetch the full
+                      // Property (including roofGeom) and hydrate all fields from it.
+                      // Fallback scalar params are included so the page can degrade gracefully
+                      // if the Bustan fetch fails (e.g. auth not configured).
+                      // panel_count drives system_size_kwp in NewProposalPage via calcDerived
+                      // (FIX 2: setting system_size_kwp directly was silently dropped because
+                      //  calcDerived recomputes it from panel_count × panel_watt).
+                      const params = new URLSearchParams({
+                        property_id: property.id,
+                        client_name: property.ownerName || '',
+                        location: `${regionConfig.nameEn}`,
+                        system_size_kwp: String(financial.capacityKwp || ''),
+                        // Prefer the drawn-roof fitted count (geometry-aware, 580W) over the
+                        // legacy 550W area heuristic so the scalar fallback matches the map.
+                        panel_count: String(property.panelCount || financial.panelCount || ''),
+                        total_price_thb: String(financial.epcCost || ''),
+                        annual_savings_thb: String(financial.annualSavingsYear1 || ''),
+                        payback_years: String(financial.paybackYears || ''),
+                      })
+                      window.open(`/admin/proposals/new?${params.toString()}`, '_blank')
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-[#1A7A5A] text-white text-sm flex items-center justify-center gap-2 hover:bg-[#11604B] transition-colors font-semibold"
+                  >
+                    <Send size={14} />
+                    {tm.createBrandedProposal}
+                  </button>
+                </>
+              ) : (
+                <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/30 text-xs">
+                  <Lock size={13} />
+                  {tm.unauthorizedProposal}
+                </div>
+              )}
             </div>
           )}
 

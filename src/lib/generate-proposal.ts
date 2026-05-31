@@ -2,17 +2,39 @@ import jsPDF from 'jspdf'
 import type { Property } from '../types'
 import type { FinancialAnalysis } from './financial-calc'
 import type { NasaPowerData } from './nasa-power'
+import { computePanelLayout, layoutToSvg } from './panel-layout'
 
 export interface ProposalData {
   property: Property
   financial: FinancialAnalysis
   nasaData?: NasaPowerData
   regionName: string
+  /** URL of the on-roof panel overlay image (preferred). Fetched and embedded as a data URI. */
+  roof_panels_url?: string
+  /** URL of the original satellite roof image (fallback when panels URL is unavailable). */
+  roof_original_url?: string
 }
 
 const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-export function generateProposal(data: ProposalData): void {
+/** Fetch a remote URL and return it as a base64 data URI. Returns null on any failure. */
+async function urlToDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const blob = await res.blob()
+    return new Promise<string | null>((resolve) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : null)
+      reader.onerror = () => resolve(null)
+      reader.readAsDataURL(blob)
+    })
+  } catch {
+    return null
+  }
+}
+
+export async function generateProposal(data: ProposalData): Promise<void> {
   const doc = new jsPDF('p', 'mm', 'a4')
   const { property, financial, nasaData, regionName } = data
   const pageWidth = 210
@@ -237,6 +259,81 @@ export function generateProposal(data: ProposalData): void {
       'Est. Connection Cost',
       `\u0E3F${property.gridProximity.estimatedConnectionCost.toLocaleString()}`,
     )
+  }
+
+  // ---- YOUR ROOF / PANEL LAYOUT PAGE ----
+  // Attempt to embed a roof visual. Priority order:
+  //   1. roof_panels_url (panel overlay image — fetch as data URI, addImage)
+  //   2. roof_original_url (satellite image — same path)
+  //   3. property.roofGeom (compute layout → SVG → addSvgAsImage)
+  // If none are available the section is silently skipped.
+
+  let roofImageEmbedded = false
+
+  // Helper: try to embed a remote image URL
+  const tryEmbedUrl = async (url: string, caption: string): Promise<boolean> => {
+    if (!url) return false
+    const dataUrl = await urlToDataUrl(url)
+    if (!dataUrl) return false
+    try {
+      doc.addPage()
+      y = margin  // reset cursor to top of new page
+      addSubtitle('Proposed Panel Layout on Your Roof')
+      const imgW = contentWidth
+      const imgH = Math.min(120, imgW * 0.6) // max 120mm tall, ~3:5 ratio
+      doc.addImage(dataUrl, 'JPEG', margin, y + 2, imgW, imgH)
+      y = y + 2 + imgH + 4
+      doc.setFontSize(8)
+      doc.setTextColor(120, 120, 120)
+      doc.setFont('helvetica', 'normal')
+      doc.text(caption, margin, y)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  if (data.roof_panels_url) {
+    roofImageEmbedded = await tryEmbedUrl(
+      data.roof_panels_url,
+      'On-roof panel placement — generated from roof polygon survey',
+    )
+  }
+
+  if (!roofImageEmbedded && data.roof_original_url) {
+    roofImageEmbedded = await tryEmbedUrl(
+      data.roof_original_url,
+      'Satellite image of roof — panel overlay not available',
+    )
+  }
+
+  if (!roofImageEmbedded && property.roofGeom) {
+    // Generate SVG schematic from the drawn polygon
+    try {
+      const layout = computePanelLayout(property.roofGeom)
+      if (layout.count > 0) {
+        const svgStr = layoutToSvg(layout, { width: 560, height: 360 })
+        doc.addPage()
+        y = margin  // reset cursor to top of new page
+        addSubtitle('Proposed Panel Layout on Your Roof')
+        const svgW = contentWidth
+        const svgH = svgW * (360 / 560)
+        // addSvgAsImage(svg, x, y, w, h) — dimensions in mm
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ;(doc as any).addSvgAsImage(svgStr, margin, y + 2, svgW, svgH)
+        y = y + 2 + svgH + 6
+        doc.setFontSize(8)
+        doc.setTextColor(120, 120, 120)
+        doc.setFont('helvetica', 'normal')
+        doc.text(
+          `Panel layout schematic: ${layout.count} panels · ${layout.capacityKwp.toFixed(2)} kWp · derived from drawn roof polygon`,
+          margin,
+          y,
+        )
+      }
+    } catch {
+      // no roof visual available — skip gracefully
+    }
   }
 
   // ---- FOOTER ----

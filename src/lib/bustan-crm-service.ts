@@ -39,6 +39,13 @@ export interface BustanPropertyRow {
   lat: number | null
   lon: number | null
   roof_geom: GeoJSON.Polygon | GeoJSON.MultiPolygon | null
+  // Populated by bustan-migrations/005_roof_meta.sql (optional until migration runs)
+  roof_orientation?: string | null
+  roof_tilt_deg?: number | null
+  roof_shading?: string | null
+  roof_usable_area_sqm?: number | null
+  roof_analysis_confidence?: number | null
+  roof_analysis_json?: Record<string, unknown> | null
 }
 
 export interface BustanOwnerRow {
@@ -169,13 +176,24 @@ export function mapLeadToProperty(lead: BustanLead): Property {
     area: num(p.roof_area_sqm),
     roofGeom: p.roof_geom ?? undefined,
     capacityKwp: lead.crm.estimated_kWp || undefined,
+    panelCount: lead.crm.estimated_kWp != null
+      ? Math.round(lead.crm.estimated_kWp * 1000 / 580)
+      : undefined,
     solarScore: num(p.solar_potential_score),
+    existingSolar: Boolean(p.existing_solar),
     priority,
     category: p.property_type ?? undefined,
     ownerName: lead.display.legalOwner !== NEEDS_RESEARCH ? lead.display.legalOwner : undefined,
     phone: str(data.decisionMakerPhone),
     website: str(data.companyWebsite),
     email: str(data.decisionMakerEmail),
+    // Roof-analysis metadata (populated once 005_roof_meta migration runs; safe
+    // to read before that — columns are undefined / null until the migration runs).
+    roofOrientation: str(p.roof_orientation) ?? undefined,
+    roofTiltDeg: num(p.roof_tilt_deg) ?? undefined,
+    roofShading: str(p.roof_shading) ?? undefined,
+    roofUsableAreaSqm: num(p.roof_usable_area_sqm) ?? undefined,
+    roofAnalysisConfidence: num(p.roof_analysis_confidence) ?? undefined,
   }
 }
 
@@ -252,6 +270,55 @@ export function updateLeadStage(propertyId: string, stage: string): Promise<Writ
 /** Reassign a lead's owner (assigned_to). Pass null to unassign. */
 export function assignLead(propertyId: string, assignedTo: string | null): Promise<WriteResult> {
   return updateLeadPipeline(propertyId, { assigned_to: assignedTo })
+}
+
+// ---------------------------------------------------------------------------
+// Roof analysis (P4) — types imported inline to avoid a circular dep on the
+// api/ folder. Mirrors RoofAnalysis from api/admin-analyze-roof.ts.
+// ---------------------------------------------------------------------------
+
+export interface RoofAnalysisInput {
+  orientation: string
+  tilt_deg_estimate: number
+  shading: string
+  usable_area_m2: number
+  confidence: number
+  /** Whether solar panels are already visibly installed on the roof (from Gemini).
+   *  Persisted to bustan.properties.existing_solar via 006_existing_solar migration.
+   *  Optional for backward compatibility — defaults to null (no-op on the column). */
+  has_existing_solar?: boolean
+  // The full analysis blob is stored as-is in roof_analysis_json; callers may
+  // pass a richer object (e.g. RoofAnalysisResult) — extra fields are preserved.
+}
+
+/**
+ * Persist the last Gemini roof-analysis result to bustan.properties via the
+ * role-checked SECURITY DEFINER RPC `bustan.save_roof_meta`.
+ *
+ * Requires bustan-migrations/005_roof_meta.sql to be applied to project
+ * ygoiaabzkuvdsyyduvhv. Returns { ok: false } if the migration has not run yet
+ * (the RPC will not exist; the error is surfaced to the caller for logging only).
+ *
+ * NOTE: kWp / financial logic (owner-decision-layer.ts) is NOT touched here.
+ * The stored values are for reference; reconciliation is explicitly deferred.
+ */
+export async function saveRoofMeta(
+  propertyId: string,
+  analysis: RoofAnalysisInput,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.rpc('save_roof_meta', {
+    p_id: propertyId,
+    p_orientation: analysis.orientation ?? null,
+    p_tilt: analysis.tilt_deg_estimate ?? null,
+    p_shading: analysis.shading ?? null,
+    p_usable: analysis.usable_area_m2 ?? null,
+    p_confidence: analysis.confidence ?? null,
+    p_json: analysis as unknown as Record<string, unknown>,
+    p_existing_solar: analysis.has_existing_solar ?? null,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
 }
 
 /**
@@ -418,6 +485,39 @@ export interface ActivityRow {
   old_value: string | null
   new_value: string | null
   at: string
+}
+
+// --- Owner-decision writes ---------------------------------------------------
+
+/**
+ * Patch the owner_decision row for a property.
+ *
+ * Only the fields passed in the patch are written; unspecified fields are
+ * untouched (Supabase upsert with onConflict='property_id').
+ *
+ * Used by the owner-research accelerator to stamp `research_status` and
+ * `source_url` when a rep starts manual registry research. Owner NAME fields
+ * (legal_owner_name, decision_maker_name) stay editable by the rep directly
+ * in the CRM; this function does not touch them unless explicitly passed.
+ */
+export interface OwnerDecisionPatch {
+  research_status?: string
+  source_url?: string
+  legal_owner_name?: string
+  decision_maker_name?: string
+  data?: Record<string, unknown>
+}
+
+export async function updateOwnerDecision(
+  propertyId: string,
+  patch: OwnerDecisionPatch,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase
+    .from('owner_decision')
+    .upsert({ property_id: propertyId, ...patch }, { onConflict: 'property_id' })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
 }
 
 /** Most recent activity_log entries (append-only, written by the DB trigger). */
