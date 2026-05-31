@@ -17,7 +17,16 @@ export const config = { runtime: 'edge' }
 const CRON_SECRET = process.env.CRON_SECRET
 const BUSTAN_URL = process.env.BUSTAN_SUPABASE_URL || 'https://ygoiaabzkuvdsyyduvhv.supabase.co'
 const BUSTAN_KEY = process.env.BUSTAN_SUPABASE_SERVICE_ROLE_KEY!
-const OVERPASS = process.env.OVERPASS_URL || 'https://overpass-api.de/api/interpreter'
+// Overpass mirrors — the public API frequently 504/429s when overloaded, so we
+// fail over across mirrors within a run. Cross-tick retry (attempts) is the
+// longer backoff if every mirror is down at once.
+const OVERPASS_URLS = [...new Set([
+  ...(process.env.OVERPASS_URL ? [process.env.OVERPASS_URL] : []),
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+])]
+const OVERPASS_TIMEOUT_MS = 12000  // per-mirror abort — keeps us inside edge limits
 
 // Tuning — mirrors scripts/download_osm_buildings.py
 const USABLE_RATIO = 0.65
@@ -26,6 +35,8 @@ const MAX_BBOX_DEG = 0.2          // ~22km per side cap — guards Overpass + co
 const MAX_BUILDINGS = 1500        // hard cap per scan; rest logged as skipped
 const DEDUP_DEG = 0.00025         // ~28m: skip buildings near an existing lead
 const SCANS_PER_RUN = 3
+const MAX_ATTEMPTS = 3            // cross-tick auto-retry cap for failed/stuck scans
+const STALE_RUNNING_MS = 3 * 60 * 1000  // a 'running' scan older than this = crashed/timed-out → retry
 
 type LngLat = { lat: number; lon: number }
 
@@ -53,6 +64,30 @@ async function bInsert(table: string, rows: unknown[]): Promise<boolean> {
     body: JSON.stringify(rows),
   })
   return r.ok
+}
+
+// Acquire buildings from OSM Overpass with mirror failover + per-mirror timeout.
+// Returns the parsed Overpass JSON, or throws after every mirror fails (the scan
+// is then re-queued by the cross-tick retry, MAX_ATTEMPTS).
+async function fetchOverpassBuildings(
+  query: string,
+): Promise<{ elements?: Array<{ type: string; id: number; geometry?: LngLat[]; tags?: Record<string, string> }> }> {
+  let lastErr = 'no mirrors configured'
+  for (const url of OVERPASS_URLS) {
+    const host = url.replace(/^https?:\/\//, '').split('/')[0]
+    const ctrl = new AbortController()
+    const timer = setTimeout(() => ctrl.abort(), OVERPASS_TIMEOUT_MS)
+    try {
+      const res = await fetch(url, { method: 'POST', body: `data=${encodeURIComponent(query)}`, signal: ctrl.signal })
+      if (res.ok) return await res.json()
+      lastErr = `${host} ${res.status}`  // 504/429/502 → try next mirror
+    } catch (e) {
+      lastErr = `${host} ${e instanceof Error ? e.name : 'error'}`  // abort/timeout/network → next mirror
+    } finally {
+      clearTimeout(timer)
+    }
+  }
+  throw new Error(`overpass all mirrors failed (last: ${lastErr})`)
 }
 
 function shoelaceAreaM2(geom: LngLat[]): number {
@@ -95,6 +130,7 @@ interface ScanRow {
   id: string
   bbox: number[] | null
   filters: { propertyType?: string; minRoofM2?: number; commercialOnly?: boolean } | null
+  attempts?: number
 }
 
 const COMMERCIAL = new Set(['retail', 'hospitality', 'restaurant', 'office', 'industrial', 'commercial', 'hotel'])
@@ -108,14 +144,12 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   }
   const filters = scan.filters || {}
 
-  // 1. ACQUIRE — OSM Overpass buildings in bbox (south,west,north,east)
-  const q = `[out:json][timeout:90];(way["building"](${minLat},${minLng},${maxLat},${maxLng});relation["building"](${minLat},${minLng},${maxLat},${maxLng}););out geom;`
-  const res = await fetch(OVERPASS, { method: 'POST', body: `data=${encodeURIComponent(q)}` })
-  if (!res.ok) throw new Error(`overpass ${res.status}`)
-  const data = await res.json() as { elements?: Array<{ type: string; id: number; geometry?: LngLat[]; tags?: Record<string, string> }> }
+  // 1. ACQUIRE — OSM Overpass buildings in bbox (south,west,north,east), with mirror failover
+  const q = `[out:json][timeout:60];(way["building"](${minLat},${minLng},${maxLat},${maxLng});relation["building"](${minLat},${minLng},${maxLat},${maxLng}););out geom;`
+  const data = await fetchOverpassBuildings(q)
   const elements = (data.elements || []).filter((e) => (e.geometry?.length ?? 0) >= 3)
   const found = elements.length
-  let skipped = Math.max(0, found - MAX_BUILDINGS)
+  const skipped = Math.max(0, found - MAX_BUILDINGS)
 
   // 2. SCORE + filter
   const candidates = []
@@ -180,20 +214,28 @@ export default async function handler(req: Request): Promise<Response> {
   if (!BUSTAN_KEY) return Response.json({ ok: false, error: 'BUSTAN_SUPABASE_SERVICE_ROLE_KEY not set' }, { status: 500 })
 
   const now = new Date().toISOString()
-  const queued = await bGet<ScanRow>(`scan_requests?status=eq.queued&order=created_at.asc&limit=${SCANS_PER_RUN}&select=id,bbox,filters`)
+  // Pick up: fresh 'queued', previously 'failed' (auto-retry up to MAX_ATTEMPTS),
+  // and 'running' scans that went stale (a prior run timed out mid-flight).
+  const staleBefore = new Date(Date.now() - STALE_RUNNING_MS).toISOString()
+  const filter = `or=(status.eq.queued,and(status.eq.failed,attempts.lt.${MAX_ATTEMPTS}),and(status.eq.running,attempts.lt.${MAX_ATTEMPTS},updated_at.lt.${staleBefore}))`
+  const queued = await bGet<ScanRow>(`scan_requests?${filter}&order=created_at.asc&limit=${SCANS_PER_RUN}&select=id,bbox,filters,attempts`)
   if (queued.length === 0) return Response.json({ ok: true, processed: 0, message: 'no queued scans' })
 
   const results: Array<Record<string, unknown>> = []
   for (const scan of queued) {
-    await bPatch(`scan_requests?id=eq.${scan.id}`, { status: 'running', updated_at: now })
+    // Claim the attempt at pickup so a mid-flight timeout (function killed before
+    // the catch runs) still counts — otherwise a perpetually-timing-out scan would
+    // be re-picked forever. attempts caps re-pickup at MAX_ATTEMPTS.
+    await bPatch(`scan_requests?id=eq.${scan.id}`, { status: 'running', attempts: (scan.attempts ?? 0) + 1, updated_at: now })
     try {
       const counts = await processScan(scan)
       await bPatch(`scan_requests?id=eq.${scan.id}`, { status: 'done', counts, updated_at: new Date().toISOString() })
       results.push({ id: scan.id, ...counts })
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err)
-      await bPatch(`scan_requests?id=eq.${scan.id}`, { status: 'failed', error, updated_at: new Date().toISOString() })
-      results.push({ id: scan.id, error })
+      const attempts = (scan.attempts ?? 0) + 1
+      await bPatch(`scan_requests?id=eq.${scan.id}`, { status: 'failed', error, attempts, updated_at: new Date().toISOString() })
+      results.push({ id: scan.id, error, attempts, willRetry: attempts < MAX_ATTEMPTS })
     }
   }
   return Response.json({ ok: true, processed: queued.length, results })
