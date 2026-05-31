@@ -309,8 +309,9 @@ export default function PlatformPage() {
         <FilterBar />
       </Suspense>
 
-      {/* Bustan CRM lead editor — shows for the selected live lead (map/scanner) */}
-      {selectedProperty && (isMapView || platformView === 'scanner') && (
+      {/* Bustan CRM lead editor — Scanner/CRM view only (Map uses PropertySidebar)
+          so the two detail panels never overlap. */}
+      {selectedProperty && platformView === 'scanner' && (
         <Suspense fallback={null}>
           <BustanLeadEditor />
         </Suspense>
@@ -370,8 +371,9 @@ export default function PlatformPage() {
         </div>
       )}
 
-      {/* PropertySidebar — works in map & scanner */}
-      {selectedProperty && (isMapView || platformView === 'scanner') && (
+      {/* PropertySidebar — Map view only (Scanner/CRM uses BustanLeadEditor)
+          so the two detail panels never overlap. */}
+      {selectedProperty && isMapView && (
         <Suspense fallback={null}>
           <PropertySidebar />
         </Suspense>
