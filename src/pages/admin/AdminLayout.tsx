@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags, Building2 } from 'lucide-react'
 import { onAuthChange, signOut, isAdmin } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 import { AdminToast } from '../../components/admin/AdminToast'
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { to: '/admin/procurement', icon: ShoppingCart, label: 'הזמנות רכש', end: true, internal: true },
   { to: '/admin/suppliers', icon: Tags, label: 'ספקים ומחירים', end: true, internal: true },
   { to: '/admin/pea', icon: FileCheck, label: 'תכניות PEA', end: true, internal: true },
+  { to: '/colliers', icon: Building2, label: 'Colliers Portfolio', end: true, internal: true, external: true },
 ]
 
 function LoadingScreen() {
