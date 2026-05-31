@@ -61,6 +61,10 @@ export interface CollierListing {
   description: string
   /** Always COLLIERS_MISSING_FIELDS — every row carries these as demo data */
   missing: string[]
+  /** Geocoded latitude — set by attachGeocodes(); undefined when no geocode exists */
+  lat?: number
+  /** Geocoded longitude — set by attachGeocodes(); undefined when no geocode exists */
+  lng?: number
 }
 
 // ---------------------------------------------------------------------------
@@ -338,4 +342,48 @@ export function summarizeColliers(rows: CollierListing[]): ColliersSummary {
     .slice(0, 15)
 
   return { total: rows.length, byAssetType, byProvince, byTier, top15 }
+}
+
+// ---------------------------------------------------------------------------
+// Geocode attachment
+// ---------------------------------------------------------------------------
+
+/**
+ * Small deterministic jitter so markers sharing the same district centroid
+ * don't perfectly stack.  The offset is ±0.0008° derived from the row index
+ * (no randomness — same input always produces the same output).
+ *
+ * The pattern maps index → a unit-circle offset scaled to 0.0008° and then
+ * distributed evenly by index mod 8, giving 8 compass directions.
+ */
+function jitterForIndex(index: number): { dLat: number; dLng: number } {
+  const STEP = 0.0008
+  // 8 directions evenly spread: N, NE, E, SE, S, SW, W, NW
+  const angle = (index % 8) * (Math.PI / 4)
+  return {
+    dLat: Math.sin(angle) * STEP,
+    dLng: Math.cos(angle) * STEP,
+  }
+}
+
+/**
+ * Attach geocoordinates to each listing by matching `row.locationRaw` to a
+ * key in `geo` (exact string match).  Rows without a matching key are left
+ * without `lat`/`lng`.
+ *
+ * A small deterministic per-index jitter (±0.0008°) is applied so that
+ * multiple listings sharing one district centroid do not perfectly overlap.
+ *
+ * Pure and deterministic — no side effects, no randomness.
+ */
+export function attachGeocodes(
+  rows: CollierListing[],
+  geo: Record<string, { lat: number; lng: number }>,
+): CollierListing[] {
+  return rows.map((row) => {
+    const match = geo[row.locationRaw]
+    if (!match) return row
+    const { dLat, dLng } = jitterForIndex(row.index)
+    return { ...row, lat: match.lat + dLat, lng: match.lng + dLng }
+  })
 }

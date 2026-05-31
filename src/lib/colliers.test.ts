@@ -9,6 +9,7 @@ import { describe, it, expect } from 'vitest'
 import {
   parseColliersMarkdown,
   summarizeColliers,
+  attachGeocodes,
   COLLIERS_MISSING_FIELDS,
   type CollierListing,
 } from './colliers'
@@ -176,5 +177,73 @@ describe('summarizeColliers — over parsed fixture', () => {
     }
     // Factory (544 kWp, tier A) must rank first
     expect(summary.top15[0].assetType).toBe('Factory')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 3. attachGeocodes
+// ---------------------------------------------------------------------------
+
+describe('attachGeocodes', () => {
+  // Use record 1 from the fixture: locationRaw = "Phra Khanong, Khlong Toei, Bangkok"
+  // and record 2: locationRaw = "Phraeksa, Mueang Samut Prakan, Samut Prakan"
+  const rows = parseColliersMarkdown(FIXTURE_MD)
+
+  const GEO: Record<string, { lat: number; lng: number }> = {
+    'Phra Khanong, Khlong Toei, Bangkok': { lat: 13.7008, lng: 100.6034 },
+    // Phraeksa intentionally omitted to test unmatched path
+  }
+
+  it('attaches lat/lng to a matched row', () => {
+    const result = attachGeocodes(rows, GEO)
+    const r1 = result.find((r) => r.locationRaw === 'Phra Khanong, Khlong Toei, Bangkok')
+    expect(r1?.lat).toBeDefined()
+    expect(r1?.lng).toBeDefined()
+  })
+
+  it('leaves unmatched rows without lat/lng', () => {
+    const result = attachGeocodes(rows, GEO)
+    const r2 = result.find((r) => r.locationRaw === 'Phraeksa, Mueang Samut Prakan, Samut Prakan')
+    expect(r2?.lat).toBeUndefined()
+    expect(r2?.lng).toBeUndefined()
+  })
+
+  it('jitter is applied: coordinates differ from the raw geocode centroid', () => {
+    const result = attachGeocodes(rows, GEO)
+    const r1 = result.find((r) => r.locationRaw === 'Phra Khanong, Khlong Toei, Bangkok')
+    // Index 1 (odd) → non-zero jitter direction, so at least one coordinate differs
+    const rawLat = GEO['Phra Khanong, Khlong Toei, Bangkok'].lat
+    const rawLng = GEO['Phra Khanong, Khlong Toei, Bangkok'].lng
+    const latDiffers = r1?.lat !== rawLat
+    const lngDiffers = r1?.lng !== rawLng
+    expect(latDiffers || lngDiffers).toBe(true)
+  })
+
+  it('jitter is deterministic: calling twice produces identical results', () => {
+    const result1 = attachGeocodes(rows, GEO)
+    const result2 = attachGeocodes(rows, GEO)
+    for (let i = 0; i < result1.length; i++) {
+      expect(result1[i].lat).toBe(result2[i].lat)
+      expect(result1[i].lng).toBe(result2[i].lng)
+    }
+  })
+
+  it('does not mutate the original rows', () => {
+    const originalLat = rows[0].lat
+    attachGeocodes(rows, GEO)
+    expect(rows[0].lat).toBe(originalLat)
+  })
+
+  it('returns the same count as the input', () => {
+    const result = attachGeocodes(rows, GEO)
+    expect(result).toHaveLength(rows.length)
+  })
+
+  it('empty geo map → no rows receive coordinates', () => {
+    const result = attachGeocodes(rows, {})
+    for (const r of result) {
+      expect(r.lat).toBeUndefined()
+      expect(r.lng).toBeUndefined()
+    }
   })
 })

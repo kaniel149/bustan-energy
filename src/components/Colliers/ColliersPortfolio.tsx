@@ -9,7 +9,8 @@
  * Self-contained + scrollable so it works in both contexts.
  */
 
-import { ExternalLink, AlertTriangle, Building2, MapPin, Zap, ChevronUp, ChevronDown, X } from 'lucide-react'
+import { useState } from 'react'
+import { ExternalLink, AlertTriangle, Building2, MapPin, Zap, ChevronUp, ChevronDown, X, List, Map } from 'lucide-react'
 import {
   COLLIERS_DISCLAIMER,
   COLLIERS_MISSING_FIELDS,
@@ -17,6 +18,7 @@ import {
 import type { CollierListing } from '../../lib/colliers'
 import { useColliersPortfolio } from '../../hooks/useColliersPortfolio'
 import type { SortKey } from '../../hooks/useColliersPortfolio'
+import { ColliersMap } from './ColliersMap'
 
 // ---------------------------------------------------------------------------
 // Tier colour system
@@ -365,10 +367,53 @@ function SortTh({
 }
 
 // ---------------------------------------------------------------------------
+// View toggle + main component
+// ---------------------------------------------------------------------------
+
+type ViewMode = 'list' | 'map'
+
+function ViewToggle({
+  view,
+  onChange,
+}: {
+  view: ViewMode
+  onChange: (v: ViewMode) => void
+}) {
+  return (
+    <div
+      role="group"
+      aria-label="Toggle view"
+      className="inline-flex rounded-lg border border-white/10 bg-white/[0.04] p-0.5 gap-0.5"
+    >
+      {(['list', 'map'] as const).map((v) => {
+        const active = view === v
+        return (
+          <button
+            key={v}
+            onClick={() => onChange(v)}
+            aria-pressed={active}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-semibold transition-all ${
+              active
+                ? 'bg-[#E8A820]/20 text-[#E8A820] border border-[#E8A820]/40'
+                : 'text-white/40 hover:text-white/70 border border-transparent'
+            }`}
+          >
+            {v === 'list' ? <List size={12} /> : <Map size={12} />}
+            {v === 'list' ? 'List' : 'Map'}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Main exported component
 // ---------------------------------------------------------------------------
 
 export function ColliersPortfolio() {
+  const [view, setView] = useState<ViewMode>('list')
+
   const {
     status,
     errorMsg,
@@ -534,62 +579,69 @@ export function ColliersPortfolio() {
         </div>
       </section>
 
-      {/* LISTINGS TABLE */}
+      {/* VIEW TOGGLE + LISTINGS */}
       <section aria-label="All listings">
-        <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-3">
-          All Listings
-        </h2>
-
-        <div className="bg-[#0D2137]/60 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] border-collapse">
-              <thead>
-                <tr className="border-b border-white/10 bg-white/[0.02]">
-                  <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider w-10">
-                    #
-                  </th>
-                  <SortTh label="Name / Type" sortKey="index" current={sortKey} asc={sortAsc} onSort={toggleSort} />
-                  <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider">
-                    Listing
-                  </th>
-                  <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider">
-                    Province
-                  </th>
-                  <SortTh label="Area" sortKey="areaSqm" current={sortKey} asc={sortAsc} onSort={toggleSort} align="right" />
-                  <SortTh label="Price ฿" sortKey="priceThb" current={sortKey} asc={sortAsc} onSort={toggleSort} align="right" />
-                  <SortTh label="Est. kWp*" sortKey="estKwp" current={sortKey} asc={sortAsc} onSort={toggleSort} align="right" />
-                  <th className="px-3 py-2.5 text-center text-[10px] text-white/40 uppercase tracking-wider">
-                    Tier
-                  </th>
-                  <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider">
-                    Missing data
-                  </th>
-                  <th className="px-3 py-2.5 w-10" aria-label="Source link" />
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((l) => (
-                  <ListingRow key={l.id} listing={l} />
-                ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={10} className="px-4 py-12 text-center text-white/30 text-sm">
-                      No listings match the current filters.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Footer note */}
-          <div className="px-4 py-2.5 border-t border-white/5 flex items-center gap-2">
-            <span className="text-[10px] text-white/25">
-              * Solar estimates are preliminary and for demonstration only. Source:{' '}
-              <span className="text-white/35">public DotProperty agency pages attributed to Colliers Thailand.</span>
-            </span>
-          </div>
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">
+            All Listings
+          </h2>
+          <ViewToggle view={view} onChange={setView} />
         </div>
+
+        {view === 'map' ? (
+          <ColliersMap listings={filtered} totalCount={summary.total} />
+        ) : (
+          <div className="bg-[#0D2137]/60 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[900px] border-collapse">
+                <thead>
+                  <tr className="border-b border-white/10 bg-white/[0.02]">
+                    <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider w-10">
+                      #
+                    </th>
+                    <SortTh label="Name / Type" sortKey="index" current={sortKey} asc={sortAsc} onSort={toggleSort} />
+                    <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider">
+                      Listing
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider">
+                      Province
+                    </th>
+                    <SortTh label="Area" sortKey="areaSqm" current={sortKey} asc={sortAsc} onSort={toggleSort} align="right" />
+                    <SortTh label="Price ฿" sortKey="priceThb" current={sortKey} asc={sortAsc} onSort={toggleSort} align="right" />
+                    <SortTh label="Est. kWp*" sortKey="estKwp" current={sortKey} asc={sortAsc} onSort={toggleSort} align="right" />
+                    <th className="px-3 py-2.5 text-center text-[10px] text-white/40 uppercase tracking-wider">
+                      Tier
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-[10px] text-white/40 uppercase tracking-wider">
+                      Missing data
+                    </th>
+                    <th className="px-3 py-2.5 w-10" aria-label="Source link" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((l) => (
+                    <ListingRow key={l.id} listing={l} />
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td colSpan={10} className="px-4 py-12 text-center text-white/30 text-sm">
+                        No listings match the current filters.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer note */}
+            <div className="px-4 py-2.5 border-t border-white/5 flex items-center gap-2">
+              <span className="text-[10px] text-white/25">
+                * Solar estimates are preliminary and for demonstration only. Source:{' '}
+                <span className="text-white/35">public DotProperty agency pages attributed to Colliers Thailand.</span>
+              </span>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Footer note */}
