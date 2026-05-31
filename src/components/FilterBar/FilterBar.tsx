@@ -70,10 +70,16 @@ export function FilterBar() {
 
   return (
     <div className="absolute top-0 left-0 right-0 z-10 pointer-events-none">
-      {/* Top bar */}
-      <div className="pointer-events-auto mx-4 mt-4 flex items-center gap-3">
+      {/* Top bar
+          Layout strategy: flex-wrap so the row can spill to a second line on very narrow screens.
+          Each pill group is shrink-0 so it won't collapse internally. The region pill group is the
+          exception — it allows overflow-x-auto horizontal scroll so 4 tabs always show fully.
+          The search box is the only flex-1/min-w-0 item so it absorbs leftover space gracefully.
+          The CRM/auth group is shrink-0 ml-auto so it anchors to the right on all widths.
+      */}
+      <div className="pointer-events-auto mx-4 mt-4 flex items-center gap-2 flex-wrap">
         {/* Logo & Title */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl px-4 py-2.5 border border-white/10 flex items-center gap-3">
+        <div className="shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl px-4 py-2.5 border border-white/10 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E8A820] to-[#E85D3A] flex items-center justify-center text-sm font-bold">
             ☀
           </div>
@@ -84,12 +90,12 @@ export function FilterBar() {
         </div>
 
         {/* View Tabs (desktop) */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden hidden md:flex">
+        <div className="shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 hidden md:flex overflow-hidden">
           {VIEW_TAB_DEFS.map(({ view, icon: Icon, key }) => (
             <button
               key={view}
               onClick={() => setPlatformView(view)}
-              className={`px-4 py-2.5 text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              className={`px-3 py-2.5 text-xs font-medium transition-colors flex items-center gap-1.5 ${
                 platformView === view
                   ? 'bg-[#00D68F]/15 text-[#00D68F]'
                   : 'text-white/50 hover:text-white hover:bg-white/5'
@@ -101,9 +107,9 @@ export function FilterBar() {
           ))}
         </div>
 
-        {/* Data Tabs (Rooftops / Community Solar) — only in map/scanner view */}
+        {/* Data Tabs (Rooftops / Land) — only in map/scanner view */}
         {(isMapView || isScannerView) && (
-          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
+          <div className="shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
             <TabButton
               active={filters.activeTab === 'rooftops'}
               onClick={() => setActiveTab('rooftops')}
@@ -119,14 +125,14 @@ export function FilterBar() {
           </div>
         )}
 
-        {/* Region selector — show for map/scanner */}
+        {/* Region selector — scrollable pill group so adding more regions never clips labels */}
         {(isMapView || isScannerView) && (
-          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden hidden lg:flex">
+          <div className="hidden lg:flex shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 overflow-x-auto max-w-[340px] scrollbar-none">
             {Object.values(REGIONS).map((r) => (
               <button
                 key={r.id}
                 onClick={() => setRegion(r.id)}
-                className={`px-3 py-2.5 text-xs font-medium transition-colors ${
+                className={`shrink-0 px-2.5 py-2.5 text-xs font-medium transition-colors whitespace-nowrap ${
                   filters.region === r.id
                     ? 'bg-[#E8A820]/20 text-[#E8A820]'
                     : 'text-white/60 hover:text-white hover:bg-white/5'
@@ -138,23 +144,23 @@ export function FilterBar() {
           </div>
         )}
 
-        {/* Search — show for map/scanner */}
+        {/* Search — absorbs leftover space, constrained so it doesn't crowd neighbours */}
         {(isMapView || isScannerView) && (
-          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex items-center px-3 gap-2 flex-1 max-w-xs hidden sm:flex">
-            <Search size={14} className="text-white/40" />
+          <div className="hidden sm:flex min-w-0 flex-1 basis-32 max-w-[220px] bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 items-center px-3 gap-2">
+            <Search size={14} className="shrink-0 text-white/40" />
             <input
               type="text"
               placeholder={tf.searchProperties}
               value={filters.searchQuery}
               onChange={(e) => setFilter('searchQuery', e.target.value)}
-              className="bg-transparent text-white text-xs py-2.5 w-full outline-none placeholder:text-white/30"
+              className="bg-transparent text-white text-xs py-2.5 w-full outline-none placeholder:text-white/30 min-w-0"
             />
           </div>
         )}
 
         {/* Map controls — only in map view */}
         {showMapControls && (
-          <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
+          <div className="shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
             <button
               onClick={cycleMapStyle}
               className="px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1.5"
@@ -211,15 +217,15 @@ export function FilterBar() {
         {platformView === 'pipeline' && crmProjects.length > 0 && (
           <button
             onClick={() => exportLeadsCSV(crmProjects)}
-            className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 px-3 py-2.5 text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors"
+            className="shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 px-3 py-2.5 text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center gap-1.5 transition-colors"
           >
             <Download size={14} />
             {tf.export}
           </button>
         )}
 
-        {/* CRM + Auth */}
-        <div className="bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden ml-auto">
+        {/* CRM + Auth — always visible, anchored right via ml-auto + shrink-0 */}
+        <div className="shrink-0 ml-auto bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
           {isCrmConnected() && (isMapView || isScannerView) && (
             <Link
               to="/crm"
