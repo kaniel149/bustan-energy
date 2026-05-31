@@ -36,11 +36,13 @@ export function openProposal(params: {
   q.set('ph', property.phone?.replace(/[^0-9]/g, '') || DEFAULT_PHONE)
   q.set('line', LINE_OA_ID)
 
-  // Satellite image of the building (if Google API key available)
-  const imgUrl = getSatelliteImageUrl(property.lat, property.lng)
-  if (imgUrl && !imgUrl.includes('placeholder')) {
-    q.set('img1', imgUrl)
-  }
+  // Satellite image — proxy URL served by /api/enrich-place (no key in bundle).
+  // Build an absolute URL so proposal.html can load it from any origin.
+  const proxyPath = getSatelliteImageUrl(property.lat, property.lng)
+  const imgUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}${proxyPath}`
+    : proxyPath
+  q.set('img1', imgUrl)
 
   window.open(`/proposal.html?${q.toString()}`, '_blank')
 }

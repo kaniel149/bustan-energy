@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity, Search, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
+import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity, Search, ExternalLink, ChevronDown, ChevronUp, Zap, CheckCircle } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { useToastStore } from '../../lib/toast-store'
@@ -21,6 +21,30 @@ import { buildOwnerResearchLinks } from '../../lib/owner-resolution'
 import { autoBuildSystem } from '../../lib/bom'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
 import { useTranslation } from '../../i18n/useTranslation'
+
+// ---------------------------------------------------------------------------
+// Enrich-owner types — mirrors api/enrich-owner.ts response shape.
+// ---------------------------------------------------------------------------
+
+interface EnrichedCompanyData {
+  companyLegalName?: string
+  registeredAddress?: string
+  businessPhone?: string
+  website?: string
+  registrationNo?: string
+  businessType?: string
+}
+
+/** Union of the two possible /api/enrich-owner response shapes. */
+type EnrichResult =
+  | { configured: false; message: string }
+  | {
+      configured: true
+      source: string
+      target: string
+      data: EnrichedCompanyData
+      disclaimer: string
+    }
 
 const thb = (n: number) => `฿${Math.round(n).toLocaleString('en-US')}`
 const inputCls =
@@ -70,6 +94,14 @@ export function BustanLeadEditor() {
   const [resolvedAddress, setResolvedAddress] = useState<string | null>(null)
   /** Loading state for the Nominatim reverse-geocode call. */
   const [geocoding, setGeocoding] = useState(false)
+
+  // --- Auto-enrich (Firecrawl) state ---------------------------------------
+  /** Whether the Firecrawl enrichment call is in flight. */
+  const [enriching, setEnriching] = useState(false)
+  /** Result payload returned by /api/enrich-owner. */
+  const [enrichResult, setEnrichResult] = useState<EnrichResult | null>(null)
+  /** Whether the rep has applied the enriched data into the owner fields. */
+  const [enrichApplied, setEnrichApplied] = useState(false)
   // -------------------------------------------------------------------------
 
   const propertyId = selected?.id ?? ''
@@ -93,6 +125,9 @@ export function BustanLeadEditor() {
     setOwnerPanelOpen(false)
     setResolvedAddress(null)
     setGeocoding(false)
+    setEnriching(false)
+    setEnrichResult(null)
+    setEnrichApplied(false)
   }, [propertyId])
 
   const quote = useMemo(() => autoBuildSystem(lead?.crm.estimated_kWp ?? 0), [lead?.crm.estimated_kWp])
@@ -163,6 +198,79 @@ export function BustanLeadEditor() {
   const handleLinkClick = (url: string) => {
     if (!canCrm) return
     void updateOwnerDecision(selected.id, { source_url: url })
+  }
+
+  /**
+   * Call /api/enrich-owner with the current lead's company name + website.
+   * JURISTIC / company data only — PDPA B.E. 2562 compliant.
+   * Named individuals / directors are never requested or displayed.
+   */
+  const handleAutoEnrich = async () => {
+    if (enriching) return
+    setEnriching(true)
+    setEnrichResult(null)
+    setEnrichApplied(false)
+    try {
+      // ownerName is already extracted from data.legalOwnerName above.
+      const companyName = ownerName ?? (lead.property.name ?? undefined)
+      const existingWebsite =
+        typeof (lead.owner?.data as Record<string, unknown> | null)?.companyWebsite === 'string'
+          ? ((lead.owner!.data as Record<string, unknown>).companyWebsite as string)
+          : undefined
+      const res = await fetch('/api/enrich-owner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyName,
+          url: existingWebsite || undefined,
+          lat,
+          lng,
+          province: lead.property.area_name ?? undefined,
+        }),
+      })
+      const json = (await res.json()) as EnrichResult
+      setEnrichResult(json)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Network error'
+      setEnrichResult({ configured: false, message: `Request failed: ${msg}` })
+    } finally {
+      setEnriching(false)
+    }
+  }
+
+  /**
+   * Apply the enriched company data into the owner_decision row via the
+   * existing updateOwnerDecision write path. Maps:
+   *   companyLegalName → legal_owner_name
+   *   website          → data.companyWebsite
+   *   businessPhone    → data.decisionMakerPhone
+   *   (all other fields go into data jsonb for reference)
+   */
+  const handleApplyEnrich = async () => {
+    if (!enrichResult || !enrichResult.configured || !canCrm) return
+    const d = enrichResult.data
+    const existingData = (lead.owner?.data ?? {}) as Record<string, unknown>
+    const mergedData: Record<string, unknown> = {
+      ...existingData,
+      ...(d.registeredAddress ? { registeredAddress: d.registeredAddress } : {}),
+      ...(d.registrationNo ? { registrationNo: d.registrationNo } : {}),
+      ...(d.businessType ? { businessType: d.businessType } : {}),
+      ...(d.website ? { companyWebsite: d.website } : {}),
+      ...(d.businessPhone ? { decisionMakerPhone: d.businessPhone } : {}),
+      enrichSource: enrichResult.source,
+      enrichTarget: enrichResult.target,
+      enrichedAt: new Date().toISOString(),
+    }
+    await runWrite(
+      () =>
+        updateOwnerDecision(selected.id, {
+          ...(d.companyLegalName ? { legal_owner_name: d.companyLegalName } : {}),
+          data: mergedData,
+        }),
+      canCrm,
+      () => setEnrichApplied(true),
+      'Owner enriched from company registry',
+    )
   }
 
   // Build registry deep-links (pure — no network, runs synchronously).
@@ -377,6 +485,124 @@ export function BustanLeadEditor() {
                 <p className="text-[10px] text-amber-400/70 leading-relaxed">
                   {researchLinks.note}
                 </p>
+
+                {/* ---- Auto-enrich (Firecrawl) — additive, company data only ---- */}
+                <div className="border-t border-white/10 pt-2 space-y-2">
+                  <button
+                    onClick={() => void handleAutoEnrich()}
+                    disabled={enriching || !canCrm}
+                    className="flex items-center gap-1.5 w-full justify-center text-[11px] font-medium px-2 py-1.5 rounded-lg bg-violet-600/20 hover:bg-violet-600/30 disabled:opacity-40 text-violet-300 border border-violet-500/20 transition-colors"
+                    title="Extract public company/juristic data from DBD registry or company website via Firecrawl. PDPA: juristic entities only — no personal data."
+                  >
+                    {enriching ? (
+                      <Loader2 size={11} className="animate-spin" />
+                    ) : (
+                      <Zap size={11} />
+                    )}
+                    {enriching ? 'Enriching…' : 'Auto-enrich (company)'}
+                  </button>
+
+                  {/* Not configured hint */}
+                  {enrichResult && !enrichResult.configured && (
+                    <p className="text-[10px] text-white/50 bg-white/5 rounded-lg px-2 py-1.5 leading-relaxed">
+                      {enrichResult.message}
+                    </p>
+                  )}
+
+                  {/* Enrichment results */}
+                  {enrichResult && enrichResult.configured && (
+                    <div className="rounded-lg bg-violet-900/20 border border-violet-500/20 p-2 space-y-1.5">
+                      <p className="text-[10px] uppercase tracking-wide text-violet-400/70">
+                        Company data — verify before use
+                      </p>
+                      {enrichResult.data.companyLegalName && (
+                        <div>
+                          <span className="text-[10px] text-white/40">Legal name: </span>
+                          <span className="text-[11px] text-white/80 select-all">
+                            {enrichResult.data.companyLegalName}
+                          </span>
+                        </div>
+                      )}
+                      {enrichResult.data.registeredAddress && (
+                        <div>
+                          <span className="text-[10px] text-white/40">Address: </span>
+                          <span className="text-[11px] text-white/70 select-all">
+                            {enrichResult.data.registeredAddress}
+                          </span>
+                        </div>
+                      )}
+                      {enrichResult.data.businessPhone && (
+                        <div>
+                          <span className="text-[10px] text-white/40">Phone: </span>
+                          <span className="text-[11px] text-white/80 select-all">
+                            {enrichResult.data.businessPhone}
+                          </span>
+                        </div>
+                      )}
+                      {enrichResult.data.website && (
+                        <div>
+                          <span className="text-[10px] text-white/40">Website: </span>
+                          <a
+                            href={enrichResult.data.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] text-sky-300 hover:text-sky-200 select-all truncate block"
+                          >
+                            {enrichResult.data.website}
+                          </a>
+                        </div>
+                      )}
+                      {enrichResult.data.registrationNo && (
+                        <div>
+                          <span className="text-[10px] text-white/40">Reg. no.: </span>
+                          <span className="text-[11px] text-white/70 select-all">
+                            {enrichResult.data.registrationNo}
+                          </span>
+                        </div>
+                      )}
+                      {enrichResult.data.businessType && (
+                        <div>
+                          <span className="text-[10px] text-white/40">Type: </span>
+                          <span className="text-[11px] text-white/70">
+                            {enrichResult.data.businessType}
+                          </span>
+                        </div>
+                      )}
+                      <p className="text-[10px] text-amber-400/60 leading-relaxed">
+                        {enrichResult.disclaimer}
+                      </p>
+                      {/* Apply button */}
+                      {!enrichApplied ? (
+                        <button
+                          onClick={() => void handleApplyEnrich()}
+                          disabled={saving || !canCrm}
+                          className="flex items-center gap-1.5 w-full justify-center text-[11px] font-medium px-2 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 disabled:opacity-40 text-emerald-300 border border-emerald-500/20 transition-colors mt-1"
+                        >
+                          <CheckCircle size={11} /> Apply to owner fields
+                        </button>
+                      ) : (
+                        <p className="flex items-center gap-1 text-[11px] text-emerald-400">
+                          <CheckCircle size={11} /> Applied to owner fields
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Source link */}
+                  {enrichResult && enrichResult.configured && (
+                    <a
+                      href={enrichResult.target}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleLinkClick(enrichResult.target)}
+                      className="flex items-center gap-1.5 text-[10px] text-sky-400/70 hover:text-sky-300 truncate"
+                    >
+                      <ExternalLink size={10} className="shrink-0" />
+                      <span className="truncate">Source: {enrichResult.target}</span>
+                    </a>
+                  )}
+                </div>
+                {/* ---- end Auto-enrich ---- */}
               </div>
             )}
           </div>

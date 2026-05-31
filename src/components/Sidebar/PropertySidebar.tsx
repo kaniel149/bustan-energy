@@ -417,7 +417,7 @@ export function PropertySidebar() {
               </>
             ) : (
               <p className="text-white/30 text-[11px]">
-                {isEnrichmentAvailable() ? 'Click Enrich to find owner info' : 'No contact info — set VITE_GOOGLE_PLACES_API_KEY to enable enrichment'}
+                {'Click Enrich to find owner info'}
               </p>
             )}
           </div>
