@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
-import { isBustanConnected } from '../lib/bustan-supabase'
+import { isBustanConnected, bustanSupabase } from '../lib/bustan-supabase'
 import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests } from '../lib/bustan-crm-service'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
@@ -149,8 +149,9 @@ export default function PlatformPage() {
   useEffect(() => {
     if (!user || !isBustanConnected()) return
     let cancelled = false
-    Promise.all([fetchBustanLeads(), fetchCurrentRole()])
-      .then(([leads, role]) => {
+    const load = async () => {
+      try {
+        const [leads, role] = await Promise.all([fetchBustanLeads(), fetchCurrentRole()])
         if (cancelled) return
         // Always apply the role so role-gated UI (admin actions etc.) is never
         // suppressed by an empty lead list. The role comes from bustan.app_users
@@ -161,11 +162,24 @@ export default function PlatformPage() {
           setProperties(leads.map(mapLeadToProperty))
           setDataStatus('loaded')
         }
-      })
-      .catch((err) => console.error('Failed to load Bustan leads:', err))
+      } catch (err) {
+        console.error('Failed to load Bustan leads:', err)
+      }
+    }
+    load()
     fetchScanRequests().then((r) => { if (!cancelled) setScanRequests(r) }).catch(() => { /* ignore */ })
+    // Re-load when the bustan session becomes available. On a page reload the
+    // MAIN session restores synchronously (so `user` is set immediately) but the
+    // separate bustan client restores its session asynchronously — the initial
+    // load() above can run while the bustan client is still anon (→ 0 leads →
+    // demo data sticks). onAuthStateChange fires INITIAL_SESSION/SIGNED_IN/
+    // TOKEN_REFRESHED with the bustan session once it's ready, so we re-load then.
+    const sub = bustanSupabase?.auth.onAuthStateChange((_event, session) => {
+      if (session && !cancelled) load()
+    })
     return () => {
       cancelled = true
+      sub?.data.subscription.unsubscribe()
     }
   }, [user, setProperties, setBustanLeads, setBustanRole, setScanRequests])
 
