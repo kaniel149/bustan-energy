@@ -10,6 +10,7 @@ import {
   parseColliersMarkdown,
   summarizeColliers,
   attachGeocodes,
+  colliersToProperties,
   COLLIERS_MISSING_FIELDS,
   type CollierListing,
 } from './colliers'
@@ -244,6 +245,73 @@ describe('attachGeocodes', () => {
     for (const r of result) {
       expect(r.lat).toBeUndefined()
       expect(r.lng).toBeUndefined()
+    }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 4. colliersToProperties — Property adapter
+// ---------------------------------------------------------------------------
+
+describe('colliersToProperties', () => {
+  const GEO: Record<string, { lat: number; lng: number }> = {
+    'Phra Khanong, Khlong Toei, Bangkok': { lat: 13.7008, lng: 100.6034 },
+    'Phraeksa, Mueang Samut Prakan, Samut Prakan': { lat: 13.5990, lng: 100.6194 },
+    // record 3 (Khlong Toei) intentionally omitted → ungeocoded
+  }
+
+  const rows = parseColliersMarkdown(FIXTURE_MD)
+  const geocoded = attachGeocodes(rows, GEO)
+  const properties = colliersToProperties(geocoded)
+
+  it('only geocoded rows (2 out of 3) are included', () => {
+    expect(properties).toHaveLength(2)
+  })
+
+  it('all included properties have region === "colliers"', () => {
+    for (const p of properties) {
+      expect(p.region).toBe('colliers')
+    }
+  })
+
+  it('all included properties carry lat and lng', () => {
+    for (const p of properties) {
+      expect(typeof p.lat).toBe('number')
+      expect(typeof p.lng).toBe('number')
+    }
+  })
+
+  it('tier → priority mapping is preserved (record 1: C, record 2: A)', () => {
+    const officeProps = properties.filter((p) => p.title.toLowerCase().includes('office'))
+    expect(officeProps).toHaveLength(1)
+    // record 1 is Office / tier C
+    expect(officeProps[0].priority).toBe('C')
+
+    const factoryProps = properties.filter((p) => p.title.toLowerCase().includes('warehouse'))
+    expect(factoryProps).toHaveLength(1)
+    // record 2 is Factory / tier A
+    expect(factoryProps[0].priority).toBe('A')
+  })
+
+  it('rent listing → status "rent"; sale listing → status "sale"', () => {
+    const rentProp = properties.find((p) => p.title.toLowerCase().includes('office'))
+    expect(rentProp?.status).toBe('rent')
+
+    const saleProp = properties.find((p) => p.title.toLowerCase().includes('warehouse'))
+    expect(saleProp?.status).toBe('sale')
+  })
+
+  it('ungeocoded row (record 3) is excluded', () => {
+    const ids = properties.map((p) => p.id)
+    // record 3 slug: "office-for-rent-khlong-toei_noprice"
+    expect(ids).not.toContain('office-for-rent-khlong-toei_noprice')
+  })
+
+  it('panelCount is round(estKwp * 1000 / 580)', () => {
+    for (const p of properties) {
+      if (p.capacityKwp != null && p.panelCount != null) {
+        expect(p.panelCount).toBe(Math.round((p.capacityKwp * 1000) / 580))
+      }
     }
   })
 })

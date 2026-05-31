@@ -15,10 +15,17 @@ export { SYSTEM_SIZE_RANGES }
 
 export function useFilteredProperties() {
   const properties = useAppStore((s) => s.properties)
+  const colliersProperties = useAppStore((s) => s.colliersProperties)
   const filters = useAppStore((s) => s.filters)
 
+  // Merge colliers into the pool so they survive demo/bustan setProperties calls
+  const allProperties = useMemo(
+    () => [...properties, ...colliersProperties],
+    [properties, colliersProperties],
+  )
+
   return useMemo(() => {
-    return properties.filter((p) => {
+    return allProperties.filter((p) => {
       // Region
       if (p.region !== filters.region) return false
 
@@ -78,5 +85,5 @@ export function useFilteredProperties() {
 
       return true
     })
-  }, [properties, filters])
+  }, [allProperties, filters])
 }

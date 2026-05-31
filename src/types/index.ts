@@ -1,4 +1,4 @@
-export type Region = 'koh_phangan' | 'koh_samui' | 'surat_thani'
+export type Region = 'koh_phangan' | 'koh_samui' | 'surat_thani' | 'colliers'
 
 export type PropertyType = 'roof' | 'land'
 export type PropertyStatus = 'sale' | 'rent' | 'private'

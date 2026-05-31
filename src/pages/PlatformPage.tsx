@@ -6,6 +6,7 @@ import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
 import { isBustanConnected, bustanSupabase } from '../lib/bustan-supabase'
 import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests } from '../lib/bustan-crm-service'
+import { parseColliersMarkdown, attachGeocodes, colliersToProperties } from '../lib/colliers'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
 import { Toast } from '../components/Toast'
@@ -139,6 +140,41 @@ export default function PlatformPage() {
       .catch(() => { /* no candidate file — fine */ })
     return () => { cancelled = true }
   }, [setRoofCandidates])
+
+  // Load Colliers dataset — independent of demo/bustan loads, runs once.
+  // Fetches the markdown catalogue + geocodes JSON, then maps to Property[].
+  // Graceful: either fetch failing simply leaves colliersProperties empty.
+  const setColliersProperties = useAppStore((s) => s.setColliersProperties)
+  useEffect(() => {
+    let cancelled = false
+    async function loadColliers() {
+      try {
+        const [mdRes, geoRes] = await Promise.all([
+          fetch('/data/colliers-listings.md'),
+          fetch('/data/colliers-geocodes.json').catch(() => null),
+        ])
+        if (cancelled) return
+        if (!mdRes.ok) return
+
+        const md = await mdRes.text()
+        if (cancelled) return
+
+        const geo: Record<string, { lat: number; lng: number }> =
+          geoRes && geoRes.ok ? await geoRes.json() : {}
+
+        if (cancelled) return
+
+        const parsed = parseColliersMarkdown(md)
+        const geocoded = attachGeocodes(parsed, geo)
+        const props = colliersToProperties(geocoded)
+        setColliersProperties(props)
+      } catch {
+        // best-effort — no Colliers data is a graceful degradation
+      }
+    }
+    loadColliers()
+    return () => { cancelled = true }
+  }, [setColliersProperties])
 
   // Load the live Bustan CRM leads (bustan schema) once authenticated.
   // Additive + reversible: RLS returns nothing when unauthenticated, so the

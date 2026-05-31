@@ -53,6 +53,9 @@ interface AppState {
   // Data
   properties: Property[]
   setProperties: (properties: Property[]) => void
+  /** Colliers demo portfolio — kept separate so demo/bustan reloads don't wipe it */
+  colliersProperties: Property[]
+  setColliersProperties: (properties: Property[]) => void
   gridData: GeoJSON.FeatureCollection | null
   setGridData: (data: GeoJSON.FeatureCollection) => void
 
@@ -169,6 +172,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     get().updateStats()
   },
 
+  colliersProperties: [],
+  setColliersProperties: (properties) => {
+    set({ colliersProperties: properties })
+    get().updateStats()
+  },
+
   gridData: null,
   setGridData: (data) => set({ gridData: data }),
 
@@ -182,8 +191,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   updateStats: () => {
-    const { properties, filters } = get()
-    const filtered = properties.filter((p) => p.region === filters.region)
+    const { properties, colliersProperties, filters } = get()
+    const allProperties = [...properties, ...colliersProperties]
+    const filtered = allProperties.filter((p) => p.region === filters.region)
     const roofs = filtered.filter((p) => p.type === 'roof')
     const lands = filtered.filter((p) => p.type === 'land')
     const forSale = filtered.filter((p) => p.status === 'sale')
