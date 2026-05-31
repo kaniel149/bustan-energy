@@ -414,41 +414,12 @@ export default function NewProposalPage() {
       return
     }
 
-    // FIX 4 + FIX 6: getSatelliteImageUrl returns a placeholder URL when
-    // VITE_GOOGLE_PLACES_API_KEY is not set.  A placeholder URL:
-    //   (a) would be written to roof_original_url and embedded in the
-    //       client-rendered proposal (security — key-bearing URL in the HTML).
-    //   (b) is CORS-blocked on the client (googleapis/mapbox).
-    //   (c) costs a Gemini/GPU call for no useful image.
-    // Short-circuit: skip the photorealistic path and jump to the schematic SVG.
-    const satelliteUrl = getSatelliteImageUrl(form.roof_lat, form.roof_lng, 20, '600x400')
-    const isPlaceholder = satelliteUrl.includes('placeholder')
-
-    if (isPlaceholder) {
-      // FIX 6: no usable satellite key — go straight to schematic fallback without
-      // attempting a 30-60s Gemini pipeline call.
-      if (form.roof_polygon) {
-        setPreviewStatus('pending')
-        setPreviewError('')
-        try {
-          const layout = computePanelLayout(form.roof_polygon, { wattage: form.panel_watt || 580 })
-          if (layout.count > 0) {
-            const svgStr = layoutToSvg(layout, { width: 600, height: 400 })
-            const svgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStr)}`
-            update('roof_panels_url', svgDataUri)
-            setPreviewStatus('fallback')
-            setPreviewError('No satellite API key — showing schematic layout')
-          } else {
-            setPreviewStatus('no_coords')
-          }
-        } catch {
-          setPreviewStatus('no_coords')
-        }
-      } else {
-        setPreviewStatus('no_coords')
-      }
-      return
-    }
+    // getSatelliteImageUrl returns a RELATIVE proxy path (/api/enrich-place?...).
+    // For admin-overlay-panels (server-side fetch) we need an ABSOLUTE URL so the
+    // server can resolve it.  Build it from window.location.origin here.
+    // The proxy itself fetches Google server-side — no key is ever in the bundle.
+    const proxyPath = getSatelliteImageUrl(form.roof_lat, form.roof_lng, 20, '600x400')
+    const satelliteUrl = `${window.location.origin}${proxyPath}`
 
     setPreviewStatus('pending')
     setPreviewError('')

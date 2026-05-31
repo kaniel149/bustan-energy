@@ -27,6 +27,9 @@ const Scanner = lazy(() => import('../components/Scanner/Scanner').then((m) => (
 const MobileBottomNav = lazy(() => import('../components/MobileNav/MobileBottomNav').then((m) => ({ default: m.MobileBottomNav })))
 const CRMDashboard = lazy(() => import('../components/CRM/Dashboard'))
 const CRMPipeline = lazy(() => import('../components/CRM/Pipeline'))
+const ColliersPortfolio = lazy(() =>
+  import('../components/Colliers/ColliersPortfolio').then((m) => ({ default: m.ColliersPortfolio })),
+)
 
 const SCAN_STATUS_STYLE: Record<string, string> = {
   queued: 'bg-white/10 text-white/60',
@@ -253,6 +256,15 @@ export default function PlatformPage() {
         <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628] overflow-y-auto">
           <Suspense fallback={<ViewLoader />}>
             {hasBustanLeads ? <BustanDashboard /> : <CRMDashboard />}
+          </Suspense>
+        </div>
+      )}
+
+      {/* Colliers portfolio view */}
+      {platformView === 'colliers' && (
+        <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628] overflow-y-auto">
+          <Suspense fallback={<ViewLoader />}>
+            <ColliersPortfolio />
           </Suspense>
         </div>
       )}

@@ -61,3 +61,6 @@ solar-intelligence/
 │   └── utils/              # Legacy utility scripts
 └── scripts/                # Python pipeline scripts
 ```
+
+## Scraping
+See [docs/SCRAPING.md](./docs/SCRAPING.md) — tool verdicts, legal matrix, integration points P1–P6, and deploy steps for `workers/dbd-enricher` (Cloud Run Crawlee batch worker).

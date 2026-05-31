@@ -1,6 +1,6 @@
 // Google Places API enrichment for building owner data
-
-const PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY || ''
+// All Google API calls are proxied through /api/enrich-place (server-side).
+// No Google key is present in the client bundle.
 
 export interface EnrichmentResult {
   name?: string
@@ -45,47 +45,29 @@ function classifyCategory(types: string[]): string {
   return 'residential'
 }
 
-// Nearby Search — finds businesses within radius of coordinates
+// Nearby Search — proxied server-side via /api/enrich-place?action=contact
 export async function enrichFromPlaces(lat: number, lng: number): Promise<EnrichmentResult | null> {
-  if (!PLACES_API_KEY) return null
-
   try {
-    // Use CORS proxy or serverless function in production
-    // For now, use the Places API directly (requires API key with Places enabled)
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=30&key=${PLACES_API_KEY}`
-
-    const res = await fetch(url)
+    const res = await fetch(
+      `/api/enrich-place?action=contact&lat=${lat}&lng=${lng}`
+    )
     if (!res.ok) return null
 
-    const data = await res.json()
-    if (!data.results?.length) return null
-
-    // Take the closest/most relevant result
-    const place = data.results[0]
-
-    // Get details for phone number
-    let phone: string | undefined
-    let website: string | undefined
-
-    if (place.place_id) {
-      const detailUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=formatted_phone_number,international_phone_number,website&key=${PLACES_API_KEY}`
-      const detailRes = await fetch(detailUrl)
-      if (detailRes.ok) {
-        const detailData = await detailRes.json()
-        phone = detailData.result?.international_phone_number?.replace(/\s/g, '')
-        website = detailData.result?.website
-      }
+    const data = await res.json() as {
+      available: boolean
+      name?: string
+      phone?: string
+      website?: string
+      types?: string[]
     }
 
+    if (!data.available) return null
+
     return {
-      name: place.name,
-      phone,
-      website,
-      category: classifyCategory(place.types || []),
-      rating: place.rating,
-      address: place.vicinity,
-      placeId: place.place_id,
-      types: place.types,
+      name: data.name,
+      phone: data.phone,
+      website: data.website,
+      category: data.types ? classifyCategory(data.types) : undefined,
     }
   } catch (err) {
     console.error('Places enrichment failed:', err)
@@ -108,15 +90,17 @@ export function enrichFromOSM(tags: Record<string, string>): Partial<EnrichmentR
   }
 }
 
-// Google Static Maps satellite image URL for a building
+// Returns a RELATIVE proxy URL for the satellite image.
+// Safe to use as <img src> — the server fetches Google / falls back to OSM tile.
+// When used in a server-side context (e.g. admin-overlay-panels fetching the URL),
+// the caller MUST make this absolute using window.location.origin before passing
+// to the server.  See NewProposalPage.generateRoofPreview for the pattern.
 export function getSatelliteImageUrl(lat: number, lng: number, zoom = 19, size = '600x400'): string {
-  if (!PLACES_API_KEY) {
-    // Fallback to free MapLibre static image
-    return `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},${zoom},0/${size}?access_token=pk.placeholder`
-  }
-  return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=${size}&maptype=satellite&key=${PLACES_API_KEY}`
+  return `/api/enrich-place?action=satellite&lat=${lat}&lng=${lng}&zoom=${zoom}&size=${size}`
 }
 
+// Always true — the server decides whether a key is configured and returns
+// { available: false } gracefully when it is not.
 export function isEnrichmentAvailable(): boolean {
-  return !!PLACES_API_KEY
+  return true
 }
