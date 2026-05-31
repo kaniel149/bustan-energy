@@ -26,6 +26,7 @@ const MaintenancePage = lazy(() => import('./pages/services/MaintenancePage'))
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'))
 const ToolsPage = lazy(() => import('./pages/ToolsPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const CollierPortfolioPage = lazy(() => import('./pages/CollierPortfolioPage'))
 
 // Admin pages — lazy loaded, separate auth context
 const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'))
@@ -102,6 +103,8 @@ export default function App() {
                   <Route path="pipeline" element={<CRMPipeline />} />
                   <Route path="leads/:id" element={<LeadDetail />} />
                 </Route>
+                {/* Colliers Thailand Solar Portfolio — read-only sales demo, no auth */}
+                <Route path="/colliers" element={<CollierPortfolioPage />} />
                 <Route path="*" element={<PlatformPage />} />
               </Routes>
             </Suspense>
@@ -141,6 +144,9 @@ export default function App() {
 
               {/* Preview scroll animation */}
               <Route path="/preview-scroll" element={<PreviewScroll />} />
+
+              {/* Colliers Thailand Solar Portfolio — read-only sales demo, no auth */}
+              <Route path="/colliers" element={<CollierPortfolioPage />} />
 
               {/* Internal platform — language set by URL prefix (en/th/he, RTL for he) */}
               <Route path="/platform" element={<PlatformPage />} />
