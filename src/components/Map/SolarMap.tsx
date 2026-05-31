@@ -164,7 +164,13 @@ export function SolarMap() {
     setProperties([...useAppStore.getState().properties, promoted])
     removeRoofCandidate(reviewCandidate.id)
     setReviewCandidate(null)
-    showToast('Lead created — open it to find the owner', 'success')
+    // Select + fly to the new lead so it's immediately visible on the map (saved
+    // to the map AND the CRM); the PropertySidebar opens for owner research / quote.
+    setSelectedProperty(promoted)
+    if (map.current && Number.isFinite(promoted.lat) && Number.isFinite(promoted.lng)) {
+      map.current.flyTo({ center: [promoted.lng, promoted.lat], zoom: 17, duration: 800 })
+    }
+    showToast('Lead added — saved to the map + CRM', 'success')
   }
   const handleRejectCandidate = async () => {
     if (!reviewCandidate) return

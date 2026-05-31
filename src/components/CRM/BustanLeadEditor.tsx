@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity, Search, ExternalLink, ChevronDown, ChevronUp, Zap, CheckCircle } from 'lucide-react'
+import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity, Search, ExternalLink, ChevronDown, ChevronUp, Zap, CheckCircle, X } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { useToastStore } from '../../lib/toast-store'
@@ -79,6 +79,7 @@ const emptyOm = (id: string): OmSite => ({
  */
 export function BustanLeadEditor() {
   const selected = useAppStore((s) => s.selectedProperty)
+  const setSelectedProperty = useAppStore((s) => s.setSelectedProperty)
   const lead = useBustanStore((s) => (selected ? s.leadsById[selected.id] : undefined))
   const role = useBustanStore((s) => s.role)
   const patchCrm = useBustanStore((s) => s.patchCrm)
@@ -313,11 +314,18 @@ export function BustanLeadEditor() {
 
   return (
     <div className="fixed inset-x-2 bottom-2 top-auto sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-4 sm:right-4 z-30 w-auto sm:w-[320px] max-h-[70vh] sm:max-h-[85vh] overflow-y-auto rounded-2xl bg-[#0A1929]/95 backdrop-blur-xl border border-white/10 shadow-2xl p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white truncate">{selected.title}</h3>
-        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-white truncate flex-1 min-w-0">{selected.title}</h3>
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60 shrink-0">
           {crm.priority} · {c.reach[crm.reachability]}
         </span>
+        <button
+          onClick={() => setSelectedProperty(null)}
+          className="shrink-0 p-1 rounded-lg hover:bg-white/10 text-white/40 hover:text-white transition-colors"
+          aria-label="Close"
+        >
+          <X size={16} />
+        </button>
       </div>
       <div className="text-[11px] text-white/50">
         {c.leadScore} <span className="text-white/80 font-medium">{crm.lead_score}</span> ·{' '}
