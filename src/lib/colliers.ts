@@ -10,6 +10,8 @@
  *   EFFICIENCY_KWP = 0.18
  */
 
+import type { Property } from '../types'
+
 // ---------------------------------------------------------------------------
 // Public constants
 // ---------------------------------------------------------------------------
@@ -386,4 +388,62 @@ export function attachGeocodes(
     const { dLat, dLng } = jitterForIndex(row.index)
     return { ...row, lat: match.lat + dLat, lng: match.lng + dLng }
   })
+}
+
+// ---------------------------------------------------------------------------
+// Property adapter — maps geocoded CollierListings to the platform Property type
+// ---------------------------------------------------------------------------
+
+/**
+ * Convert geocoded CollierListing[] to Property[] for map display.
+ *
+ * Only rows that have both lat AND lng (i.e. were matched by attachGeocodes)
+ * are included — ungeocoded rows are silently dropped.
+ *
+ * Mapping decisions:
+ *   status: 'sale' | 'rent' based on listing; 'unknown' → 'private'
+ *   region: always 'colliers'
+ *   area / sizeM2: from areaSqm when present
+ *   capacityKwp: estKwp from solar estimation
+ *   panelCount: estKwp * 1000 / 580 W per panel (standard 580 W panel)
+ *   category: assetType lowercased (e.g. "office", "factory")
+ *   priority: tier from solar estimation (A/B/C/D)
+ *   price: priceThb when present
+ *   listingLink: original DotProperty URL
+ */
+export function colliersToProperties(rows: CollierListing[]): Property[] {
+  const result: Property[] = []
+
+  for (const row of rows) {
+    // Skip rows without geocoordinates
+    if (row.lat == null || row.lng == null) continue
+
+    const status: Property['status'] =
+      row.listing === 'sale' ? 'sale'
+      : row.listing === 'rent' ? 'rent'
+      : 'private'
+
+    const prop: Property = {
+      id: row.id,
+      type: 'roof',
+      status,
+      region: 'colliers',
+      title: row.name || row.id,
+      location: row.locationRaw,
+      lat: row.lat,
+      lng: row.lng,
+      area: row.areaSqm ?? row.estFootprintSqm,
+      sizeM2: row.areaSqm ?? undefined,
+      capacityKwp: row.estKwp,
+      panelCount: Math.round((row.estKwp * 1000) / 580),
+      category: row.assetType?.toLowerCase(),
+      priority: row.tier,
+      price: row.priceThb ?? undefined,
+      listingLink: row.url,
+    }
+
+    result.push(prop)
+  }
+
+  return result
 }
