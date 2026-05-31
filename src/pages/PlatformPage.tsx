@@ -5,7 +5,8 @@ import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
 import { isBustanConnected, bustanSupabase } from '../lib/bustan-supabase'
-import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests } from '../lib/bustan-crm-service'
+import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests, fetchScanCandidates } from '../lib/bustan-crm-service'
+import type { Property } from '../types'
 import { parseColliersMarkdown, attachGeocodes, colliersToProperties } from '../lib/colliers'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
@@ -52,6 +53,7 @@ function ViewLoader() {
 
 export default function PlatformPage() {
   const setProperties = useAppStore((s) => s.setProperties)
+  const setFilter = useAppStore((s) => s.setFilter)
   const setScanRequests = useAppStore((s) => s.setScanRequests)
   const scanRequests = useAppStore((s) => s.scanRequests)
   const setGridData = useAppStore((s) => s.setGridData)
@@ -126,20 +128,83 @@ export default function PlatformPage() {
     init()
   }, [setProperties, setGridData])
 
-  // Load offline-detector roof candidates (best-effort; file may be absent).
-  // Reviewed/confirmed on the map (P3) — confirming inserts a real lead.
+  // Load scan candidates — live source (bustan.scan_candidates, status='pending').
+  // Falls back to the static /data/roof-candidates.json if no live candidates are
+  // found (graceful: the json may be absent). Auto-enables the roof-detection layer
+  // when live candidates exist so the user sees them without toggling a filter.
   const setRoofCandidates = useAppStore((s) => s.setRoofCandidates)
   useEffect(() => {
+    if (!user || !isBustanConnected()) {
+      // Not authenticated — try the static json fallback only
+      let cancelled = false
+      fetch('/data/roof-candidates.json')
+        .then((r) => (r.ok ? r.json() : []))
+        .then((rows) => {
+          if (cancelled || !Array.isArray(rows)) return
+          setRoofCandidates(rows.map((r: Record<string, unknown>) => ({ ...r, type: 'roof', status: 'private' })) as Property[])
+        })
+        .catch(() => { /* no candidate file — fine */ })
+      return () => { cancelled = true }
+    }
+
     let cancelled = false
-    fetch('/data/roof-candidates.json')
-      .then((r) => (r.ok ? r.json() : []))
-      .then((rows) => {
-        if (cancelled || !Array.isArray(rows)) return
-        setRoofCandidates(rows.map((r) => ({ ...r, type: 'roof', status: 'private' })))
-      })
-      .catch(() => { /* no candidate file — fine */ })
+
+    const loadCandidates = async () => {
+      try {
+        const live = await fetchScanCandidates()
+        if (cancelled) return
+        if (live.length > 0) {
+          setRoofCandidates(live)
+          // Auto-enable the detection layer so candidates are immediately visible
+          setFilter('showRoofDetection', true)
+        } else {
+          // No live candidates — try static json as a fallback (best-effort)
+          fetch('/data/roof-candidates.json')
+            .then((r) => (r.ok ? r.json() : []))
+            .then((rows) => {
+              if (cancelled || !Array.isArray(rows)) return
+              setRoofCandidates(rows.map((r: Record<string, unknown>) => ({ ...r, type: 'roof', status: 'private' })) as Property[])
+            })
+            .catch(() => { /* no candidate file — fine */ })
+        }
+      } catch {
+        /* fetchScanCandidates failure is non-fatal */
+      }
+    }
+
+    void loadCandidates()
     return () => { cancelled = true }
-  }, [setRoofCandidates])
+  }, [user, setRoofCandidates, setFilter])
+
+  // Poll candidates + scan-request status while any scan is queued or running.
+  // Stops automatically when all scans are in a terminal state (done/failed).
+  // This makes new candidates appear without a manual reload after a scan finishes.
+  useEffect(() => {
+    if (!user || !isBustanConnected()) return
+    const activeScans = scanRequests.filter((s) => s.status === 'queued' || s.status === 'running')
+    if (activeScans.length === 0) return
+
+    let cancelled = false
+    const interval = setInterval(async () => {
+      if (cancelled) return
+      try {
+        const [requests, candidates] = await Promise.all([fetchScanRequests(), fetchScanCandidates()])
+        if (cancelled) return
+        setScanRequests(requests)
+        if (candidates.length > 0) {
+          setRoofCandidates(candidates)
+          setFilter('showRoofDetection', true)
+        }
+      } catch {
+        /* non-fatal — keep polling */
+      }
+    }, 20_000)
+
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
+  }, [user, scanRequests, setScanRequests, setRoofCandidates, setFilter])
 
   // Load Colliers dataset — independent of demo/bustan loads, runs once.
   // Fetches the markdown catalogue + geocodes JSON, then maps to Property[].

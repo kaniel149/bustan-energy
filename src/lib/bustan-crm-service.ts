@@ -372,6 +372,78 @@ export async function confirmDetectedRoof(c: Property): Promise<WriteResult & { 
   return { ok: true, id: typeof data === 'string' ? data : c.id }
 }
 
+// --- Scan candidates (P4 review layer) -------------------------------------
+
+/**
+ * Fetch all pending scan candidates. Maps each row to a `Property` so the
+ * existing roofCandidates review layer (SolarMap store) can render and
+ * interact with them without any new types.
+ *
+ * Mapping notes:
+ *   type='roof', status='private', region='koh_phangan' (same as confirmed leads).
+ *   id   = candidate UUID (used by setScanCandidateStatus / confirmDetectedRoof).
+ *   title / location from name / area_name.
+ *   area / capacityKwp / solarScore / priority / category / roofGeom from candidate columns.
+ *   lng maps from the column `lon` (PostgREST returns the column name as-is).
+ */
+export async function fetchScanCandidates(): Promise<Property[]> {
+  if (!bustanSupabase) return []
+  const { data, error } = await bustanSupabase
+    .from('scan_candidates')
+    .select('*')
+    .eq('status', 'pending')
+  if (error) throw error
+  return ((data ?? []) as Array<{
+    id: string
+    name: string | null
+    area_name: string | null
+    property_type: string | null
+    lat: number | null
+    lon: number | null
+    roof_geom: GeoJSON.Polygon | null
+    roof_area_sqm: number | null
+    solar_potential_score: number | null
+    estimated_kwp: number | null
+    priority: string | null
+  }>).map((row) => ({
+    id: row.id,
+    type: 'roof' as const,
+    status: 'private' as const,
+    region: 'koh_phangan' as const,
+    title: row.name ?? row.id,
+    location: row.area_name ?? '',
+    lat: num(row.lat) ?? 0,
+    lng: num(row.lon) ?? 0,
+    area: num(row.roof_area_sqm),
+    capacityKwp: num(row.estimated_kwp),
+    solarScore: num(row.solar_potential_score),
+    priority: (['A', 'B', 'C', 'D'] as const).includes(row.priority as 'A' | 'B' | 'C' | 'D')
+      ? (row.priority as 'A' | 'B' | 'C' | 'D')
+      : undefined,
+    category: row.property_type ?? undefined,
+    roofGeom: row.roof_geom ?? undefined,
+  }))
+}
+
+/**
+ * Update a scan candidate's status to 'added' or 'rejected' via the
+ * SECURITY DEFINER RPC `bustan.set_scan_candidate_status` (role-gated:
+ * admin/sales/engineer). Call this BEFORE confirmDetectedRoof when promoting
+ * a candidate to a lead so the candidate row reflects the decision.
+ */
+export async function setScanCandidateStatus(
+  id: string,
+  status: 'added' | 'rejected',
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.rpc('set_scan_candidate_status', {
+    p_id: id,
+    p_status: status,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
+}
+
 // --- On-demand scan engine (P4) --------------------------------------------
 
 export interface ScanFilters {
