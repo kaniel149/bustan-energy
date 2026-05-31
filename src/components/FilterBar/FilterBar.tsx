@@ -1,6 +1,6 @@
 import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download, Home, Building } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAppStore } from '../../lib/store'
 import { supabase } from '../../lib/supabase'
 import { signOutBustan } from '../../lib/bustan-supabase'
@@ -9,6 +9,7 @@ import { REGIONS } from '../../lib/regions'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { exportLeadsCSV } from '../../lib/csv-export'
 import { useTranslation } from '../../i18n/useTranslation'
+import { useLanguage } from '../../i18n/useLanguage'
 import type { GridGrade, RoofPriority, SystemSizeRange, CategoryFilter, PlatformView } from '../../types'
 
 const PRIORITY_CONFIG: Record<RoofPriority, { label: string; color: string; bg: string }> = {
@@ -61,6 +62,9 @@ export function FilterBar() {
   const [showFilters, setShowFilters] = useState(false)
   const { t } = useTranslation()
   const tf = t.crm.filter
+  const { switchLangPath } = useLanguage()
+  const switchLangLabel = t.crm.switchLang
+  const navigate = useNavigate()
 
   const hasActiveFilters = filters.priority !== 'all' || filters.systemSize !== 'all' || filters.categoryFilter !== 'all'
   const filteredCount = filteredProperties.length
@@ -226,6 +230,14 @@ export function FilterBar() {
 
         {/* CRM + Auth — always visible, anchored right via ml-auto + shrink-0 */}
         <div className="shrink-0 ml-auto bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 flex overflow-hidden">
+          {/* Language toggle — lives here so it never floats over the logo */}
+          <button
+            onClick={() => navigate(switchLangPath())}
+            className="px-3 py-2.5 text-white/60 hover:text-white hover:bg-white/5 transition-colors text-[11px] font-medium border-r border-white/10"
+            aria-label="Switch language"
+          >
+            {switchLangLabel}
+          </button>
           {isCrmConnected() && (isMapView || isScannerView) && (
             <Link
               to="/crm"

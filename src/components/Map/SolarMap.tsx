@@ -1150,7 +1150,7 @@ export function SolarMap() {
           disabled={scanning}
           title="Draw a polygon to define the area to scan for rooftops"
           aria-label="Draw scan area"
-          className="absolute top-16 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#F59E0B]/40 text-[#FCD34D] text-xs font-semibold flex items-center gap-2 hover:bg-[#F59E0B]/15 transition-colors disabled:opacity-50 shadow-lg"
+          className="absolute top-32 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#F59E0B]/40 text-[#FCD34D] text-xs font-semibold flex items-center gap-2 hover:bg-[#F59E0B]/15 transition-colors disabled:opacity-50 shadow-lg"
         >
           {scanning ? 'Queuing…' : '⊕ Draw scan area'}
         </button>
@@ -1203,7 +1203,7 @@ export function SolarMap() {
           onClick={() => setShowPanelLayout((v) => !v)}
           title={showPanelLayout ? 'Hide panel layout' : 'Show panel layout'}
           aria-pressed={showPanelLayout}
-          className={`absolute top-28 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border text-xs font-semibold flex items-center gap-2 shadow-lg transition-colors ${
+          className={`absolute top-44 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border text-xs font-semibold flex items-center gap-2 shadow-lg transition-colors ${
             showPanelLayout
               ? 'border-[#1E40AF]/70 text-[#60A5FA] hover:bg-[#1E40AF]/20'
               : 'border-white/10 text-white/40 hover:text-white hover:bg-white/5'
