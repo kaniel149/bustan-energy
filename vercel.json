@@ -52,6 +52,10 @@
       ]
     }
   ],
+  "redirects": [
+    { "source": "/crm", "destination": "/platform", "permanent": true },
+    { "source": "/crm/:path*", "destination": "/platform", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" },
     { "source": "/p/:ref", "destination": "/api/proposal-serve?ref=:ref" },
