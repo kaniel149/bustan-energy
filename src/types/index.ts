@@ -123,7 +123,7 @@ export interface GridFeature {
 
 export type MapLayer = 'satellite' | 'street'
 export type ActiveTab = 'rooftops' | 'community-solar'
-export type PlatformView = 'map' | 'scanner' | 'pipeline' | 'dashboard'
+export type PlatformView = 'map' | 'scanner' | 'pipeline' | 'dashboard' | 'colliers'
 
 export type SystemSizeRange = 'all' | 'micro' | 'small' | 'medium' | 'large' | 'utility'
 export type CategoryFilter = 'all' | 'residential' | 'commercial' | 'hospitality' | 'mixed' | 'other'
