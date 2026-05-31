@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   parseColliersMarkdown,
   summarizeColliers,
+  attachGeocodes,
 } from '../lib/colliers'
 import type { CollierListing, ColliersSummary } from '../lib/colliers'
 
@@ -43,17 +44,26 @@ export function useColliersPortfolio() {
   const [sortKey, setSortKey] = useState<SortKey>('estKwp')
   const [sortAsc, setSortAsc] = useState(false)
 
-  // Fetch + parse on mount
+  // Fetch + parse on mount (also fetches geocodes gracefully)
   useEffect(() => {
     let cancelled = false
-    fetch('/data/colliers-listings.md')
-      .then((r) => {
+
+    const fetchGeo = (): Promise<Record<string, { lat: number; lng: number }>> =>
+      fetch('/data/colliers-geocodes.json')
+        .then((r) => (r.ok ? r.json() : {}))
+        .catch(() => ({}))
+
+    Promise.all([
+      fetch('/data/colliers-listings.md').then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.text()
-      })
-      .then((md) => {
+      }),
+      fetchGeo(),
+    ])
+      .then(([md, geo]) => {
         if (cancelled) return
-        const rows = parseColliersMarkdown(md)
+        const parsed = parseColliersMarkdown(md)
+        const rows = attachGeocodes(parsed, geo)
         setListings(rows)
         setSummary(summarizeColliers(rows))
         setStatus('loaded')
