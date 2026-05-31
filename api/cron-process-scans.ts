@@ -175,7 +175,9 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   const data = await fetchOverpassBuildings(q)
   const elements = (data.elements || []).filter((e) => (e.geometry?.length ?? 0) >= 3)
   const found = elements.length
-  const skipped = Math.max(0, found - MAX_BUILDINGS)
+  // `skipped` is the OSM overage beyond MAX_BUILDINGS; Overture overage is
+  // captured separately once we know the combined total.
+  const osmSkipped = Math.max(0, found - MAX_BUILDINGS)
 
   // 2. SCORE + filter (+ polygon containment check)
   const scored = []
@@ -206,7 +208,87 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
       _kwp: kwp, _priority: priority(kwp),
     })
   }
-  const kept = scored.length
+
+  // 2b. ACQUIRE (Overture) — pre-loaded buildings_external for this bbox.
+  // Runs in parallel-ish with OSM scoring being already done; any network error
+  // is swallowed so OSM-only behaviour is fully preserved when the table is
+  // empty OR when the query fails.
+  let overture = 0
+  try {
+    const extRows = await bGet<{
+      id: string
+      lat: number
+      lon: number
+      roof_geom: { type: string; coordinates: number[][][] } | null
+      area_sqm: number | null
+      name: string | null
+      source: string
+    }>(
+      `buildings_external?lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=5000&select=id,lat,lon,roof_geom,area_sqm,name,source`,
+    )
+    overture = extRows.length
+    for (const ext of extRows) {
+      // Respect the global MAX_BUILDINGS cap across OSM + Overture combined.
+      if (scored.length >= MAX_BUILDINGS) break
+
+      // Determine area: prefer the stored area_sqm, fall back to shoelace on
+      // the roof_geom polygon, skip the row if we can't compute one.
+      let area: number
+      if (ext.area_sqm && ext.area_sqm >= 5) {
+        area = ext.area_sqm
+      } else if (ext.roof_geom?.type === 'Polygon' && ext.roof_geom.coordinates?.[0]?.length >= 3) {
+        const ring = ext.roof_geom.coordinates[0]
+        const geomPts: LngLat[] = ring.map(([lon, lat]) => ({ lat, lon }))
+        area = shoelaceAreaM2(geomPts)
+        if (area < 5) continue
+      } else {
+        continue  // no usable geometry — skip
+      }
+      if (filters.minRoofM2 && area < filters.minRoofM2) continue
+      // Overture buildings carry no OSM building tag so they are never
+      // commercial-filtered out — treat as 'other' and skip if commercialOnly.
+      if (filters.commercialOnly) continue
+
+      const usable = area * USABLE_RATIO
+      const kwp = Math.round(usable * EFFICIENCY_KWP * 100) / 100
+
+      const lat = Number(Number(ext.lat).toFixed(7))
+      const lon = Number(Number(ext.lon).toFixed(7))
+
+      // Polygon containment — same guard as OSM path.
+      if (!pointInPolygon(lon, lat, polygon)) continue
+
+      // Normalise roof_geom ring so first === last (closed ring).
+      let roofGeom: { type: string; coordinates: number[][][] } | null = null
+      if (ext.roof_geom?.type === 'Polygon' && ext.roof_geom.coordinates?.[0]?.length >= 3) {
+        const ring = ext.roof_geom.coordinates[0].map(([ln, la]) => [
+          Number(ln.toFixed(7)),
+          Number(la.toFixed(7)),
+        ])
+        if (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1]) ring.push(ring[0])
+        if (ring.length >= 4) roofGeom = { type: 'Polygon', coordinates: [ring] }
+      }
+
+      scored.push({
+        id: crypto.randomUUID(),
+        name: ext.name || `Building (${Math.round(area)}m²)`,
+        area_name: 'Scan',
+        property_type: 'overture',
+        roof_area_sqm: Math.round(area * 10) / 10,
+        solar_potential_score: solarScore(kwp),
+        lat,
+        lon,
+        roof_geom: roofGeom,
+        _kwp: kwp,
+        _priority: priority(kwp),
+      })
+    }
+  } catch {
+    // buildings_external query failed (table not yet populated, network issue, etc.)
+    // Fall through — OSM-only behaviour is unchanged.
+  }
+
+  const kept = scored.length   // OSM + Overture combined (pre-dedup)
 
   // 3. DEDUP — drop buildings near an existing lead OR an existing pending candidate
   const [existing, existingCandidates] = await Promise.all([
@@ -227,6 +309,9 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
     if (dupExisting || dupCandidate || dupSelf) continue
     accepted.push(c)
   }
+  // kept = osmKept + overture candidates that passed polygon filter.
+  // skipped counts OSM overage (rows beyond MAX_BUILDINGS that were never scored).
+  const skipped = osmSkipped
   const deduped = kept - accepted.length
 
   // 4. INSERT candidates (status='pending') — NO auto-lead insert.
@@ -249,7 +334,7 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   }))
   await bInsert('scan_candidates', candidateRows)
 
-  return { found, kept, deduped, candidates: accepted.length, skipped }
+  return { found, overture, kept, deduped, candidates: accepted.length, skipped }
 }
 
 export default async function handler(req: Request): Promise<Response> {
