@@ -59,7 +59,7 @@ const rows = raw
     source: 'overture',
     lat: r.lat,
     lon: r.lon,
-    roof_geom: JSON.parse(r.geom), // GeoJSON geometry → jsonb
+    roof_geom: typeof r.geom === 'string' ? JSON.parse(r.geom) : r.geom, // GeoJSON geometry → jsonb (DuckDB JSON export may already be an object)
     height: Number.isFinite(r.height) ? r.height : null,
     name: r.name || null,
   }))
