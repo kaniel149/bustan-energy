@@ -968,7 +968,9 @@ export function SolarMap() {
           const f = e.features?.[0]
           if (!f) return
           const propId = (f.properties as Record<string, string>).id
-          const property = properties.find((p) => p.id === propId)
+          // Look up in filteredProperties (includes the merged Colliers properties)
+          // — `properties` alone excludes Colliers, so their markers couldn't be selected.
+          const property = filteredProperties.find((p) => p.id === propId)
           if (property) setSelectedProperty(property)
         })
       }
@@ -977,7 +979,11 @@ export function SolarMap() {
     }
 
     if (m.isStyleLoaded()) setupLayers()
-    else m.once('load', setupLayers)
+    // 'idle' (not 'load') — 'load' only fires once per map lifetime, so on a
+    // region switch (when isStyleLoaded() can momentarily report false during the
+    // fitBounds + layer re-render cascade) a 'load' listener would never fire and
+    // the markers would never rebuild. 'idle' fires after the next render settles.
+    else m.once('idle', setupLayers)
 
     return () => {
       // Clean up event handlers on unmount
