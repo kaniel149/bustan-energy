@@ -139,8 +139,9 @@ async function scrapeWithFirecrawl(
         url: targetUrl,
         formats: ['markdown'],
         onlyMainContent: true,
-        // Timeout hint to Firecrawl (seconds); we also enforce our own AbortController above.
-        timeout: 18,
+        // Timeout hint to Firecrawl in MILLISECONDS (min 1000); we also enforce
+        // our own AbortController (FIRECRAWL_TIMEOUT_MS) above.
+        timeout: 18_000,
       }),
     })
   } finally {
