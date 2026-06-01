@@ -89,61 +89,62 @@ export default async function handler(req: Request): Promise<Response> {
   const safeZoom = Math.min(Math.max(parseInt(zoom, 10) || 19, 1), 21)
 
   // ── action=contact ────────────────────────────────────────────────────────
+  // Uses Places API (New) — the legacy place/nearbysearch + place/details
+  // endpoints are no longer enabled for new GCP projects. One searchNearby call
+  // returns name + phone + website + types (no second details round-trip).
+  // Requires the "Places API (New)" to be enabled on the key's GCP project.
   if (action === 'contact') {
     if (!GOOGLE_KEY) {
       return Response.json({ available: false })
     }
 
     try {
-      const nearbyUrl =
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json` +
-        `?location=${latN},${lngN}&radius=30&key=${GOOGLE_KEY}`
+      const res = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': GOOGLE_KEY,
+          'X-Goog-FieldMask':
+            'places.displayName,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types',
+        },
+        body: JSON.stringify({
+          locationRestriction: {
+            circle: { center: { latitude: latN, longitude: lngN }, radius: 50 },
+          },
+          maxResultCount: 1,
+          rankPreference: 'DISTANCE',
+        }),
+      })
 
-      const nearbyRes = await fetch(nearbyUrl)
-      if (!nearbyRes.ok) {
+      if (!res.ok) {
         return Response.json({ available: false })
       }
 
-      const nearbyData = await nearbyRes.json() as {
-        results?: Array<{ name?: string; place_id?: string; types?: string[] }>
+      const data = (await res.json()) as {
+        places?: Array<{
+          displayName?: { text?: string }
+          nationalPhoneNumber?: string
+          internationalPhoneNumber?: string
+          websiteUri?: string
+          types?: string[]
+        }>
       }
 
-      if (!nearbyData.results?.length) {
+      const place = data.places?.[0]
+      if (!place) {
         return Response.json({ available: false })
       }
 
-      const place = nearbyData.results[0]
-
-      let phone: string | undefined
-      let website: string | undefined
-
-      if (place.place_id) {
-        const detailUrl =
-          `https://maps.googleapis.com/maps/api/place/details/json` +
-          `?place_id=${encodeURIComponent(place.place_id)}` +
-          `&fields=formatted_phone_number,international_phone_number,website` +
-          `&key=${GOOGLE_KEY}`
-
-        const detailRes = await fetch(detailUrl)
-        if (detailRes.ok) {
-          const detailData = await detailRes.json() as {
-            result?: {
-              international_phone_number?: string
-              formatted_phone_number?: string
-              website?: string
-            }
-          }
-          phone = detailData.result?.international_phone_number?.replace(/\s/g, '')
-            || detailData.result?.formatted_phone_number?.replace(/\s/g, '')
-          website = detailData.result?.website
-        }
-      }
+      const phone =
+        (place.internationalPhoneNumber || place.nationalPhoneNumber || '').replace(/\s/g, '') ||
+        undefined
 
       return Response.json({
         available: true,
-        name: place.name,
+        name: place.displayName?.text,
         phone,
-        website,
+        website: place.websiteUri,
+        types: place.types,
       })
     } catch {
       // Intentionally no error detail — do not leak key or internal state
