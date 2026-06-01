@@ -224,7 +224,10 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
       name: string | null
       source: string
     }>(
-      `buildings_external?lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=5000&select=id,lat,lon,roof_geom,area_sqm,name,source`,
+      // order=source.desc → 'overture' rows come before 'msbuildings', so when
+      // both cover the same roof the curated Overture footprint wins the dedup
+      // tie; Microsoft only fills gaps where Overture is absent.
+      `buildings_external?lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&order=source.desc&limit=5000&select=id,lat,lon,roof_geom,area_sqm,name,source`,
     )
     overture = extRows.length
     for (const ext of extRows) {
