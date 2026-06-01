@@ -245,8 +245,8 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
         continue  // no usable geometry — skip
       }
       if (filters.minRoofM2 && area < filters.minRoofM2) continue
-      // Overture buildings carry no OSM building tag so they are never
-      // commercial-filtered out — treat as 'other' and skip if commercialOnly.
+      // Overture buildings carry no OSM building tag / category, so they cannot
+      // be classified as commercial — skip them when commercialOnly is set.
       if (filters.commercialOnly) continue
 
       const usable = area * USABLE_RATIO
@@ -273,7 +273,7 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
         id: crypto.randomUUID(),
         name: ext.name || `Building (${Math.round(area)}m²)`,
         area_name: 'Scan',
-        property_type: 'overture',
+        property_type: ext.source || 'other',
         roof_area_sqm: Math.round(area * 10) / 10,
         solar_potential_score: solarScore(kwp),
         lat,
@@ -283,8 +283,8 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
         _priority: priority(kwp),
       })
     }
-  } catch {
-    // buildings_external query failed (table not yet populated, network issue, etc.)
+  } catch (err) {
+    console.error('Overture buildings_external fetch failed:', err)
     // Fall through — OSM-only behaviour is unchanged.
   }
 
@@ -332,15 +332,16 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
     priority: c._priority,
     status: 'pending',
   }))
-  await bInsert('scan_candidates', candidateRows)
+  const inserted = await bInsert('scan_candidates', candidateRows)
+  if (!inserted && candidateRows.length > 0) throw new Error('failed to insert candidates into scan_candidates')
 
   return { found, overture, kept, deduped, candidates: accepted.length, skipped }
 }
 
 export default async function handler(req: Request): Promise<Response> {
   if (!CRON_SECRET) return Response.json({ ok: false, error: 'server_misconfigured' }, { status: 500 })
-  const secret = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (secret !== CRON_SECRET) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
+  const secret = req.headers.get('authorization')?.match(/^Bearer\s+(\S+)$/i)?.[1]
+  if (!secret || secret !== CRON_SECRET) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
   if (!BUSTAN_KEY) return Response.json({ ok: false, error: 'BUSTAN_SUPABASE_SERVICE_ROLE_KEY not set' }, { status: 500 })
 
   const now = new Date().toISOString()

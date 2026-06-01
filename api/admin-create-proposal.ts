@@ -530,13 +530,17 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ ok: false, error: 'missing_required' }, { status: 400 })
     }
 
+    // Require roof_panels_url whenever panels are being installed.
+    // Without it the template would render the company logo in the roof visual slot.
+    if (Number(panel_count || 0) > 0 && !roof_panels_url) {
+      return Response.json({ ok: false, error: 'roof_panels_url_required_for_panels' }, { status: 400 })
+    }
+
     const language = proposalLang(language_raw)
     const copy = COPY[language]
 
     const financials = calculateSolarFinancials({
       systemSizeKwp: Number(system_size_kwp),
-      panelCount: Number(panel_count || 0),
-      panelWatt: Number(panel_watt || 580),
       pshAvg: Number(psh || TM_SOLAR_ASSUMPTIONS.pshAnnual),
       performanceRatio: Number(pr || TM_SOLAR_ASSUMPTIONS.performanceRatio),
       soilingFactor: 1,
@@ -650,8 +654,8 @@ export default async function handler(req: Request): Promise<Response> {
       location_psh,
       location_display: language === 'he' ? location_he : location_en,
       logo_url,
-      roof_original_url: roof_original_url || logo_url,
-      roof_panels_url: roof_panels_url || logo_url,
+      roof_original_url: roof_original_url || '',
+      roof_panels_url: roof_panels_url || '',
       month_year,
       // v3 deal options
       ppa_rate: String(ppa_rate_thb_per_kwh),

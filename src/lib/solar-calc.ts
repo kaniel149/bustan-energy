@@ -1,7 +1,8 @@
 import type { SolarCalc, GridProximity, GridGrade } from '../types'
+import { STANDARD_PANEL_WATT } from './constants'
 
 const PANEL_AREA_M2 = 2.0
-const PANEL_WATT = 550
+const PANEL_WATT = STANDARD_PANEL_WATT
 // PR 0.77 for Ko Phangan tropical+coastal (IEC 61724 / Skoplaki & Palyvos 2009)
 const PERFORMANCE_RATIO = 0.77
 // 3% soiling loss from salt-spray + monsoon dust (IEA PVPS T13-10:2018)

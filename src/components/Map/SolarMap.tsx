@@ -73,6 +73,20 @@ function buildBufferFeatures(
   return { type: 'FeatureCollection', features: circles }
 }
 
+// Validates that a GeoJSON Polygon/MultiPolygon is structurally sound:
+// has at least one ring with ≥4 coordinates, all of which are finite numbers.
+function isValidRoofGeometry(geom: GeoJSON.Polygon | GeoJSON.MultiPolygon): boolean {
+  const rings = geom.type === 'Polygon' ? geom.coordinates : geom.coordinates.flat(1)
+  if (!rings || rings.length === 0) return false
+  for (const ring of rings) {
+    if (!ring || ring.length < 4) return false
+    for (const coord of ring) {
+      if (!Array.isArray(coord) || coord.length < 2 || !Number.isFinite(coord[0]) || !Number.isFinite(coord[1])) return false
+    }
+  }
+  return true
+}
+
 // Build a roof footprint feature for a property.
 // Uses persisted roofGeom (P2+) when present; otherwise synthesizes a square
 // footprint sized by roof area (m²) centered on the property — an interim
@@ -89,6 +103,10 @@ function buildRoofFeature(p: {
     synthetic: p.roofGeom ? 0 : 1,
   }
   if (p.roofGeom) {
+    if (!isValidRoofGeometry(p.roofGeom)) {
+      console.error('[SolarMap] invalid roof geometry for', p.id)
+      return null
+    }
     return { type: 'Feature', geometry: p.roofGeom, properties: props }
   }
   const area = Number(p.area)
@@ -156,7 +174,7 @@ export function SolarMap() {
     if (!reviewCandidate) return
     setConfirmingCand(true)
     // Mark candidate as 'added' before promoting — best-effort, non-blocking
-    setScanCandidateStatus(reviewCandidate.id, 'added').catch(() => { /* ignore */ })
+    setScanCandidateStatus(reviewCandidate.id, 'added').catch((err) => { console.warn('[SolarMap] failed to mark candidate added:', err) })
     const res = await confirmDetectedRoof(reviewCandidate)
     setConfirmingCand(false)
     if (!res.ok) { showToast(res.error || 'Failed to confirm roof', 'error'); return }
@@ -224,7 +242,7 @@ export function SolarMap() {
       if (src) src.setTiles(TILE_SOURCES[mapStyle])
     }
     if (m.isStyleLoaded()) apply()
-    else m.on('load', apply)
+    else m.once('load', apply)
   }, [mapStyle])
 
   // Fly to region
@@ -327,7 +345,7 @@ export function SolarMap() {
     }
 
     if (m.isStyleLoaded()) addBuffers()
-    else m.on('load', addBuffers)
+    else m.once('load', addBuffers)
   }, [gridData, filters.showBufferZones, filters.region])
 
   // Grid layer
@@ -408,7 +426,7 @@ export function SolarMap() {
     }
 
     if (m.isStyleLoaded()) addGrid()
-    else m.on('load', addGrid)
+    else m.once('load', addGrid)
   }, [gridData, filters.showGrid, filters.region])
 
   // Roof-polygon overlay (read-only) — P1
@@ -440,6 +458,7 @@ export function SolarMap() {
       // Keep roof polygons beneath the lead markers / clusters
       const beforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters']
         .find((id) => m.getLayer(id))
+      const safeBeforeId = beforeId && m.getLayer(beforeId) ? beforeId : undefined
 
       // Fill — color ramp by solar potential score (0..100)
       m.addLayer({
@@ -449,7 +468,7 @@ export function SolarMap() {
             0, '#FF3D00', 50, '#FF9100', 75, '#FFD600', 90, '#00E676'],
           'fill-opacity': 0.35,
         },
-      }, beforeId)
+      }, safeBeforeId)
 
       // Outline — solid for real geometry, dashed for synthetic interim footprints
       // (line-dasharray is not data-driven in MapLibre, so use two filtered layers)
@@ -457,12 +476,12 @@ export function SolarMap() {
         id: 'roofs-outline', type: 'line', source: 'roofs-src',
         filter: ['==', ['get', 'synthetic'], 0],
         paint: { 'line-color': '#ffffff', 'line-width': 1.5, 'line-opacity': 0.85 },
-      }, beforeId)
+      }, safeBeforeId)
       m.addLayer({
         id: 'roofs-outline-synthetic', type: 'line', source: 'roofs-src',
         filter: ['==', ['get', 'synthetic'], 1],
         paint: { 'line-color': '#ffffff', 'line-width': 1.5, 'line-opacity': 0.7, 'line-dasharray': [2, 2] },
-      }, beforeId)
+      }, safeBeforeId)
 
       const on = (type: LayerMouseEventType, layer: string, handler: LayerMouseHandler) => {
         m.on(type, layer, handler)
@@ -482,8 +501,10 @@ export function SolarMap() {
 
     if (m.isStyleLoaded()) setup()
     else m.once('load', setup)
+    m.on('style.load', setup)
 
     return () => {
+      m.off('style.load', setup)
       if (!m) return
       for (const { type, layer, handler } of roofHandlers.current) m.off(type, layer, handler)
       roofHandlers.current = []
@@ -512,15 +533,16 @@ export function SolarMap() {
       if (features.length === 0) return
 
       m.addSource('cand-src', { type: 'geojson', data: { type: 'FeatureCollection', features } })
-      const beforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters'].find((id) => m.getLayer(id))
+      const candBeforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters'].find((id) => m.getLayer(id))
+      const safeCandBeforeId = candBeforeId && m.getLayer(candBeforeId) ? candBeforeId : undefined
       m.addLayer({
         id: 'cand-fill', type: 'fill', source: 'cand-src',
         paint: { 'fill-color': '#C026D3', 'fill-opacity': 0.3 },
-      }, beforeId)
+      }, safeCandBeforeId)
       m.addLayer({
         id: 'cand-outline', type: 'line', source: 'cand-src',
         paint: { 'line-color': '#E879F9', 'line-width': 1.5, 'line-dasharray': [2, 2] },
-      }, beforeId)
+      }, safeCandBeforeId)
 
       const on = (type: LayerMouseEventType, layer: string, handler: LayerMouseHandler) => {
         m.on(type, layer, handler)
@@ -533,15 +555,17 @@ export function SolarMap() {
         const f = e.features?.[0]
         if (!f) return
         const id = (f.properties as Record<string, string>).id
-        const cand = useAppStore.getState().roofCandidates.find((c) => c.id === id)
+        const cand = roofCandidates.find((c) => c.id === id)
         if (cand) setReviewCandidate(cand)
       })
     }
 
     if (m.isStyleLoaded()) setup()
     else m.once('load', setup)
+    m.on('style.load', setup)
 
     return () => {
+      m.off('style.load', setup)
       if (!m) return
       for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
       candHandlers.current = []
@@ -894,8 +918,9 @@ export function SolarMap() {
             computePanelLayout(selectedProperty.roofGeom),
           )
           ;(m.getSource('panel-layout-src') as maplibregl.GeoJSONSource).setData(fc)
-        } catch {
-          // Degenerate geometry — leave source empty (no crash)
+        } catch (err) {
+          console.error('[SolarMap] panel layout failed:', err)
+          showToast('Panel layout could not be computed for this roof', 'error')
         }
       }
     }
@@ -912,7 +937,7 @@ export function SolarMap() {
       for (const id of PANEL_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
       if (m.getSource('panel-layout-src')) m.removeSource('panel-layout-src')
     }
-  }, [selectedProperty, showPanelLayout, drawRoofFor])
+  }, [selectedProperty, showPanelLayout, drawRoofFor, showToast])
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)

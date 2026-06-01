@@ -15,6 +15,7 @@
  * `rowsToLeads`) are exported separately from the network fetch so they can be
  * unit-tested against real-data fixtures with no I/O.
  */
+import { STANDARD_PANEL_WATT } from './constants'
 import { bustanSupabase } from './bustan-supabase'
 import {
   normalizeCrmLayer,
@@ -24,6 +25,7 @@ import {
   type OwnerDecisionDisplay,
   type PropertyInput,
 } from './owner-decision-layer'
+import { regionFromLead } from './region-utils'
 import type { Property, ScanRequest } from '../types'
 
 export interface BustanPropertyRow {
@@ -168,7 +170,7 @@ export function mapLeadToProperty(lead: BustanLead): Property {
     id: p.id,
     type: 'roof',
     status: 'private',
-    region: 'koh_phangan',
+    region: regionFromLead({ areaName: p.area_name }, num(p.lat) ?? 0),
     title: p.name ?? p.id,
     location: p.area_name ?? '',
     lat: num(p.lat) ?? 0,
@@ -177,7 +179,7 @@ export function mapLeadToProperty(lead: BustanLead): Property {
     roofGeom: p.roof_geom ?? undefined,
     capacityKwp: lead.crm.estimated_kWp || undefined,
     panelCount: lead.crm.estimated_kWp != null
-      ? Math.round(lead.crm.estimated_kWp * 1000 / 580)
+      ? Math.round(lead.crm.estimated_kWp * 1000 / STANDARD_PANEL_WATT)
       : undefined,
     solarScore: num(p.solar_potential_score),
     existingSolar: Boolean(p.existing_solar),
@@ -221,7 +223,15 @@ export async function fetchBustanLeads(): Promise<BustanLead[]> {
 /** Convenience: fetch leads already mapped to SPA `Property[]` for the map/store. */
 export async function fetchBustanProperties(): Promise<Property[]> {
   const leads = await fetchBustanLeads()
-  return leads.map(mapLeadToProperty)
+  return leads.map(mapLeadToProperty).filter((prop) => {
+    const validLat = Number.isFinite(prop.lat) && !(prop.lat === 0 && prop.lng === 0)
+    const validLng = Number.isFinite(prop.lng)
+    if (!validLat || !validLng) {
+      console.warn(`[bustan] dropped property ${prop.id} with invalid coords (${prop.lat}, ${prop.lng})`)
+      return false
+    }
+    return true
+  })
 }
 
 // ---------------------------------------------------------------------------
@@ -380,7 +390,7 @@ export async function confirmDetectedRoof(c: Property): Promise<WriteResult & { 
  * interact with them without any new types.
  *
  * Mapping notes:
- *   type='roof', status='private', region='koh_phangan' (same as confirmed leads).
+ *   type='roof', status='private', region derived via regionFromLead (same as confirmed leads).
  *   id   = candidate UUID (used by setScanCandidateStatus / confirmDetectedRoof).
  *   title / location from name / area_name.
  *   area / capacityKwp / solarScore / priority / category / roofGeom from candidate columns.
@@ -393,7 +403,10 @@ export async function fetchScanCandidates(): Promise<Property[]> {
     .select('*')
     .eq('status', 'pending')
   if (error) throw error
-  return ((data ?? []) as Array<{
+  const seen = new Set<string>()
+  const candidates: Property[] = []
+
+  for (const row of (data ?? []) as Array<{
     id: string
     name: string | null
     area_name: string | null
@@ -405,24 +418,44 @@ export async function fetchScanCandidates(): Promise<Property[]> {
     solar_potential_score: number | null
     estimated_kwp: number | null
     priority: string | null
-  }>).map((row) => ({
-    id: row.id,
-    type: 'roof' as const,
-    status: 'private' as const,
-    region: 'koh_phangan' as const,
-    title: row.name ?? row.id,
-    location: row.area_name ?? '',
-    lat: num(row.lat) ?? 0,
-    lng: num(row.lon) ?? 0,
-    area: num(row.roof_area_sqm),
-    capacityKwp: num(row.estimated_kwp),
-    solarScore: num(row.solar_potential_score),
-    priority: (['A', 'B', 'C', 'D'] as const).includes(row.priority as 'A' | 'B' | 'C' | 'D')
-      ? (row.priority as 'A' | 'B' | 'C' | 'D')
-      : undefined,
-    category: row.property_type ?? undefined,
-    roofGeom: row.roof_geom ?? undefined,
-  }))
+  }>) {
+    const lat = num(row.lat) ?? 0
+    const lng = num(row.lon) ?? 0
+
+    // Guard: drop candidates with non-finite or [0,0] coordinates
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) {
+      console.warn(`[scan] dropped candidate ${row.id} with invalid coords (${lat}, ${lng})`)
+      continue
+    }
+
+    // Proximity dedup: quantize to ~1e-4 (~11m) and skip duplicates
+    const dedupKey = `${Math.round(lat * 1e4)},${Math.round(lng * 1e4)}`
+    if (seen.has(dedupKey)) continue
+    seen.add(dedupKey)
+
+    const capacityKwp = num(row.estimated_kwp)
+    candidates.push({
+      id: row.id,
+      type: 'roof' as const,
+      status: 'private' as const,
+      region: regionFromLead({ areaName: row.area_name }, lat),
+      title: row.name ?? row.id,
+      location: row.area_name ?? '',
+      lat,
+      lng,
+      area: num(row.roof_area_sqm),
+      capacityKwp,
+      panelCount: row.estimated_kwp != null ? Math.round(row.estimated_kwp * 1000 / STANDARD_PANEL_WATT) : undefined,
+      solarScore: num(row.solar_potential_score),
+      priority: (['A', 'B', 'C', 'D'] as const).includes(row.priority as 'A' | 'B' | 'C' | 'D')
+        ? (row.priority as 'A' | 'B' | 'C' | 'D')
+        : undefined,
+      category: row.property_type ?? undefined,
+      roofGeom: row.roof_geom ?? undefined,
+    })
+  }
+
+  return candidates
 }
 
 /**

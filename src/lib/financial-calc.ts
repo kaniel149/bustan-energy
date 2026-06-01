@@ -1,3 +1,5 @@
+import { STANDARD_PANEL_WATT } from './constants'
+
 // ── PERFORMANCE CONSTANTS (Ko Phangan tropical+coastal) ──────────────────────
 // PR 0.77: IEC 61724 typical tropical (vs 0.80 temperate).
 // Source: Skoplaki & Palyvos 2009, validated on Thai PEA monitoring data.
@@ -15,7 +17,7 @@ const DEFAULT_TARIFF_ESCALATION = 0.03     // 3%/year
 const DEFAULT_SYSTEM_LIFE_YEARS = 25
 const OM_COST_PCT = 0.01                   // 1% of EPC/year
 const CO2_KG_PER_KWH = 0.477              // EGAT 2023 official grid mix
-const PANEL_WATT = 550
+const PANEL_WATT = STANDARD_PANEL_WATT
 
 // ── THAILAND PEA EXPORT / TARIFF MODEL ───────────────────────────────────────
 // Export value is a planning assumption and must be verified against the current

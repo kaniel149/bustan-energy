@@ -12,6 +12,7 @@
  */
 
 import { area as turfArea } from '@turf/area'
+import { STANDARD_PANEL_WATT } from './constants'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -73,7 +74,7 @@ export interface PanelLayoutResult {
 /** Standard residential/commercial 60-cell+ mono panel — landscape default. */
 const DEFAULT_PANEL_WIDTH_M = 1.134
 const DEFAULT_PANEL_HEIGHT_M = 1.762
-const DEFAULT_WATTAGE = 580
+const DEFAULT_WATTAGE = STANDARD_PANEL_WATT
 const DEFAULT_EDGE_SETBACK_M = 0.5
 const DEFAULT_COL_GAP_M = 0.02
 const DEFAULT_ROW_GAP_M = 0.02

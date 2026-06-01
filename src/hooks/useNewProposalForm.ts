@@ -65,8 +65,6 @@ function calcDerived(form: NewProposalForm): Partial<NewProposalForm> {
 
   const financials = calculateSolarFinancials({
     systemSizeKwp: system_size_kwp,
-    panelCount: form.panel_count,
-    panelWatt: form.panel_watt,
     pshAvg: form.psh,
     // `pr` is the effective PR shown in the admin UI, so keep soiling at 1.
     performanceRatio: form.pr,

@@ -19,8 +19,6 @@ export const TM_SOLAR_ASSUMPTIONS = {
 } as const
 
 export interface SolarFinancialInput {
-  panelCount?: number
-  panelWatt?: number
   systemSizeKwp?: number
   pshAvg?: number
   performanceRatio?: number
@@ -61,9 +59,7 @@ function round(value: number, digits = 0) {
 
 export function calculateSolarFinancials(input: SolarFinancialInput): SolarFinancialOutput {
   const assumptions = TM_SOLAR_ASSUMPTIONS
-  const panelDerivedKwp =
-    input.panelCount && input.panelWatt ? (input.panelCount * input.panelWatt) / 1000 : 0
-  const systemSizeKwp = input.systemSizeKwp || panelDerivedKwp
+  const systemSizeKwp = input.systemSizeKwp || 0
   const pshAvg = input.pshAvg || assumptions.pshAnnual
   const performanceRatio = input.performanceRatio || assumptions.performanceRatio
   const soilingFactor = input.soilingFactor || assumptions.soilingFactor

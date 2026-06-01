@@ -58,6 +58,7 @@ export function FilterBar() {
   const platformView = useAppStore((s) => s.platformView)
   const setPlatformView = useAppStore((s) => s.setPlatformView)
   const crmProjects = useAppStore((s) => s.crmProjects)
+  const scanRequests = useAppStore((s) => s.scanRequests)
   const filteredProperties = useFilteredProperties()
   const [showFilters, setShowFilters] = useState(false)
   const { t } = useTranslation()
@@ -67,6 +68,7 @@ export function FilterBar() {
   const navigate = useNavigate()
 
   const hasActiveFilters = filters.priority !== 'all' || filters.systemSize !== 'all' || filters.categoryFilter !== 'all'
+  const activeScans = scanRequests.filter((s) => s.status === 'queued' || s.status === 'running')
   const filteredCount = filteredProperties.length
   const isMapView = platformView === 'map'
   const isScannerView = platformView === 'scanner'
@@ -226,6 +228,16 @@ export function FilterBar() {
             <Download size={14} />
             {tf.export}
           </button>
+        )}
+
+        {/* Scan progress indicator — always visible when scans are active, regardless of view */}
+        {activeScans.length > 0 && (
+          <div className="shrink-0 bg-[#3B82F6]/15 backdrop-blur-xl rounded-xl border border-[#3B82F6]/30 px-3 py-2 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#60A5FA] animate-pulse shrink-0" />
+            <span className="text-[11px] font-medium text-[#60A5FA] whitespace-nowrap">
+              {activeScans.length} scan{activeScans.length > 1 ? 's' : ''} running
+            </span>
+          </div>
         )}
 
         {/* CRM + Auth — always visible, anchored right via ml-auto + shrink-0 */}

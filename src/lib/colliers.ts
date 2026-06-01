@@ -11,6 +11,7 @@
  */
 
 import type { Property } from '../types'
+import { STANDARD_PANEL_WATT } from './constants'
 
 // ---------------------------------------------------------------------------
 // Public constants
@@ -369,25 +370,51 @@ function jitterForIndex(index: number): { dLat: number; dLng: number } {
 }
 
 /**
- * Attach geocoordinates to each listing by matching `row.locationRaw` to a
- * key in `geo` (exact string match).  Rows without a matching key are left
- * without `lat`/`lng`.
+ * Attach geocoordinates to each listing using two lookup maps:
  *
- * A small deterministic per-index jitter (±0.0008°) is applied so that
- * multiple listings sharing one district centroid do not perfectly overlap.
+ * 1. `precise` — URL → {lat, lng} (one entry per listing, exact building coords).
+ *    Matched by `row.url`. When matched, coordinates are used AS-IS with NO jitter.
+ *
+ * 2. `district` — locationRaw text → {lat, lng} (one entry per district centroid).
+ *    Matched by `row.locationRaw`. When matched, a small deterministic per-index
+ *    jitter (±0.0008°) is applied so co-district markers don't perfectly stack.
+ *
+ * Priority: precise first, district second, unmatched rows are left without lat/lng.
+ * Unmatched rows emit a console.warn; after the full pass a console.info reports
+ * the match rate.
  *
  * Pure and deterministic — no side effects, no randomness.
  */
 export function attachGeocodes(
   rows: CollierListing[],
-  geo: Record<string, { lat: number; lng: number }>,
+  precise: Record<string, { lat: number; lng: number }>,
+  district: Record<string, { lat: number; lng: number }>,
 ): CollierListing[] {
-  return rows.map((row) => {
-    const match = geo[row.locationRaw]
-    if (!match) return row
-    const { dLat, dLng } = jitterForIndex(row.index)
-    return { ...row, lat: match.lat + dLat, lng: match.lng + dLng }
+  let matched = 0
+
+  const result = rows.map((row) => {
+    // 1. Try precise URL-keyed map first — no jitter applied
+    const preciseMatch = precise[row.url]
+    if (preciseMatch) {
+      matched++
+      return { ...row, lat: preciseMatch.lat, lng: preciseMatch.lng }
+    }
+
+    // 2. Fall back to district centroid with deterministic jitter
+    const districtMatch = district[row.locationRaw]
+    if (districtMatch) {
+      matched++
+      const { dLat, dLng } = jitterForIndex(row.index)
+      return { ...row, lat: districtMatch.lat + dLat, lng: districtMatch.lng + dLng }
+    }
+
+    // 3. No match — warn and leave without coords
+    console.warn(`Colliers ${row.id}: no precise/district geocode match`)
+    return row
   })
+
+  console.info(`Colliers geocoded: ${matched}/${rows.length}`)
+  return result
 }
 
 // ---------------------------------------------------------------------------
@@ -435,7 +462,7 @@ export function colliersToProperties(rows: CollierListing[]): Property[] {
       area: row.areaSqm ?? row.estFootprintSqm,
       sizeM2: row.areaSqm ?? undefined,
       capacityKwp: row.estKwp,
-      panelCount: Math.round((row.estKwp * 1000) / 580),
+      panelCount: Math.round((row.estKwp * 1000) / STANDARD_PANEL_WATT),
       category: row.assetType?.toLowerCase(),
       priority: row.tier,
       price: row.priceThb ?? undefined,

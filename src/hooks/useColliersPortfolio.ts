@@ -12,6 +12,7 @@ import {
   attachGeocodes,
 } from '../lib/colliers'
 import type { CollierListing, ColliersSummary } from '../lib/colliers'
+import { useColliersGeocodes } from './useColliersGeocodes'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -44,26 +45,23 @@ export function useColliersPortfolio() {
   const [sortKey, setSortKey] = useState<SortKey>('estKwp')
   const [sortAsc, setSortAsc] = useState(false)
 
-  // Fetch + parse on mount (also fetches geocodes gracefully)
+  // Shared geocode maps — fetches both precise (URL-keyed) and district (text-keyed)
+  const { precise, district, loading: geoLoading } = useColliersGeocodes()
+
+  // Fetch + parse markdown; apply geocodes once both are ready
   useEffect(() => {
+    if (geoLoading) return
     let cancelled = false
 
-    const fetchGeo = (): Promise<Record<string, { lat: number; lng: number }>> =>
-      fetch('/data/colliers-geocodes.json')
-        .then((r) => (r.ok ? r.json() : {}))
-        .catch(() => ({}))
-
-    Promise.all([
-      fetch('/data/colliers-listings.md').then((r) => {
+    fetch('/data/colliers-listings.md')
+      .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.text()
-      }),
-      fetchGeo(),
-    ])
-      .then(([md, geo]) => {
+      })
+      .then((md) => {
         if (cancelled) return
         const parsed = parseColliersMarkdown(md)
-        const rows = attachGeocodes(parsed, geo)
+        const rows = attachGeocodes(parsed, precise, district)
         setListings(rows)
         setSummary(summarizeColliers(rows))
         setStatus('loaded')
@@ -74,7 +72,7 @@ export function useColliersPortfolio() {
         setStatus('error')
       })
     return () => { cancelled = true }
-  }, [])
+  }, [geoLoading, precise, district])
 
   // Unique filter option lists
   const assetTypes = useMemo(() => {
