@@ -1,5 +1,7 @@
 import type { LeadResearchMetadata, OwnerDecisionLayer, Property, Region, RoofPriority } from '../types'
 import { calculateGridProximity } from './solar-calc'
+import { STANDARD_PANEL_WATT } from './constants'
+import { regionFromLead } from './region-utils'
 
 // All data now served locally from /public/data/
 
@@ -74,13 +76,6 @@ function categoryFromPropertyType(type = ''): string {
   return 'commercial'
 }
 
-function regionFromLead(property: OwnerDecisionPropertyLocal, lat: number): Region {
-  const area = `${property.areaName || ''}`.toLowerCase()
-  if (area.includes('samui') || lat < 9.63) return 'koh_samui'
-  if (area.includes('surat')) return 'surat_thani'
-  return 'koh_phangan'
-}
-
 function buildOwnerLead(property: OwnerDecisionPropertyLocal): Property | null {
   const leadResearch = property.leadResearch || {}
   const lat = Number(leadResearch.latitude)
@@ -91,7 +86,7 @@ function buildOwnerLead(property: OwnerDecisionPropertyLocal): Property | null {
   const area = Math.max(120, Number(property.roofAreaSqm) || 420)
   const usableArea = Math.round(area * 0.7)
   const capacityKwp = Math.round((usableArea / 2.6) * 0.55 * 10) / 10
-  const panelCount = Math.max(1, Math.round((capacityKwp * 1000) / 550))
+  const panelCount = Math.max(1, Math.round((capacityKwp * 1000) / STANDARD_PANEL_WATT))
   const annualKwh = Math.round(capacityKwp * 1500)
   const annualSavings = Math.round(annualKwh * 5)
   const epcCost = Math.round(capacityKwp * 45000)
@@ -101,7 +96,7 @@ function buildOwnerLead(property: OwnerDecisionPropertyLocal): Property | null {
     id: property.id,
     type: 'roof',
     status: 'private',
-    region: regionFromLead(property, lat),
+    region: regionFromLead({ areaName: property.areaName }, lat),
     title: property.name || 'Solar Intelligence lead',
     location: property.areaName || 'Koh Phangan',
     lat,

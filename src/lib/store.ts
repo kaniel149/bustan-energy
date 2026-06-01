@@ -200,7 +200,13 @@ export const useAppStore = create<AppState>((set, get) => ({
   updateStats: () => {
     const { properties, colliersProperties, filters } = get()
     const allProperties = [...properties, ...colliersProperties]
-    const filtered = allProperties.filter((p) => p.region === filters.region)
+    // Apply the same region + activeTab filters that useFilteredProperties uses
+    const filtered = allProperties.filter((p) => {
+      if (p.region !== filters.region) return false
+      if (filters.activeTab === 'rooftops' && p.type !== 'roof') return false
+      if (filters.activeTab === 'community-solar' && p.type !== 'land') return false
+      return true
+    })
     const roofs = filtered.filter((p) => p.type === 'roof')
     const lands = filtered.filter((p) => p.type === 'land')
     const forSale = filtered.filter((p) => p.status === 'sale')

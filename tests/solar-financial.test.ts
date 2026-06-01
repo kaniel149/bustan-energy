@@ -14,10 +14,10 @@ describe('solar calculations', () => {
 
     expect(result.usableArea).toBe(70)
     expect(result.panelCount).toBe(35)
-    expect(result.capacityKwp).toBeCloseTo(19.25, 2)
-    expect(result.annualKwh).toBeCloseTo(25715, 0)
-    expect(result.annualSavingsTHB).toBeCloseTo(109030, 0)
-    expect(result.epcCost).toBeCloseTo(616000, 0)
+    expect(result.capacityKwp).toBeCloseTo(20.3, 2)
+    expect(result.annualKwh).toBeCloseTo(27117, 0)
+    expect(result.annualSavingsTHB).toBeCloseTo(114978, 0)
+    expect(result.epcCost).toBeCloseTo(649600, 0)
     expect(result.paybackYears).toBeGreaterThan(6)
     expect(result.paybackYears).toBeLessThan(10)
   })
@@ -93,7 +93,7 @@ describe('financial model', () => {
       },
     })
 
-    expect(result.panelCount).toBe(18)
+    expect(result.panelCount).toBe(17)
     expect(result.epcCost).toBe(320000)
     expect(result.annualOMCost).toBe(3200)
     expect(result.annualKwhYear1).toBeCloseTo(13358, 0)

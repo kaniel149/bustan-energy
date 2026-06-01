@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, useState, useRef, lazy, Suspense } from 'react'
 import { useAppStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
 import { identifyUser, resetAnalytics } from '../lib/analytics'
@@ -8,6 +8,7 @@ import { isBustanConnected, bustanSupabase } from '../lib/bustan-supabase'
 import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests, fetchScanCandidates } from '../lib/bustan-crm-service'
 import type { Property } from '../types'
 import { parseColliersMarkdown, attachGeocodes, colliersToProperties } from '../lib/colliers'
+import { useColliersGeocodes } from '../hooks/useColliersGeocodes'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
 import { Toast } from '../components/Toast'
@@ -130,6 +131,9 @@ export default function PlatformPage() {
   // found (graceful: the json may be absent). Auto-enables the roof-detection layer
   // when live candidates exist so the user sees them without toggling a filter.
   const setRoofCandidates = useAppStore((s) => s.setRoofCandidates)
+  // Ref used to gate the poll effect: polling only starts after the initial load
+  // completes, preventing a race where the poll runs before the first fetch is done.
+  const hasInitialLoadRef = useRef(false)
   useEffect(() => {
     if (!user || !isBustanConnected()) {
       // Not authenticated — try the static json fallback only
@@ -139,8 +143,9 @@ export default function PlatformPage() {
         .then((rows) => {
           if (cancelled || !Array.isArray(rows)) return
           setRoofCandidates(rows.map((r: Record<string, unknown>) => ({ ...r, type: 'roof', status: 'private' })) as Property[])
+          hasInitialLoadRef.current = true
         })
-        .catch(() => { /* no candidate file — fine */ })
+        .catch(() => { hasInitialLoadRef.current = true /* no candidate file — fine */ })
       return () => { cancelled = true }
     }
 
@@ -166,6 +171,8 @@ export default function PlatformPage() {
         }
       } catch {
         /* fetchScanCandidates failure is non-fatal */
+      } finally {
+        if (!cancelled) hasInitialLoadRef.current = true
       }
     }
 
@@ -173,12 +180,20 @@ export default function PlatformPage() {
     return () => { cancelled = true }
   }, [user, setRoofCandidates, setFilter])
 
+  // Stable ref so the poll interval callback can read the latest scanRequests without
+  // being in the dep array (which would tear down and recreate the interval each cycle).
+  const scanRequestsRef = useRef(scanRequests)
+  scanRequestsRef.current = scanRequests
+
   // Poll candidates + scan-request status while any scan is queued or running.
   // Stops automatically when all scans are in a terminal state (done/failed).
   // This makes new candidates appear without a manual reload after a scan finishes.
+  // Does NOT start until the initial load has completed (hasInitialLoadRef guard).
   useEffect(() => {
     if (!user || !isBustanConnected()) return
-    const activeScans = scanRequests.filter((s) => s.status === 'queued' || s.status === 'running')
+    // Gate: do not start interval before initial load populates the candidates
+    if (!hasInitialLoadRef.current) return
+    const activeScans = scanRequestsRef.current.filter((s) => s.status === 'queued' || s.status === 'running')
     if (activeScans.length === 0) return
 
     let cancelled = false
@@ -188,8 +203,15 @@ export default function PlatformPage() {
         const [requests, candidates] = await Promise.all([fetchScanRequests(), fetchScanCandidates()])
         if (cancelled) return
         setScanRequests(requests)
+        // MERGE: add newly returned candidates, keep existing ones the poll didn't return.
+        // Never wipe candidates when the poll returns an empty array.
         if (candidates.length > 0) {
-          setRoofCandidates(candidates)
+          const prev = useAppStore.getState().roofCandidates
+          const merged = [
+            ...candidates,
+            ...prev.filter((p) => !candidates.some((c) => c.id === p.id)),
+          ]
+          setRoofCandidates(merged)
           setFilter('showRoofDetection', true)
         }
       } catch {
@@ -201,33 +223,29 @@ export default function PlatformPage() {
       cancelled = true
       clearInterval(interval)
     }
-  }, [user, scanRequests, setScanRequests, setRoofCandidates, setFilter])
+    // scanRequests intentionally excluded — read via scanRequestsRef to avoid
+    // tearing down the interval on every poll cycle.
+  }, [user, setScanRequests, setRoofCandidates, setFilter])
 
   // Load Colliers dataset — independent of demo/bustan loads, runs once.
-  // Fetches the markdown catalogue + geocodes JSON, then maps to Property[].
-  // Graceful: either fetch failing simply leaves colliersProperties empty.
+  // Uses shared geocode hook to fetch both precise (URL-keyed) and district
+  // maps, then maps to Property[]. Graceful: failures leave colliersProperties empty.
+  const { precise: colliersPrecise, district: colliersDistrict, loading: colliersGeoLoading } = useColliersGeocodes()
   const setColliersProperties = useAppStore((s) => s.setColliersProperties)
   useEffect(() => {
+    if (colliersGeoLoading) return
     let cancelled = false
     async function loadColliers() {
       try {
-        const [mdRes, geoRes] = await Promise.all([
-          fetch('/data/colliers-listings.md'),
-          fetch('/data/colliers-geocodes.json').catch(() => null),
-        ])
+        const mdRes = await fetch('/data/colliers-listings.md')
         if (cancelled) return
         if (!mdRes.ok) return
 
         const md = await mdRes.text()
         if (cancelled) return
 
-        const geo: Record<string, { lat: number; lng: number }> =
-          geoRes && geoRes.ok ? await geoRes.json() : {}
-
-        if (cancelled) return
-
         const parsed = parseColliersMarkdown(md)
-        const geocoded = attachGeocodes(parsed, geo)
+        const geocoded = attachGeocodes(parsed, colliersPrecise, colliersDistrict)
         const props = colliersToProperties(geocoded)
         setColliersProperties(props)
       } catch {
@@ -236,7 +254,7 @@ export default function PlatformPage() {
     }
     loadColliers()
     return () => { cancelled = true }
-  }, [setColliersProperties])
+  }, [colliersGeoLoading, colliersPrecise, colliersDistrict, setColliersProperties])
 
   // Load the live Bustan CRM leads (bustan schema) once authenticated.
   // Additive + reversible: RLS returns nothing when unauthenticated, so the
@@ -272,20 +290,32 @@ export default function PlatformPage() {
     // load() above can run while the bustan client is still anon (→ 0 leads →
     // demo data sticks). onAuthStateChange fires INITIAL_SESSION/SIGNED_IN/
     // TOKEN_REFRESHED with the bustan session once it's ready, so we re-load then.
-    const sub = bustanSupabase?.auth.onAuthStateChange((_event, session) => {
+    if (!bustanSupabase) {
+      return () => { cancelled = true }
+    }
+    const { data: { subscription: bustanSub } } = bustanSupabase.auth.onAuthStateChange((_event, session) => {
       if (session && !cancelled) load()
     })
     return () => {
       cancelled = true
-      sub?.data.subscription.unsubscribe()
+      bustanSub.unsubscribe()
     }
   }, [user, setProperties, setBustanLeads, setBustanRole, setScanRequests])
 
   const isMapView = platformView === 'map'
+  const filters = useAppStore((s) => s.filters)
 
   useEffect(() => {
     if (isMapView) setHasLoadedMap(true)
   }, [isMapView])
+
+  // Clear roof candidates when the detection layer is toggled off or when
+  // the user navigates away from the map, to avoid stale markers on return.
+  useEffect(() => {
+    if (!filters.showRoofDetection || platformView !== 'map') {
+      setRoofCandidates([])
+    }
+  }, [filters.showRoofDetection, platformView, setRoofCandidates])
 
   return (
     <div className="platform-layout bg-[#0A1628] relative">

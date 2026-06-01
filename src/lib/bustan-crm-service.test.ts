@@ -57,6 +57,13 @@ describe('bustan-crm-service: real seeded data (85 leads)', () => {
   it('maps every lead to a Property with coordinates for the map', () => {
     const props = leads.map(mapLeadToProperty)
     expect(props.every((p) => p.lat !== 0 && p.lng !== 0)).toBe(true)
-    expect(props.every((p) => p.region === 'koh_phangan')).toBe(true)
+    // Region is now derived from area_name / lat via regionFromLead.
+    // Fixture: 83 koh_phangan + 2 koh_samui (lat < 9.63: demo-003 @ 9.56, demo-004 @ 9.515)
+    const regions = props.map((p) => p.region)
+    const samui = regions.filter((r) => r === 'koh_samui')
+    const phangan = regions.filter((r) => r === 'koh_phangan')
+    expect(samui.length).toBe(2)
+    expect(phangan.length).toBe(83)
+    expect(regions.every((r) => r === 'koh_phangan' || r === 'koh_samui')).toBe(true)
   })
 })

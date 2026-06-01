@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useSearchParams, useParams } from 'react-router-dom'
 import { Loader2, ChevronLeft, Info, RefreshCw, AlertTriangle } from 'lucide-react'
-import { useNewProposalForm } from '../../hooks/useNewProposalForm'
+import { useNewProposalForm, clearProposalDraft } from '../../hooks/useNewProposalForm'
 import { useAdminStore } from '../../lib/admin-store'
 import { getSession } from '../../lib/admin-auth'
 import { LOCATION_PRESETS, type NewProposalForm } from '../../types/proposals'
@@ -17,6 +17,7 @@ import { fetchProposal } from '../../lib/admin-service'
 import { fetchBustanLeads, mapLeadToProperty } from '../../lib/bustan-crm-service'
 import { getSatelliteImageUrl } from '../../lib/enrich-building'
 import { computePanelLayout, layoutToSvg } from '../../lib/panel-layout'
+import { STANDARD_PANEL_WATT } from '../../lib/constants'
 
 function SectionTitle({ number, title }: { number: string; title: string }) {
   return (
@@ -352,7 +353,7 @@ export default function NewProposalPage() {
         const effectivePanelCount = prop.panelCount != null
           ? prop.panelCount
           : prop.capacityKwp != null
-            ? Math.round((prop.capacityKwp * 1000) / 580)
+            ? Math.round((prop.capacityKwp * 1000) / STANDARD_PANEL_WATT)
             : null
 
         // FIX 3: If lat or lng is 0 (unset) but we have a roof polygon, derive
@@ -388,7 +389,7 @@ export default function NewProposalPage() {
         // system_size_kwp = panel_count × panel_watt / 1000.  Verify this is
         // within 5% of the authoritative capacityKwp from CRM; warn if not.
         if (prop.capacityKwp != null && effectivePanelCount != null) {
-          const derivedKwp = Math.round((effectivePanelCount * 580) / 1000 * 100) / 100
+          const derivedKwp = Math.round((effectivePanelCount * STANDARD_PANEL_WATT) / 1000 * 100) / 100
           const pct = Math.abs(derivedKwp - prop.capacityKwp) / prop.capacityKwp
           if (pct > 0.05) {
             console.warn(
@@ -467,8 +468,11 @@ export default function NewProposalPage() {
             const svgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStr)}`
             update('roof_panels_url', svgDataUri)
           }
-        } catch {
+        } catch (svgErr) {
           // SVG fallback also failed — leave roof_panels_url blank, just show hint
+          const m = svgErr instanceof Error ? svgErr.message : String(svgErr)
+          console.warn('[NewProposalPage] SVG fallback failed:', m)
+          setPreviewError('Fallback failed: ' + m)
         }
       }
 
@@ -636,6 +640,9 @@ export default function NewProposalPage() {
         return
       }
 
+      // Clear draft immediately after API success so a tab-close + reload
+      // between here and the modal button click cannot re-submit a stale draft.
+      clearProposalDraft()
       setSuccessResult({ ref: data.ref, password: data.password })
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'שגיאה ביצירת הצעה'
@@ -832,9 +839,10 @@ export default function NewProposalPage() {
             onOriginalChange={(url) => update('roof_original_url', url)}
             onPanelsChange={(url) => update('roof_panels_url', url)}
             onAnalysis={(a) => {
-              // Prefill system specs from AI roof analysis
+              // Prefill system specs from AI roof analysis.
+              // Do NOT write system_size_kwp directly — calcDerived always
+              // recomputes it from panel_count × panel_watt and would discard it.
               update('panel_count', a.suggested_panel_count)
-              update('system_size_kwp', a.suggested_system_kwp)
               update('annual_kwh', a.estimated_annual_kwh)
               // Keep full analysis for metadata on submit
               setAiAnalysis(a)
