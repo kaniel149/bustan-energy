@@ -37,6 +37,14 @@ const TILE_SOURCES: Record<string, string[]> = {
   ],
 }
 
+// Resolve the tile URLs for a style id, with safe fallbacks:
+// - mapbox needs a token; without it fall back to the EOX Sentinel-2 layer
+// - any unknown style falls back to Google satellite (never undefined → no crash)
+function resolveTiles(style: string): string[] {
+  if (style === 'mapbox' && !MAPBOX_TOKEN) return TILE_SOURCES.sentinel2024
+  return TILE_SOURCES[style] ?? TILE_SOURCES.satellite
+}
+
 type LayerMouseEventType = 'click' | 'mouseenter' | 'mouseleave' | 'mousemove'
 type LayerMouseHandler = (event: maplibregl.MapLayerMouseEvent) => void
 
@@ -211,9 +219,10 @@ export function SolarMap() {
         sources: {
           'raster-tiles': {
             type: 'raster',
-            tiles: TILE_SOURCES.satellite,
+            tiles: resolveTiles(mapStyle),
             tileSize: 256,
             maxzoom: 20,
+            attribution: '© Mapbox © Maxar · Esri · EOX Sentinel-2 cloudless · © OpenStreetMap',
           },
         },
         layers: [
@@ -222,7 +231,7 @@ export function SolarMap() {
       },
       center: regionConfig.center,
       zoom: regionConfig.zoom,
-      maxZoom: 18,
+      maxZoom: 20,
       minZoom: 7,
     })
 
@@ -239,7 +248,7 @@ export function SolarMap() {
     if (!m) return
     const apply = () => {
       const src = m.getSource('raster-tiles') as maplibregl.RasterTileSource
-      if (src) src.setTiles(TILE_SOURCES[mapStyle])
+      if (src) src.setTiles(resolveTiles(mapStyle))
     }
     if (m.isStyleLoaded()) apply()
     else m.once('load', apply)

@@ -12,7 +12,9 @@ function readStoredMapStyle(): MapStyleId {
     const v = localStorage.getItem(MAP_STYLE_KEY) as MapStyleId | null
     if (v && MAP_STYLES.includes(v)) return v
   } catch { /* SSR / private mode */ }
-  return 'sentinel2024'
+  // Default to the freshest imagery (Mapbox Satellite = Maxar 2025-26) when a
+  // token is configured; otherwise fall back to the EOX Sentinel-2 layer.
+  return import.meta.env.VITE_MAPBOX_TOKEN ? 'mapbox' : 'sentinel2024'
 }
 
 function persistMapStyle(style: MapStyleId): void {
