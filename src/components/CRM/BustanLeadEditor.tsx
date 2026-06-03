@@ -214,14 +214,17 @@ export function BustanLeadEditor() {
     try {
       // ownerName is already extracted from data.legalOwnerName above.
       const companyName = ownerName ?? (lead.property.name ?? undefined)
+      const ownerData = (lead.owner?.data ?? {}) as Record<string, unknown>
       const existingWebsite =
-        typeof (lead.owner?.data as Record<string, unknown> | null)?.companyWebsite === 'string'
-          ? ((lead.owner!.data as Record<string, unknown>).companyWebsite as string)
-          : undefined
+        typeof ownerData.companyWebsite === 'string' ? ownerData.companyWebsite : undefined
+      // 13-digit DBD juristic ID → official Open API path (real registry data).
+      const juristicId =
+        typeof ownerData.registrationNo === 'string' ? ownerData.registrationNo : undefined
       const res = await fetch('/api/enrich-owner', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          juristicId,
           companyName,
           url: existingWebsite || undefined,
           lat,

@@ -1,28 +1,29 @@
 /**
  * /api/enrich-owner
  *
- * POST { companyName?, url?, lat?, lng?, province? }
- *   → { configured: true,  source: 'firecrawl', target: string,
+ * POST { juristicId?, companyName?, url?, lat?, lng?, province? }
+ *   → { configured: true,  source: 'dbd' | 'firecrawl', target: string,
  *       data: EnrichedCompanyData, disclaimer: string }
- *   → { configured: false, message: string }   (FIRECRAWL_API_KEY unset, HTTP 200)
+ *   → { configured: false, message: string }   (no provider key set, HTTP 200)
  *   → { error: string }                         (validation / upstream error, HTTP 4xx/5xx)
+ *
+ * RESOLUTION ORDER
+ *   1. juristicId (13-digit) — or a 13-digit number found in companyName —
+ *      → DBD Open API (openapi.dbd.go.th), official JSON. REAL registry data.
+ *   2. url — Firecrawl scrape + LLM JSON-extract of the six juristic fields.
+ *   3. companyName only (no id, no url) — cannot be resolved by the official
+ *      DBD Open API (it is keyed by 13-digit ID, no name search), so we return
+ *      a structured hint asking for a website URL or a juristic ID.
  *
  * LEGAL DESIGN — JURISTIC / COMPANY DATA ONLY.
  * This endpoint ONLY requests and returns data about JURISTIC PERSONS (registered
  * companies, limited partnerships, public companies) and public business websites.
  * It MUST NOT request, extract, store, or return:
- *   - Named individuals / directors / shareholders
+ *   - Named individuals / directors / shareholders / committee members
  *   - Sole-proprietor (ห้างหุ้นส่วนสามัญ) personal details
  *   - Any personally identifiable information (PII)
  * Compliant with Thailand PDPA B.E. 2562 — juristic entity records in the DBD
  * public registry are classified as public data, not personal data.
- *
- * FIRECRAWL call shape:
- *   POST https://api.firecrawl.dev/v1/scrape
- *   Authorization: Bearer <FIRECRAWL_API_KEY>
- *   { url: string, formats: ['markdown'], onlyMainContent: true }
- * The raw markdown is then parsed for the six business fields below.
- * No Firecrawl SDK is used — plain fetch only.
  */
 export const config = { runtime: 'edge' }
 
@@ -31,6 +32,7 @@ export const config = { runtime: 'edge' }
 // ---------------------------------------------------------------------------
 
 interface EnrichOwnerBody {
+  juristicId?: unknown
   companyName?: unknown
   url?: unknown
   lat?: unknown
@@ -58,6 +60,8 @@ interface FirecrawlScrapeResponse {
   data?: {
     markdown?: string
     content?: string
+    json?: Record<string, unknown>
+    extract?: Record<string, unknown>
     [key: string]: unknown
   }
   error?: string
@@ -71,15 +75,19 @@ interface FirecrawlScrapeResponse {
 const FIRECRAWL_SCRAPE_URL = 'https://api.firecrawl.dev/v1/scrape'
 
 /**
- * DBD (Department of Business Development) public data warehouse.
- * Juristic persons are searchable by company name — public data, not PDPA-restricted.
- * We append the company name as a query param; DBD returns an HTML page with
- * registration details that Firecrawl will convert to markdown.
+ * DBD (Department of Business Development) Open API — official JSON registry.
+ * Keyed by the 13-digit juristic registration number. Public juristic data,
+ * not PDPA-restricted. Requires DBD_API_KEY (register at openapi.dbd.go.th).
  */
-const DBD_SEARCH_BASE = 'https://datawarehouse.dbd.go.th/searchJuristic'
+const DBD_OPENAPI_BASE = 'https://openapi.dbd.go.th/api/v1/juristic_person'
 
-/** Hard timeout for the Firecrawl upstream call (milliseconds). */
+/** Hard timeout for upstream calls (milliseconds). */
 const FIRECRAWL_TIMEOUT_MS = 20_000
+const DBD_TIMEOUT_MS = 12_000
+
+/** Keys we MUST NOT read from any registry payload (PDPA — individual PII). */
+const PII_KEY_PATTERN =
+  /committee|director|shareholder|firstname|lastname|person(?!.*juristic)|ผู้ถือหุ้น|กรรมการ/i
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -100,28 +108,176 @@ function isNonEmptyString(v: unknown): v is string {
 }
 
 /**
- * Build the DBD juristic-search URL for a given company name.
- * Returns a publicly accessible search results page with company registration
- * data — classified as public registry information, not personal data.
+ * Strip markdown / formatting artifacts from an extracted string value:
+ * leading/trailing `**` bold markers, surrounding quotes, list bullets and
+ * collapsed whitespace. Returns undefined for empty results.
  */
-function buildDbdSearchUrl(companyName: string): string {
-  const encoded = encodeURIComponent(companyName.trim())
-  return `${DBD_SEARCH_BASE}?keyword=${encoded}`
+function cleanValue(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined
+  let s = raw
+    .replace(/\*\*/g, '') // markdown bold
+    .replace(/[`_]/g, '') // code / italic markers
+    .replace(/^[\s\-•|>#]+/, '') // leading bullets / pipes / heading marks
+    .replace(/[\s|]+$/, '') // trailing pipes / space
+    .replace(/^["'“”‘’]+|["'“”‘’]+$/g, '') // wrapping quotes
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+  return s.length ? s : undefined
+}
+
+/** Extract a 13-digit juristic ID from an arbitrary string, if present. */
+function extractJuristicId(s: string | undefined): string | undefined {
+  if (!s) return undefined
+  const m = s.replace(/[\s-]/g, '').match(/\b\d{13}\b/)
+  return m ? m[0] : undefined
+}
+
+// ---------------------------------------------------------------------------
+// DBD Open API — official JSON path
+// ---------------------------------------------------------------------------
+
+/**
+ * Recursively collect string leaves from the DBD payload keyed by what their
+ * key name contains, while NEVER descending into PII branches (committee /
+ * director / shareholder). Robust to the `cd:`-namespaced field names DBD uses
+ * and to nested address objects.
+ */
+function collectDbdFields(node: unknown, out: Record<string, string>, depth = 0): void {
+  if (depth > 8 || node == null) return
+  if (Array.isArray(node)) {
+    for (const item of node) collectDbdFields(item, out, depth + 1)
+    return
+  }
+  if (typeof node !== 'object') return
+
+  for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+    // Hard PDPA guard — skip any branch that could hold individual PII.
+    if (PII_KEY_PATTERN.test(key)) continue
+
+    const bareKey = key.replace(/^.*:/, '').toLowerCase() // drop `cd:` prefix
+
+    if (value && typeof value === 'object') {
+      collectDbdFields(value, out, depth + 1)
+      continue
+    }
+    if (typeof value === 'string' || typeof value === 'number') {
+      const str = String(value).trim()
+      if (str && out[bareKey] === undefined) out[bareKey] = str
+    }
+  }
+}
+
+/** Map collected DBD fields → the six juristic fields we expose. */
+function mapDbdToCompanyData(flat: Record<string, string>): EnrichedCompanyData {
+  const pick = (...needles: string[]): string | undefined => {
+    for (const n of needles) {
+      const hit = Object.keys(flat).find((k) => k.includes(n))
+      if (hit && flat[hit]) return cleanValue(flat[hit])
+    }
+    return undefined
+  }
+
+  // Address may arrive as several parts — assemble building/road/sub-district…
+  const addressParts = Object.keys(flat)
+    .filter((k) => /address|building|street|road|subdistrict|district|province|postal|tambol|amphur/.test(k))
+    .map((k) => flat[k])
+    .filter(Boolean)
+  const assembledAddress = addressParts.length ? cleanValue(addressParts.join(' ')) : undefined
+
+  return {
+    companyLegalName:
+      pick('juristicnameen', 'nameen') ?? pick('juristicnameth', 'nameth', 'juristicname', 'name'),
+    businessType: pick('juristictype', 'type'),
+    registrationNo: pick('juristicid', 'registerno', 'regno'),
+    registeredAddress: pick('fulladdress', 'addressfull') ?? assembledAddress,
+    businessPhone: pick('phone', 'tel'),
+    website: pick('website', 'web', 'url'),
+  }
 }
 
 /**
- * Call the Firecrawl scrape endpoint on `targetUrl` and return the raw markdown.
- * Throws on network errors; returns null if Firecrawl reports !success.
+ * Call the DBD Open API for a 13-digit juristic ID. Returns mapped juristic
+ * fields, or null when the entity is not found / payload has no usable fields.
+ * Throws on network / auth errors so the handler can surface a clear message.
  *
- * IMPORTANT: The prompt passed to Firecrawl instructs it to extract ONLY
- * juristic / company-level fields. Named individuals MUST NOT be returned.
- * This is enforced both here (field extraction regex) and in the LLM extract
- * prompt below.
+ * Auth is configurable because DBD's portal documents the token under an
+ * `Authorization` header; DBD_AUTH_SCHEME lets you switch the prefix
+ * (default "Token") without a code change after you read your key's docs.
+ */
+async function fetchDbdJuristic(
+  juristicId: string,
+  apiKey: string,
+): Promise<EnrichedCompanyData | null> {
+  const scheme = (process.env.DBD_AUTH_SCHEME ?? 'Token').trim()
+  const authValue = scheme ? `${scheme} ${apiKey}` : apiKey
+
+  const ac = new AbortController()
+  const timer = setTimeout(() => ac.abort(), DBD_TIMEOUT_MS)
+  let res: Response
+  try {
+    res = await fetch(`${DBD_OPENAPI_BASE}/${encodeURIComponent(juristicId)}`, {
+      method: 'GET',
+      signal: ac.signal,
+      headers: {
+        Accept: 'application/json',
+        // NEVER logged. DBD documents the credential on the Authorization header.
+        Authorization: authValue,
+      },
+    })
+  } finally {
+    clearTimeout(timer)
+  }
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('DBD auth rejected — check DBD_API_KEY / DBD_AUTH_SCHEME')
+  }
+  if (res.status === 404) return null
+  if (!res.ok) throw new Error(`DBD HTTP ${res.status}`)
+
+  const payload = (await res.json()) as unknown
+  const flat: Record<string, string> = {}
+  collectDbdFields(payload, flat)
+
+  const data = mapDbdToCompanyData(flat)
+  data.registrationNo ??= juristicId
+  // Require at least a name to count as a hit.
+  return data.companyLegalName ? data : null
+}
+
+// ---------------------------------------------------------------------------
+// Firecrawl — URL path (LLM JSON extract, regex fallback)
+// ---------------------------------------------------------------------------
+
+/** JSON schema describing the six juristic fields for Firecrawl's extractor. */
+const FIRECRAWL_EXTRACT_SCHEMA = {
+  type: 'object',
+  properties: {
+    companyLegalName: {
+      type: 'string',
+      description: 'Official registered legal name of the company / juristic entity only.',
+    },
+    registeredAddress: { type: 'string', description: 'Registered business address.' },
+    businessPhone: { type: 'string', description: 'Public business phone number.' },
+    website: { type: 'string', description: 'Company website URL.' },
+    registrationNo: { type: 'string', description: 'Business / DBD registration number.' },
+    businessType: { type: 'string', description: 'Business type, e.g. Limited Company / บริษัทจำกัด.' },
+  },
+} as const
+
+const FIRECRAWL_EXTRACT_PROMPT =
+  'Extract ONLY juristic / company-level registration fields about the business entity. ' +
+  'Do NOT extract any named individuals, directors, shareholders, or personal data. ' +
+  'Leave a field empty if it is not clearly present.'
+
+/**
+ * Scrape a company website with Firecrawl, requesting BOTH an LLM JSON extract
+ * (preferred — structured, robust) and markdown (regex fallback). Returns the
+ * raw response so the caller can prefer json then fall back to markdown parse.
  */
 async function scrapeWithFirecrawl(
   targetUrl: string,
   apiKey: string,
-): Promise<string | null> {
+): Promise<FirecrawlScrapeResponse | null> {
   const ac = new AbortController()
   const timer = setTimeout(() => ac.abort(), FIRECRAWL_TIMEOUT_MS)
 
@@ -132,89 +288,93 @@ async function scrapeWithFirecrawl(
       signal: ac.signal,
       headers: {
         'Content-Type': 'application/json',
-        // NEVER log this key — passed directly, not interpolated into logs.
+        // NEVER logged — passed directly.
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         url: targetUrl,
-        formats: ['markdown'],
+        formats: ['json', 'markdown'],
         onlyMainContent: true,
-        // Timeout hint to Firecrawl in MILLISECONDS (min 1000); we also enforce
-        // our own AbortController (FIRECRAWL_TIMEOUT_MS) above.
         timeout: 18_000,
+        jsonOptions: {
+          schema: FIRECRAWL_EXTRACT_SCHEMA,
+          prompt: FIRECRAWL_EXTRACT_PROMPT,
+        },
       }),
     })
   } finally {
     clearTimeout(timer)
   }
 
-  if (!res.ok) {
-    throw new Error(`Firecrawl HTTP ${res.status}`)
-  }
-
+  if (!res.ok) throw new Error(`Firecrawl HTTP ${res.status}`)
   const json = (await res.json()) as FirecrawlScrapeResponse
-
-  if (!json.success) {
-    // Firecrawl returned an error payload — log the message, not the key.
-    return null
-  }
-
-  return json.data?.markdown ?? json.data?.content ?? null
+  if (!json.success) return null
+  return json
 }
 
-// ---------------------------------------------------------------------------
-// Markdown parser — juristic fields only
-// ---------------------------------------------------------------------------
+/**
+ * Build EnrichedCompanyData from a Firecrawl response — prefer the structured
+ * LLM extract, fall back to regex over markdown. All values are cleaned of
+ * markdown artifacts (e.g. trailing `**`).
+ */
+function buildFromFirecrawl(resp: FirecrawlScrapeResponse): EnrichedCompanyData {
+  const extracted = (resp.data?.json ?? resp.data?.extract) as
+    | Partial<Record<keyof EnrichedCompanyData, unknown>>
+    | undefined
+
+  if (extracted && typeof extracted === 'object') {
+    const fromLlm: EnrichedCompanyData = {
+      companyLegalName: cleanValue(extracted.companyLegalName),
+      registeredAddress: cleanValue(extracted.registeredAddress),
+      businessPhone: cleanValue(extracted.businessPhone),
+      website: cleanValue(extracted.website),
+      registrationNo: cleanValue(extracted.registrationNo),
+      businessType: cleanValue(extracted.businessType),
+    }
+    // If the extractor found at least the name, trust it.
+    if (fromLlm.companyLegalName) return fromLlm
+  }
+
+  const markdown = resp.data?.markdown ?? resp.data?.content ?? ''
+  return parseCompanyFields(markdown)
+}
 
 /**
- * Extract the six business-level fields from Firecrawl markdown output.
- *
- * PDPA / JURISTIC ONLY enforcement:
- *   - We ONLY look for company-level registration fields.
- *   - Director / shareholder / named-individual sections are intentionally
- *     NOT searched for and NOT returned.
- *   - If the source is a sole-proprietor record, registrationNo will be present
- *     but companyLegalName / businessType signals will indicate this; the
- *     disclaimer in the response tells the rep to verify before use.
+ * Regex fallback parser — juristic fields only, PDPA-safe (no individuals).
+ * Used only when the LLM extract produced nothing usable.
  */
 function parseCompanyFields(markdown: string): EnrichedCompanyData {
   const result: EnrichedCompanyData = {}
 
-  // Company legal name — look for common DBD / company-page patterns.
   const nameMatch =
     markdown.match(/(?:ชื่อนิติบุคคล|Company Name|Legal Name|บริษัท)[:\s]+([^\n|]+)/i) ??
     markdown.match(/^#+\s+(.+(?:Co\.,? Ltd\.?|Limited|บริษัท|จำกัด|PLC|PCL).*)$/im)
-  if (nameMatch?.[1]) result.companyLegalName = nameMatch[1].trim()
+  if (nameMatch?.[1]) result.companyLegalName = cleanValue(nameMatch[1])
 
-  // Registered address — Thai or English.
   const addrMatch = markdown.match(
     /(?:ที่ตั้งสำนักงาน|Registered Address|Address)[:\s]+([^\n|]{10,})/i,
   )
-  if (addrMatch?.[1]) result.registeredAddress = addrMatch[1].trim()
+  if (addrMatch?.[1]) result.registeredAddress = cleanValue(addrMatch[1])
 
-  // Business phone — Thai mobile/landline patterns.
   const phoneMatch = markdown.match(
     /(?:โทรศัพท์|Phone|Tel|Telephone)[:\s]+([\d\s\-+()]{7,20})/i,
   )
-  if (phoneMatch?.[1]) result.businessPhone = phoneMatch[1].trim()
+  if (phoneMatch?.[1]) result.businessPhone = cleanValue(phoneMatch[1])
 
-  // Website URL.
   const websiteMatch =
     markdown.match(/(?:Website|เว็บไซต์|Web)[:\s]+(https?:\/\/[^\s\n|]+)/i) ??
     markdown.match(/\b(https?:\/\/(?!firecrawl|dbd\.go\.th)[a-z0-9.-]+\.[a-z]{2,}[^\s\n|]*)/i)
-  if (websiteMatch?.[1]) result.website = websiteMatch[1].trim()
+  if (websiteMatch?.[1]) result.website = cleanValue(websiteMatch[1])
 
-  // Registration number (เลขทะเบียนนิติบุคคล).
   const regNoMatch = markdown.match(
     /(?:เลขทะเบียน|Registration No|Reg\.? No|juristic_id)[:\s.]+(\d[\d-]{6,})/i,
   )
   if (regNoMatch?.[1]) result.registrationNo = regNoMatch[1].replace(/\s/g, '').trim()
 
-  // Business type (บริษัทจำกัด, ห้างหุ้นส่วน, etc.) — company-level, not individual.
   const bizTypeMatch = markdown.match(
     /(?:ประเภทนิติบุคคล|Business Type|Type)[:\s]+([^\n|]{3,60})/i,
   )
-  if (bizTypeMatch?.[1]) result.businessType = bizTypeMatch[1].trim()
+  if (bizTypeMatch?.[1]) result.businessType = cleanValue(bizTypeMatch[1])
 
   return result
 }
@@ -224,7 +384,6 @@ function parseCompanyFields(markdown: string): EnrichedCompanyData {
 // ---------------------------------------------------------------------------
 
 export default async function handler(req: Request): Promise<Response> {
-  // CORS pre-flight.
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -240,16 +399,6 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Method not allowed' }, 405)
   }
 
-  // --- Graceful no-key path ---------------------------------------------------
-  const apiKey = process.env.FIRECRAWL_API_KEY
-  if (!apiKey) {
-    return jsonResponse({
-      configured: false,
-      message: 'Set FIRECRAWL_API_KEY in Vercel env to enable auto-enrichment.',
-    })
-  }
-
-  // --- Parse + validate body --------------------------------------------------
   let body: EnrichOwnerBody
   try {
     body = (await req.json()) as EnrichOwnerBody
@@ -259,16 +408,17 @@ export default async function handler(req: Request): Promise<Response> {
 
   const companyName = isNonEmptyString(body.companyName) ? body.companyName.trim() : undefined
   const providedUrl = isNonEmptyString(body.url) ? body.url.trim() : undefined
+  const juristicId =
+    extractJuristicId(isNonEmptyString(body.juristicId) ? body.juristicId : undefined) ??
+    extractJuristicId(companyName)
 
-  // At least one of companyName or url must be present.
-  if (!companyName && !providedUrl) {
+  if (!juristicId && !companyName && !providedUrl) {
     return jsonResponse(
-      { error: 'Provide at least one of: companyName, url' },
+      { error: 'Provide at least one of: juristicId, companyName, url' },
       400,
     )
   }
 
-  // Validate provided URL shape if present.
   if (providedUrl) {
     try {
       const parsed = new URL(providedUrl)
@@ -280,41 +430,75 @@ export default async function handler(req: Request): Promise<Response> {
     }
   }
 
-  // --- Determine scrape target ------------------------------------------------
-  // Prefer the provided company website URL (richer content); fall back to the
-  // DBD juristic registry search URL built from the company name.
-  const target: string = providedUrl ?? buildDbdSearchUrl(companyName!)
+  const disclaimer =
+    'Public business-registry / company-website data only — verify before outreach (PDPA B.E. 2562).'
 
-  // --- Scrape via Firecrawl ---------------------------------------------------
-  let markdown: string | null
-  try {
-    markdown = await scrapeWithFirecrawl(target, apiKey)
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Upstream fetch error'
-    const isTimeout = msg.toLowerCase().includes('abort') || msg.toLowerCase().includes('signal')
-    return jsonResponse(
-      { error: isTimeout ? `Firecrawl timed out (${FIRECRAWL_TIMEOUT_MS / 1000}s)` : `Firecrawl error: ${msg}` },
-      502,
-    )
+  // --- 1) DBD Open API (official JSON, real data) ---------------------------
+  if (juristicId) {
+    const dbdKey = process.env.DBD_API_KEY
+    if (dbdKey) {
+      try {
+        const data = await fetchDbdJuristic(juristicId, dbdKey)
+        if (data) {
+          return jsonResponse({
+            configured: true,
+            source: 'dbd',
+            target: `${DBD_OPENAPI_BASE}/${juristicId}`,
+            data,
+            disclaimer,
+          })
+        }
+        // Found nothing for that ID — fall through to URL scrape if available.
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'DBD upstream error'
+        // If we have no URL fallback, surface the DBD error; else try the URL.
+        if (!providedUrl) return jsonResponse({ error: msg }, 502)
+      }
+    } else if (!providedUrl) {
+      return jsonResponse({
+        configured: false,
+        message:
+          'Set DBD_API_KEY in Vercel env to enable official DBD registry lookup (register at openapi.dbd.go.th).',
+      })
+    }
   }
 
-  if (!markdown) {
-    return jsonResponse(
-      { error: 'Firecrawl returned no content for this target' },
-      502,
-    )
+  // --- 2) Firecrawl URL scrape + extract ------------------------------------
+  const firecrawlKey = process.env.FIRECRAWL_API_KEY
+  if (providedUrl) {
+    if (!firecrawlKey) {
+      return jsonResponse({
+        configured: false,
+        message: 'Set FIRECRAWL_API_KEY in Vercel env to enable website enrichment.',
+      })
+    }
+    let resp: FirecrawlScrapeResponse | null
+    try {
+      resp = await scrapeWithFirecrawl(providedUrl, firecrawlKey)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upstream fetch error'
+      const isTimeout = /abort|signal/i.test(msg)
+      return jsonResponse(
+        { error: isTimeout ? `Firecrawl timed out (${FIRECRAWL_TIMEOUT_MS / 1000}s)` : `Firecrawl error: ${msg}` },
+        502,
+      )
+    }
+    if (!resp) {
+      return jsonResponse({ error: 'Firecrawl returned no content for this target' }, 502)
+    }
+    return jsonResponse({
+      configured: true,
+      source: 'firecrawl',
+      target: providedUrl,
+      data: buildFromFirecrawl(resp),
+      disclaimer,
+    })
   }
 
-  // --- Parse juristic fields from markdown ------------------------------------
-  const data = parseCompanyFields(markdown)
-
+  // --- 3) companyName only — no resolvable official source ------------------
   return jsonResponse({
-    configured: true,
-    source: 'firecrawl',
-    target,
-    data,
-    // Surfaced to the rep in the UI — reminds them to verify before outreach.
-    disclaimer:
-      'Public business-registry / company-website data only — verify before outreach (PDPA B.E. 2562).',
+    configured: false,
+    message:
+      'Company name alone cannot be resolved via the official DBD Open API (it is keyed by a 13-digit juristic ID). Provide a company website URL or a 13-digit DBD juristic ID.',
   })
 }
