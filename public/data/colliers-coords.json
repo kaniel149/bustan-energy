@@ -1,0 +1,602 @@
+{
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-phra-khanong-bangkok_be8d7ba2feb0-8cae-d742-93fb-f273b089": {
+    "lat": 13.724042973878,
+    "lng": 100.5784477423
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_801bcbacc544-1c0e-2a32-2a88-3e63b089": {
+    "lat": 13.73355395849,
+    "lng": 100.57678464761
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_17c495498d0c-eacf-ba62-ab30-70c5b089": {
+    "lat": 13.736272533307,
+    "lng": 100.5613062762
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_a5e394630f2a-01d1-1892-f73f-6e15b089": {
+    "lat": 13.733012008592,
+    "lng": 100.58257821908
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_d2dd0738f2fe-a511-6662-d2fe-ee45b089": {
+    "lat": 13.723402021568,
+    "lng": 100.58449948518
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_36f0d89757b3-3c6e-b622-192e-3555b089": {
+    "lat": 13.723402021568,
+    "lng": 100.58449948518
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-pathum-wan-bangkok_b32ff2d11832-06cf-b542-322c-7c15b089": {
+    "lat": 13.7323496,
+    "lng": 100.5299928
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_2582953374be-d421-0e42-7627-5d06b089": {
+    "lat": 13.727050477047,
+    "lng": 100.57446721902
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_5d3b4040b550-eae1-e062-a5c6-96f6b089": {
+    "lat": 13.731865320279,
+    "lng": 100.57088349895
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_bcdde363d0d1-6d10-0f92-cfc3-cdb6b089": {
+    "lat": 13.728592985756,
+    "lng": 100.57940248361
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_4472758df0db-556f-b762-aba7-ef45b089": {
+    "lat": 13.727092166605,
+    "lng": 100.57863000741
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_fd0136f4b429-193e-5532-cf70-d265b089": {
+    "lat": 13.727092166605,
+    "lng": 100.57863000741
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_3a89a2046fbc-6531-1f62-0c17-68f6b089": {
+    "lat": 13.738187704183,
+    "lng": 100.56161463174
+  },
+  "https://www.dotproperty.co.th/en/ads/land-for-rent-in-khlong-toei-nuea-bangkok_9558dbcd2263-ff9f-ff52-8bf6-13b6b089": {
+    "lat": 13.7406915,
+    "lng": 100.5553901
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_a66a3f9abce9-783e-8d32-d6f3-bdf7b089": {
+    "lat": 13.733699616156,
+    "lng": 100.56577657299
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_74f8dc1b1d13-7a21-0e92-3a4a-11a8b089": {
+    "lat": 13.7367311,
+    "lng": 100.5605338
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_64c4acef6363-a1a1-0c72-d885-13a8b089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_8067f6bc32b8-06ae-f662-fa4d-5f89b089": {
+    "lat": 13.73688901,
+    "lng": 100.58352236
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_c1047e0855d5-0adf-0d92-c019-8039b089": {
+    "lat": 13.743472,
+    "lng": 100.55513821
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_5b6f9607f89a-c460-c642-e022-9c89b089": {
+    "lat": 13.74085816,
+    "lng": 100.56212167
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-phraeksa-samut-prakan_1009fb4dffb6-988e-be22-05d9-4299b089": {
+    "lat": 13.55063446,
+    "lng": 100.66097106
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-phraeksa-samut-prakan_9318bfa8dbe4-ae0e-e782-8f58-7099b089": {
+    "lat": 13.55174738,
+    "lng": 100.65673076
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-ta-sit-rayong_d01571ae7c16-5990-2372-95d7-ff89b089": {
+    "lat": 13.06490366,
+    "lng": 101.18970492
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_11452d33d1ec-57de-d982-aaaa-11c7c089": {
+    "lat": 13.7363336456,
+    "lng": 100.58340975026
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_e26e9cf2dd97-988f-4842-2cd9-6765c089": {
+    "lat": 13.73304786179,
+    "lng": 100.58231012328
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_cc74b9978246-301e-1032-50fa-65b9c089": {
+    "lat": 13.725317030424,
+    "lng": 100.57945765026
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_8795dd0615f9-b031-7d62-946f-f5ead089": {
+    "lat": 13.736693181476,
+    "lng": 100.58345120052
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_63e26dc296c9-ac61-b782-6fe3-5c09c089": {
+    "lat": 13.731616083565,
+    "lng": 100.5818252
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_e71ce644af8c-45b1-0f92-375e-4ff9c089": {
+    "lat": 13.735995942059,
+    "lng": 100.5833185619
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_4eb408c07b71-fd3f-c942-c11f-d87cd089": {
+    "lat": 13.734813451495,
+    "lng": 100.56083420741
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-bang-na-bangkok_a3951c178c1d-f650-8462-dc27-99cdc089": {
+    "lat": 13.671807300643,
+    "lng": 100.61565875817
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_48dc38c8d228-903f-1342-953c-62ffc089": {
+    "lat": 13.722031877947,
+    "lng": 100.52997730688
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-thung-mahamek-bangkok_ccca352d007a-88df-5182-8b90-9617c089": {
+    "lat": 13.721193690606,
+    "lng": 100.53089440475
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_611e558b8d03-d85f-0622-7c17-84afc089": {
+    "lat": 13.7304479,
+    "lng": 100.5697677
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_4fde2c632a63-5f71-d972-4fa8-e12cc089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_4625995336e8-26f0-a132-c6d0-28afc089": {
+    "lat": 13.736272533307,
+    "lng": 100.56143502223
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_f3e31da31a0c-fd6f-1d32-1156-a31cc089": {
+    "lat": 13.745271046953,
+    "lng": 100.55128716663
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_3074c81157e7-071f-eb42-403f-6817c089": {
+    "lat": 13.728613578686,
+    "lng": 100.572385536
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_21d452d0999c-96ee-d592-2a74-0365c089": {
+    "lat": 13.737094693122,
+    "lng": 100.56030492433
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-lumphini-bangkok_d1f2646e9d08-447f-4e52-8188-7f74c089": {
+    "lat": 13.7441206,
+    "lng": 100.5421046
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-phra-khanong-bangkok_a69c205d429b-5731-e362-837f-8242c089": {
+    "lat": 13.7245074,
+    "lng": 100.5783296
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-bang-pla-samut-prakan_3d877a8fed83-286f-b422-45fe-9fc7c089": {
+    "lat": 13.593414724506,
+    "lng": 100.76111463967
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-wang-mai-bangkok_d2732a2cc3c7-931e-9572-a67f-6409c089": {
+    "lat": 13.73547741,
+    "lng": 100.52535001
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-bo-win-chon-buri_8f3fdbd57df1-16ce-f692-3cc6-38c7c089": {
+    "lat": 13.09287839,
+    "lng": 101.07674639
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-thung-mahamek-bangkok_8c9a7b795829-c6c0-e782-237b-9c32c089": {
+    "lat": 13.717494686999,
+    "lng": 100.54654549207
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-lumphini-bangkok_25db72d645db-2afe-ec22-214d-a3f9c089": {
+    "lat": 13.7433318,
+    "lng": 100.5448376
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-mercury-tower-lumphini-bangkok_a7d25b82cb0e-a04e-c062-5c66-3eaad089": {
+    "lat": 13.7435383,
+    "lng": 100.5441383
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-pathum-wan-bangkok_38b90a992aa0-9be0-a432-c2fb-532cc089": {
+    "lat": 13.7323496,
+    "lng": 100.5299928
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_ba62f1beb3ef-5a71-c552-42bb-fbc1d089": {
+    "lat": 13.72693387,
+    "lng": 100.58384422
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-jubilee-prestige-tower-din-daeng-bangkok_23a0e450c3ee-b3f1-d622-bced-421bf089": {
+    "lat": 13.7761551,
+    "lng": 100.5736662
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-all-seasons-place-lumphini-bangkok_1515193442b4-a9d0-b672-f01b-fa9de089": {
+    "lat": 13.7389964,
+    "lng": 100.5478505
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_753142f04205-d470-e322-a652-5dcae089": {
+    "lat": 13.73522124,
+    "lng": 100.5662701
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_72eb7680a568-5aaf-f492-0b77-a655e089": {
+    "lat": 13.7336315,
+    "lng": 100.5825247
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_16e35fe0ee16-5981-8252-fc41-4cdaf089": {
+    "lat": 13.73412101,
+    "lng": 100.56398409
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_d52003a285a6-d930-dff2-ae47-7dd75089": {
+    "lat": 13.7329308,
+    "lng": 100.573988
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_744e30124fef-401e-7022-5d30-58c1e089": {
+    "lat": 13.7336315,
+    "lng": 100.5825247
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_bda684ca43d2-daee-1352-f61f-81ace089": {
+    "lat": 13.73588858,
+    "lng": 100.55313013
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_1da09a1598b6-f760-f092-edd3-8c0be089": {
+    "lat": 13.72027523,
+    "lng": 100.5655336
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_be2160b4616d-b36f-f892-7ae9-c25be089": {
+    "lat": 13.7304479,
+    "lng": 100.5697677
+  },
+  "https://www.dotproperty.co.th/en/ads/townhouse-for-rent-in-suan-luang-bangkok_a473039b073a-941e-a792-dab0-af56e089": {
+    "lat": 13.7071189,
+    "lng": 100.6198947
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-sam-sen-nai-bangkok_18acf9811180-b981-cb32-bab5-aa6be089": {
+    "lat": 13.7796464,
+    "lng": 100.544598
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-thung-mahamek-bangkok_a0bbe8b1d0e3-ccf0-2672-cb7a-f94ce089": {
+    "lat": 13.7250141,
+    "lng": 100.5440334
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_0ea0e2f20916-22a1-2442-1946-7111d089": {
+    "lat": 13.736979079606,
+    "lng": 100.57098147227
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_8de6ca66cd5c-efc0-a152-eab2-5886d089": {
+    "lat": 13.72863594,
+    "lng": 100.53396647
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_61de379b9198-31c1-5e32-cd16-2d55e089": {
+    "lat": 13.73770963,
+    "lng": 100.58867279
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-phraya-bangkok_e0bd5538413a-930e-1962-7340-65fce089": {
+    "lat": 13.73057006,
+    "lng": 100.52778137
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-bangkok_a2180d0cd53e-0b11-a762-ee78-ade7d089": {
+    "lat": 13.7309668,
+    "lng": 100.5638857
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-jubilee-prestige-tower-din-daeng-bangkok_d270c7ee1059-dac1-d362-4857-531bf089": {
+    "lat": 13.7761551,
+    "lng": 100.5736662
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-jubilee-prestige-tower-din-daeng-bangkok_26fe816fa695-d98f-9482-0776-b11bf089": {
+    "lat": 13.7761551,
+    "lng": 100.5736662
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_cd68ce9ad54b-8661-f272-044c-04c8d089": {
+    "lat": 13.72091,
+    "lng": 100.52692
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_95bdec7aa048-c76f-0062-f66e-bd45d089": {
+    "lat": 13.7295978,
+    "lng": 100.58612742
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_a2d19acd99a8-4d51-b622-3609-fc48e089": {
+    "lat": 13.7264193,
+    "lng": 100.57793276
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_fa530b309407-1e3f-e942-2671-2b5de089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_21ddfcd64cd3-2f2f-5182-2af0-cb89e089": {
+    "lat": 13.7304479,
+    "lng": 100.5697677
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-bang-na-bangkok_98949cb04f26-868e-1a22-333f-a98ee089": {
+    "lat": 13.66072542,
+    "lng": 100.62401705
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-jubilee-prestige-tower-din-daeng-bangkok_61361aa3183c-5590-bf32-48fe-3e1bf089": {
+    "lat": 13.7761551,
+    "lng": 100.5736662
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_461815326a37-f0b0-ae92-ec50-a994d089": {
+    "lat": 13.7358115,
+    "lng": 100.5626446
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_888ab69f229a-f1d0-9242-25b4-c252d089": {
+    "lat": 13.733802196748,
+    "lng": 100.58740118455
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_26e53ea16a60-dcfe-1162-89d7-4c1be089": {
+    "lat": 13.73368014,
+    "lng": 100.58118339
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-lake-ratchada-office-complex-khlong-toei-bangkok_ed4b73e94282-26c0-b892-4b8c-2b60d089": {
+    "lat": 13.7307717,
+    "lng": 100.5599132
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-lam-pla-thio-bangkok_55d32a4f2427-85e0-ef62-2e3e-981bf089": {
+    "lat": 13.7714355,
+    "lng": 100.7927423
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-interchange-21-khlong-toei-nuea-bangkok_2100ba6801f8-6b61-b762-1126-1750d089": {
+    "lat": 13.7365751,
+    "lng": 100.5616832
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_6dfe7340667b-87f0-2982-268d-a78ee089": {
+    "lat": 13.73546259,
+    "lng": 100.58798602
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_86f91dce2da0-5f30-5c52-06b7-dee0e089": {
+    "lat": 13.73206952,
+    "lng": 100.57090966
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-lumphini-bangkok_854a205221c3-d53e-f992-4bef-2246e089": {
+    "lat": 13.74301598,
+    "lng": 100.54887496
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-lumphini-bangkok_ab6542169d03-280f-3362-6ff0-f346e089": {
+    "lat": 13.743002,
+    "lng": 100.5490635
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-thung-mahamek-bangkok_eead3d19bd03-3890-6282-1cb3-a847e089": {
+    "lat": 13.70817668,
+    "lng": 100.54279067
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-wang-mai-bangkok_a3617060e635-0e7f-b362-04c4-cbbae089": {
+    "lat": 13.74648974,
+    "lng": 100.52955805
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-sirirat-bangkok_33ea7bf7a4cc-9180-eb52-ac80-7570e089": {
+    "lat": 13.75575984,
+    "lng": 100.48643575
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_3220e6547f9e-1b61-0c92-9fa9-2d9fe089": {
+    "lat": 13.74220265,
+    "lng": 100.55653809
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_91f94a6f81b1-28c0-9b52-67bd-2447e089": {
+    "lat": 13.7304479,
+    "lng": 100.5697677
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_b2e8393e4d0a-3fe1-e962-4bd3-d7a5e089": {
+    "lat": 13.72856009,
+    "lng": 100.56900822
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-pluak-daeng-rayong_c4b867c1dd2f-2ec1-1c62-ac0f-43f3d089": {
+    "lat": 12.98165431,
+    "lng": 101.19013923
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_47b7a072ef93-1e10-d822-a1c0-c196e089": {
+    "lat": 13.72919813,
+    "lng": 100.57583863
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_96c050becfef-2f0f-6632-61b6-33a3d089": {
+    "lat": 13.73743948,
+    "lng": 100.58873622
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_68b3af773b7f-eb2e-3182-b3ff-2587e089": {
+    "lat": 13.7171138,
+    "lng": 100.57142338
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_5fa1963d5387-ae21-cd82-4c25-e970e089": {
+    "lat": 13.73564027,
+    "lng": 100.56428565
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-interchange-21-khlong-toei-nuea-bangkok_0cd7daf31c92-7501-0e32-b8f3-bf10d089": {
+    "lat": 13.7365751,
+    "lng": 100.5616832
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_257d4122502d-b791-d992-986e-20c1e089": {
+    "lat": 13.73918025,
+    "lng": 100.560051
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-athenee-tower-lumphini-bangkok_3e88f5eb3623-82bf-1f92-fe88-3a9fe089": {
+    "lat": 13.7415529,
+    "lng": 100.5486312
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_1f52377a6f2f-0b3e-6232-7cac-a997e089": {
+    "lat": 13.730824,
+    "lng": 100.5864445
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_12c96302860e-b72f-f732-2dfb-31c9d089": {
+    "lat": 13.72091,
+    "lng": 100.52692
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-nuea-bangkok_743ebf833399-8780-f162-f4b3-f710d089": {
+    "lat": 13.736242593517,
+    "lng": 100.57172034816
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-phra-khanong-bangkok_e4cd64ba2440-cdaf-df62-2a4e-e096e089": {
+    "lat": 13.71502924,
+    "lng": 100.59126772
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-phra-khanong-bangkok_dfdb9b4ae31d-5dbf-db32-f657-2096e089": {
+    "lat": 13.71507094,
+    "lng": 100.59135355
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-phra-khanong-bangkok_be1306595c2b-ee1e-5a62-1d4a-40f7e089": {
+    "lat": 13.7195823,
+    "lng": 100.585131
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-bang-phriang-samut-prakan_362e1902f212-99ff-1972-799b-1164e089": {
+    "lat": 13.55942433,
+    "lng": 100.83659986
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-lumphini-bangkok_173386ebfacc-6dbe-d652-d57a-aa57e089": {
+    "lat": 13.7430143,
+    "lng": 100.5489934
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-thung-mahamek-bangkok_0190fbf9718e-c920-9552-043c-7703e089": {
+    "lat": 13.7225621,
+    "lng": 100.5368672
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-toei-nuea-bangkok_87a97ae8fe9a-56ee-f932-66de-6f43d089": {
+    "lat": 13.7406915,
+    "lng": 100.5553901
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-interchange-21-khlong-toei-nuea-bangkok_804cebdaa13f-2491-6142-d0ed-0a10d089": {
+    "lat": 13.7365751,
+    "lng": 100.5616832
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_4fa4f56480ec-492f-d182-f4c6-6af7e089": {
+    "lat": 13.72837944,
+    "lng": 100.53402516
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_2b46e6e55ea1-fb4f-5432-db45-b903e089": {
+    "lat": 13.7258842,
+    "lng": 100.5271394
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-bang-chak-samut-prakan_1e1a15319a15-7edf-fd52-a6f1-eb2cf089": {
+    "lat": 13.6047125,
+    "lng": 100.5295469
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-chong-nonsi-bangkok_7243b7a7a79e-6071-c222-e189-d08ee089": {
+    "lat": 13.7039205,
+    "lng": 100.5444222
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-phraya-bangkok_492bd8f6f3d1-75a1-d382-0ed6-990be089": {
+    "lat": 13.72629691,
+    "lng": 100.51942361
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_f9bdcbecf71d-3b1f-d422-474c-8d5de089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_97ffc8be4a04-2cff-b142-bd86-a4d0e089": {
+    "lat": 13.72810906,
+    "lng": 100.57288376
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_026fd69eddd4-1380-fd62-e75a-ca5de089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-bang-chalong-samut-prakan_6bc7b7c1478f-e290-ea82-a6b0-b7bcf089": {
+    "lat": 13.6213596,
+    "lng": 100.7562703
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-din-daeng-bangkok_5b1bb95c9c79-5910-8b32-3890-bd5be089": {
+    "lat": 13.7646099,
+    "lng": 100.5682175
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-jubilee-prestige-tower-din-daeng-bangkok_9c302a93b3bb-2bd0-e752-58a1-6f1bf089": {
+    "lat": 13.7761551,
+    "lng": 100.5736662
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-empire-tower-thung-wat-don-bangkok_7686c4a1ccd1-265f-be22-9ed4-0e35d089": {
+    "lat": 13.7206386,
+    "lng": 100.5303786
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-huai-khwang-bangkok_202738116a85-5c91-c422-1bd2-5a5be089": {
+    "lat": 13.7557204,
+    "lng": 100.5722836
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_8c58a43897be-d8b0-0c42-58c5-fa4de089": {
+    "lat": 13.728223,
+    "lng": 100.5351377
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-phra-khanong-nuea-bangkok_718695a89445-33af-a042-d254-19caf089": {
+    "lat": 13.72152465,
+    "lng": 100.58460528
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_b4c4f30191c5-bd90-c972-566d-c6bae089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-pathum-wan-bangkok_3a0d60cca256-0161-1482-f15b-7670e089": {
+    "lat": 13.7446395,
+    "lng": 100.5329147
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_b3d717670a6e-07e1-ef42-e28e-9dc9d089": {
+    "lat": 13.72091,
+    "lng": 100.52692
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_cefd24665007-bc01-2982-0d3e-dab3d089": {
+    "lat": 13.72614238,
+    "lng": 100.54411273
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-huai-khwang-bangkok_0d7f7571dfa8-7a20-8622-df65-a94be089": {
+    "lat": 13.776037,
+    "lng": 100.574056
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-lam-pla-thio-bangkok_f5ee3580a284-2f91-b772-2181-6b46e089": {
+    "lat": 13.77007558,
+    "lng": 100.79266742
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-huai-khwang-bangkok_29104311311a-e96e-1952-074a-bb5be089": {
+    "lat": 13.7557204,
+    "lng": 100.5722836
+  },
+  "https://www.dotproperty.co.th/en/ads/warehouse-for-rent-in-bo-win-chon-buri_a1839313d940-221f-bd82-5cfc-00f3d089": {
+    "lat": 13.06990323,
+    "lng": 101.1162137
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-khlong-tan-bangkok_28d7920afe76-edc0-0222-8d5d-0a35d089": {
+    "lat": 13.72266845,
+    "lng": 100.56943264
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-athenee-tower-lumphini-bangkok_548b9831f49d-2e6e-dd22-c0e6-ee4fe089": {
+    "lat": 13.7415529,
+    "lng": 100.5486312
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_64e919cf7112-11a1-cc42-44a3-9a70d089": {
+    "lat": 13.728965032849,
+    "lng": 100.52847874288
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_97ddcb3be87c-38ef-b652-c968-db4de089": {
+    "lat": 13.728223,
+    "lng": 100.5351377
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_e6c55a943901-87f1-0562-137e-6d4de089": {
+    "lat": 13.728223,
+    "lng": 100.5351377
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_73a125ccd78a-1600-1062-88c5-984de089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_85c3c1e3450c-d57e-eb52-96fa-934de089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_3428fd791269-c220-e852-1ab2-8960d089": {
+    "lat": 13.72758928451,
+    "lng": 100.52740585928
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_074f77920748-f2e0-7d22-9258-5c4de089": {
+    "lat": 13.728223,
+    "lng": 100.5351377
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-si-lom-bangkok_a28ee3b54765-3e20-3142-297c-3e4de089": {
+    "lat": 13.728223,
+    "lng": 100.5351377
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-pathum-wan-bangkok_60e294c6dca3-e46e-f972-2117-0a29d089": {
+    "lat": 13.74666654,
+    "lng": 100.53153859
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-suriyawong-bangkok_8c5f4a57794f-dad0-7d72-ef95-f04de089": {
+    "lat": 13.7283389,
+    "lng": 100.5334944
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-pathum-wan-bangkok_230e1212feec-24b0-ca22-f068-e7c8d089": {
+    "lat": 13.7467568,
+    "lng": 100.5316924
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-pathum-wan-bangkok_4d26eb34c737-0ec1-fd52-a983-c319d089": {
+    "lat": 13.7467568,
+    "lng": 100.5316924
+  },
+  "https://www.dotproperty.co.th/en/ads/office-for-rent-in-pathum-wan-bangkok_b6476532d5fb-c5c1-fd42-af04-eb29d089": {
+    "lat": 13.7467568,
+    "lng": 100.5316924
+  },
+  "https://www.dotproperty.co.th/en/ads/hotel-for-rent-in-nong-prue-chon-buri_9c46fca5993e-2cb0-0562-f0b1-1939f089": {
+    "lat": 12.9314766,
+    "lng": 100.8798922
+  }
+}
