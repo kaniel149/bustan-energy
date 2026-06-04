@@ -10,7 +10,7 @@ _Last verified live: 2026-06-01 (energy-tm.com production)._
 | **Satellite thumbnail** | `/api/enrich-place?action=satellite` | ⚠️ 403 → OSM fallback | Maps Static API returns 403 ("API not activated on your project"). Either propagation delay or enabled on a different GCP project than the key (`223019860758`). Falls back to OSM tile gracefully. |
 | **Firecrawl — URL extract** | `/api/enrich-owner` `{url}` | ✅ **Works (LLM extract)** | Now uses Firecrawl `jsonOptions` schema extract for the 6 juristic fields (regex markdown is fallback only). `**` artifacts stripped via `cleanValue()`. |
 | **DBD Open API** | `/api/enrich-owner` `{juristicId}` | ✅ **Wired (needs key)** | Migrated off the SPA → official JSON `openapi.dbd.go.th/api/v1/juristic_person/{13-digit-id}`. Returns real registry fields. Needs `DBD_API_KEY` in Vercel (register at openapi.dbd.go.th). PII branches (committee/director/shareholder) skipped. |
-| **companyName only** | `/api/enrich-owner` `{companyName}` | ℹ️ **By design** | Official DBD API has no name search (keyed by 13-digit ID). Returns a hint to supply a URL or juristic ID. |
+| **companyName only** | `/api/enrich-owner` `{companyName}` | ✅ **Works (Firecrawl search)** | Calls Firecrawl `/v1/search` (Thailand-scoped) → scrape + LLM extract in one call → first hit with a legal name (`source: firecrawl-search`). Verified live: "Siam Cement Group" → name + scg.com. Quality depends on top SERP result; may pick a 3rd-party profile page. |
 
 ## How to get `DBD_API_KEY` (register)
 1. Go to **https://openapi.dbd.go.th** → สมัครสมาชิก / Register (Thai national ID or company; an email works for the developer portal).
