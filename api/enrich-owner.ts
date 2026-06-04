@@ -73,6 +73,7 @@ interface FirecrawlScrapeResponse {
 // ---------------------------------------------------------------------------
 
 const FIRECRAWL_SCRAPE_URL = 'https://api.firecrawl.dev/v1/scrape'
+const FIRECRAWL_SEARCH_URL = 'https://api.firecrawl.dev/v1/search'
 
 /**
  * DBD (Department of Business Development) Open API — official JSON registry.
@@ -313,6 +314,66 @@ async function scrapeWithFirecrawl(
 }
 
 /**
+ * Resolve a company NAME → its best public web page via Firecrawl /v1/search,
+ * scraping + LLM-extracting the six juristic fields in the same call. Returns
+ * the first result that yields a company legal name, plus the URL it came from.
+ * PDPA-safe: the extract prompt forbids individuals; we only keep juristic fields.
+ */
+async function searchWithFirecrawl(
+  companyName: string,
+  province: string | undefined,
+  apiKey: string,
+): Promise<{ data: EnrichedCompanyData; url: string } | null> {
+  const ac = new AbortController()
+  const timer = setTimeout(() => ac.abort(), FIRECRAWL_TIMEOUT_MS)
+
+  const query = [companyName, province, 'company Thailand'].filter(Boolean).join(' ')
+
+  let res: Response
+  try {
+    res = await fetch(FIRECRAWL_SEARCH_URL, {
+      method: 'POST',
+      signal: ac.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        query,
+        limit: 3,
+        location: 'Thailand',
+        scrapeOptions: {
+          formats: ['json', 'markdown'],
+          onlyMainContent: true,
+          jsonOptions: {
+            schema: FIRECRAWL_EXTRACT_SCHEMA,
+            prompt: FIRECRAWL_EXTRACT_PROMPT,
+          },
+        },
+      }),
+    })
+  } finally {
+    clearTimeout(timer)
+  }
+
+  if (!res.ok) throw new Error(`Firecrawl search HTTP ${res.status}`)
+  const json = (await res.json()) as {
+    success?: boolean
+    data?: Array<FirecrawlScrapeResponse['data'] & { url?: string }>
+  }
+  if (!json.success || !Array.isArray(json.data)) return null
+
+  for (const item of json.data) {
+    if (!item) continue
+    const built = buildFromFirecrawl({ success: true, data: item })
+    if (built.companyLegalName) {
+      return { data: built, url: (item.url as string) ?? '' }
+    }
+  }
+  return null
+}
+
+/**
  * Build EnrichedCompanyData from a Firecrawl response — prefer the structured
  * LLM extract, fall back to regex over markdown. All values are cleaned of
  * markdown artifacts (e.g. trailing `**`).
@@ -495,10 +556,41 @@ export default async function handler(req: Request): Promise<Response> {
     })
   }
 
-  // --- 3) companyName only — no resolvable official source ------------------
-  return jsonResponse({
-    configured: false,
-    message:
-      'Company name alone cannot be resolved via the official DBD Open API (it is keyed by a 13-digit juristic ID). Provide a company website URL or a 13-digit DBD juristic ID.',
-  })
+  // --- 3) companyName only — Firecrawl web search → extract -----------------
+  if (companyName) {
+    if (!firecrawlKey) {
+      return jsonResponse({
+        configured: false,
+        message: 'Set FIRECRAWL_API_KEY in Vercel env to enable company-name search enrichment.',
+      })
+    }
+    const province = isNonEmptyString(body.province) ? body.province.trim() : undefined
+    let found: { data: EnrichedCompanyData; url: string } | null
+    try {
+      found = await searchWithFirecrawl(companyName, province, firecrawlKey)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upstream fetch error'
+      const isTimeout = /abort|signal/i.test(msg)
+      return jsonResponse(
+        { error: isTimeout ? `Firecrawl search timed out (${FIRECRAWL_TIMEOUT_MS / 1000}s)` : `Firecrawl error: ${msg}` },
+        502,
+      )
+    }
+    if (!found) {
+      return jsonResponse({
+        configured: false,
+        message: `No public company page found for "${companyName}". Provide a website URL or a 13-digit DBD juristic ID.`,
+      })
+    }
+    return jsonResponse({
+      configured: true,
+      source: 'firecrawl-search',
+      target: found.url || `search:${companyName}`,
+      data: found.data,
+      disclaimer,
+    })
+  }
+
+  // Should be unreachable — earlier guard requires at least one input.
+  return jsonResponse({ error: 'Nothing to enrich' }, 400)
 }
