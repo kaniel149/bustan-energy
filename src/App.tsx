@@ -27,6 +27,7 @@ const BlogPostPage = lazy(() => import('./pages/BlogPostPage'))
 const ToolsPage = lazy(() => import('./pages/ToolsPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const CollierPortfolioPage = lazy(() => import('./pages/CollierPortfolioPage'))
+const ResortSolarAssessmentPage = lazy(() => import('./pages/ResortSolarAssessmentPage'))
 
 // Admin pages — lazy loaded, separate auth context
 const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'))
@@ -147,6 +148,10 @@ export default function App() {
 
               {/* Colliers Thailand Solar Portfolio — read-only sales demo, no auth */}
               <Route path="/colliers" element={<CollierPortfolioPage />} />
+
+              {/* Bustan resort lead magnet funnel */}
+              <Route path="/resort-solar-assessment" element={<ResortSolarAssessmentPage />} />
+              <Route path="/th/resort-solar-assessment" element={<ResortSolarAssessmentPage />} />
 
               {/* Internal platform — language set by URL prefix (en/th/he, RTL for he) */}
               <Route path="/platform" element={<PlatformPage />} />
