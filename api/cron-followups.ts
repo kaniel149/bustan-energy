@@ -177,7 +177,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     // Type-specific checks
-    if (fu.followup_type.startsWith('not_viewed') && proposal.view_count > 0) {
+    if (fu.followup_type.startsWith('not_viewed') && (proposal.view_count ?? 0) > 0) {
       await supaPatch(`proposal_followups?id=eq.${fu.id}`, {
         status: 'cancelled',
         metadata: { ...fu.metadata, reason: 'already_viewed' },

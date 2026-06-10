@@ -100,7 +100,8 @@ export default async function handler(req: Request): Promise<Response> {
     const avgHoursToView =
       viewedProposals.length > 0
         ? viewedProposals.reduce((s, p) => {
-            const diff = new Date(p.first_viewed_at).getTime() - new Date(p.sent_at).getTime()
+            // Non-null: filter above guarantees first_viewed_at && sent_at
+            const diff = new Date(p.first_viewed_at!).getTime() - new Date(p.sent_at!).getTime()
             return s + diff / (1000 * 60 * 60)
           }, 0) / viewedProposals.length
         : 0
@@ -109,7 +110,8 @@ export default async function handler(req: Request): Promise<Response> {
     const avgHoursViewToSign =
       signedProposals.length > 0
         ? signedProposals.reduce((s, p) => {
-            const diff = new Date(p.signed_at).getTime() - new Date(p.first_viewed_at).getTime()
+            // Non-null: filter above guarantees signed_at && first_viewed_at
+            const diff = new Date(p.signed_at!).getTime() - new Date(p.first_viewed_at!).getTime()
             return s + diff / (1000 * 60 * 60)
           }, 0) / signedProposals.length
         : 0

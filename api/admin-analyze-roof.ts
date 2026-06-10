@@ -37,7 +37,8 @@ export interface RoofAnalysis {
   tilt_deg_estimate: number
   confidence: number
   notes: string
-  has_existing_solar: boolean
+  // Gemini may emit a string ("true"/"false") instead of a boolean — handler normalizes it.
+  has_existing_solar: boolean | string
 }
 
 // Panel dimensions by wattage (Jinko Tiger Neo / N-Type mono spec)
