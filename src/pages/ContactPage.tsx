@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { MessageCircle, Mail, MapPin, Clock, Send, Phone } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
 import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
-import { trackEvent } from '../lib/analytics'
+import { trackEvent, trackLeadConversion, getMetaClickIds, newEventId } from '../lib/analytics'
+import { getAttribution } from '../lib/attribution'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -115,6 +116,10 @@ export default function ContactPage() {
   const [sending, setSending] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
+  // Stable Meta dedup event id — generated once per page, reused across
+  // retries so browser pixel + server CAPI always dedup correctly.
+  const eventIdRef = useRef<string>(newEventId())
+
   function update(field: keyof FormState) {
     return (value: string) => setForm((f) => ({ ...f, [field]: value }))
   }
@@ -125,10 +130,19 @@ export default function ContactPage() {
     setSending(true)
 
     try {
+      const attribution = getAttribution()
+      const { fbc, fbp } = getMetaClickIds()
+
       const res = await fetch('/api/contact-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          ...attribution,
+          event_id: eventIdRef.current,
+          fbc: fbc || undefined,
+          fbp: fbp || undefined,
+        }),
       })
       const json = await res.json().catch(() => null)
       if (!res.ok || !json?.ok) {
@@ -137,6 +151,15 @@ export default function ContactPage() {
       trackEvent('contact_form_submit', {
         property_type: form.propertyType || undefined,
         system_interest: form.systemInterest || undefined,
+      })
+      // GA4 generate_lead + Google Ads Enhanced Conversion + Meta Pixel Lead
+      // (each branch no-ops when its env var is missing; never throws)
+      void trackLeadConversion({
+        eventId: eventIdRef.current,
+        email: form.email || null,
+        phone: form.phone || null,
+        firstName: form.name.trim().split(/\s+/)[0] || null,
+        lastName: form.name.trim().split(/\s+/).slice(1).join(' ') || null,
       })
       setSending(false)
       setSubmitted(true)
