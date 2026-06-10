@@ -22,6 +22,26 @@ interface ContactLeadBody {
   propertyType?: string
   systemInterest?: string
   message?: string
+  /** Lead origin, e.g. 'bill-scanner'. Defaults to 'website'. */
+  source?: string
+  /** Free-text summary produced by tools (e.g. bill scanner savings estimate). */
+  billSummary?: string
+  /** Attribution params captured client-side (utm_*, gclid, fbclid, ref). */
+  utm?: Record<string, unknown>
+  /** Honeypot field — humans never fill this. */
+  website?: string
+}
+
+interface LeadEmailPayload {
+  name: string
+  email: string
+  phone: string
+  propertyType: string
+  systemInterest: string
+  message: string
+  source: string
+  billSummary: string
+  utmText: string
 }
 
 function clean(value: unknown): string {
@@ -32,22 +52,64 @@ function isEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 }
 
-async function sendLeadEmail(lead: Required<ContactLeadBody>) {
+function isPhone(value: string): boolean {
+  return (value.match(/\d/g) || []).length >= 7
+}
+
+// --- Basic per-IP rate limit (best-effort, per edge isolate) ---
+const RATE_WINDOW_MS = 10 * 60 * 1000
+const RATE_MAX = 5
+const rateMap = new Map<string, number[]>()
+
+function rateLimited(ip: string): boolean {
+  const now = Date.now()
+  const hits = (rateMap.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS)
+  if (hits.length >= RATE_MAX) {
+    rateMap.set(ip, hits)
+    return true
+  }
+  hits.push(now)
+  rateMap.set(ip, hits)
+  // Prevent unbounded growth across many IPs
+  if (rateMap.size > 5000) rateMap.clear()
+  return false
+}
+
+const ALLOWED_UTM_KEYS = [
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+  'gclid', 'fbclid', 'ref', 'landing_page',
+] as const
+
+function utmToText(utm: Record<string, unknown> | undefined): string {
+  if (!utm || typeof utm !== 'object') return ''
+  const parts: string[] = []
+  for (const key of ALLOWED_UTM_KEYS) {
+    const value = clean(utm[key]).slice(0, 300)
+    if (value) parts.push(`${key}=${value}`)
+  }
+  return parts.join(' | ')
+}
+
+async function sendLeadEmail(lead: LeadEmailPayload) {
   if (!RESEND_KEY || NOTIFY.length === 0) return
+
+  const sourceLabel = lead.source === 'bill-scanner' ? 'Bill Scanner lead magnet' : 'Website contact form'
 
   const html = `
 <div style="font-family:system-ui;max-width:620px;direction:ltr;">
   <div style="background:#0D2137;color:white;padding:24px;border-radius:16px 16px 0 0;">
     <h1 style="margin:0;color:#E8A820;font-size:22px;">New Bustan Energy Lead</h1>
-    <p style="margin:6px 0 0 0;opacity:.8;">Website contact form</p>
+    <p style="margin:6px 0 0 0;opacity:.8;">${escapeHtml(sourceLabel)}</p>
   </div>
   <div style="border:1px solid #eee;border-top:0;padding:22px;border-radius:0 0 16px 16px;">
     <p><b>Name:</b> ${escapeHtml(lead.name)}</p>
-    <p><b>Email:</b> ${escapeHtml(lead.email)}</p>
+    <p><b>Email:</b> ${escapeHtml(lead.email) || '-'}</p>
     <p><b>Phone:</b> ${escapeHtml(lead.phone) || '-'}</p>
     <p><b>Property:</b> ${escapeHtml(lead.propertyType) || '-'}</p>
     <p><b>Interest:</b> ${escapeHtml(lead.systemInterest) || '-'}</p>
     <p><b>Message:</b><br>${escapeHtml(lead.message).replace(/\n/g, '<br>') || '-'}</p>
+    ${lead.billSummary ? `<p><b>Bill scan estimate:</b><br>${escapeHtml(lead.billSummary).replace(/\n/g, '<br>')}</p>` : ''}
+    ${lead.utmText ? `<p style="font-size:12px;color:#888;"><b>Attribution:</b> ${escapeHtml(lead.utmText)}</p>` : ''}
   </div>
 </div>`
 
@@ -60,8 +122,8 @@ async function sendLeadEmail(lead: Required<ContactLeadBody>) {
     body: JSON.stringify({
       from: FROM,
       to: NOTIFY,
-      reply_to: [lead.email],
-      subject: `New Bustan Energy lead · ${lead.name}`,
+      ...(isEmail(lead.email) ? { reply_to: [lead.email] } : {}),
+      subject: `New Bustan Energy lead · ${lead.name}${lead.source === 'bill-scanner' ? ' (Bill Scanner)' : ''}`,
       html,
     }),
   }).catch(() => null)
@@ -76,8 +138,22 @@ export default async function handler(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: 'server_not_configured' }, { status: 500 })
   }
 
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || req.headers.get('x-real-ip')
+    || 'unknown'
+  if (rateLimited(ip)) {
+    return Response.json({ ok: false, error: 'rate_limited' }, { status: 429 })
+  }
+
   try {
     const raw = await req.json() as ContactLeadBody
+
+    // Honeypot: bots fill every field. Pretend success, store nothing.
+    if (clean(raw.website)) {
+      return Response.json({ ok: true, project_id: null })
+    }
+
+    const source = clean(raw.source).slice(0, 60).replace(/[^a-z0-9_-]/gi, '') || 'website'
     const lead = {
       name: clean(raw.name),
       email: clean(raw.email).toLowerCase(),
@@ -85,17 +161,28 @@ export default async function handler(req: Request): Promise<Response> {
       propertyType: clean(raw.propertyType),
       systemInterest: clean(raw.systemInterest),
       message: clean(raw.message),
+      billSummary: clean(raw.billSummary),
     }
+    const utmText = utmToText(raw.utm)
 
-    if (!lead.name || !isEmail(lead.email)) {
+    // Name + at least one valid contact channel (email or phone).
+    // Website contact form always sends email; bill scanner may send phone only.
+    const hasEmail = isEmail(lead.email)
+    const hasPhone = isPhone(lead.phone)
+    if (!lead.name || (!hasEmail && !hasPhone)) {
+      return Response.json({ ok: false, error: 'invalid_contact_details' }, { status: 400 })
+    }
+    if (lead.email && !hasEmail) {
       return Response.json({ ok: false, error: 'invalid_contact_details' }, { status: 400 })
     }
 
     const notes = [
-      'Source: website contact form',
+      source === 'bill-scanner' ? 'Source: bill scanner lead magnet' : 'Source: website contact form',
       lead.propertyType ? `Property type: ${lead.propertyType}` : '',
       lead.systemInterest ? `System interest: ${lead.systemInterest}` : '',
       lead.message ? `Message:\n${lead.message}` : '',
+      lead.billSummary ? `Bill scan estimate:\n${lead.billSummary}` : '',
+      utmText ? `Attribution: ${utmText}` : '',
     ].filter(Boolean).join('\n\n')
 
     const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/projects`, {
@@ -108,14 +195,14 @@ export default async function handler(req: Request): Promise<Response> {
       },
       body: JSON.stringify({
         client_name: lead.name,
-        client_email: lead.email,
+        client_email: lead.email || null,
         client_phone: lead.phone || null,
         business_type: lead.propertyType || null,
         deal_type: lead.systemInterest || null,
         status: 'lead',
         step_number: 1,
         priority: 'normal',
-        source: 'website',
+        source,
         notes,
       }),
     })
@@ -134,6 +221,9 @@ export default async function handler(req: Request): Promise<Response> {
       propertyType: lead.propertyType,
       systemInterest: lead.systemInterest,
       message: lead.message,
+      source,
+      billSummary: lead.billSummary,
+      utmText,
     })
 
     return Response.json({ ok: true, project_id: project?.id ?? null })

@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bustan Energy — Bill Scanner & Proposal Generator</title>
+<title>Free Solar Savings Calculator — Scan Your PEA Bill | Bustan Energy</title>
+<meta name="description" content="Upload your PEA electricity bill and see how much you could save with solar in 60 seconds. Free instant estimate for homes, villas, resorts and businesses in Thailand.">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--ocean:#0A3D5C;--gold:#E8A820;--reef:#1A7A5A;--coral:#E85D3A;--night:#0D2137;--white:#FFF}
@@ -114,9 +115,28 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
 .back-btn{position:fixed;bottom:20px;right:20px;background:rgba(255,255,255,.1);color:var(--white);border:1px solid rgba(255,255,255,.2);padding:10px 24px;border-radius:8px;font-family:'Heebo';font-size:14px;cursor:pointer;z-index:100;text-decoration:none}
 .back-btn:hover{background:rgba(255,255,255,.15)}
 
+/* Lead gate */
+.lead-card{background:linear-gradient(135deg,rgba(232,168,32,.12),rgba(46,216,154,.08));border:1px solid rgba(232,168,32,.4);border-radius:16px;padding:28px 24px;margin:24px 0;text-align:center}
+.lead-card h3{font-size:20px;font-weight:900;margin-bottom:6px}
+.lead-card .lead-sub{font-size:14px;opacity:.7;margin-bottom:4px}
+.lead-card .lead-sub-th{font-size:13px;opacity:.55;margin-bottom:18px}
+.lead-form{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:760px;margin:0 auto;text-align:left}
+@media(max-width:700px){.lead-form{grid-template-columns:1fr}}
+.lead-form .input-group{margin-bottom:0}
+.lead-submit-row{margin-top:16px}
+.lead-error{color:var(--coral);font-size:13px;margin-top:10px;display:none}
+.lead-privacy{font-size:11px;opacity:.4;margin-top:12px}
+.hp-field{position:absolute;left:-9999px;top:-9999px;height:0;width:0;opacity:0;pointer-events:none}
+.gated{position:relative}
+.gated.locked .gate-inner{filter:blur(7px);pointer-events:none;user-select:none}
+.gate-overlay{display:none}
+.gated.locked .gate-overlay{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;padding:20px}
+.gate-overlay .lock{font-size:32px}
+.gate-overlay .gate-msg{font-size:15px;font-weight:700;background:rgba(13,33,55,.85);border:1px solid rgba(232,168,32,.4);border-radius:12px;padding:12px 20px}
+
 @media print{
   body{background:#fff;color:#111}
-  .steps,.back-btn,.btn-row,.upload-zone{display:none!important}
+  .steps,.back-btn,.btn-row,.upload-zone,.lead-card{display:none!important}
   .proposal-frame{border-color:#0A3D5C!important;page-break-inside:avoid}
   .proposal-frame::before{background:#0A3D5C!important}
   .gold,.stat-card .val{color:#0A3D5C!important}
@@ -125,15 +145,15 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
 </style>
 </head>
 <body>
-<script src="auth.js"></script>
 
-<a href="assets.html" class="back-btn">Back to Assets</a>
+<a href="/tools" class="back-btn">← All Tools</a>
 
 <div class="app">
 
 <div class="header">
-  <h1>🧾 Bill Calculator — <span class="gold">Solar Proposal Estimate</span></h1>
-  <div class="sub">Enter PEA bill data for a preliminary estimate before site survey and PEA review</div>
+  <h1>🧾 Free Solar Savings Calculator — <span class="gold">Scan Your PEA Bill</span></h1>
+  <div class="sub">Enter your PEA bill numbers and see how much you could save with solar — in 60 seconds, free</div>
+  <div class="sub" style="font-size:13px;opacity:.45;margin-top:4px">กรอกข้อมูลบิลไฟฟ้า กฟภ. ของคุณ ดูว่าโซลาร์เซลล์ช่วยประหยัดได้เท่าไหร่ — ฟรี</div>
 </div>
 
 <!-- Steps indicator -->
@@ -161,7 +181,7 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
     <div class="input-grid">
       <div>
         <div class="input-group">
-          <label>Customer Name</label>
+          <label>Name / Business Name</label>
           <input type="text" id="inName" placeholder="e.g. Sunset Villa Resort">
         </div>
         <div class="input-group">
@@ -262,25 +282,64 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
 
   <div class="savings-bar" id="savingsBar"></div>
 
-  <div class="card">
-    <h3>📊 15-Year Projection</h3>
-    <div style="overflow-x:auto">
-      <table class="proposal-table" id="projectionTable"></table>
+  <!-- Lead capture gate: full breakdown + proposal PDF unlock -->
+  <div class="lead-card" id="leadGateCard">
+    <h3>🔓 Unlock Your Full 15-Year Breakdown</h3>
+    <div class="lead-sub">Get the complete year-by-year savings table, monthly cost chart and a free proposal PDF — plus a free site survey if you want one.</div>
+    <div class="lead-sub-th">กรอกชื่อและเบอร์โทรเพื่อดูตารางประหยัด 15 ปีแบบเต็ม และรับใบเสนอราคา PDF ฟรี</div>
+    <form id="leadForm" class="lead-form" novalidate>
+      <div class="input-group">
+        <label>Name / ชื่อ *</label>
+        <input type="text" id="leadName" autocomplete="name" placeholder="Your name" required>
+      </div>
+      <div class="input-group">
+        <label>Phone / เบอร์โทร *</label>
+        <input type="tel" id="leadPhone" autocomplete="tel" placeholder="+66 ..." required>
+      </div>
+      <div class="input-group">
+        <label>Email (optional / ไม่บังคับ)</label>
+        <input type="email" id="leadEmail" autocomplete="email" placeholder="you@example.com">
+      </div>
+      <!-- Honeypot: humans never see or fill this -->
+      <div class="hp-field" aria-hidden="true">
+        <label>Website</label>
+        <input type="text" id="leadWebsite" name="website" tabindex="-1" autocomplete="off">
+      </div>
+    </form>
+    <div class="lead-submit-row">
+      <button class="btn btn-gold" id="leadSubmitBtn" onclick="submitLead()">Unlock Full Results → / ดูผลลัพธ์ทั้งหมด</button>
     </div>
+    <div class="lead-error" id="leadError"></div>
+    <div class="lead-privacy">We only use your details to send your solar estimate. No spam, ever. · ข้อมูลของคุณใช้สำหรับส่งผลประเมินโซลาร์เท่านั้น</div>
   </div>
 
-  <div class="card">
-    <h3>📈 Monthly Cost: PEA vs Solar</h3>
-    <div class="chart-container" id="monthChart"></div>
-    <div style="display:flex;gap:20px;justify-content:center;margin-top:24px;font-size:12px">
-      <span><span style="display:inline-block;width:12px;height:12px;background:var(--coral);border-radius:3px;margin-left:4px"></span> Current PEA</span>
-      <span><span style="display:inline-block;width:12px;height:12px;background:#2ED89A;border-radius:3px;margin-left:4px"></span> With Solar</span>
+  <div class="gated locked" id="gatedContent">
+    <div class="gate-overlay">
+      <div class="lock">🔒</div>
+      <div class="gate-msg">Enter your name & phone above to unlock the full breakdown + proposal PDF</div>
     </div>
-  </div>
+    <div class="gate-inner">
+      <div class="card">
+        <h3>📊 15-Year Projection</h3>
+        <div style="overflow-x:auto">
+          <table class="proposal-table" id="projectionTable"></table>
+        </div>
+      </div>
 
-  <div class="btn-row">
-    <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
-    <button class="btn btn-gold" onclick="goStep(3)">Generate Proposal →</button>
+      <div class="card">
+        <h3>📈 Monthly Cost: PEA vs Solar</h3>
+        <div class="chart-container" id="monthChart"></div>
+        <div style="display:flex;gap:20px;justify-content:center;margin-top:24px;font-size:12px">
+          <span><span style="display:inline-block;width:12px;height:12px;background:var(--coral);border-radius:3px;margin-left:4px"></span> Current PEA</span>
+          <span><span style="display:inline-block;width:12px;height:12px;background:#2ED89A;border-radius:3px;margin-left:4px"></span> With Solar</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-gold" onclick="goStep(3)">Generate Proposal →</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -307,7 +366,7 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
     <div class="savings-bar" id="propSavings" style="margin-top:24px"></div>
 
     <div style="text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid rgba(232,168,32,.2)">
-      <p style="font-size:14px;opacity:.6">Bustan Energy — Bustan Energy</p>
+      <p style="font-size:14px;opacity:.6">Bustan Energy — Solar EPC & PPA, Thailand</p>
       <p style="font-size:12px;opacity:.4;margin-top:4px">Koh Phangan, Surat Thani, Thailand | Line: @kophangansolar</p>
     </div>
   </div>
@@ -323,7 +382,7 @@ body{font-family:'Space Grotesk','Heebo',sans-serif;background:var(--night);colo
 
 <script>
 // === Constants ===
-const COST_PER_KWP = 12000; // actual cost
+const COST_PER_KWP = 12000; // planning estimate, verified in BOM before proposal
 const PRICE_PER_KWP = 32000; // EPC planning estimate
 const PPA_RATE = 4.20;
 const PPA_ESCALATION = 0.03;
@@ -530,6 +589,11 @@ function renderAnalysis() {
 }
 
 function goStep(n) {
+  // Proposal (step 3) is gated behind lead capture
+  if (n === 3 && !isLeadUnlocked()) {
+    focusLeadGate();
+    return;
+  }
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + n).classList.add('active');
 
@@ -630,6 +694,126 @@ function sendWhatsApp() {
   );
   window.open('https://wa.me/66946692011?text=' + text, '_blank');
 }
+
+// ==================== LEAD GATE ====================
+const LEAD_KEY = 'bustan_bs_lead';
+const UTM_KEY = 'bustan_utm';
+
+// Capture UTM / click-id params on landing (first touch per session)
+(function captureUtm() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid','ref'];
+    const found = {};
+    let any = false;
+    keys.forEach(k => { const v = params.get(k); if (v) { found[k] = v.slice(0, 300); any = true; } });
+    if (any && !sessionStorage.getItem(UTM_KEY)) {
+      found.landing_page = window.location.pathname;
+      sessionStorage.setItem(UTM_KEY, JSON.stringify(found));
+    }
+  } catch (e) { /* storage blocked — non-fatal */ }
+})();
+
+function getUtm() {
+  try { return JSON.parse(sessionStorage.getItem(UTM_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+
+function isLeadUnlocked() {
+  try { return !!localStorage.getItem(LEAD_KEY); }
+  catch (e) { return window.__leadUnlocked === true; }
+}
+
+function applyGateState() {
+  const gated = document.getElementById('gatedContent');
+  const card = document.getElementById('leadGateCard');
+  if (!gated || !card) return;
+  if (isLeadUnlocked()) {
+    gated.classList.remove('locked');
+    card.style.display = 'none';
+  } else {
+    gated.classList.add('locked');
+    card.style.display = '';
+  }
+}
+
+function focusLeadGate() {
+  const card = document.getElementById('leadGateCard');
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const nameInput = document.getElementById('leadName');
+    if (nameInput && !nameInput.value) setTimeout(() => nameInput.focus(), 400);
+  }
+}
+
+function showLeadError(msg) {
+  const el = document.getElementById('leadError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function buildBillSummary() {
+  const d = calcData;
+  if (!d || !d.actualKwp) return '';
+  return [
+    `Customer type: ${d.type || '-'} | Location: ${d.location || '-'}`,
+    `Monthly: ${d.kwh.toLocaleString()} kWh / ${fmt(d.kwh * d.effectiveTariff)} (tariff ฿${d.effectiveTariff.toFixed(2)}/kWh)`,
+    `Recommended system: ${d.actualKwp.toFixed(1)} kWp (${d.numPanels} panels)`,
+    `EPC: ${fmt(d.epcPrice)}, payback ${d.paybackEPC.toFixed(1)} yrs | PPA Y1 savings: ${fmt(d.ppaSavingsY1)}`,
+    `15-yr savings: EPC ${fmt(d.epc15.totalSavings - d.epcPrice)} / PPA ${fmt(d.ppa15.totalSavings)}`,
+  ].join('\n');
+}
+
+async function submitLead() {
+  const name = document.getElementById('leadName').value.trim();
+  const phone = document.getElementById('leadPhone').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+  const honeypot = document.getElementById('leadWebsite').value;
+  document.getElementById('leadError').style.display = 'none';
+
+  if (!name) { showLeadError('Please enter your name / กรุณากรอกชื่อ'); return; }
+  if ((phone.match(/\d/g) || []).length < 7) { showLeadError('Please enter a valid phone number / กรุณากรอกเบอร์โทรที่ถูกต้อง'); return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showLeadError('Please enter a valid email or leave it empty / อีเมลไม่ถูกต้อง'); return; }
+
+  const btn = document.getElementById('leadSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Unlocking…';
+
+  try {
+    const res = await fetch('/api/contact-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        phone,
+        email,
+        website: honeypot,
+        source: 'bill-scanner',
+        propertyType: (calcData && calcData.type) || document.getElementById('inType').value || '',
+        systemInterest: (calcData && calcData.model) || '',
+        billSummary: buildBillSummary(),
+        utm: getUtm(),
+      }),
+    });
+    const json = await res.json().catch(() => null);
+    if (!res.ok || !json || !json.ok) throw new Error((json && json.error) || 'submit_failed');
+
+    try { localStorage.setItem(LEAD_KEY, JSON.stringify({ name, phone, ts: Date.now() })); }
+    catch (e) { window.__leadUnlocked = true; }
+
+    // Personalize proposal if the bill form had no name
+    if (calcData && (!calcData.name || calcData.name === 'Customer')) calcData.name = name;
+    if (window.posthog) { try { posthog.capture('bill_scanner_lead', { source: 'bill-scanner' }); } catch (e) {} }
+    applyGateState();
+  } catch (err) {
+    showLeadError('Could not submit right now — please try again or message us on WhatsApp +66 94 669 2011');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Unlock Full Results → / ดูผลลัพธ์ทั้งหมด';
+  }
+}
+
+applyGateState();
 </script>
 </body>
 </html>
