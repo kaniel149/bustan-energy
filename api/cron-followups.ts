@@ -12,7 +12,7 @@ import { supaGetAll, supaPatch, supaPost } from './_lib/supa.js'
 import { isWhatsAppConfigured, sendWhatsApp, type WhatsAppSendResult } from './_lib/whatsapp.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
-const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan.energy>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan-energy.com>'
 
 // CRON_SECRET must be set — no fallback to prevent unauthenticated execution
 const CRON_SECRET = process.env.CRON_SECRET

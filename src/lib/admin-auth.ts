@@ -1,7 +1,8 @@
 import { supabase } from './supabase'
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js'
 
-const DEFAULT_ADMIN_EMAILS = 'k@kanielt.com,erez@bustan-energy.com,kaniel@bustan-energy.com'
+// Old @energy-tm.com addresses kept until Stage 4 of the Bustan rebrand
+const DEFAULT_ADMIN_EMAILS = 'k@kanielt.com,erez@bustan-energy.com,kaniel@bustan-energy.com,erez@energy-tm.com,kaniel@energy-tm.com'
 
 function list(value: string | undefined, fallback = ''): string[] {
   return (value || fallback)

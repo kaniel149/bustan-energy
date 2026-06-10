@@ -13,7 +13,7 @@ import { escapeHtml } from './_lib/html.js'
 import { supaGetAll, supaUpsert } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY
-const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan.energy>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan-energy.com>'
 const ALERT_TO = process.env.MONITORING_ALERT_EMAIL || 'erez@bustan-energy.com'
 
 // CRON_SECRET must be set — no fallback to prevent unauthenticated execution

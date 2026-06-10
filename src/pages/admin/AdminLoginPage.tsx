@@ -99,7 +99,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@bustan.energy"
+                  placeholder="you@bustan-energy.com"
                   required
                   autoComplete="email"
                   className="w-full px-3 py-2.5 rounded-xl bg-white border border-[#24463E]/15 text-sm text-[#27342F] placeholder:text-[#27342F]/35 focus:outline-none focus:border-[#006F6B]/60 transition-colors text-left"

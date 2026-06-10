@@ -15,7 +15,7 @@ import type { JsonValue } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const NOTIFY = ['erez@bustan-energy.com', 'kaniel@bustan-energy.com']
-const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan.energy>'
+const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan-energy.com>'
 
 interface ProposalViewRow {
   ref_number: string
