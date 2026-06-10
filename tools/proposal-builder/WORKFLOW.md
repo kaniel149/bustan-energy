@@ -73,7 +73,7 @@ All pricing comes from `bom-templates.json > locations.koh_phangan` or similar.
 
 1. Receive drone photo of roof → save as `output/X-001-roof-before.jpg`
 2. Get from client: name, Thai ID (13-digit), address, land deed copy, electricity bill
-3. Run KP Solar Pro v2 at energy-tm.com/admin to auto-detect roof area + panel fit
+3. Run KP Solar Pro v2 at bustan-energy.com/admin to auto-detect roof area + panel fit
 4. Decide system size (e.g. 18 panels × 580W = 10.44 kWp)
 
 ### Step 2: Build JSON data files
@@ -107,7 +107,7 @@ node tools/proposal-builder/generate-pea.mjs --ref X-001 --data clients/X-opt3-b
 **Requires Gemini billing enabled** (free tier has 0 quota for image generation).
 
 Option A — via web admin:
-- Go to energy-tm.com/admin → open project → "Add Panels" button → upload roof photo → specify panel count + arrangement → wait 30-60s → download result
+- Go to bustan-energy.com/admin → open project → "Add Panels" button → upload roof photo → specify panel count + arrangement → wait 30-60s → download result
 
 Option B — CLI (faster for bulk):
 ```bash
@@ -146,7 +146,7 @@ uv run ~/Desktop/projects/.agents/skills/nano-banana-pro/scripts/generate_image.
 ### Step 7: After signature
 
 1. Use admin-create-proposal API to register in DB → gets `ref_number` + password
-2. Email client the signed URL: `energy-tm.com/p/X-001`
+2. Email client the signed URL: `bustan-energy.com/p/X-001`
 3. Generate PEA package via `/api/admin-pea-package` (uploads to Supabase storage)
 4. Submit to PEA Surat Thani → update `projects.pea_status = 'submitted'`
 

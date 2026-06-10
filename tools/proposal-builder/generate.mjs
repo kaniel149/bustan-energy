@@ -129,7 +129,7 @@ function calcProposalFinancials(data) {
 // -- ENV ----------------------------------------------------------------------------------
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-const PUBLIC_BASE_URL = process.env.PROPOSAL_BASE_URL || 'https://energy-tm.com/p'
+const PUBLIC_BASE_URL = process.env.PROPOSAL_BASE_URL || 'https://bustan-energy.com/p'
 
 // -- ARGS ---------------------------------------------------------------------------------
 function parseArgs() {

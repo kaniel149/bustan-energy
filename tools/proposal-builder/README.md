@@ -13,7 +13,7 @@ npx playwright install chromium
 # 2. Set env vars (add to ~/.zshrc)
 export SUPABASE_URL="https://trvgpgpsqvvdsudpgwpm.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="..."
-export PROPOSAL_BASE_URL="https://energy-tm.com/p"
+export PROPOSAL_BASE_URL="https://bustan-energy.com/p"
 
 # 3. Generate a proposal
 node generate.mjs --data clients/amir.json
@@ -28,10 +28,10 @@ node generate.mjs --data clients/amir.json
 
 ## How Tracking Works
 
-1. Client opens `https://energy-tm.com/p/AMIR-001`
+1. Client opens `https://bustan-energy.com/p/AMIR-001`
 2. Password gate appears → client enters 6-digit password
 3. `POST /api/proposal-view` validates + logs view
-4. Email sent to **erez@energy-tm.com** + **kaniel@energy-tm.com**
+4. Email sent to **erez@bustan-energy.com** + **kaniel@bustan-energy.com**
 5. `localStorage` remembers unlock → auto-opens on next visit (but still logs)
 
 ## Email Notification
@@ -65,7 +65,7 @@ cp output/*.png output/*.jpeg ../../public/proposals/
 # 3. Deploy main project
 cd ../.. && vercel --prod
 
-# 4. Send client: https://energy-tm.com/p/AMIR-001 + password
+# 4. Send client: https://bustan-energy.com/p/AMIR-001 + password
 ```
 
 ## Required Env Vars (Vercel)

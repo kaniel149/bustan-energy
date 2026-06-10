@@ -88,7 +88,7 @@ async function generatePDF(htmlPath, pdfPath) {
       footerTemplate: `
         <div style="font-family:Inter,sans-serif; font-size:7pt; color:#A0AEC0;
                     width:100%; padding:0 15mm; display:flex; justify-content:space-between; box-sizing:border-box;">
-          <span>Bustan Energy Co., Ltd. — energy-tm.com</span>
+          <span>Bustan Energy Co., Ltd. — bustan-energy.com</span>
           <span class="pageNumber"></span> / <span class="totalPages"></span>
         </div>`,
     })
