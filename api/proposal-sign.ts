@@ -183,29 +183,34 @@ export default async function handler(req: Request): Promise<Response> {
     const s = Array.isArray(saved) ? saved[0] : saved
 
     // Flip proposal status to 'signed' (trigger in migration 010 also does this,
-    // but the explicit PATCH ensures it even if the trigger is disabled)
-    supaPatch(`proposals?ref_number=eq.${encodeURIComponent(ref)}`, {
-      status: 'signed',
-      signed_at: signature.signed_at,
-    }).catch(() => {})
-
-    // Analytics event
-    supaPost('proposal_events', {
-      proposal_ref: ref,
-      event_type: 'signed',
-      event_data: {
-        signer_name,
-        signer_email: signer_email || null,
-        hash: hash.slice(0, 16),
-        ip,
-      },
-    }).catch(() => {})
-
+    // but the explicit PATCH ensures it even if the trigger is disabled).
+    // NOTE: previously fire-and-forget — on Edge, work scheduled after the
+    // response may be dropped, so the team/client emails could silently not
+    // send. Await everything (allSettled = failures don't block signing ack).
     const teamSubject = `🎉 חתימה התקבלה · ${proposal.client_name || proposal.ref_number} · ${ref}`
-    sendEmail(NOTIFY, teamSubject, teamEmail(proposal, s)).catch(() => {})
+    const postSignTasks: Promise<unknown>[] = [
+      supaPatch(`proposals?ref_number=eq.${encodeURIComponent(ref)}`, {
+        status: 'signed',
+        signed_at: signature.signed_at,
+      }),
+      supaPost('proposal_events', {
+        proposal_ref: ref,
+        event_type: 'signed',
+        event_data: {
+          signer_name,
+          signer_email: signer_email || null,
+          hash: hash.slice(0, 16),
+          ip,
+        },
+      }),
+      sendEmail(NOTIFY, teamSubject, teamEmail(proposal, s)),
+    ]
     if (signer_email) {
-      sendEmail([signer_email], `&#x2713; Agreement signed · Bustan Energy · ${ref}`, clientEmail(proposal, s)).catch(() => {})
+      postSignTasks.push(
+        sendEmail([signer_email], `&#x2713; Agreement signed · Bustan Energy · ${ref}`, clientEmail(proposal, s)),
+      )
     }
+    await Promise.allSettled(postSignTasks)
 
     return Response.json({ ok: true, signature_id: s.id, hash })
   } catch (e: unknown) {
