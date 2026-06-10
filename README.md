@@ -1,8 +1,8 @@
 # Bustan Energy — Solar Intelligence Platform
 
 ## Status: Live
-- **URL:** https://energy-tm.com
-- **CRM:** crm.energy-tm.com
+- **URL:** https://bustan-energy.com
+- **CRM:** crm.bustan-energy.com
 - **Supabase:** trvgpgpsqvvdsudpgwpm
 - **Vercel:** solar-intelligence
 

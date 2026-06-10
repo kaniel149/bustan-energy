@@ -5,7 +5,7 @@
 
 import { escapeHtml } from './html.js'
 
-const SITE_URL = process.env.SITE_URL || 'https://energy-tm.com'
+const SITE_URL = process.env.SITE_URL || 'https://bustan-energy.com'
 const WHATSAPP = process.env.CONTACT_WHATSAPP || '+66 94 669 2011'
 
 export interface DripVars {
@@ -27,7 +27,7 @@ function layout(heading: string, body: string): string {
   <div style="background:white;padding:28px;border:1px solid #eee;border-top:none;border-radius:0 0 16px 16px;color:#1a1a1a;">
     ${body}
     <p style="color:#666;font-size:13px;margin-top:28px;">Questions? WhatsApp us at ${escapeHtml(WHATSAPP)} or just reply to this email.</p>
-    <p style="color:#999;font-size:11px;margin-top:16px;">You're receiving this because you contacted Bustan Energy at energy-tm.com. Reply "unsubscribe" and we'll stop emailing you.</p>
+    <p style="color:#999;font-size:11px;margin-top:16px;">You're receiving this because you contacted Bustan Energy at bustan-energy.com. Reply "unsubscribe" and we'll stop emailing you.</p>
   </div>
 </div>`
 }
