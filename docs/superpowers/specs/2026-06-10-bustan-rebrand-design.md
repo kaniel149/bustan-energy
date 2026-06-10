@@ -2,7 +2,16 @@
 
 **Date:** 2026-06-10
 **Decision maker:** Kaniel Tordjman
-**Status:** Approved approach A (staged migration)
+**Status:** Stage 1 ✅ DONE (2026-06-10). Stages 2–4 pending.
+
+**Stage 1 outcome notes:**
+- SI + CS fully swept (0 TM refs except transitional: `crm.energy-tm.com` in App.tsx, old admin emails in admin-access/admin-auth defaults, CS/CNAME)
+- bustan-energy.com confirmed attached to Vercel project `solar-intelligence`; deployed + smoke passed (/p/AMIR-001 200, Bustan branding, sitemap 96/0)
+- Resend: old failed energy-tm.com domain DELETED; bustan-energy.com added (id a54afb7b-f297-4251-b088-be9c81866782), status not_started — WAITING on 3 GoDaddy DNS records (DKIM + send MX/TXT)
+- Prod has NO email env vars — senders/admin lists come from code defaults (now bustan-energy.com). Fixed stray `bustan.energy` senders in 6 api files.
+- Reply-to/notify = @bustan-energy.com (Mailgun MX exists on domain) — mailbox receipt NOT yet confirmed
+- ⚠️ Rotate RESEND_API_KEY (full key surfaced in session output) — add to security TODO
+- ⚠️ Stage 4: remove duplicate "* 2.*" files (api/contact-lead 2.ts, proposal-builder " 2" files) — macOS copy artifacts
 
 ## Goal
 
