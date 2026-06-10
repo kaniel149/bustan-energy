@@ -106,7 +106,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Update existing bustan user's password
-  const { error: updateError } = await bustanAdmin.auth.admin.updateUser(bustanUserId, {
+  const { error: updateError } = await bustanAdmin.auth.admin.updateUserById(bustanUserId, {
     password,
   })
   if (updateError) {
