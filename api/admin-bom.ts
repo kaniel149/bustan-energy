@@ -6,7 +6,6 @@
 export const config = { runtime: 'edge' }
 
 import { isAllowedAdmin } from './_lib/admin-access.js'
-// @ts-expect-error - Vercel esbuild handles JSON imports without attributes
 import templatesJson from '../tools/proposal-builder/bom-templates.json'
 import {
   resolveSupplierPrice,
@@ -238,13 +237,13 @@ function calcBOM(opts: { panels: number; watt: number; template: string; battery
     const subtotal = unitPrice * qty
 
     const row = {
+      ...resolvedPrice,
       category: item.category,
       sku: skuName,
       qty,
       unit_price_thb: unitPrice,
       subtotal_thb: subtotal,
       note: item.note || '',
-      ...resolvedPrice,
     }
     rows.push(row)
     byCategory[item.category] ??= { items: [], subtotal: 0 }
