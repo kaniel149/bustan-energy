@@ -9,7 +9,7 @@
  */
 import type { Lang } from '../../i18n/translations'
 
-export const BASE_URL = 'https://energy-tm.com'
+export const BASE_URL = 'https://bustan-energy.com'
 const BUSINESS_ID = `${BASE_URL}/#business`
 
 // ─── LocalBusiness ────────────────────────────────────────────────────────────

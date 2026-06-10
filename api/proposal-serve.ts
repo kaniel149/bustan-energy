@@ -52,7 +52,7 @@ const expiredPage = (ref: string) => `<!DOCTYPE html>
     <h1>Proposal Expired</h1>
     <p>Proposal <b>${escapeHtml(ref)}</b> has expired.<br>Please contact Bustan Energy to receive an updated quote.</p>
     <p style="margin-top:24px;">
-      <a href="https://energy-tm.com">energy-tm.com</a> &nbsp;·&nbsp;
+      <a href="https://bustan-energy.com">bustan-energy.com</a> &nbsp;·&nbsp;
       <a href="https://wa.me/66946692011">WhatsApp</a>
     </p>
   </div>

@@ -41,7 +41,7 @@ export function ProposalSuccessModal({
   onCreateAnother,
   onClose,
 }: ProposalSuccessModalProps) {
-  const url = `https://energy-tm.com/p/${ref}`
+  const url = `https://bustan-energy.com/p/${ref}`
   const firstName = clientName.split(' ')[0] ?? clientName
 
   const waMessage = `היי ${firstName}, הצעת המחיר שלך מ-Bustan Energy:\n${url}\nסיסמה: ${password}`

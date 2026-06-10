@@ -10,7 +10,7 @@ import { getProposalSessionCookie, verifyProposalSession } from './_lib/proposal
 import { supaGet, supaPost, supaPatch } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
-const NOTIFY = ['erez@energy-tm.com', 'kaniel@energy-tm.com']
+const NOTIFY = ['erez@bustan-energy.com', 'kaniel@bustan-energy.com']
 const FROM = process.env.RESEND_FROM || 'Bustan Energy Contracts <contracts@bustan.energy>'
 
 interface ProposalSignRow {
@@ -55,7 +55,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
     body: JSON.stringify({
       from: FROM,
       to,
-      reply_to: ['erez@energy-tm.com'],
+      reply_to: ['erez@bustan-energy.com'],
       subject,
       html,
     }),

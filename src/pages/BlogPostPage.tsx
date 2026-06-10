@@ -55,7 +55,7 @@ export default function BlogPostPage() {
             ...pageBreadcrumb(lang, t.nav.blog, '/blog'),
             {
               name: post.title,
-              url: `https://energy-tm.com${lang === 'th' ? '/th' : ''}/blog/${post.slug}`,
+              url: `https://bustan-energy.com${lang === 'th' ? '/th' : ''}/blog/${post.slug}`,
             },
           ]),
           articleSchema({

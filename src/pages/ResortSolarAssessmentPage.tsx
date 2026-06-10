@@ -185,7 +185,7 @@ export default function ResortSolarAssessmentPage() {
         description="Find out if solar + battery is worth it for your Thailand resort before investing. Bustan reviews bills, solar fit, battery fit, ROI assumptions and next steps."
         path="/resort-solar-assessment"
         lang={lang}
-        ogImage="https://energy-tm.com/assets/images/strategy-03-resort.png"
+        ogImage="https://bustan-energy.com/assets/images/strategy-03-resort.png"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'Service',

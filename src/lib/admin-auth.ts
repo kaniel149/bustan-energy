@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js'
 
-const DEFAULT_ADMIN_EMAILS = 'k@kanielt.com,erez@energy-tm.com,kaniel@energy-tm.com'
+const DEFAULT_ADMIN_EMAILS = 'k@kanielt.com,erez@bustan-energy.com,kaniel@bustan-energy.com'
 
 function list(value: string | undefined, fallback = ''): string[] {
   return (value || fallback)
@@ -25,7 +25,7 @@ export async function signInWithEmail(email: string): Promise<{ error: string | 
   const origin =
     typeof window !== 'undefined' && window.location.origin
       ? window.location.origin
-      : 'https://energy-tm.com'
+      : 'https://bustan-energy.com'
   const redirectTo = `${origin}/admin`
 
   const { error } = await supabase.auth.signInWithOtp({

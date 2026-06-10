@@ -5,7 +5,7 @@ import { getSatelliteImageUrl } from './enrich-building'
 
 const DEFAULT_PPA_DISCOUNT = 0.80  // PPA price = 80% of grid tariff
 const DEFAULT_PHONE = '66502213948' // Bustan Energy Thailand
-const LINE_OA_ID = import.meta.env.VITE_LINE_OA_ID || '%40tmenergy'
+const LINE_OA_ID = import.meta.env.VITE_LINE_OA_ID || '%40bustan-energy'
 
 export function openProposal(params: {
   property: Property

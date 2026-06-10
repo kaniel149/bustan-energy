@@ -1,5 +1,5 @@
 # Bustan Energy — SEO Strategy
-## energy-tm.com | Bustan Energy Installation
+## bustan-energy.com | Bustan Energy Installation
 
 **Created:** 2026-04-08
 **Current ranking:** #2 for "solar energy ko phangan" | Missing from all other keywords
@@ -56,14 +56,14 @@ Projects:     Our Solar Projects | Ko Phangan Installations — Bustan Energy
 Each page needs a unique, compelling meta description (150-160 chars) with CTA.
 
 ### 3. Canonical URLs
-Add `<link rel="canonical" href="https://energy-tm.com/[page]">` to every page.
+Add `<link rel="canonical" href="https://bustan-energy.com/[page]">` to every page.
 
 ### 4. Open Graph Tags
 ```html
 <meta property="og:title" content="...">
 <meta property="og:description" content="...">
-<meta property="og:image" content="https://energy-tm.com/og-image.jpg">
-<meta property="og:url" content="https://energy-tm.com/[page]">
+<meta property="og:image" content="https://bustan-energy.com/og-image.jpg">
+<meta property="og:url" content="https://bustan-energy.com/[page]">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
 ```
@@ -76,8 +76,8 @@ Add `<link rel="canonical" href="https://energy-tm.com/[page]">` to every page.
   "@context": "https://schema.org",
   "@type": ["SolarEnergyCompany", "LocalBusiness"],
   "name": "Bustan Energy",
-  "url": "https://energy-tm.com",
-  "logo": "https://energy-tm.com/logo.png",
+  "url": "https://bustan-energy.com",
+  "logo": "https://bustan-energy.com/logo.png",
   "description": "Premium solar energy solutions for Ko Phangan, Thailand",
   "address": {
     "@type": "PostalAddress",
@@ -136,7 +136,7 @@ Add `<link rel="canonical" href="https://energy-tm.com/[page]">` to every page.
 ## Site Architecture
 
 ```
-energy-tm.com/
+bustan-energy.com/
 ├── / (Homepage — hero, services overview, social proof)
 ├── /services (Overview — links to sub-services)
 │   ├── /services/residential (Home solar systems)
@@ -258,8 +258,8 @@ Map each route to its SEO config (title, description, schema type).
 
 ### Step 3: Google Search Console
 1. Go to search.google.com/search-console
-2. Add property: energy-tm.com
-3. Submit sitemap: energy-tm.com/sitemap.xml
+2. Add property: bustan-energy.com
+3. Submit sitemap: bustan-energy.com/sitemap.xml
 
 ### Step 4: Google Business Profile
 1. Go to business.google.com

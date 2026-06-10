@@ -14,7 +14,7 @@ import { supaGetAll, supaUpsert } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY
 const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan.energy>'
-const ALERT_TO = process.env.MONITORING_ALERT_EMAIL || 'erez@energy-tm.com'
+const ALERT_TO = process.env.MONITORING_ALERT_EMAIL || 'erez@bustan-energy.com'
 
 // CRON_SECRET must be set — no fallback to prevent unauthenticated execution
 const CRON_SECRET = process.env.CRON_SECRET
@@ -136,7 +136,7 @@ function buildAlertEmail(flagged: SystemHealth[]): { subject: string; html: stri
       ${rows}
     </table>
     <p style="margin:24px 0 0;">
-      <a href="https://energy-tm.com/admin/monitoring" style="background:#E8A820;color:#0D2137;padding:12px 24px;border-radius:100px;text-decoration:none;font-weight:800;">Open Monitoring Dashboard →</a>
+      <a href="https://bustan-energy.com/admin/monitoring" style="background:#E8A820;color:#0D2137;padding:12px 24px;border-radius:100px;text-decoration:none;font-weight:800;">Open Monitoring Dashboard →</a>
     </p>
   </div>
 </div>`,

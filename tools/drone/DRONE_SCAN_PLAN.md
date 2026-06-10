@@ -285,7 +285,7 @@ ROI on scan: 1.8 חודשים
 - מדורג לפי פוטנציאל סולארי
 
 ### 7.4 Interactive Solar Map
-- URL ציבורי: tmenergy.asia/map (לאחר רכישת domain)
+- URL ציבורי: bustan-energy.com/map (לאחר רכישת domain)
 - כל גג לחיץ → הצעה אוטומטית
 - שכבות: אורתומוזאיקה, פוטנציאל סולארי, בעלים, סטטוס
 

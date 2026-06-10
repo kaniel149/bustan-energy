@@ -54,7 +54,7 @@ async function sendEmail(to: string, subject: string, html: string) {
     body: JSON.stringify({
       from: FROM,
       to: [to],
-      reply_to: ['erez@energy-tm.com'],
+      reply_to: ['erez@bustan-energy.com'],
       subject,
       html,
     }),
@@ -62,7 +62,7 @@ async function sendEmail(to: string, subject: string, html: string) {
 }
 
 function buildFollowupEmail(type: string, proposal: FollowupProposalRow): { subject: string; html: string } {
-  const url = `https://energy-tm.com/p/${encodeURIComponent(proposal.ref_number)}`
+  const url = `https://bustan-energy.com/p/${encodeURIComponent(proposal.ref_number)}`
   const firstName = escapeHtml((proposal.client_name || 'valued customer').split(' ')[0])
   const systemLine = `${escapeHtml(proposal.system_size_kwp)} kWp · <b>Total:</b> ฿${fmt(proposal.total_price_thb)}`
   const refEsc = escapeHtml(proposal.ref_number)
@@ -146,7 +146,7 @@ interface WaProposalRow {
 }
 
 function buildWhatsAppMessages(p: WaProposalRow): { client: string; team: string } {
-  const url = `https://energy-tm.com/p/${encodeURIComponent(p.ref_number)}`
+  const url = `https://bustan-energy.com/p/${encodeURIComponent(p.ref_number)}`
   const firstName = (p.client_name || '').trim().split(' ')[0] || 'there'
   const size = p.system_size_kwp ? `${p.system_size_kwp} kWp` : 'solar'
 

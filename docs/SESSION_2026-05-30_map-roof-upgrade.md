@@ -2,7 +2,7 @@
 **Date:** 2026-05-29 → 2026-05-30 · **Repo:** `solar-intelligence` · **Branch:** `feat/map-roof-upgrade` (merged to `main`)
 **Plan file:** `~/.claude/plans/parallel-wishing-zephyr.md`
 
-## What shipped (all live on main + Vercel prod, energy-tm.com / bustan-energy.com)
+## What shipped (all live on main + Vercel prod, bustan-energy.com / bustan-energy.com)
 | Phase | Feature | Commit |
 |---|---|---|
 | P0 | fit-to-bounds, fly-to-selected, persisted map style, legend synced to priority colors | `adbdfb9` |
@@ -29,11 +29,11 @@ PRs: #17 (P0–P4, merged). Then auth fix pushed direct to main.
 
 ## Vercel env set
 - `BUSTAN_SUPABASE_SERVICE_ROLE_KEY` (production) — validated against bustan project (200). Local copy in `.env` (gitignored).
-- Existing: `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` (TM Energy), VITE_* keys.
+- Existing: `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` (Bustan Energy), VITE_* keys.
 
 ## ⚠️ Root cause why features were invisible (FIXED)
 1. `bustan.app_users` empty → everyone `viewer` → all bustan-gated UI hidden. **Fixed** (backfill).
-2. Login authenticated only the **main TM Energy project** (`trvgpgpsqvvdsudpgwpm`), never the separate bustan client → 85 leads never loaded (showed demo `16,253`). **Fixed** (dual sign-in in LoginModal + CRMPage; sign-out clears both).
+2. Login authenticated only the **main Bustan Energy project** (`trvgpgpsqvvdsudpgwpm`), never the separate bustan client → 85 leads never loaded (showed demo `16,253`). **Fixed** (dual sign-in in LoginModal + CRMPage; sign-out clears both).
 
 ## ⏳ Remaining manual step (only thing left)
 Dual sign-in succeeds only if the **bustan password == main password** for the same email.

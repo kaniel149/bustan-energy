@@ -28,4 +28,4 @@ Disallow: /proposals
 Disallow: /proposal-templates
 Disallow: /preview-scroll
 
-Sitemap: https://energy-tm.com/sitemap.xml
+Sitemap: https://bustan-energy.com/sitemap.xml

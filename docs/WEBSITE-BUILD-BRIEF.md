@@ -1,6 +1,6 @@
 # Bustan Energy Website — Full Build Brief
 
-## Domain: energy-tm.com
+## Domain: bustan-energy.com
 ## Stack: React + TypeScript + Vite + Tailwind + Framer Motion + Zustand
 ## Deploy: Vercel (project: solar-intelligence)
 ## Supabase: trvgpgpsqvvdsudpgwpm (Bustan Energy)
@@ -9,14 +9,14 @@
 
 ## Goal
 
-Build a world-class solar energy company website at energy-tm.com.
+Build a world-class solar energy company website at bustan-energy.com.
 Apple-level design quality — animated product showcases, scroll-driven animations,
 smooth transitions, premium feel. Full SEO optimization.
 
 ## What Exists Today
 
 ### Current App (solar-intelligence)
-The current app at energy-tm.com is a **GIS solar intelligence platform** (map + buildings).
+The current app at bustan-energy.com is a **GIS solar intelligence platform** (map + buildings).
 This should become ONE SECTION of the new website, not the whole site.
 
 ### copenhagen-solar Repo (source material)
@@ -175,4 +175,4 @@ Path: `~/Desktop/projects/copenhagen-solar` (618 files)
 - Source content: `~/Desktop/projects/copenhagen-solar/`
 - Supabase MCP: `.mcp.json` (project scope, trvgpgpsqvvdsudpgwpm)
 - Vercel env vars: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (already set)
-- Domain: energy-tm.com (GoDaddy → Vercel DNS, SSL active)
+- Domain: bustan-energy.com (GoDaddy → Vercel DNS, SSL active)

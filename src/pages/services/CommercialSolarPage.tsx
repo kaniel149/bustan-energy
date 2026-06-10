@@ -16,7 +16,7 @@ import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
 
-const BASE_URL = 'https://energy-tm.com'
+const BASE_URL = 'https://bustan-energy.com'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },

@@ -1,4 +1,4 @@
-const DEFAULT_ADMIN_EMAILS = 'k@kanielt.com,erez@energy-tm.com,kaniel@energy-tm.com'
+const DEFAULT_ADMIN_EMAILS = 'k@kanielt.com,erez@bustan-energy.com,kaniel@bustan-energy.com'
 
 function list(value: string | undefined, fallback = ''): string[] {
   return (value || fallback)

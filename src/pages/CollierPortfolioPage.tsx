@@ -24,7 +24,7 @@ export default function CollierPortfolioPage() {
   return (
     <>
       <Helmet>
-        <title>Colliers Thailand — Solar Portfolio Demo | TM Energy</title>
+        <title>Colliers Thailand — Solar Portfolio Demo | Bustan Energy</title>
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
 
@@ -40,7 +40,7 @@ export default function CollierPortfolioPage() {
                 <h1 className="text-sm font-semibold text-white leading-tight">
                   Colliers Thailand — Solar Portfolio
                 </h1>
-                <p className="text-[10px] text-white/40">Demo · TM Energy</p>
+                <p className="text-[10px] text-white/40">Demo · Bustan Energy</p>
               </div>
             </div>
             <div className="ml-auto flex items-center gap-2 text-[10px] text-white/30">

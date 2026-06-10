@@ -939,7 +939,7 @@ git commit -m "feat: CRM v1 complete — dashboard, pipeline, lead detail, scann
 git push
 ```
 
-Vercel auto-deploys to crm.energy-tm.com.
+Vercel auto-deploys to crm.bustan-energy.com.
 
 ---
 

@@ -603,14 +603,14 @@ git commit -m "feat(content): content calendar — weeks 1-2"
 - [ ] Profile pic: Bustan Energy logo (circle crop from brand kit)
 - [ ] Cover photo: Render dark hero image (villa + solar + ocean)
 - [ ] About: "Solar intelligence for Koh Phangan. We scan your roof from space."
-- [ ] CTA button: "Contact Us" → energy-tm.com/contact
+- [ ] CTA button: "Contact Us" → bustan-energy.com/contact
 - [ ] Location: Koh Phangan, Surat Thani, Thailand
 
 ## Instagram
 - [ ] Create business account: @bustanenergy.th (already exists per CLAUDE.md)
 - [ ] Profile pic: Same as FB
 - [ ] Bio: "Solar Intelligence for Koh Phangan 🛰️☀️\nWe scan your roof from space.\n📩 Free assessment ↓"
-- [ ] Link in bio: energy-tm.com
+- [ ] Link in bio: bustan-energy.com
 - [ ] Connect to FB page
 - [ ] Switch to Professional Account → Business
 

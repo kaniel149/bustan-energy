@@ -1,6 +1,6 @@
 # Scraping Architecture — Solar Intelligence
 
-Authoritative reference for all data-acquisition tooling in the Bustan / TM Energy stack.
+Authoritative reference for all data-acquisition tooling in the Bustan / Bustan Energy stack.
 Last updated: 2026-05-31.
 
 ---
@@ -70,7 +70,7 @@ No API key required; Overture data is open-licence. Run locally or on a CI box �
 |----------|-----------|-------|
 | `FIRECRAWL_API_KEY` | `api/enrich-owner.ts` | Get from app.firecrawl.dev → API Keys |
 | `GOOGLE_MAPS_API_KEY` | `scripts/enrich_owners.py` (local) | Not deployed to Vercel; set in shell env when running the script. For Vercel usage (P6 Solar API) use `GOOGLE_SOLAR_API_KEY` as a separate key with only Solar API enabled. |
-| `BUSTAN_SUPABASE_URL` | `api/cron-process-scans.ts`, `workers/dbd-enricher` | Bustan project URL (not the TM Energy project) |
+| `BUSTAN_SUPABASE_URL` | `api/cron-process-scans.ts`, `workers/dbd-enricher` | Bustan project URL (not the Bustan Energy project) |
 | `BUSTAN_SUPABASE_SERVICE_ROLE_KEY` | Same | Service-role key; never expose client-side |
 | `CRON_SECRET` | `api/cron-process-scans.ts` | Bearer token used by Vercel cron + Cloud Scheduler |
 

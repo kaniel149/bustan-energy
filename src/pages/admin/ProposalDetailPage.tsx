@@ -175,7 +175,7 @@ export default function ProposalDetailPage() {
   }
 
   const badge = STATUS_BADGE[proposal.status]
-  const proposalUrl = `https://energy-tm.com/p/${proposal.ref_number}`
+  const proposalUrl = `https://bustan-energy.com/p/${proposal.ref_number}`
   const timeline = buildTimeline(proposal)
 
   const handleDownloadPDF = async () => {

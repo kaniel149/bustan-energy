@@ -646,7 +646,7 @@ export function ColliersPortfolio() {
 
       {/* Footer note */}
       <p className="text-[10px] text-white/20 text-center pb-4">
-        TM Energy &middot; Sales Demo &middot; Not for distribution &middot; Solar figures are estimates only
+        Bustan Energy &middot; Sales Demo &middot; Not for distribution &middot; Solar figures are estimates only
       </p>
     </div>
   )

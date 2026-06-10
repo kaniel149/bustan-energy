@@ -7,7 +7,7 @@
 - [ ] **LINE OA ID** — Fix `~your-line-id` placeholder in Footer.tsx, set `VITE_LINE_OA_ID` env var
 - [ ] **Contact form backend** — Currently fakes submission with setTimeout. Wire to Supabase leads table or Resend email
 - [ ] **Run Supabase migrations** — Verify 7 migrations (001-007) ran on project `trvgpgpsqvvdsudpgwpm`
-- [ ] **Instagram account** — Create @tmenergy or @tmenergy_solar, add link to Footer
+- [ ] **Instagram account** — Create @bustan-energy or @bustan-energy_solar, add link to Footer
 
 ### IMPORTANT (Week 1)
 
@@ -17,7 +17,7 @@
 - [ ] **Open Graph image** — Create og-default.jpg (1200x630) for social sharing
 - [ ] **Facebook page** — Create Bustan Energy Ko Phangan page (required for Meta Pixel + ads)
 - [ ] **Email service** — Set up Resend API for contact form emails, set `RESEND_API_KEY`
-- [ ] **info@energy-tm.com** — Set up email (Google Workspace / Zoho Mail)
+- [ ] **info@bustan-energy.com** — Set up email (Google Workspace / Zoho Mail)
 
 ### OPTIMIZATION (Week 2-3)
 
@@ -44,8 +44,8 @@ RESEND_API_KEY             ❌ Missing
 
 | Platform | Status | Action |
 |----------|--------|--------|
-| Instagram | ❌ | Create @tmenergy_solar |
+| Instagram | ❌ | Create @bustan-energy_solar |
 | Facebook Page | ❌ | Create Bustan Energy Ko Phangan |
-| LINE Official | ⚠️ | Verify @tmenergy is active |
+| LINE Official | ⚠️ | Verify @bustan-energy is active |
 | WhatsApp Business | ❌ | Get Thai number +66 → WhatsApp Business |
 | Google Business | ❌ | Create GBP in Thong Sala |

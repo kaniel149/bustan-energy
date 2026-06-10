@@ -1,7 +1,7 @@
 // ============================================================
 // /api/cron-pea-followups
 /* eslint-disable @typescript-eslint/no-explicit-any -- Supabase REST payloads here are schemaless until generated DB types are wired in. */
-// Daily cron at 09:00 UTC — emails erez@energy-tm.com about
+// Daily cron at 09:00 UTC — emails erez@bustan-energy.com about
 // PEA submissions with no response after 20 days.
 // Logs to notification_log table.
 // ============================================================
@@ -12,7 +12,7 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY!
 const FROM = process.env.RESEND_FROM || 'Bustan Energy <contracts@bustan.energy>'
 const CRON_SECRET = process.env.CRON_SECRET
-const ALERT_RECIPIENT = 'erez@energy-tm.com'
+const ALERT_RECIPIENT = 'erez@bustan-energy.com'
 
 async function supaGetAll(path: string): Promise<any[]> {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -96,7 +96,7 @@ function buildAlertEmail(staleProjects: any[]): string {
     </div>
 
     <p style="margin-top:20px;font-size:12px;color:#9ca3af;">
-      Sent automatically by Bustan Energy PEA Tracker · energy-tm.com/admin<br>
+      Sent automatically by Bustan Energy PEA Tracker · bustan-energy.com/admin<br>
       This cron runs daily at 09:00 UTC (16:00 Bangkok time).
     </p>
   </div>

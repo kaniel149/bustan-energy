@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-31
 **Status:** Approved
-**Brand:** Bustan Energy (energy-tm.com)
+**Brand:** Bustan Energy (bustan-energy.com)
 **Market:** Koh Phangan, Samui, Phuket — Thailand
 
 ---

@@ -10,8 +10,8 @@ import { supaGetAll, supaPatch } from './_lib/supa.js'
 import { getDripTemplate } from './_lib/drip-templates.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY
-const FROM = process.env.EMAIL_FROM || process.env.RESEND_FROM || 'Bustan Energy <proposals@energy-tm.com>'
-const REPLY_TO = process.env.EMAIL_REPLY_TO || 'erez@energy-tm.com'
+const FROM = process.env.EMAIL_FROM || process.env.RESEND_FROM || 'Bustan Energy <proposals@bustan-energy.com>'
+const REPLY_TO = process.env.EMAIL_REPLY_TO || 'erez@bustan-energy.com'
 
 // CRON_SECRET must be set — no fallback to prevent unauthenticated execution
 const CRON_SECRET = process.env.CRON_SECRET

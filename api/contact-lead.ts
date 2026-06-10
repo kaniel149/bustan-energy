@@ -14,8 +14,8 @@ import { enrollInDrip } from './_lib/drip.js'
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY = process.env.RESEND_API_KEY
-const FROM = process.env.RESEND_FROM || 'Bustan Energy Leads <leads@energy-tm.com>'
-const NOTIFY = (process.env.LEAD_NOTIFY_EMAILS || 'erez@energy-tm.com,kaniel@energy-tm.com')
+const FROM = process.env.RESEND_FROM || 'Bustan Energy Leads <leads@bustan-energy.com>'
+const NOTIFY = (process.env.LEAD_NOTIFY_EMAILS || 'erez@bustan-energy.com,kaniel@bustan-energy.com')
   .split(',')
   .map((email) => email.trim())
   .filter(Boolean)
@@ -319,7 +319,7 @@ export default async function handler(req: Request): Promise<Response> {
         fbp: clean(raw.fbp) || null,
         clientIp,
         clientUserAgent,
-        sourceUrl: landingPage || 'https://energy-tm.com/contact',
+        sourceUrl: landingPage || 'https://bustan-energy.com/contact',
         currency: 'THB',
         contentName: source === 'bill-scanner' ? 'bill_scanner' : 'website_contact_form',
         country: 'th',

@@ -33,7 +33,7 @@ export default function ProposalsListPage() {
 
   const handleCopyUrl = async (e: React.MouseEvent, ref: string) => {
     e.stopPropagation()
-    const url = `https://energy-tm.com/p/${ref}`
+    const url = `https://bustan-energy.com/p/${ref}`
     await navigator.clipboard.writeText(url)
     setCopiedRef(ref)
     setTimeout(() => setCopiedRef(null), 2000)

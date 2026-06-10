@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js'
  * Dedicated Supabase client for the Bustan CRM / Solar Intelligence data.
  *
  * Project: solar-os-saas (ygoiaabzkuvdsyyduvhv), dedicated schema `bustan`.
- * This is SEPARATE from the TM Energy client in `./supabase.ts`
+ * This is SEPARATE from the Bustan Energy client in `./supabase.ts`
  * (proposal/admin system, project trvgpgpsqvvdsudpgwpm) — do not merge them.
  *
  * The publishable key is client-safe: all access is governed by RLS, and a DB
@@ -24,7 +24,7 @@ export const bustanSupabase =
     ? createClient(BUSTAN_URL, BUSTAN_KEY, {
         db: { schema: 'bustan' },
         auth: {
-          // Isolate the Bustan auth session from the TM Energy client so the
+          // Isolate the Bustan auth session from the Bustan Energy client so the
           // two clients never clobber each other's tokens in localStorage.
           storageKey: 'bustan-crm-auth',
           persistSession: true,
@@ -73,7 +73,7 @@ export async function syncBustanPassword(email: string, password: string): Promi
 }
 
 /**
- * Dual-auth: the platform login authenticates the main (TM Energy) project, but
+ * Dual-auth: the platform login authenticates the main (Bustan Energy) project, but
  * the CRM data lives in the SEPARATE bustan project with its own client/session.
  * After the main sign-in we mirror the credentials into the bustan client so the
  * 85 leads + role actually load.

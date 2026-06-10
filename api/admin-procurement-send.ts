@@ -7,7 +7,7 @@
 //   - Fetches order + order items + supplier emails
 //   - Groups items by supplier_id
 //   - Sends ONE email per supplier with their line items
-//   - Also sends a summary to erez@energy-tm.com
+//   - Also sends a summary to erez@bustan-energy.com
 //   - Logs each send in notification_log
 //   - Transitions order status draft -> sent
 //   - Returns { ok, sent: number, errors: string[] }
@@ -19,8 +19,8 @@ import { isAllowedAdmin } from './_lib/admin-access.js'
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const RESEND_KEY   = process.env.RESEND_API_KEY!
-const FROM         = process.env.RESEND_FROM || 'Bustan Energy <procurement@energy-tm.com>'
-const REPLY_TO     = 'erez@energy-tm.com'
+const FROM         = process.env.RESEND_FROM || 'Bustan Energy <procurement@bustan-energy.com>'
+const REPLY_TO     = 'erez@bustan-energy.com'
 
 const allowed = isAllowedAdmin
 
@@ -145,7 +145,7 @@ function buildSupplierEmail(opts: {
 
     <p style="margin-top:24px;">Thank you for your prompt response.</p>
     <p><strong>Bustan Energy Procurement</strong><br>
-    <a href="https://energy-tm.com" style="color:#E8A820;">energy-tm.com</a></p>
+    <a href="https://bustan-energy.com" style="color:#E8A820;">bustan-energy.com</a></p>
   </div>
 
   <div style="padding:16px 32px;background:#f9fafb;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;font-size:11px;color:#9ca3af;text-align:center;">

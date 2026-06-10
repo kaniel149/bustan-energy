@@ -501,7 +501,7 @@ export default async function handler(req: Request): Promise<Response> {
       total_price_thb,
       roof_original_url,
       roof_panels_url,
-      logo_url = 'https://energy-tm.com/assets/logo/bustan-energy.svg',
+      logo_url = 'https://bustan-energy.com/assets/logo/bustan-energy.svg',
       language: language_raw = 'he',
       password,
       psh = TM_SOLAR_ASSUMPTIONS.pshAnnual,
@@ -722,7 +722,7 @@ export default async function handler(req: Request): Promise<Response> {
       annual_production_kwh: annual_kwh,
       password_hash,
       language,
-      html_url: `https://energy-tm.com/p/${ref}`,
+      html_url: `https://bustan-energy.com/p/${ref}`,
       expires_at,
       metadata: {
         rendered_html: finalHtml,
@@ -814,7 +814,7 @@ export default async function handler(req: Request): Promise<Response> {
       ok: true,
       ref,
       password: pw,
-      url: `https://energy-tm.com/p/${ref}`,
+      url: `https://bustan-energy.com/p/${ref}`,
       created_by: admin.email,
       is_new: isNewProposal,
     })

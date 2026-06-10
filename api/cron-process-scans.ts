@@ -12,7 +12,7 @@
 // scripts/enrich_owners.py). This serverless tier covers the cheap OSM path.
 //
 // Auth: Bearer CRON_SECRET (Vercel cron or manual trigger).
-// Targets the BUSTAN project (separate from the TM Energy SUPABASE_URL); uses
+// Targets the BUSTAN project (separate from the Bustan Energy SUPABASE_URL); uses
 // its own service-role key + PostgREST schema headers.
 // ============================================================
 export const config = { runtime: 'edge' }

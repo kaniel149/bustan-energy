@@ -34,9 +34,9 @@ A new additive lead-magnet funnel page for Bustan Energy:
 
 Commit and deploy the repo through the existing production flow. After deployment, test:
 
-- `https://energy-tm.com/resort-solar-assessment`
-- `https://energy-tm.com/th/resort-solar-assessment`
-- `https://energy-tm.com/assets/lead-magnets/bustan-resort-solar-battery-checklist.pdf`
+- `https://bustan-energy.com/resort-solar-assessment`
+- `https://bustan-energy.com/th/resort-solar-assessment`
+- `https://bustan-energy.com/assets/lead-magnets/bustan-resort-solar-battery-checklist.pdf`
 
 ## Notes
 
