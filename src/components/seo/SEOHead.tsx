@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { localBusinessSchema } from './schemas'
 import type { Lang } from '../../i18n/translations'
 
-const BASE_URL = 'https://energy-tm.com'
+const BASE_URL = 'https://bustan-energy.com'
 const DEFAULT_OG_IMAGE = `${BASE_URL}/assets/images/og-default.jpg`
 
 interface SEOHeadProps {

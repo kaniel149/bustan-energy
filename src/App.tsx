@@ -76,11 +76,11 @@ function PageRoutes() {
   )
 }
 
-/** Detect if we're on the CRM subdomain */
-const isCrmDomain = window.location.hostname === 'crm.energy-tm.com'
+/** Detect if we're on the CRM subdomain (old TM hostname kept until Stage 4 of rebrand) */
+const isCrmDomain = ['crm.energy-tm.com', 'crm.bustan-energy.com'].includes(window.location.hostname)
 
 export default function App() {
-  // crm.energy-tm.com → show platform with integrated views + CRM routes for deep links
+  // crm.bustan-energy.com → show platform with integrated views + CRM routes for deep links
   if (isCrmDomain) {
     return (
       <HelmetProvider>
@@ -117,7 +117,7 @@ export default function App() {
     )
   }
 
-  // energy-tm.com → marketing website
+  // bustan-energy.com → marketing website
   return (
     <HelmetProvider>
       <BrowserRouter>
