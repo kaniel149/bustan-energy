@@ -9,6 +9,7 @@ export const config = { runtime: 'edge' }
 import { escapeHtml } from './_lib/html.js'
 import { inferAttribution } from './_lib/attribution.js'
 import { sendMetaCapiEventLogged } from './_lib/meta-capi.js'
+import { enrollInDrip } from './_lib/drip.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -325,6 +326,16 @@ export default async function handler(req: Request): Promise<Response> {
       })
     } catch {
       /* CAPI must never break lead intake */
+    }
+
+    // Enroll in welcome drip sequence (best-effort — never blocks intake).
+    // Phone-only leads (bill scanner) can't be enrolled — requires an email.
+    if (hasEmail) {
+      await enrollInDrip({
+        email: lead.email,
+        name: lead.name,
+        projectId: project?.id ?? null,
+      })
     }
 
     return Response.json({ ok: true, project_id: project?.id ?? null, event_id: eventId })
