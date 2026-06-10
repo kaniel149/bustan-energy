@@ -5,6 +5,7 @@
 export const config = { runtime: 'edge' }
 
 import { escapeHtml } from './_lib/html.js'
+import { enrollInDrip } from './_lib/drip.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -134,6 +135,13 @@ export default async function handler(req: Request): Promise<Response> {
       propertyType: lead.propertyType,
       systemInterest: lead.systemInterest,
       message: lead.message,
+    })
+
+    // Enroll in welcome drip sequence (best-effort — never blocks intake)
+    await enrollInDrip({
+      email: lead.email,
+      name: lead.name,
+      projectId: project?.id ?? null,
     })
 
     return Response.json({ ok: true, project_id: project?.id ?? null })
