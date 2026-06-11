@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Search, Download, Grid3X3, MapPin } from 'lucide-react'
+import { Search, Download, Grid3X3, MapPin, Phone, MessageCircle, UserSearch } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { exportBuildingsCSV } from '../../lib/csv-export'
@@ -168,6 +168,7 @@ export function Scanner() {
               property={property}
               inCrm={!!crmBuildingIds[property.id]}
               onClick={() => setSelectedProperty(property)}
+              onFindContact={() => setSelectedProperty(property)}
             />
           ))}
         </div>
@@ -175,7 +176,20 @@ export function Scanner() {
         {sorted.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-white/40">
             <Grid3X3 size={48} className="mb-4 opacity-30" />
-            <p className="text-sm">No buildings match your filters</p>
+            <p className="text-sm font-medium text-white/50">
+              {typeFilter === 'land'
+                ? 'No land plots yet'
+                : typeFilter === 'roof'
+                ? 'No rooftops yet'
+                : 'No buildings match your filters'}
+            </p>
+            <p className="text-xs mt-1 text-white/30 text-center max-w-xs">
+              {typeFilter === 'land'
+                ? 'Switch to Map view, select the Land toggle, and draw a scan area to detect grid-grade land plots.'
+                : typeFilter === 'roof'
+                ? 'Switch to Map view and draw a scan area to detect rooftops.'
+                : 'Try removing some filters or run a scan area on the Map.'}
+            </p>
           </div>
         )}
       </div>
@@ -189,7 +203,7 @@ const TIER_BADGES: Record<string, { bg: string; text: string; border: string; la
   commercial: { bg: '#3B82F620', text: '#93C5FD', border: '#3B82F640', label: 'Commercial' },
 }
 
-function BuildingCard({ property, inCrm, onClick }: { property: Property; inCrm: boolean; onClick: () => void }) {
+function BuildingCard({ property, inCrm, onClick, onFindContact }: { property: Property; inCrm: boolean; onClick: () => void; onFindContact: () => void }) {
   const grade = property.priority || 'B'
   const gradeColor = GRADE_COLORS[grade] || GRADE_COLORS.B
   const isRoof = property.type === 'roof'
@@ -297,8 +311,51 @@ function BuildingCard({ property, inCrm, onClick }: { property: Property; inCrm:
         </div>
       </div>
 
+      {/* Owner / contact strip */}
+      <div className="mt-2 flex items-center gap-1.5">
+        {property.ownerName ? (
+          <span className="text-[10px] text-white/50 truncate flex-1" title={property.ownerName}>
+            {property.ownerName}
+          </span>
+        ) : (
+          <span className="text-[10px] text-white/25 italic flex-1">no contact yet</span>
+        )}
+        {/* Quick actions — rendered as anchors / buttons so they don't open sidebar */}
+        <div className="flex items-center gap-0.5 shrink-0">
+          {property.phone && (
+            <a
+              href={`tel:${property.phone}`}
+              onClick={(e) => e.stopPropagation()}
+              className="w-6 h-6 flex items-center justify-center rounded-md bg-[#2ED89A]/10 border border-[#2ED89A]/20 text-[#2ED89A] hover:bg-[#2ED89A]/25 transition-colors"
+              title={`Call ${property.phone}`}
+            >
+              <Phone size={10} />
+            </a>
+          )}
+          {property.phone && (
+            <a
+              href={`https://wa.me/${property.phone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="w-6 h-6 flex items-center justify-center rounded-md bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366]/25 transition-colors"
+              title="WhatsApp"
+            >
+              <MessageCircle size={10} />
+            </a>
+          )}
+          <button
+            onClick={(e) => { e.stopPropagation(); onFindContact() }}
+            className="w-6 h-6 flex items-center justify-center rounded-md bg-[#E8A820]/10 border border-[#E8A820]/20 text-[#E8A820] hover:bg-[#E8A820]/25 transition-colors"
+            title="Find decision maker"
+          >
+            <UserSearch size={10} />
+          </button>
+        </div>
+      </div>
+
       {inCrm && (
-        <div className="mt-2 px-2 py-0.5 rounded bg-[#6366f1]/15 border border-[#6366f1]/20 text-[#6366f1] text-[9px] font-semibold text-center">
+        <div className="mt-1.5 px-2 py-0.5 rounded bg-[#6366f1]/15 border border-[#6366f1]/20 text-[#6366f1] text-[9px] font-semibold text-center">
           In Pipeline
         </div>
       )}

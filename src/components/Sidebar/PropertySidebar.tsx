@@ -200,7 +200,7 @@ export function PropertySidebar() {
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: 400, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="absolute top-0 right-0 bottom-0 w-[380px] z-20 bg-[#0D2137]/95 backdrop-blur-xl border-l border-white/10 overflow-y-auto"
+        className="absolute top-0 right-0 bottom-0 w-full sm:w-[380px] z-20 bg-[#0D2137]/95 backdrop-blur-xl border-l border-white/10 overflow-y-auto"
       >
         {/* Header */}
         <div className="sticky top-0 bg-[#0D2137]/95 backdrop-blur-xl border-b border-white/10 p-4">

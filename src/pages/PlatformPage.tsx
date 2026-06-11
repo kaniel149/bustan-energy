@@ -6,12 +6,14 @@ import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
 import { isBustanConnected, bustanSupabase } from '../lib/bustan-supabase'
 import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests, fetchScanCandidates } from '../lib/bustan-crm-service'
-import type { Property } from '../types'
+import type { Property, ScanRequest } from '../types'
 import { parseColliersMarkdown, attachGeocodes, colliersToProperties } from '../lib/colliers'
 import { useColliersGeocodes } from '../hooks/useColliersGeocodes'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
+import { can } from '../lib/bustan-permissions'
 import { Toast } from '../components/Toast'
+import { CandidateReviewPanel } from '../components/Candidates/CandidateReviewPanel'
 const BustanLeadEditor = lazy(() =>
   import('../components/CRM/BustanLeadEditor').then((m) => ({ default: m.BustanLeadEditor })),
 )
@@ -31,11 +33,12 @@ const ColliersPortfolio = lazy(() =>
   import('../components/Colliers/ColliersPortfolio').then((m) => ({ default: m.ColliersPortfolio })),
 )
 
-const SCAN_STATUS_STYLE: Record<string, string> = {
-  queued: 'bg-white/10 text-white/60',
-  running: 'bg-[#3B82F6]/20 text-[#60A5FA]',
-  done: 'bg-[#2ED89A]/20 text-[#2ED89A]',
-  failed: 'bg-red-500/20 text-red-400',
+// Scan status chip styles
+const SCAN_CHIP: Record<string, { cls: string; icon: string }> = {
+  queued:  { cls: 'bg-white/10 text-white/60',       icon: '⏳' },
+  running: { cls: 'bg-[#3B82F6]/20 text-[#60A5FA]', icon: '🔄' },
+  done:    { cls: 'bg-[#2ED89A]/20 text-[#2ED89A]', icon: '✅' },
+  failed:  { cls: 'bg-red-500/20 text-red-400',      icon: '❌' },
 }
 
 function ViewLoader() {
@@ -304,6 +307,10 @@ export default function PlatformPage() {
 
   const isMapView = platformView === 'map'
   const filters = useAppStore((s) => s.filters)
+  const roofCandidates = useAppStore((s) => s.roofCandidates)
+  const bustanRole = useBustanStore((s) => s.role)
+  const canScanReview = can(bustanRole, 'crm.edit')
+  const setMapFlyToBbox = useAppStore((s) => s.setMapFlyToBbox)
 
   useEffect(() => {
     if (isMapView) setHasLoadedMap(true)
@@ -386,6 +393,11 @@ export default function PlatformPage() {
         </div>
       )}
 
+      {/* Candidate review panel — map view, detection layer on, has candidates, authorised */}
+      {isMapView && filters.showRoofDetection && roofCandidates.length > 0 && canScanReview && (
+        <CandidateReviewPanel />
+      )}
+
       {/* PropertySidebar — Map view only (Scanner/CRM uses BustanLeadEditor)
           so the two detail panels never overlap. */}
       {selectedProperty && isMapView && (
@@ -428,45 +440,12 @@ export default function PlatformPage() {
 
       {/* Scan status — only in map view, when there are scans */}
       {isMapView && scanRequests.length > 0 && (
-        <div className="absolute top-20 right-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 w-56">
-          <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Area Scans</h4>
-          <div className="space-y-1.5 max-h-48 overflow-y-auto">
-            {scanRequests.slice(0, 8).map((s) => (
-              <div key={s.id} className="flex items-center justify-between gap-2 text-[11px]">
-                <span className="text-white/60 truncate flex items-center gap-1">
-                  <span className="shrink-0">{s.scan_type === 'land' ? '🌾' : '🏠'}</span>
-                  {new Date(s.created_at).toLocaleDateString()} {new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-                <span className="flex items-center gap-1 shrink-0">
-                  {typeof s.counts?.inserted === 'number' && (
-                    <span className="text-white/40">+{s.counts.inserted}</span>
-                  )}
-                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${SCAN_STATUS_STYLE[s.status]}`}>
-                    {s.status}
-                  </span>
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ScanStatusPanel scanRequests={scanRequests} onFlyToBbox={setMapFlyToBbox} />
       )}
 
       {/* Legend — only in map view */}
       {isMapView && (
-        <div className="absolute bottom-4 left-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 md:bottom-4 bottom-16">
-          <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Legend</h4>
-          <div className="space-y-1.5">
-            <LegendItem shape="circle" color="#00E676" label="Roof — Priority A" />
-            <LegendItem shape="circle" color="#FFD600" label="Roof — Priority B" />
-            <LegendItem shape="circle" color="#FF9100" label="Roof — Priority C" />
-            <LegendItem shape="circle" color="#FF3D00" label="Roof — Priority D" />
-            <LegendItem shape="square" color="#E8A820" label="Land (grid-grade colored)" />
-            <LegendItem shape="line" color="#ff4444" label="Substation" />
-            <LegendItem shape="line" color="#ff8800" label="Transmission Line" />
-            <LegendItem shape="line" color="#ffcc00" label="Distribution Line" />
-            <LegendItem shape="line" color="#00aaff" label="Submarine Cable" />
-          </div>
-        </div>
+        <MapLegend hasLandCandidates={roofCandidates.some((c) => c.type === 'land')} />
       )}
     </div>
   )
@@ -479,6 +458,117 @@ function LegendItem({ shape, color, label }: { shape: 'square' | 'circle' | 'lin
       {shape === 'circle' && <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />}
       {shape === 'line' && <div className="w-3 h-0.5 rounded" style={{ backgroundColor: color }} />}
       <span className="text-[10px] text-white/60">{label}</span>
+    </div>
+  )
+}
+
+// ── Scan status panel (Task 2) ────────────────────────────────────────────────
+function ScanStatusPanel({
+  scanRequests,
+  onFlyToBbox,
+}: {
+  scanRequests: ScanRequest[]
+  onFlyToBbox: (bbox: number[]) => void
+}) {
+  const [hoveredError, setHoveredError] = useState<string | null>(null)
+
+  return (
+    <div className="absolute top-20 right-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 w-60">
+      <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Area Scans</h4>
+      <div className="space-y-1.5 max-h-52 overflow-y-auto">
+        {scanRequests.slice(0, 10).map((s) => {
+          const chip = SCAN_CHIP[s.status] ?? SCAN_CHIP.queued
+          const hasBbox = Array.isArray(s.bbox) && s.bbox.length >= 4
+          const candidateCount = typeof s.counts?.candidates === 'number'
+            ? s.counts.candidates
+            : typeof s.counts?.inserted === 'number'
+            ? s.counts.inserted
+            : null
+
+          return (
+            <div
+              key={s.id}
+              className={`flex items-center gap-2 text-[11px] rounded-lg px-2 py-1.5 transition-colors ${
+                hasBbox ? 'hover:bg-white/5 cursor-pointer' : ''
+              }`}
+              onClick={() => hasBbox && onFlyToBbox(s.bbox!)}
+              title={hasBbox ? 'Click to zoom to scan area' : undefined}
+            >
+              <span className="shrink-0">{s.scan_type === 'land' ? '🌾' : '🏠'}</span>
+              <span className="text-white/50 truncate flex-1">
+                {new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+              {candidateCount !== null && s.status === 'done' && (
+                <span className="text-white/40 shrink-0">+{candidateCount}</span>
+              )}
+              <div className="relative shrink-0">
+                <span
+                  className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase flex items-center gap-0.5 ${chip.cls}`}
+                  onMouseEnter={() => s.status === 'failed' && s.error ? setHoveredError(s.error) : undefined}
+                  onMouseLeave={() => setHoveredError(null)}
+                >
+                  {chip.icon} {s.status}
+                </span>
+                {hoveredError && s.status === 'failed' && (
+                  <div className="absolute right-0 top-6 z-50 bg-[#0A1628] border border-red-500/30 text-red-300 text-[10px] rounded-lg px-3 py-2 w-48 shadow-xl whitespace-normal">
+                    {hoveredError}
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ── Map Legend with collapsible tier section (Task 5) ─────────────────────────
+function MapLegend({ hasLandCandidates }: { hasLandCandidates: boolean }) {
+  const [showTier, setShowTier] = useState(false)
+
+  return (
+    <div className="absolute bottom-4 left-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 md:bottom-4 bottom-16 max-w-[180px]">
+      <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Legend</h4>
+      <div className="space-y-1.5">
+        <LegendItem shape="circle" color="#00E676" label="Roof — Priority A" />
+        <LegendItem shape="circle" color="#FFD600" label="Roof — Priority B" />
+        <LegendItem shape="circle" color="#FF9100" label="Roof — Priority C" />
+        <LegendItem shape="circle" color="#FF3D00" label="Roof — Priority D" />
+        <LegendItem shape="square" color="#E8A820" label="Land (grid-grade)" />
+        <LegendItem shape="line" color="#ff4444" label="Substation" />
+        <LegendItem shape="line" color="#ff8800" label="Transmission" />
+        <LegendItem shape="line" color="#ffcc00" label="Distribution" />
+        <LegendItem shape="line" color="#00aaff" label="Submarine Cable" />
+      </div>
+
+      {/* Collapsible tier legend — shown when land candidates are present */}
+      {hasLandCandidates && (
+        <div className="mt-2 pt-2 border-t border-white/10">
+          <button
+            onClick={() => setShowTier((v) => !v)}
+            className="text-[10px] text-white/40 hover:text-white/70 transition-colors flex items-center gap-1 w-full"
+          >
+            🌾 Land tiers {showTier ? '▲' : '▼'}
+          </button>
+          {showTier && (
+            <div className="mt-1.5 space-y-1">
+              <div className="flex items-center gap-1.5">
+                <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-[#E8A820]/20 text-[#E8A820]">Farm</span>
+                <span className="text-[9px] text-white/40">≤9 MW</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300">Utility</span>
+                <span className="text-[9px] text-white/40">DC-scale</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-blue-500/20 text-blue-300">Commercial</span>
+                <span className="text-[9px] text-white/40">rooftop C&I</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

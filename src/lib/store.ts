@@ -51,6 +51,15 @@ interface AppState {
   scanRequests: ScanRequest[]
   setScanRequests: (requests: ScanRequest[]) => void
 
+  // Map imperative command: fly to a bbox [minLng, minLat, maxLng, maxLat].
+  // SolarMap watches this via useEffect and resets to null after consuming it.
+  mapFlyToBbox: number[] | null
+  setMapFlyToBbox: (bbox: number[] | null) => void
+
+  // Running tally of candidates approved in the current session
+  approvedTodayCount: number
+  incrementApprovedToday: () => void
+
   // Map
   mapStyle: 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
   setMapStyle: (style: AppState['mapStyle']) => void
@@ -161,6 +170,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   scanRequests: [],
   setScanRequests: (requests) => set({ scanRequests: requests }),
+
+  mapFlyToBbox: null,
+  setMapFlyToBbox: (bbox) => set({ mapFlyToBbox: bbox }),
+
+  approvedTodayCount: 0,
+  incrementApprovedToday: () => set((s) => ({ approvedTodayCount: s.approvedTodayCount + 1 })),
 
   mapStyle: readStoredMapStyle(),
   setMapStyle: (style) => {

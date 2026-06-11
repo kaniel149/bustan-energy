@@ -261,6 +261,17 @@ export function SolarMap() {
     map.current?.flyTo({ center: regionConfig.center, zoom: regionConfig.zoom, duration: 1500 })
   }, [regionConfig])
 
+  // Imperative flyToBbox command from the store (scan status panel click)
+  const mapFlyToBbox = useAppStore((s) => s.mapFlyToBbox)
+  const setMapFlyToBbox = useAppStore((s) => s.setMapFlyToBbox)
+  useEffect(() => {
+    const m = map.current
+    if (!m || !mapFlyToBbox || mapFlyToBbox.length < 4) return
+    const [minLng, minLat, maxLng, maxLat] = mapFlyToBbox
+    m.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 60, maxZoom: 15, duration: 1000 })
+    setMapFlyToBbox(null)
+  }, [mapFlyToBbox, setMapFlyToBbox])
+
   // Fit map to all visible leads once per region (after data loads)
   useEffect(() => {
     const m = map.current
@@ -1186,7 +1197,7 @@ export function SolarMap() {
           <div className="flex rounded-xl overflow-hidden border border-white/10 bg-[#0D2137]/90 backdrop-blur-xl shadow-lg">
             <button
               onClick={() => setScanType('roof')}
-              className={`px-2.5 py-2 text-[11px] font-semibold transition-colors ${
+              className={`px-3 py-2.5 text-[11px] font-semibold transition-colors min-w-[52px] ${
                 scanType === 'roof'
                   ? 'bg-[#F59E0B]/20 text-[#FCD34D]'
                   : 'text-white/40 hover:text-white/70'
@@ -1197,7 +1208,7 @@ export function SolarMap() {
             </button>
             <button
               onClick={() => setScanType('land')}
-              className={`px-2.5 py-2 text-[11px] font-semibold transition-colors border-l border-white/10 ${
+              className={`px-3 py-2.5 text-[11px] font-semibold transition-colors border-l border-white/10 min-w-[52px] ${
                 scanType === 'land'
                   ? 'bg-[#2ED89A]/20 text-[#2ED89A]'
                   : 'text-white/40 hover:text-white/70'
