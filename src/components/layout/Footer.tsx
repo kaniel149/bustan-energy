@@ -104,9 +104,9 @@ export function Footer() {
 
           {/* Col 2: Quick Links */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-ink/45">
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink/45">
               {t.footer.quickLinks}
-            </h4>
+            </p>
             <ul className="flex flex-col gap-2.5">
               {QUICK_LINKS.map((link) => (
                 <li key={link.path}>
@@ -120,9 +120,9 @@ export function Footer() {
 
           {/* Col 3: Services */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-ink/45">
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink/45">
               {t.footer.servicesTitle}
-            </h4>
+            </p>
             <ul className="flex flex-col gap-2.5">
               {SERVICES.map((svc) => (
                 <li key={svc.path}>
@@ -136,9 +136,9 @@ export function Footer() {
 
           {/* Col 4: Contact */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-ink/45">
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink/45">
               {t.footer.contactTitle}
-            </h4>
+            </p>
             <ul className="flex flex-col gap-4">
               <li>
                 <a

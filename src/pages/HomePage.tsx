@@ -29,14 +29,17 @@ const SolarInstallationScroll = lazy(
 )
 
 // ─── Image paths (intrinsic dimensions for CLS prevention) ──────────────────
-const aerialImg = '/assets/images/strategy-01-aerial.png' // 1024×574
-const longiImg = '/assets/images/longi-panel.png' // 1024×1024
-const huaweiImg = '/assets/images/huawei-inverter.png' // 1024×680
-const villaImg = '/assets/images/bizplan-05-villa.png' // 1024×510
-const resortImg = '/assets/images/strategy-03-resort.png' // 1024×681
-const installImg = '/assets/images/install-06-panel.png' // 1024×508
-const happyImg = '/assets/images/sales-10-happy.png' // 1024×574
-const monitorImg = '/assets/images/monitor-02-app.png' // 1024×678
+// Home uses optimized JPEG versions (~80% smaller than the source PNGs, which
+// other pages still reference). Hero JPEG is preloaded in index.html for LCP.
+const aerialImg = '/assets/images/strategy-01-aerial.jpg' // 1024×574
+const heroImg = '/assets/images/strategy-01-aerial.jpg' // 1024×574
+const longiImg = '/assets/images/longi-panel.jpg' // 1024×1024
+const huaweiImg = '/assets/images/huawei-inverter.jpg' // 1024×680
+const villaImg = '/assets/images/bizplan-05-villa.jpg' // 1024×510
+const resortImg = '/assets/images/strategy-03-resort.jpg' // 1024×681
+const installImg = '/assets/images/install-06-panel.jpg' // 1024×508
+const happyImg = '/assets/images/sales-10-happy.jpg' // 1024×574
+const monitorImg = '/assets/images/monitor-02-app.jpg' // 1024×678
 
 // ─── Project images mapped to 6 items ───────────────────────────────────────
 const projectImages = [
@@ -116,10 +119,12 @@ function HeroSection() {
       {/* Aerial background image */}
       <div className="absolute inset-0">
         <img
-          src={aerialImg}
+          src={heroImg}
           alt="Aerial view of solar panels on Ko Phangan"
           width={1024}
           height={574}
+          fetchPriority="high"
+          decoding="async"
           className="w-full h-full object-cover"
         />
         {/* Grove overlay — deepened behind the text area so headline + subtitle pass contrast */}

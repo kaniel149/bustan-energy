@@ -70,11 +70,9 @@ export function Navbar() {
           'transition-all duration-[var(--duration-base)] ease-out-soft',
           solid
             ? 'bg-shell/85 backdrop-blur-md border-b border-grove/10 shadow-soft'
-            : overHero
-              ? 'bg-transparent border-b border-transparent'
-              : // Light pages: paint the paper canvas so the bar reads as
-                // transparent (the Layout wrapper is still dark behind pt-16).
-                'bg-[var(--bustan-paper)] border-b border-transparent',
+            : // Not scrolled: truly transparent — the Layout wrapper behind
+              // pt-16 is paper, so light pages need no painted workaround.
+              'bg-transparent border-b border-transparent',
         ].join(' ')}
       >
         {/* Hero scrim — only visible over the Home hero photo so the shell

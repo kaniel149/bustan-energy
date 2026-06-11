@@ -15,7 +15,7 @@ export default function Layout() {
   }, [pathname])
 
   return (
-    <div className="min-h-screen flex flex-col bg-dark">
+    <div className="min-h-screen flex flex-col bg-[var(--bustan-paper)]">
       <Navbar />
 
       {/* pt-16 clears the fixed navbar height */}

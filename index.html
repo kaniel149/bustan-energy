@@ -8,7 +8,33 @@
     <meta name="description" content="Bustan Energy designs, installs, and maintains solar systems for island homes, resorts, and commercial properties in Thailand." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Hebrew:wght@300..900&display=swap" rel="stylesheet" />
+    <!-- Fonts trimmed to weights actually used (400-700); italic kept only for Instrument Serif (brand highlight).
+         Loaded async (media swap) so the CSS never blocks first paint; display=swap shows fallback text immediately. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Hebrew:wght@400..700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Hebrew:wght@400..700&display=swap" rel="stylesheet" />
+    </noscript>
+    <!-- Home hero LCP image (optimized JPEG) — preloaded only on home routes so
+         other pages don't pay the 243KB bandwidth tax. Runs at parse time,
+         long before the JS bundle, so the preload benefit is preserved. -->
+    <script>
+      ;(function () {
+        var p = location.pathname.replace(/\/+$/, '') || '/'
+        if (p === '/' || p === '/th' || p === '/he') {
+          var l = document.createElement('link')
+          l.rel = 'preload'
+          l.as = 'image'
+          l.href = '/assets/images/strategy-01-aerial.jpg'
+          l.fetchPriority = 'high'
+          document.head.appendChild(l)
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

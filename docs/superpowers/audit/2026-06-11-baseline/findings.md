@@ -113,3 +113,40 @@ Honorable mentions: generic "Learn More" link text everywhere (a11y + SEO), head
 - 30 screenshots: `docs/superpowers/audit/2026-06-11-baseline/*.png` (28 required + blog-post desktop/mobile)
 - Lighthouse JSON: `lh-home.json`, `lh-pricing.json`, `lh-contact.json` (same dir)
 - Capture script: `scripts/audit-screenshots.mjs`
+
+---
+
+# After (2026-06-12)
+
+Post-redesign + performance pass (Tasks 7-14). Same methodology: `vite preview`, Lighthouse mobile emulation (performance/accessibility/seo), full screenshot set at `docs/superpowers/audit/2026-06-12-after/`.
+
+## Lighthouse before → after
+
+| Page | Perf | A11y | SEO | Key metrics after |
+|---|---|---|---|---|
+| Home `/` | 67 → **76** | 94 → **95** | 92 → **92** | LCP 5.9s, FCP 2.2s (was 3.5s), TBT 0ms, CLS 0, SI 2.6s · page weight 15.7MB → **1.1MB** |
+| Pricing `/pricing` | 89 → **90** | 95 → **95** | 69 → **100** | LCP 3.4s, FCP 2.2s, TBT 0ms, CLS 0.02 · is-crawlable passes |
+| Contact `/contact` | 84 → **90** | 94 → **96** | 100 → **100** | LCP 3.3s, FCP 2.1s, TBT 0ms, CLS 0 |
+
+Perf changes in this pass: robots `/p` → `/p/`; hero converted to 243KB JPEG (was 1.1MB PNG) + route-gated `rel=preload` + `fetchpriority=high`; all 8 home card images converted PNG→JPEG (~7MB → ~1.4MB); SolarInstallationScroll frame sequences (189 requests / 11.4MB — the real LCP killer) now load only when the section nears the viewport, and inactive house-type preloads wait until the active set finishes; Google Fonts trimmed (DM Sans 400-700 upright, Noto Hebrew 400-700) and loaded async (est. 1.3s FCP saving); footer `h4` → `p` (heading-order fix sitewide); Layout wrapper `bg-dark` → paper + Navbar transparent state simplified.
+
+**Home perf 76 (target was 90) — honest assessment:** LCP is pinned at ~5.9s by *element render delay* (~2.2s observed, 4x under simulated mobile CPU): the hero image is fetched in <50ms thanks to the preload, but nothing paints until the 487KB (151KB gzip) main bundle boots React. The remaining lever is the main chunk (react-dom + framer-motion + router + i18n all in one). **Follow-up (deferred, riskier):** manualChunks vendor splitting and/or prerendering the marketing shell; route-level code-splitting already exists.
+
+**Home SEO 92 (target 95):** sole failing audit is `link-text` — four generic "Learn More" service-card CTAs. Copy lives in `src/i18n/translations.ts` (en/th/he); needs a copywriting decision in 3 languages, deferred.
+
+## Top-10 baseline findings — status
+
+1. Whole-site dark theme → **FIXED** (Tasks 7-13; after-screenshots show tropical-light on all public routes)
+2. `.blog-content` white-on-dark CSS → **FIXED** (now ink-on-paper, index.css:265+)
+3. Scroll-gated animations leave pages blank → **PARTIAL** (entrance animations remain; full-page captures still show gated regions)
+4. About counters show "0+ / 0MW" un-animated → **DEFERRED** (still 0s in static capture)
+5. robots.txt `Disallow: /p` prefix bug → **FIXED** (`/p/` in all 3 UA groups; also added `/th/platform`, `/he/platform`, `/colliers`; pricing is-crawlable passes, SEO 69→100)
+6. Home hero subtitle legibility → **PARTIAL** (overlay deepened behind text; hero passes visually, but color-contrast still fails on other home elements: `text-ink/55-64` spans/links)
+7. `.bustan-home` `!important` retrofit → **PARTIAL** (real tokens exist; ~59 `!important` rules remain in index.css)
+8. /how-it-works mobile horizontal overflow → **FIXED** (after capture is exactly 390px wide)
+9. Home mobile sticky header dark strip → **FIXED** (Layout wrapper now paper, Navbar truly transparent; verified no dark strip on home/pricing/about tops. The dark *logo chip* is part of the logo SVG itself — separate asset decision)
+10. Home mobile LCP 6.0s / perf 67 → **PARTIAL** (perf 76; weight 15.7MB→1.1MB, TBT 0, frames deferred; LCP still ~5.9s — gated by main-bundle boot, see follow-up above)
+
+## Artifacts (after)
+
+- 28 screenshots + `lh-home.json`, `lh-pricing.json`, `lh-contact.json`: `docs/superpowers/audit/2026-06-12-after/`

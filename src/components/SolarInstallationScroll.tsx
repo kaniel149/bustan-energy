@@ -31,12 +31,15 @@ function getFramePath(type: HouseType, frame: number) {
   return `/frames/${type}/${String(frame).padStart(3, '0')}.jpg`;
 }
 
-function useFrameSequence(type: HouseType) {
+function useFrameSequence(type: HouseType, enabled: boolean) {
   const [frames, setFrames] = useState<HTMLImageElement[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // Don't start the ~4MB frame download until the section nears the
+    // viewport — it otherwise competes with the hero LCP image at page load.
+    if (!enabled) return;
     setLoaded(false);
     setProgress(0);
     let count = 0;
@@ -63,7 +66,7 @@ function useFrameSequence(type: HouseType) {
         }
       };
     }
-  }, [type]);
+  }, [type, enabled]);
 
   return { frames, loaded, progress };
 }
@@ -73,9 +76,32 @@ export default function SolarInstallationScroll() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeType, setActiveType] = useState<HouseType>('concrete');
   const [currentStage, setCurrentStage] = useState(0);
+  const [nearView, setNearView] = useState(false);
   const currentFrameRef = useRef(0);
 
-  const { frames, loaded, progress: loadProgress } = useFrameSequence(activeType);
+  // Start loading frames only once the section is within ~800px of the
+  // viewport (the loading bar covers the brief gap on fast scrolls).
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) {
+      setNearView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setNearView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '800px 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const { frames, loaded, progress: loadProgress } = useFrameSequence(activeType, nearView);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -134,8 +160,11 @@ export default function SolarInstallationScroll() {
     }
   }, [loaded, frames, drawFrame]);
 
-  // Preload other types in background
+  // Preload other types in background — only after the active sequence has
+  // fully loaded, so the ~8MB of inactive frames never contend with the
+  // visible content (or the page's LCP) for bandwidth.
   useEffect(() => {
+    if (!loaded) return;
     HOUSE_TYPES.forEach((type) => {
       if (type.id === activeType) return;
       for (let i = 1; i <= FRAME_COUNT; i++) {
@@ -143,7 +172,7 @@ export default function SolarInstallationScroll() {
         img.src = getFramePath(type.id, i);
       }
     });
-  }, [activeType]);
+  }, [activeType, loaded]);
 
   const stageProgress = ((currentStage + 1) / STAGES.length) * 100;
 
