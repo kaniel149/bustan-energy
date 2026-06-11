@@ -412,6 +412,10 @@ export interface ScanCandidate {
   tier: 'commercial' | 'farm' | 'utility' | null
   landuse: string | null
   land_geom: GeoJSON.Polygon | null
+  // Added by cron (backend agent) — existing PV detection
+  existing_solar: boolean | null
+  solar_check_confidence: number | null
+  solar_checked_at: string | null
 }
 
 /**
@@ -486,6 +490,10 @@ export async function fetchScanCandidates(): Promise<Property[]> {
       sizeM2: row.kind === 'land' ? (num(row.land_area_m2) ?? undefined) : undefined,
       sizeRai: row.kind === 'land' ? (num(row.area_rai) ?? undefined) : undefined,
       tier: row.kind === 'land' ? (row.tier ?? undefined) : undefined,
+      // Existing PV detection (backend cron populates these; null = not checked yet)
+      existingSolar: row.existing_solar === true ? true : row.existing_solar === false ? false : undefined,
+      roofAnalysisConfidence: num(row.solar_check_confidence) ?? undefined,
+      solarCheckedAt: row.solar_checked_at ?? undefined,
     })
   }
 

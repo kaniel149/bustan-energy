@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Search, Download, Grid3X3, MapPin, Phone, MessageCircle, UserSearch } from 'lucide-react'
+import { Search, Download, Grid3X3, MapPin, Phone, MessageCircle, UserSearch, Eye, EyeOff } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { exportBuildingsCSV } from '../../lib/csv-export'
@@ -32,9 +32,15 @@ export function Scanner() {
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [gradeFilter, setGradeFilter] = useState<string>('all')
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
+  // Hide properties that already have solar installed (default ON)
+  const [hideExistingPv, setHideExistingPv] = useState(true)
 
   const sorted = useMemo(() => {
     let items = [...filteredProperties]
+
+    if (hideExistingPv) {
+      items = items.filter(p => p.existingSolar !== true)
+    }
 
     if (search) {
       const q = search.toLowerCase()
@@ -65,7 +71,13 @@ export function Scanner() {
     })
 
     return items
-  }, [filteredProperties, search, sortField, sortDir, gradeFilter, typeFilter])
+  }, [filteredProperties, search, sortField, sortDir, gradeFilter, typeFilter, hideExistingPv])
+
+  // Count of PV-hidden properties (for display when filter is on)
+  const pvHiddenCount = useMemo(
+    () => hideExistingPv ? filteredProperties.filter(p => p.existingSolar === true).length : 0,
+    [filteredProperties, hideExistingPv],
+  )
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -107,6 +119,23 @@ export function Scanner() {
             </button>
           ))}
         </div>
+
+        {/* Hide existing PV toggle */}
+        <button
+          onClick={() => setHideExistingPv((v) => !v)}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all border ${
+            hideExistingPv
+              ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+              : 'bg-transparent text-white/40 border-transparent hover:text-white/70'
+          }`}
+          title={hideExistingPv ? 'Showing only properties without PV' : 'Show all properties'}
+        >
+          {hideExistingPv ? <EyeOff size={11} /> : <Eye size={11} />}
+          Hide existing PV
+          {hideExistingPv && pvHiddenCount > 0 && (
+            <span className="ml-0.5 text-[9px] opacity-70">({pvHiddenCount})</span>
+          )}
+        </button>
 
         <div className="flex items-center gap-1">
           {['all', 'A', 'B', 'C', 'D'].map(grade => (
@@ -238,16 +267,27 @@ function BuildingCard({ property, inCrm, onClick, onFindContact }: { property: P
           </span>
           <h3 className="text-xs font-medium text-white truncate">{property.title}</h3>
         </div>
-        <span
-          className="px-1.5 py-0.5 rounded text-[10px] font-bold shrink-0 ml-2"
-          style={{
-            backgroundColor: gradeColor.bg,
-            color: gradeColor.text,
-            border: `1px solid ${gradeColor.border}`,
-          }}
-        >
-          {grade}
-        </span>
+        <div className="flex items-center gap-1 shrink-0 ml-2">
+          {property.existingSolar === true && (
+            <span
+              className="px-1 py-0.5 rounded text-[8px] font-bold"
+              style={{ backgroundColor: 'rgba(245,158,11,0.15)', color: '#FBBF24', border: '1px solid rgba(245,158,11,0.3)' }}
+              title="Existing PV detected on this roof"
+            >
+              ☀️ PV
+            </span>
+          )}
+          <span
+            className="px-1.5 py-0.5 rounded text-[10px] font-bold"
+            style={{
+              backgroundColor: gradeColor.bg,
+              color: gradeColor.text,
+              border: `1px solid ${gradeColor.border}`,
+            }}
+          >
+            {grade}
+          </span>
+        </div>
       </div>
 
       <p className="text-[10px] text-white/40 truncate mb-2 flex items-center gap-1">

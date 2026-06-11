@@ -1,8 +1,17 @@
 /**
  * CandidateReviewPanel — fast triage UI for pending scan candidates.
  *
- * Desktop: fixed side panel (right of map, left of PropertySidebar).
+ * Desktop: draggable FloatingPanel (right of map).
  * Mobile:  bottom sheet (slides up from bottom, above MobileBottomNav).
+ *          FloatingPanel is bypassed via mobileBehavior="passthrough" so the
+ *          existing bottom-sheet markup is preserved.
+ *
+ * Existing-PV features:
+ *   - Rows with existingSolar=true show an amber "☀️ has PV" badge and are
+ *     dimmed. When solar_checked_at is null a subtle "⏳ PV check pending"
+ *     hint is shown instead.
+ *   - "Hide existing PV" toggle in the panel header (default ON) filters them out.
+ *     The count of hidden rows is displayed: "N hidden (existing PV)".
  *
  * Uses existing service calls — no new backend surface:
  *   setScanCandidateStatus  → marks 'added' | 'rejected' in scan_candidates
@@ -10,7 +19,7 @@
  *   setReviewCandidate      → focuses the map overlay on the selected candidate
  */
 import { useState, useMemo, useCallback } from 'react'
-import { Check, X, ChevronDown, ChevronUp, MapPin, Zap, Loader2 } from 'lucide-react'
+import { Check, X, ChevronDown, ChevronUp, MapPin, Zap, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
@@ -19,6 +28,7 @@ import {
   confirmDetectedRoof,
 } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
+import { FloatingPanel } from '../ui/FloatingPanel'
 import type { Property } from '../../types'
 
 // ── Tier badge config ────────────────────────────────────────────────────────
@@ -51,12 +61,14 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
     : c.area ? `${Math.round(c.area).toLocaleString()} m²` : ''
 
   const tier = c.tier ? TIER_STYLE[c.tier] : null
+  const hasPv = c.existingSolar === true
+  const pvPending = c.existingSolar === undefined && c.solarCheckedAt === undefined
 
   return (
     <div
       className={`flex items-center gap-2 px-3 py-2.5 border-b border-white/5 transition-colors ${
         selected ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'
-      }`}
+      } ${hasPv ? 'opacity-60' : ''}`}
     >
       {/* Checkbox */}
       <button
@@ -77,13 +89,21 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
         className="flex-1 min-w-0 text-left"
         disabled={working}
       >
-        <div className="flex items-center gap-1.5 min-w-0">
+        <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
           <span className="text-xs shrink-0">{isLand ? '🌾' : '🏠'}</span>
-          <span className="text-xs text-white truncate">{c.title}</span>
+          <span className="text-xs text-white truncate max-w-[100px]">{c.title}</span>
           {tier && (
             <span className={`shrink-0 px-1 py-0.5 rounded text-[8px] font-bold ${tier.bg} ${tier.text}`}>
               {tier.label}
             </span>
+          )}
+          {hasPv && (
+            <span className="shrink-0 px-1 py-0.5 rounded text-[8px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              ☀️ has PV
+            </span>
+          )}
+          {!hasPv && pvPending && (
+            <span className="shrink-0 text-[8px] text-white/25 italic">⏳ PV check pending</span>
           )}
         </div>
         <div className="flex items-center gap-2 mt-0.5">
@@ -149,11 +169,22 @@ export function CandidateReviewPanel() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   // Bulk working flag
   const [bulkWorking, setBulkWorking] = useState(false)
+  // Hide existing PV toggle (default ON)
+  const [hideExistingPv, setHideExistingPv] = useState(true)
 
   // Sort by capacity desc (highest potential first)
   const sorted = useMemo(
     () => [...roofCandidates].sort((a, b) => (b.capacityKwp ?? 0) - (a.capacityKwp ?? 0)),
     [roofCandidates],
+  )
+
+  // Count of hidden (existing PV) rows
+  const pvCount = useMemo(() => sorted.filter((c) => c.existingSolar === true).length, [sorted])
+
+  // Visible rows after the PV filter
+  const visible = useMemo(
+    () => hideExistingPv ? sorted.filter((c) => c.existingSolar !== true) : sorted,
+    [sorted, hideExistingPv],
   )
 
   const toggleSelect = useCallback((id: string) => {
@@ -166,8 +197,8 @@ export function CandidateReviewPanel() {
   }, [])
 
   const selectAll = useCallback(() => {
-    setSelected(new Set(sorted.map((c) => c.id)))
-  }, [sorted])
+    setSelected(new Set(visible.map((c) => c.id)))
+  }, [visible])
 
   const clearSelected = useCallback(() => setSelected(new Set()), [])
 
@@ -260,12 +291,29 @@ export function CandidateReviewPanel() {
 
   if (!canReview || sorted.length === 0) return null
 
+  // ── Sub-header: PV filter + tally ─────────────────────────────────────────
+  const pvFilterBar = pvCount > 0 && (
+    <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5 bg-amber-500/5">
+      <button
+        onClick={() => setHideExistingPv((v) => !v)}
+        className="flex items-center gap-1.5 text-[10px] text-amber-400/80 hover:text-amber-300 transition-colors"
+        title={hideExistingPv ? 'Show candidates with existing PV' : 'Hide candidates with existing PV'}
+      >
+        {hideExistingPv ? <EyeOff size={10} /> : <Eye size={10} />}
+        Hide existing PV
+      </button>
+      {hideExistingPv && pvCount > 0 && (
+        <span className="text-[10px] text-amber-400/60">{pvCount} hidden</span>
+      )}
+    </div>
+  )
+
   // ── Tally header ──────────────────────────────────────────────────────────
   const tallyBar = (
     <div className="flex items-center justify-between px-3 py-2 border-b border-white/10">
       <div className="flex items-center gap-2">
         <span className="text-[11px] font-semibold text-white">
-          {sorted.length} pending
+          {visible.length} pending
         </span>
         {approvedTodayCount > 0 && (
           <span className="text-[10px] text-[#2ED89A]">· {approvedTodayCount} approved today</span>
@@ -314,7 +362,7 @@ export function CandidateReviewPanel() {
 
   const listBody = (
     <div className="overflow-y-auto flex-1 overscroll-contain">
-      {sorted.map((c) => (
+      {visible.map((c) => (
         <CandidateRow
           key={c.id}
           candidate={c}
@@ -329,16 +377,22 @@ export function CandidateReviewPanel() {
     </div>
   )
 
-  // ── Desktop panel (hidden on mobile via md:flex) ───────────────────────────
+  // ── Desktop: FloatingPanel wrapper ────────────────────────────────────────
   const desktopPanel = (
-    <div className="hidden md:flex absolute top-[52px] left-4 bottom-16 z-20 w-72 flex-col bg-[#0D2137]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-      <div className="px-3 py-2 border-b border-white/10 bg-white/[0.03]">
-        <h3 className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">
-          Candidate Review
-        </h3>
-      </div>
-      {tallyBar}
-      {listBody}
+    <div className="hidden md:flex">
+      <FloatingPanel
+        id="candidate-review"
+        title="Candidate Review"
+        badge={sorted.length}
+        defaultPosition={{ x: 16, y: 72 }}
+        minWidth={288}
+      >
+        {pvFilterBar}
+        {tallyBar}
+        <div className="flex flex-col overflow-hidden" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+          {listBody}
+        </div>
+      </FloatingPanel>
     </div>
   )
 
@@ -364,6 +418,7 @@ export function CandidateReviewPanel() {
         </button>
         {mobileOpen && (
           <div className="flex flex-col" style={{ maxHeight: '55vh' }}>
+            {pvFilterBar}
             {tallyBar}
             {listBody}
           </div>

@@ -84,6 +84,10 @@
     {
       "path": "/api/cron-monitoring-check",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron-detect-solar",
+      "schedule": "5-55/10 * * * *"
     }
   ]
 }

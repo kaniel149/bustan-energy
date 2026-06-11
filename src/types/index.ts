@@ -85,6 +85,8 @@ export interface Property {
   roofAnalysisConfidence?: number
   /** Existing PV detected on the roof (Gemini has_existing_solar). Deprioritizes EPC leads. */
   existingSolar?: boolean
+  /** ISO timestamp when the existing-PV check was last run (null = not checked yet). */
+  solarCheckedAt?: string
   annualKwh?: number
   annualSavings?: number
   epcCost?: number

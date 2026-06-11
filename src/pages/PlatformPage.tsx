@@ -14,6 +14,7 @@ import { useBustanStore } from '../lib/bustan-store'
 import { can } from '../lib/bustan-permissions'
 import { Toast } from '../components/Toast'
 import { CandidateReviewPanel } from '../components/Candidates/CandidateReviewPanel'
+import { FloatingPanel, PanelDock } from '../components/ui/FloatingPanel'
 const BustanLeadEditor = lazy(() =>
   import('../components/CRM/BustanLeadEditor').then((m) => ({ default: m.BustanLeadEditor })),
 )
@@ -440,13 +441,31 @@ export default function PlatformPage() {
 
       {/* Scan status — only in map view, when there are scans */}
       {isMapView && scanRequests.length > 0 && (
-        <ScanStatusPanel scanRequests={scanRequests} onFlyToBbox={setMapFlyToBbox} />
+        <FloatingPanel
+          id="scan-status"
+          title="Area Scans"
+          badge={scanRequests.length}
+          defaultPosition={{ x: typeof window !== 'undefined' ? Math.max(window.innerWidth - 272, 16) : 16, y: 80 }}
+          minWidth={240}
+        >
+          <ScanStatusPanel scanRequests={scanRequests} onFlyToBbox={setMapFlyToBbox} />
+        </FloatingPanel>
       )}
 
       {/* Legend — only in map view */}
       {isMapView && (
-        <MapLegend hasLandCandidates={roofCandidates.some((c) => c.type === 'land')} />
+        <FloatingPanel
+          id="map-legend"
+          title="Legend"
+          defaultPosition={{ x: 16, y: typeof window !== 'undefined' ? window.innerHeight - 340 : 400 }}
+          minWidth={180}
+        >
+          <MapLegend hasLandCandidates={roofCandidates.some((c) => c.type === 'land')} />
+        </FloatingPanel>
       )}
+
+      {/* Panel dock — reopen chips for closed floating panels */}
+      <PanelDock />
     </div>
   )
 }
@@ -462,7 +481,7 @@ function LegendItem({ shape, color, label }: { shape: 'square' | 'circle' | 'lin
   )
 }
 
-// ── Scan status panel (Task 2) ────────────────────────────────────────────────
+// ── Scan status panel — body only (wrapped in FloatingPanel in PlatformPage) ──
 function ScanStatusPanel({
   scanRequests,
   onFlyToBbox,
@@ -473,8 +492,7 @@ function ScanStatusPanel({
   const [hoveredError, setHoveredError] = useState<string | null>(null)
 
   return (
-    <div className="absolute top-20 right-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 w-60">
-      <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Area Scans</h4>
+    <div className="p-3">
       <div className="space-y-1.5 max-h-52 overflow-y-auto">
         {scanRequests.slice(0, 10).map((s) => {
           const chip = SCAN_CHIP[s.status] ?? SCAN_CHIP.queued
@@ -523,13 +541,12 @@ function ScanStatusPanel({
   )
 }
 
-// ── Map Legend with collapsible tier section (Task 5) ─────────────────────────
+// ── Map Legend — body only (wrapped in FloatingPanel in PlatformPage) ────────
 function MapLegend({ hasLandCandidates }: { hasLandCandidates: boolean }) {
   const [showTier, setShowTier] = useState(false)
 
   return (
-    <div className="absolute bottom-4 left-4 z-10 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 p-3 md:bottom-4 bottom-16 max-w-[180px]">
-      <h4 className="text-[10px] text-white/40 uppercase tracking-wider mb-2">Legend</h4>
+    <div className="p-3 max-w-[180px]">
       <div className="space-y-1.5">
         <LegendItem shape="circle" color="#00E676" label="Roof — Priority A" />
         <LegendItem shape="circle" color="#FFD600" label="Roof — Priority B" />

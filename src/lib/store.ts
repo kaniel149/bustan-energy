@@ -3,6 +3,14 @@ import type { FilterState, Property, Region, ActiveTab, PlatformView, ScanReques
 import type { CrmProject } from '../types/crm'
 import type { User } from '@supabase/supabase-js'
 
+/** Persisted state for a single floating panel (position + collapse/close flags). */
+export interface PanelState {
+  x: number
+  y: number
+  minimized: boolean
+  closed: boolean
+}
+
 type MapStyleId = 'sentinel2024' | 'satellite' | 'mapbox' | 'esri' | 'street'
 const MAP_STYLE_KEY = 'bustan:mapStyle'
 const MAP_STYLES: MapStyleId[] = ['sentinel2024', 'satellite', 'mapbox', 'esri', 'street']
@@ -104,6 +112,10 @@ interface AppState {
   updateCrmBuildingIds: () => void
   crmLoading: boolean
   setCrmLoading: (loading: boolean) => void
+
+  // Floating panel states — keyed by panel id
+  panelStates: Record<string, PanelState>
+  setPanelState: (id: string, patch: Partial<PanelState>) => void
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -272,4 +284,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   crmLoading: false,
   setCrmLoading: (loading) => set({ crmLoading: loading }),
+
+  panelStates: {},
+  setPanelState: (id, patch) =>
+    set((state) => {
+      const prev = state.panelStates[id] ?? { x: 0, y: 0, minimized: false, closed: false }
+      return { panelStates: { ...state.panelStates, [id]: { ...prev, ...patch } } }
+    }),
 }))

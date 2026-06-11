@@ -239,6 +239,21 @@ export function PropertySidebar() {
         </div>
 
         <div className="p-4 space-y-4">
+          {/* Existing PV banner — shown when solar panels detected on this roof */}
+          {property.existingSolar === true && (
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-400">
+              <span className="text-base shrink-0">☀️</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold">Existing PV detected on this roof</p>
+                {property.roofAnalysisConfidence != null && (
+                  <p className="text-[10px] text-amber-400/70 mt-0.5">
+                    Confidence: {Math.round(property.roofAnalysisConfidence * 100)}%
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Key Metrics */}
           <div className="grid grid-cols-2 gap-2">
             {area && (
