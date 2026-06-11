@@ -4,7 +4,7 @@
 - **URL:** https://bustan-energy.com
 - **CRM:** crm.bustan-energy.com
 - **Supabase:** trvgpgpsqvvdsudpgwpm
-- **Vercel:** solar-intelligence
+- **Vercel:** bustan-energy (renamed from solar-intelligence)
 
 ## Quick Links
 - [App](./src/) — React + TypeScript platform
