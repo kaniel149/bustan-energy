@@ -52,12 +52,6 @@ const LAND_PROPERTY_TYPES = new Set([
   'farmland', 'meadow', 'grass', 'greenfield', 'brownfield',
   'orchard', 'farmyard', 'quarry',
 ])
-// Esri World Imagery tile size (pixels); 640×640 is the Esri default cap.
-const TILE_SIZE    = 640
-// Approximate half-size in degrees added as padding around the roof bbox.
-// ~30 m at Thai latitudes → enough context to see adjacent panels without
-// losing the roof centroid.
-const BBOX_PAD_DEG = 0.00030   // ≈ 33 m per side
 
 // ----------------------------------------------------------------
 // Bustan REST helpers (mirrors cron-process-scans.ts exactly)
@@ -90,58 +84,64 @@ async function bPatch(path: string, body: unknown): Promise<boolean> {
 // imageSR=3857 lets the server project internally — output is still a JPEG
 // that represents the requested geographic bbox.
 // ----------------------------------------------------------------
-async function fetchAerialBase64(
-  lat: number,
-  lon: number,
-  roofGeom: { type: string; coordinates: number[][][] } | null,
-): Promise<{ b64: string; mime: string }> {
-  // Compute bbox from the roof polygon or fall back to a ~60 m box.
-  let minLon: number, minLat: number, maxLon: number, maxLat: number
-  if (roofGeom?.type === 'Polygon' && roofGeom.coordinates?.[0]?.length >= 3) {
-    const ring = roofGeom.coordinates[0]
-    minLon = ring.reduce((m, p) => Math.min(m, p[0]), Infinity)
-    minLat = ring.reduce((m, p) => Math.min(m, p[1]), Infinity)
-    maxLon = ring.reduce((m, p) => Math.max(m, p[0]), -Infinity)
-    maxLat = ring.reduce((m, p) => Math.max(m, p[1]), -Infinity)
-  } else {
-    // ~60 m box centred on the point
-    minLon = lon - BBOX_PAD_DEG * 2
-    minLat = lat - BBOX_PAD_DEG * 2
-    maxLon = lon + BBOX_PAD_DEG * 2
-    maxLat = lat + BBOX_PAD_DEG * 2
-  }
-  // Add 25 % padding to each side for context.
-  const dLon = (maxLon - minLon) * 0.25
-  const dLat = (maxLat - minLat) * 0.25
-  minLon -= dLon; maxLon += dLon
-  minLat -= dLat; maxLat += dLat
+// NOTE: the World_Imagery `export` endpoint returns HTTP 500 (verified
+// 2026-06-11), so we use the reliable XYZ tile endpoint instead: a 2×2 grid
+// of z19 tiles (~150×150 m combined at Thai latitudes) chosen so the target
+// point sits nearest the shared corner. Falls back to the single centre tile.
+const TILE_ZOOM = 19
+const ESRI_TILE = (z: number, y: number, x: number) =>
+  `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`
 
-  const url =
-    `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export` +
-    `?bbox=${minLon},${minLat},${maxLon},${maxLat}` +
-    `&bboxSR=4326&imageSR=3857` +
-    `&size=${TILE_SIZE},${TILE_SIZE}` +
-    `&format=jpg&f=image`
-
-  const ctrl = new AbortController()
-  const t = setTimeout(() => ctrl.abort(), 12_000)
-  let buf: ArrayBuffer
-  try {
-    const res = await fetch(url, { signal: ctrl.signal })
-    if (!res.ok) throw new Error(`esri_http_${res.status}`)
-    buf = await res.arrayBuffer()
-  } finally {
-    clearTimeout(t)
-  }
-
-  // ArrayBuffer → base64 in chunks to avoid call-stack overflow on large arrays.
+function bufToB64(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf)
   let binary = ''
   const CHUNK = 0x8000
   for (let i = 0; i < bytes.length; i += CHUNK) {
     binary += String.fromCharCode(...(bytes.subarray(i, i + CHUNK) as unknown as number[]))
   }
-  return { b64: btoa(binary), mime: 'image/jpeg' }
+  return btoa(binary)
+}
+
+async function fetchTile(z: number, y: number, x: number): Promise<string> {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), 10_000)
+  try {
+    const res = await fetch(ESRI_TILE(z, y, x), { signal: ctrl.signal })
+    if (!res.ok) throw new Error(`esri_tile_${res.status}`)
+    const mime = res.headers.get('content-type') ?? ''
+    if (!mime.startsWith('image/')) throw new Error('esri_tile_not_image')
+    return bufToB64(await res.arrayBuffer())
+  } finally {
+    clearTimeout(t)
+  }
+}
+
+async function fetchAerialBase64(
+  lat: number,
+  lon: number,
+): Promise<{ images: string[]; mime: string; grid: boolean }> {
+  // Slippy-map fractional tile coords
+  const n = 2 ** TILE_ZOOM
+  const xf = ((lon + 180) / 360) * n
+  const latRad = (lat * Math.PI) / 180
+  const yf = ((1 - Math.asinh(Math.tan(latRad)) / Math.PI) / 2) * n
+
+  // 2×2 block whose shared corner is nearest the point
+  const x0 = Math.max(0, Math.min(n - 2, Math.round(xf) - 1))
+  const y0 = Math.max(0, Math.min(n - 2, Math.round(yf) - 1))
+  const coords: Array<[number, number]> = [
+    [y0, x0], [y0, x0 + 1],       // top-left, top-right
+    [y0 + 1, x0], [y0 + 1, x0 + 1], // bottom-left, bottom-right
+  ]
+
+  try {
+    const images = await Promise.all(coords.map(([y, x]) => fetchTile(TILE_ZOOM, y, x)))
+    return { images, mime: 'image/jpeg', grid: true }
+  } catch {
+    // Fall back to the single tile containing the point
+    const single = await fetchTile(TILE_ZOOM, Math.floor(yf), Math.floor(xf))
+    return { images: [single], mime: 'image/jpeg', grid: false }
+  }
 }
 
 // ----------------------------------------------------------------
@@ -150,9 +150,9 @@ async function fetchAerialBase64(
 // analysis, so the model stays on-task and the output token budget
 // stays tiny (well within 200-token max).
 // ----------------------------------------------------------------
-const SOLAR_DETECT_PROMPT = `You are analysing an aerial / satellite photograph of a building rooftop.
+const SOLAR_DETECT_PROMPT = `You are analysing aerial / satellite imagery of a building rooftop. When 4 tiles are provided they form a 2×2 grid (order: top-left, top-right, bottom-left, bottom-right) and the target building sits near the CENTRE of the combined area.
 
-TASK: Determine whether photovoltaic (PV) solar panels are ALREADY installed on the roof of the building in the centre of the image.
+TASK: Determine whether photovoltaic (PV) solar panels are ALREADY installed on the roof of the building nearest the centre of the imagery.
 
 GUIDANCE:
 - Solar panels: rectangular grid of dark blue/black cells, often with a metallic frame visible from above.
@@ -169,40 +169,55 @@ interface SolarDetectResult {
   panel_coverage_pct: number
 }
 
-async function callGemini(b64: string, mime: string): Promise<SolarDetectResult> {
-  const ctrl = new AbortController()
-  const t = setTimeout(() => ctrl.abort(), 20_000)
-  let res: Response
-  try {
-    res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: ctrl.signal,
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: SOLAR_DETECT_PROMPT },
-              { inline_data: { mime_type: mime, data: b64 } },
-            ],
-          }],
-          generationConfig: {
-            temperature: 0.1,
-            responseMimeType: 'application/json',
-            maxOutputTokens: 200,
-          },
-        }),
-      },
-    )
-  } finally {
-    clearTimeout(t)
+// Model fallback chain: free-tier quotas are tracked PER MODEL, so when one
+// model is 429-exhausted we roll to the next (verified 2026-06-11: 2.0-flash
+// exhausted while 2.5-flash-lite / 2.5-flash still had quota).
+const GEMINI_MODELS = [
+  ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+]
+
+async function callGemini(images: string[], mime: string): Promise<SolarDetectResult> {
+  let res: Response | null = null
+  let lastErr = ''
+  for (const model of GEMINI_MODELS) {
+    const ctrl = new AbortController()
+    const t = setTimeout(() => ctrl.abort(), 20_000)
+    try {
+      res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: ctrl.signal,
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { text: SOLAR_DETECT_PROMPT },
+                ...images.map((data) => ({ inline_data: { mime_type: mime, data } })),
+              ],
+            }],
+            generationConfig: {
+              temperature: 0.1,
+              responseMimeType: 'application/json',
+              maxOutputTokens: 200,
+            },
+          }),
+        },
+      )
+    } finally {
+      clearTimeout(t)
+    }
+    if (res.ok) break
+    lastErr = `gemini_${model}_${res.status}: ${(await res.text()).slice(0, 120)}`
+    // 429 (quota) / 404 (model unavailable) → try the next model; else give up
+    if (res.status !== 429 && res.status !== 404) throw new Error(lastErr)
+    res = null
   }
 
-  if (!res.ok) {
-    const txt = await res.text()
-    throw new Error(`gemini_${res.status}: ${txt.slice(0, 120)}`)
-  }
+  if (!res) throw new Error(lastErr || 'gemini_all_models_exhausted')
 
   const envelope = await res.json() as {
     candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>
@@ -269,13 +284,13 @@ function buildPropertySolarPatch(
 // ----------------------------------------------------------------
 // Process a single item (shared logic for candidates + properties)
 // ----------------------------------------------------------------
-async function processItem(lat: number, lon: number, roofGeom: { type: string; coordinates: number[][][] } | null): Promise<{
+async function processItem(lat: number, lon: number): Promise<{
   has_existing_solar: boolean
   confidence: number
   panel_coverage_pct: number
 }> {
-  const { b64, mime } = await fetchAerialBase64(lat, lon, roofGeom)
-  const result = await callGemini(b64, mime)
+  const { images, mime } = await fetchAerialBase64(lat, lon)
+  const result = await callGemini(images, mime)
   return {
     has_existing_solar: result.has_existing_solar as boolean,
     confidence: Number(result.confidence) || 0,
@@ -311,7 +326,7 @@ export default async function handler(req: Request): Promise<Response> {
       if (rows.length === 0) continue
       const row = rows[0]
       try {
-        const r = await processItem(Number(row.lat), Number(row.lon), row.roof_geom)
+        const r = await processItem(Number(row.lat), Number(row.lon))
         await bPatch(`scan_candidates?id=eq.${id}`, {
           existing_solar: r.has_existing_solar,
           solar_check_confidence: r.confidence,
@@ -332,7 +347,7 @@ export default async function handler(req: Request): Promise<Response> {
       if (rows.length === 0) continue
       const row = rows[0]
       try {
-        const r = await processItem(Number(row.lat), Number(row.lon), null)
+        const r = await processItem(Number(row.lat), Number(row.lon))
         await bPatch(`properties?id=eq.${id}`, {
           ...buildPropertySolarPatch(row.existing_solar, r.has_existing_solar, r.confidence),
           solar_check_confidence: r.confidence,
@@ -393,7 +408,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Process scan_candidates (Slot A)
   for (const c of candidates) {
     try {
-      const r = await processItem(Number(c.lat), Number(c.lon), c.roof_geom)
+      const r = await processItem(Number(c.lat), Number(c.lon))
       await bPatch(`scan_candidates?id=eq.${c.id}`, {
         existing_solar: r.has_existing_solar,
         solar_check_confidence: r.confidence,
@@ -416,7 +431,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Process properties (Slot B)
   for (const p of properties) {
     try {
-      const r = await processItem(Number(p.lat), Number(p.lon), null)
+      const r = await processItem(Number(p.lat), Number(p.lon))
       await bPatch(`properties?id=eq.${p.id}`, {
         ...buildPropertySolarPatch(p.existing_solar, r.has_existing_solar, r.confidence),
         solar_check_confidence: r.confidence,
