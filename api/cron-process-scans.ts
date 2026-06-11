@@ -34,6 +34,10 @@ const OVERPASS_TIMEOUT_MS = 12000  // per-mirror abort — keeps us inside edge 
 // Tuning — mirrors scripts/download_osm_buildings.py
 const USABLE_RATIO = 0.65
 const EFFICIENCY_KWP = 0.18
+// Default roof floor when the operator sets no explicit minRoofM2 filter.
+// Prod audit (2026-06-11): 69% of pending candidates were <30 kWp residential
+// noise. 150 m² ≈ 17 kWp keeps small-commercial while killing the junk tail.
+const DEFAULT_MIN_ROOF_M2 = 150
 const MAX_BBOX_DEG = 0.2          // ~22km per side cap — guards Overpass + cost
 const MAX_BUILDINGS = 1500        // hard cap per scan; rest logged as skipped
 const DEDUP_DEG = 0.00025         // ~28m: skip buildings near an existing lead
@@ -417,7 +421,7 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
     const geom = el.geometry as LngLat[]
     const area = shoelaceAreaM2(geom)
     if (area < 5) continue
-    if (filters.minRoofM2 && area < filters.minRoofM2) continue
+    if (area < (filters.minRoofM2 ?? DEFAULT_MIN_ROOF_M2)) continue
     const usable = area * USABLE_RATIO
     const kwp = Math.round(usable * EFFICIENCY_KWP * 100) / 100
     const tag = (el.tags?.building || 'yes').toLowerCase()
@@ -479,7 +483,7 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
       } else {
         continue  // no usable geometry — skip
       }
-      if (filters.minRoofM2 && area < filters.minRoofM2) continue
+      if (area < (filters.minRoofM2 ?? DEFAULT_MIN_ROOF_M2)) continue
       // Overture buildings carry no OSM building tag / category, so they cannot
       // be classified as commercial — skip them when commercialOnly is set.
       if (filters.commercialOnly) continue
