@@ -23,11 +23,11 @@ export function SectionHeader({ tag, title, subtitle, align = 'center', classNam
           {tag}
         </p>
       )}
-      <h2 className="font-serif text-[2.5rem] leading-[1.1] text-[var(--bustan-ink)] md:text-[3.5rem]">
+      <h2 className="font-serif text-[2.5rem] leading-[1.1] text-ink md:text-[3.5rem]">
         {title}
       </h2>
       {subtitle && (
-        <p className="mt-4 text-lg leading-relaxed text-[rgba(39,52,47,0.74)]">{subtitle}</p>
+        <p className="mt-4 text-lg leading-relaxed text-ink/74">{subtitle}</p>
       )}
     </motion.div>
   )

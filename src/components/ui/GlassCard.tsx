@@ -16,9 +16,9 @@ export function GlassCard({
   as: Tag = 'div',
 }: GlassCardProps) {
   const baseClasses = [
-    'bg-[rgba(255,244,226,0.7)]',
+    'bg-shell/70',
     'backdrop-blur-xl',
-    'border border-[rgba(36,70,62,0.14)]',
+    'border border-grove/14',
     'rounded-card',
     'shadow-soft',
     'transition-all duration-[var(--duration-base)] ease-out-soft',

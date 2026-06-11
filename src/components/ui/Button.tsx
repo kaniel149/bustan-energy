@@ -36,9 +36,9 @@ const variantClasses: Record<Variant, string> = {
     'border border-transparent',
   ].join(' '),
   secondary: [
-    'bg-transparent text-[var(--bustan-grove)] font-medium',
-    'border border-[rgba(36,70,62,0.3)]',
-    'hover:bg-[rgba(216,236,232,0.5)]',
+    'bg-transparent text-grove font-medium',
+    'border border-grove/30',
+    'hover:bg-mist/50',
   ].join(' '),
   ghost: [
     'bg-transparent text-[var(--bustan-lagoon)] font-medium',

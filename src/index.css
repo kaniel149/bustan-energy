@@ -12,6 +12,11 @@
   --color-sand: #f4ead8;
   --color-dark: #27342f;
   --color-navy: #24463e;
+  /* Semantic brand tokens — preferred idiom: text-ink/72, bg-shell/70, border-grove/14 */
+  --color-ink: #27342f;
+  --color-shell: #fff4e2;
+  --color-grove: #24463e;
+  --color-mist: #d8ece8;
   /* Type scale (Instrument Serif display / DM Sans body) */
   --text-display-xl: 4.5rem;
   --text-display-lg: 3.5rem;
