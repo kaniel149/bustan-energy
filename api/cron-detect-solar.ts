@@ -403,7 +403,7 @@ export default async function handler(req: Request): Promise<Response> {
     return Response.json({ ok: true, processed: 0, detected: 0, errors: 0, message: 'nothing_to_process' })
   }
 
-  let processed = 0, detected = 0, errors = 0
+  let processed = 0, detected = 0, errors = 0, deferred = 0
 
   // Sequential processing of 15 items blew the 25-s edge wall clock
   // (FUNCTION_INVOCATION_TIMEOUT, verified 2026-06-11). Process with a small
@@ -431,13 +431,22 @@ export default async function handler(req: Request): Promise<Response> {
       processed++
       if (r.has_existing_solar) detected++
     } catch (err) {
-      // Stamp solar_checked_at so this row exits the work queue (confidence=0
-      // signals the failure; the item can be re-queued via POST if needed).
+      const msg = err instanceof Error ? err.message : String(err)
+      // Gemini quota exhaustion (429 on every model) is TRANSIENT — free-tier
+      // limit is ~20 req/min. Do NOT stamp the row; leave it queued so the
+      // next 10-min cron tick retries it. Stamping here would silently drain
+      // the whole queue as "checked, confidence 0" during a quota storm.
+      if (msg.includes('_429')) {
+        deferred++
+        return
+      }
+      // Real per-item failure (bad imagery, parse error): stamp so the row
+      // exits the queue (confidence=0 signals failure; re-queue via POST).
       await bPatch(`${table}?id=eq.${row.id}`, {
         solar_check_confidence: 0,
         solar_checked_at: now,
       })
-      console.error(`cron-detect-solar ${table} ${row.id} error:`, err instanceof Error ? err.message : err)
+      console.error(`cron-detect-solar ${table} ${row.id} error:`, msg)
       errors++
     }
   }
@@ -458,6 +467,7 @@ export default async function handler(req: Request): Promise<Response> {
     processed,
     detected,
     errors,
+    deferred,
     slots: { candidates: candidates.length, properties: properties.length },
   })
 }
