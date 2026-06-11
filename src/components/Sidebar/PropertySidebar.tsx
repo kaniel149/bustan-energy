@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers, PenLine, Lock, UserSearch, Mail, Linkedin } from 'lucide-react'
+import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, FileText, Send, Check, MessageCircle, Search, ChevronRight, Layers, PenLine, Lock, UserSearch, Mail, Linkedin } from 'lucide-react'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import { ProposalModal } from '../Proposal/ProposalModal'
@@ -511,14 +511,44 @@ export function PropertySidebar() {
                   <UserSearch size={12} className="text-[#E8A820]" />
                   Decision Maker
                 </h3>
-                <button
-                  onClick={handleFindContact}
-                  disabled={contactLoading}
-                  className="flex items-center gap-1 text-[10px] text-[#E8A820] hover:text-[#E8A820]/80 transition-colors disabled:opacity-50"
-                >
-                  {contactLoading ? <Loader2 size={10} className="animate-spin" /> : <Search size={10} />}
-                  {contactLoading ? 'Searching…' : 'Find'}
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Create Proposal — prefills /admin/proposals/new with this property's data */}
+                  <button
+                    onClick={() => {
+                      const params = new URLSearchParams({
+                        property_id: property.id,
+                        client_name: property.ownerName || '',
+                        location: `${regionConfig.nameEn}`,
+                        system_size_kwp: String(
+                          property.capacityKwp || (financial ? financial.capacityKwp : '') || ''
+                        ),
+                        panel_count: String(
+                          property.panelCount || (financial ? financial.panelCount : '') || ''
+                        ),
+                        ...(financial
+                          ? {
+                              total_price_thb: String(financial.epcCost || ''),
+                              annual_savings_thb: String(financial.annualSavingsYear1 || ''),
+                              payback_years: String(financial.paybackYears || ''),
+                            }
+                          : {}),
+                      })
+                      window.open(`/admin/proposals/new?${params.toString()}`, '_blank')
+                    }}
+                    className="flex items-center gap-1 text-[10px] text-[#2ED89A] hover:text-[#2ED89A]/80 transition-colors"
+                  >
+                    <Send size={10} />
+                    Create proposal
+                  </button>
+                  <button
+                    onClick={handleFindContact}
+                    disabled={contactLoading}
+                    className="flex items-center gap-1 text-[10px] text-[#E8A820] hover:text-[#E8A820]/80 transition-colors disabled:opacity-50"
+                  >
+                    {contactLoading ? <Loader2 size={10} className="animate-spin" /> : <Search size={10} />}
+                    {contactLoading ? 'Searching…' : 'Find'}
+                  </button>
+                </div>
               </div>
 
               {contactResult && (
@@ -665,9 +695,38 @@ export function PropertySidebar() {
             <div className="flex flex-col gap-2">
               {canQuote ? (
                 <>
+                  {/* PRIMARY: DB-backed tracked proposal — view tracking, signature, email drip */}
+                  <button
+                    onClick={() => {
+                      // property_id is the canonical path — the page will fetch the full
+                      // Property (including roofGeom) and hydrate all fields from it.
+                      // Fallback scalar params are included so the page can degrade gracefully
+                      // if the Bustan fetch fails (e.g. auth not configured).
+                      // panel_count drives system_size_kwp in NewProposalPage via calcDerived
+                      // (FIX 2: setting system_size_kwp directly was silently dropped because
+                      //  calcDerived recomputes it from panel_count × panel_watt).
+                      const params = new URLSearchParams({
+                        property_id: property.id,
+                        client_name: property.ownerName || '',
+                        location: `${regionConfig.nameEn}`,
+                        system_size_kwp: String(financial.capacityKwp || ''),
+                        // Prefer the drawn-roof fitted count (geometry-aware, 580W) over the
+                        // legacy 550W area heuristic so the scalar fallback matches the map.
+                        panel_count: String(property.panelCount || financial.panelCount || ''),
+                        total_price_thb: String(financial.epcCost || ''),
+                        annual_savings_thb: String(financial.annualSavingsYear1 || ''),
+                        payback_years: String(financial.paybackYears || ''),
+                      })
+                      window.open(`/admin/proposals/new?${params.toString()}`, '_blank')
+                    }}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#D4930A] text-white font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  >
+                    <Send size={16} />
+                    {tm.createProposal}
+                  </button>
                   <button
                     onClick={() => setShowProposalModal(true)}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#00D68F] to-[#00B377] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#00D68F] to-[#00B377] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                   >
                     <Layers size={16} />
                     {tm.compareOptions}
@@ -687,10 +746,10 @@ export function PropertySidebar() {
                         dealValue: financial.epcCost,
                       }).then(() => getCrmProjects().then(p => useAppStore.getState().setCrmProjects(p)))
                     }}
-                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#E8A820] to-[#E85D3A] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                    className="w-full py-2 rounded-xl bg-white/5 border border-white/10 text-white/50 text-xs flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
                   >
-                    <Send size={16} />
-                    {tm.fullSalesProposal}
+                    <FileText size={14} />
+                    {tm.quickPreviewUntracked}
                   </button>
                   <button
                     onClick={async () => {
@@ -724,34 +783,6 @@ export function PropertySidebar() {
                   {pdfError && (
                     <p className="text-[#E85D3A] text-[10px] text-center px-1">{pdfError}</p>
                   )}
-                  <button
-                    onClick={() => {
-                      // property_id is the canonical path — the page will fetch the full
-                      // Property (including roofGeom) and hydrate all fields from it.
-                      // Fallback scalar params are included so the page can degrade gracefully
-                      // if the Bustan fetch fails (e.g. auth not configured).
-                      // panel_count drives system_size_kwp in NewProposalPage via calcDerived
-                      // (FIX 2: setting system_size_kwp directly was silently dropped because
-                      //  calcDerived recomputes it from panel_count × panel_watt).
-                      const params = new URLSearchParams({
-                        property_id: property.id,
-                        client_name: property.ownerName || '',
-                        location: `${regionConfig.nameEn}`,
-                        system_size_kwp: String(financial.capacityKwp || ''),
-                        // Prefer the drawn-roof fitted count (geometry-aware, 580W) over the
-                        // legacy 550W area heuristic so the scalar fallback matches the map.
-                        panel_count: String(property.panelCount || financial.panelCount || ''),
-                        total_price_thb: String(financial.epcCost || ''),
-                        annual_savings_thb: String(financial.annualSavingsYear1 || ''),
-                        payback_years: String(financial.paybackYears || ''),
-                      })
-                      window.open(`/admin/proposals/new?${params.toString()}`, '_blank')
-                    }}
-                    className="w-full py-2.5 rounded-xl bg-[#1A7A5A] text-white text-sm flex items-center justify-center gap-2 hover:bg-[#11604B] transition-colors font-semibold"
-                  >
-                    <Send size={14} />
-                    {tm.createBrandedProposal}
-                  </button>
                 </>
               ) : (
                 <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/30 text-xs">

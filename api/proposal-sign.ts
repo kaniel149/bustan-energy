@@ -109,7 +109,7 @@ function clientEmail(p: ProposalSignRow, s: SignatureRow) {
     <p><b>Next steps:</b></p>
     <ol style="padding-left:20px;">
       <li>We will contact you within 24h to schedule site visit</li>
-      <li>50% deposit invoice will be sent separately</li>
+      <li>40% deposit invoice will be sent separately</li>
       <li>Installation within 4-6 weeks</li>
     </ol>
     <p style="margin-top:20px;font-size:13px;color:#888;">WhatsApp: +66 94 669 2011 · Bustan Energy Contracts</p>

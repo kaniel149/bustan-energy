@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useBustanStore } from '../../lib/bustan-store'
+import { useAppStore } from '../../lib/store'
 import { fetchActivityLog, type ActivityRow } from '../../lib/bustan-crm-service'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
 import { useTranslation } from '../../i18n/useTranslation'
@@ -19,7 +21,11 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub?: string
 /** Live CRM dashboard built from the bustan leads in the store. */
 export default function BustanDashboard() {
   const leadsById = useBustanStore((s) => s.leadsById)
+  const scanRequests = useAppStore((s) => s.scanRequests)
+  const roofCandidates = useAppStore((s) => s.roofCandidates)
+  const setPlatformView = useAppStore((s) => s.setPlatformView)
   const d = useTranslation().t.crm.dash
+  const navigate = useNavigate()
   const [activity, setActivity] = useState<ActivityRow[]>([])
 
   useEffect(() => {
@@ -54,8 +60,36 @@ export default function BustanDashboard() {
     const lost = byStage.lost || 0
     const winRate = won + lost > 0 ? Math.round((won / (won + lost)) * 100) : 0
     const topAreas = Object.entries(byArea).sort((a, b) => b[1] - a[1]).slice(0, 6)
-    return { total: leads.length, byStage, byPriority, byReach, pipelineKwp, pipelineValue, winRate, topAreas }
-  }, [leadsById])
+
+    // Deal-flow funnel counts — maps the full pipeline from raw scans to closed deals.
+    //
+    // Step 1 — Scans run: total scan_requests in the store (all statuses).
+    // Step 2 — Candidates found: pending scan_candidates currently in store.
+    // Step 3 — Approved: every lead in leadsById was approved from a candidate
+    //          (inserted via confirmDetectedRoof / set_scan_candidate_status='added').
+    //          Count = total leads (candidates graduate into leads; the rest stay pending
+    //          in scan_candidates and are counted in step 2).
+    // Step 4 — Has contact: approved leads where owner data includes a decision-maker
+    //          name OR legal-owner name (i.e. research has been done).
+    // Step 5 — Proposal sent: leads at stage 'proposal' or 'won' (proposal was built
+    //          and the deal is either in negotiation or already closed). The stage alias
+    //          'proposal_sent' / 'negotiation' both normalise to 'proposal' in the layer.
+    // Step 6 — Signed/Won: leads at stage 'won'.
+    const funnelScans = scanRequests.length
+    const funnelCandidates = roofCandidates.length
+    const funnelApproved = leads.length
+    const funnelContact = leads.filter((l) => {
+      const ownerName = l.owner?.decision_maker_name || l.owner?.legal_owner_name
+      return Boolean(ownerName?.trim())
+    }).length
+    const funnelProposal = (byStage.proposal || 0) + (byStage.won || 0)
+    const funnelSigned = byStage.won || 0
+
+    return {
+      total: leads.length, byStage, byPriority, byReach, pipelineKwp, pipelineValue, winRate, topAreas,
+      funnelScans, funnelCandidates, funnelApproved, funnelContact, funnelProposal, funnelSigned,
+    }
+  }, [leadsById, scanRequests, roofCandidates])
 
   if (m.total === 0) {
     return (
@@ -77,7 +111,10 @@ export default function BustanDashboard() {
         <Kpi label={d.winRate} value={`${m.winRate}%`} sub={`${m.byStage.won || 0} ${d.won} · ${m.byStage.lost || 0} ${d.lost}`} />
       </div>
 
-      {/* Funnel */}
+      {/* Deal-flow funnel — Scans → Candidates → Approved → Contact → Proposal → Signed */}
+      <DealFlowFunnel m={m} d={d} onCandidatesClick={() => setPlatformView('scanner')} onPipelineClick={() => navigate('/crm/pipeline')} />
+
+      {/* Funnel by stage */}
       <div className="rounded-xl bg-[#0D2137] border border-white/10 p-4">
         <h2 className="text-sm font-medium text-white mb-3">{d.funnel}</h2>
         <div className="space-y-2">
@@ -145,6 +182,113 @@ export default function BustanDashboard() {
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Deal-flow funnel sub-component
+// ---------------------------------------------------------------------------
+
+type DashMetrics = {
+  funnelScans: number
+  funnelCandidates: number
+  funnelApproved: number
+  funnelContact: number
+  funnelProposal: number
+  funnelSigned: number
+}
+
+type DashTranslations = {
+  dealFunnel: string
+  funnelScans: string
+  funnelCandidates: string
+  funnelApproved: string
+  funnelContact: string
+  funnelProposal: string
+  funnelSigned: string
+  ofPrev: string
+}
+
+function DealFlowFunnel({
+  m,
+  d,
+  onCandidatesClick,
+  onPipelineClick,
+}: {
+  m: DashMetrics
+  d: DashTranslations
+  onCandidatesClick: () => void
+  onPipelineClick: () => void
+}) {
+  // Each step: label, count, click handler (null = no navigation)
+  const steps: Array<{ label: string; count: number; onClick?: () => void }> = [
+    { label: d.funnelScans, count: m.funnelScans },
+    { label: d.funnelCandidates, count: m.funnelCandidates, onClick: onCandidatesClick },
+    { label: d.funnelApproved, count: m.funnelApproved, onClick: onPipelineClick },
+    { label: d.funnelContact, count: m.funnelContact, onClick: onPipelineClick },
+    { label: d.funnelProposal, count: m.funnelProposal, onClick: onPipelineClick },
+    { label: d.funnelSigned, count: m.funnelSigned, onClick: onPipelineClick },
+  ]
+
+  // Bar width relative to the first step (always 100%) — tapering funnel.
+  const maxCount = Math.max(steps[0].count, 1)
+
+  return (
+    <div className="rounded-xl bg-[#0D2137] border border-white/10 p-4">
+      <h2 className="text-sm font-medium text-white mb-3">{d.dealFunnel}</h2>
+      <div className="space-y-2.5">
+        {steps.map((step, i) => {
+          const prev = i === 0 ? step.count : steps[i - 1].count
+          const pct = prev > 0 ? Math.round((step.count / prev) * 100) : 0
+          const barPct = (step.count / maxCount) * 100
+          // Gold accent for first/last, teal for middle steps
+          const barColor = i === steps.length - 1 ? '#E8A820' : i === 0 ? '#6366f1' : '#2ED89A'
+          const Row = (
+            <div className={`flex items-center gap-2 sm:gap-3 ${step.onClick ? 'cursor-pointer group' : ''}`}>
+              {/* Step index */}
+              <span className="w-4 text-[10px] text-white/30 shrink-0 text-right">{i + 1}</span>
+              {/* Label */}
+              <span className={`w-28 sm:w-32 text-[11px] shrink-0 truncate ${step.onClick ? 'text-white/60 group-hover:text-white/90' : 'text-white/50'} transition-colors`}>
+                {step.label}
+              </span>
+              {/* Bar */}
+              <div className="flex-1 h-5 bg-white/5 rounded-md overflow-hidden min-w-0">
+                <div
+                  className="h-full rounded-md transition-all duration-500 flex items-center px-2"
+                  style={{
+                    width: `${Math.max(barPct, step.count > 0 ? 6 : 0)}%`,
+                    backgroundColor: `${barColor}30`,
+                    borderLeft: step.count > 0 ? `2px solid ${barColor}` : 'none',
+                  }}
+                >
+                  {step.count > 0 && (
+                    <span className="text-[11px] font-bold whitespace-nowrap" style={{ color: barColor }}>
+                      {step.count}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {/* Conversion % vs previous step */}
+              {i > 0 && (
+                <span className={`w-10 text-right text-[10px] shrink-0 ${pct >= 50 ? 'text-[#2ED89A]' : pct >= 20 ? 'text-[#E8A820]' : 'text-white/30'}`}>
+                  {pct}%
+                </span>
+              )}
+              {i === 0 && <span className="w-10" />}
+            </div>
+          )
+          if (step.onClick) {
+            return (
+              <button key={step.label} onClick={step.onClick} className="w-full text-left">
+                {Row}
+              </button>
+            )
+          }
+          return <div key={step.label}>{Row}</div>
+        })}
+      </div>
+      <p className="text-[9px] text-white/25 mt-2 text-right">{d.ofPrev}</p>
     </div>
   )
 }

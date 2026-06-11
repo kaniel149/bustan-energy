@@ -88,6 +88,10 @@
     {
       "path": "/api/cron-detect-solar",
       "schedule": "5-55/10 * * * *"
+    },
+    {
+      "path": "/api/cron-enrich-contacts",
+      "schedule": "2-52/10 * * * *"
     }
   ]
 }

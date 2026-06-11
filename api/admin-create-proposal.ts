@@ -480,6 +480,30 @@ export default async function handler(req: Request): Promise<Response> {
     if (!admin) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
 
     const body = await req.json()
+
+    // ── mark_sent action — admin manually copies link and marks proposal as sent ──
+    if (body.action === 'mark_sent') {
+      const { ref: markRef } = body
+      if (!markRef || typeof markRef !== 'string') {
+        return Response.json({ ok: false, error: 'missing_ref' }, { status: 400 })
+      }
+      const nowIso = new Date().toISOString()
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/proposals?ref_number=eq.${encodeURIComponent(markRef)}&status=eq.draft`,
+        {
+          method: 'PATCH',
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal',
+          },
+          body: JSON.stringify({ status: 'sent', sent_at: nowIso }),
+        },
+      )
+      return Response.json({ ok: true, ref: markRef, marked_sent_at: nowIso })
+    }
+
     const {
       ref,
       client_name,
@@ -698,10 +722,15 @@ export default async function handler(req: Request): Promise<Response> {
     const finalHtml = rendered.replace('</body>', `${contract}\n</body>`)
 
     const nowIso = new Date().toISOString()
-    // 30-day expiry (needed by schedule_followups_on_send trigger)
-    const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    // 30-day expiry — only used for new proposals.
+    // Edits preserve the existing expires_at so price validity is not silently extended.
+    // Pass {extend_validity:true} to explicitly reset the clock on an edit.
+    const freshExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const expires_at = isNewProposal
+      ? freshExpiresAt
+      : (body.extend_validity ? freshExpiresAt : (existing.expires_at || freshExpiresAt))
 
-    // Build upsert payload — only set sent_at on first send
+    // Build upsert payload
     const upsertBody: Record<string, unknown> = {
       ref_number: ref,
       client_name,
@@ -780,15 +809,20 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     if (isNewProposal) {
-      // First time — mark as sent now
-      upsertBody.status = 'sent'
-      upsertBody.sent_at = nowIso
+      // New proposal — stays 'draft' until admin explicitly marks it sent via
+      // {action:'mark_sent'}. This prevents the not_viewed drip from firing
+      // before the link has actually been shared with the client.
+      upsertBody.status = 'draft'
+      upsertBody.sent_at = null
     } else {
-      // Edit — preserve existing lifecycle state
-      upsertBody.sent_at = existing.sent_at || nowIso
-      // Don't downgrade status (viewed/signed should stay)
-      if (!existing.status || existing.status === 'draft') {
-        upsertBody.status = 'sent'
+      // Edit — preserve existing lifecycle state and sent_at timestamp.
+      // Never auto-advance draft→sent on edit; admin uses mark_sent for that.
+      upsertBody.sent_at = existing.sent_at || null
+      // Only preserve status; never downgrade viewed/signed back to draft/sent.
+      if (existing.status) {
+        upsertBody.status = existing.status
+      } else {
+        upsertBody.status = 'draft'
       }
     }
 
@@ -805,7 +839,7 @@ export default async function handler(req: Request): Promise<Response> {
       },
       body: JSON.stringify({
         proposal_ref: ref,
-        event_type: isNewProposal ? 'sent' : 'edited',
+        event_type: isNewProposal ? 'created' : 'edited',
         event_data: { by: admin.email },
       }),
     }).catch(() => {})

@@ -91,19 +91,24 @@ export default async function handler(req: Request): Promise<Response> {
     // Log view attempt (correct or not).
     // The DB trigger (migration 009) handles view_count increment on correct inserts.
     // We do NOT patch view_count here to avoid double-counting.
-    supaPost('proposal_views', {
+    // NOTE: viewInsert + access_denied event are awaited via allSettled below so the
+    // Edge isolate does not die before they resolve.
+    const viewInsert = supaPost('proposal_views', {
       proposal_ref: ref,
       ip,
       user_agent: ua,
       password_correct: correct,
-    }).catch(() => {})
+    })
 
     if (!correct) {
-      supaPost('proposal_events', {
-        proposal_ref: ref,
-        event_type: 'access_denied',
-        event_data: { ip, ua },
-      }).catch(() => {})
+      await Promise.allSettled([
+        viewInsert,
+        supaPost('proposal_events', {
+          proposal_ref: ref,
+          event_type: 'access_denied',
+          event_data: { ip, ua },
+        }),
+      ])
       return Response.json({ ok: false, error: 'wrong_password' }, { status: 401 })
     }
 
@@ -112,30 +117,40 @@ export default async function handler(req: Request): Promise<Response> {
     // The trigger will increment, so expected new count = current + 1
     const viewCount = (proposal.view_count || 0) + 1
 
+    // Collect all side-effect work; await via allSettled so the Edge isolate
+    // does not die before view tracking, analytics, and the team email resolve.
+    const postViewTasks: Promise<unknown>[] = [viewInsert]
+
     // Only update status/first_viewed_at — NOT view_count (trigger owns it)
     if (isFirst) {
       const updates: Record<string, JsonValue> = { first_viewed_at: now }
       if (proposal.status === 'sent' || proposal.status === 'draft') {
         updates.status = 'viewed'
       }
-      supaPatch(
-        `proposals?ref_number=eq.${encodeURIComponent(ref)}`,
-        updates,
-      ).catch(() => {})
+      postViewTasks.push(
+        supaPatch(
+          `proposals?ref_number=eq.${encodeURIComponent(ref)}`,
+          updates,
+        ),
+      )
     }
 
     // Emit analytics event
-    supaPost('proposal_events', {
-      proposal_ref: ref,
-      event_type: isFirst ? 'viewed_first' : 'viewed_return',
-      event_data: { ip, ua, view_count: viewCount },
-    }).catch(() => {})
+    postViewTasks.push(
+      supaPost('proposal_events', {
+        proposal_ref: ref,
+        event_type: isFirst ? 'viewed_first' : 'viewed_return',
+        event_data: { ip, ua, view_count: viewCount },
+      }),
+    )
 
-    // Send notification email (fire-and-forget)
+    // Send notification email to the team
     const subject = isFirst
       ? `🎯 ${proposal.client_name || proposal.ref_number} פתח את ההצעה!`
       : `👁️ ${proposal.client_name || proposal.ref_number} צופה שוב (${ref})`
-    sendEmail(NOTIFY, subject, emailBody(proposal, viewCount, isFirst)).catch(() => {})
+    postViewTasks.push(sendEmail(NOTIFY, subject, emailBody(proposal, viewCount, isFirst)))
+
+    await Promise.allSettled(postViewTasks)
 
     return Response.json({ ok: true, first_view: isFirst, view_count: viewCount })
   } catch (e: unknown) {

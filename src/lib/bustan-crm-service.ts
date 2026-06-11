@@ -259,15 +259,18 @@ export interface CrmPipelinePatch {
 }
 
 /**
- * Apply a patch to a lead's crm_pipeline row. Errors are returned (never
- * swallowed) so the caller can surface a toast.
+ * Apply a patch to a lead's crm_pipeline row. Uses upsert on property_id so
+ * that a missing pipeline row is created rather than silently dropped (a plain
+ * UPDATE matching 0 rows returns ok:true with no data written).
  */
 export async function updateLeadPipeline(
   propertyId: string,
   patch: CrmPipelinePatch,
 ): Promise<WriteResult> {
   if (!bustanSupabase) return NOT_CONNECTED
-  const { error } = await bustanSupabase.from('crm_pipeline').update(patch).eq('property_id', propertyId)
+  const { error } = await bustanSupabase
+    .from('crm_pipeline')
+    .upsert({ property_id: propertyId, ...patch }, { onConflict: 'property_id' })
   if (error) return { ok: false, error: error.message }
   return { ok: true }
 }

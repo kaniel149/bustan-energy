@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   Download,
   PenLine,
+  Send,
 } from 'lucide-react'
 import { fetchProposal, buildTimeline, downloadProposalPDF, downloadSignedPDF } from '../../lib/admin-service'
 import { useAdminStore } from '../../lib/admin-store'
@@ -96,6 +97,7 @@ export default function ProposalDetailPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [downloadingPDF, setDownloadingPDF] = useState(false)
   const [downloadingSignedPDF, setDownloadingSignedPDF] = useState(false)
+  const [markingSent, setMarkingSent] = useState(false)
 
   // PEA section state
   const [pea, setPea] = useState<PEAState>(PEA_DEFAULT)
@@ -204,6 +206,34 @@ export default function ProposalDetailPage() {
     }
   }
 
+  // Mark a draft proposal as sent — starts the not_viewed drip clock truthfully
+  // (proposals are created as 'draft'; the admin copies the link manually, then
+  // clicks this when the client actually received it).
+  const handleMarkSent = async () => {
+    if (!ref || markingSent) return
+    setMarkingSent(true)
+    try {
+      const session = await getSession()
+      if (!session) throw new Error('לא מחובר')
+      const res = await fetch('/api/admin-create-proposal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ action: 'mark_sent', ref }),
+      })
+      if (!res.ok) throw new Error('הסימון נכשל')
+      const p = await fetchProposal(ref)
+      if (p) setProposal(p)
+      showToast('ההצעה סומנה כנשלחה — תזכורות הופעלו', 'success')
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'שגיאה בסימון', 'error')
+    } finally {
+      setMarkingSent(false)
+    }
+  }
+
   // ── PEA handlers ───────────────────────────────────────────
   const handlePeaSave = async () => {
     if (!pea.project_id || !supabase) {
@@ -302,6 +332,17 @@ export default function ProposalDetailPage() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap sm:mr-auto sm:ml-0">
+          {proposal.status === 'draft' && (
+            <button
+              onClick={handleMarkSent}
+              disabled={markingSent}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#2ED89A]/15 border border-[#2ED89A]/40 text-[#2ED89A] text-sm font-medium hover:bg-[#2ED89A]/25 transition-all disabled:opacity-50 min-h-[40px]"
+              title="סמן שהלינק נשלח ללקוח — מפעיל תזכורות אוטומטיות"
+            >
+              {markingSent ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+              סמן כנשלחה
+            </button>
+          )}
           <button
             onClick={handleDownloadPDF}
             disabled={downloadingPDF}

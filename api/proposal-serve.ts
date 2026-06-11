@@ -30,6 +30,22 @@ interface ProposalServeRow {
 const securityHeaders = {
   'X-Robots-Tag': 'noindex, nofollow, noarchive',
   'Cache-Control': 'private, no-store, max-age=0',
+  // Proposal pages load Google Fonts (stylesheet + gstatic font files),
+  // Supabase storage images (roof before/after + logo), and same-origin assets.
+  // Scripts and frames are restricted to self only; no eval/inline scripts
+  // except what we write directly into the gate-page HTML (covered by 'unsafe-inline'
+  // on the gate page only — acceptable for a password-gate form with no user data).
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https://bustan-energy.com https://*.supabase.co",
+    "script-src 'self' 'unsafe-inline'",
+    "connect-src 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join('; '),
 }
 
 const expiredPage = (ref: string) => `<!DOCTYPE html>
