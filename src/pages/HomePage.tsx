@@ -110,7 +110,6 @@ function useCountUp(target: number, duration = 1800, started = false) {
 function HeroSection() {
   const { t } = useTranslation()
   const { langPath } = useLanguage()
-  const hero = t.home.hero as typeof t.home.hero & HomeHeroExtra
 
   return (
     <section className="bustan-home-hero relative min-h-[86vh] flex flex-col items-center justify-center overflow-hidden px-0 pt-20 pb-16 text-shell/82">
@@ -193,20 +192,12 @@ function HeroSection() {
           </Button>
         </motion.div>
 
-        {/* Trust line */}
-        {hero.trustLine && (
-          <motion.p
-            variants={fadeUp}
-            className="mt-8 text-sm text-shell/75 tracking-wide"
-          >
-            {hero.trustLine}
-          </motion.p>
-        )}
+        {/* Trust line shown in StatsBar below (was duplicated here — lowest-contrast spot in hero) */}
       </motion.div>
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-shell/70"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-grove/50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
@@ -905,7 +896,7 @@ function PartnersBar() {
                   width={logo.width}
                   height={logo.height}
                   loading="lazy"
-                  className="h-10 w-auto object-contain grayscale opacity-75"
+                  className="h-10 w-auto object-contain grayscale"
                 />
               ) : (
                 <div className="h-10 flex items-center">
