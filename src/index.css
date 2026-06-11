@@ -261,17 +261,17 @@ html, body, #root {
   }
 }
 
-/* Blog post content typography */
+/* Blog post content typography — light theme (ink on paper) */
 .blog-content {
   font-size: 1.125rem;
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(39, 52, 47, 0.78);
 }
 
 .blog-content h2 {
   font-family: var(--font-serif);
   font-size: 1.875rem;
-  color: white;
+  color: var(--bustan-ink);
   margin-top: 3rem;
   margin-bottom: 1.5rem;
   line-height: 1.3;
@@ -280,7 +280,7 @@ html, body, #root {
 .blog-content h3 {
   font-family: var(--font-serif);
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(39, 52, 47, 0.92);
   margin-top: 2rem;
   margin-bottom: 1rem;
   line-height: 1.4;
@@ -292,12 +292,12 @@ html, body, #root {
 }
 
 .blog-content strong {
-  color: white;
+  color: var(--bustan-ink);
   font-weight: 600;
 }
 
 .blog-content a {
-  color: var(--color-gold);
+  color: var(--bustan-lagoon);
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -334,15 +334,15 @@ html, body, #root {
 
 .blog-content th {
   text-align: left;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(39, 52, 47, 0.85);
   font-weight: 600;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(216, 236, 232, 0.45);
+  border-bottom: 1px solid rgba(36, 70, 62, 0.14);
 }
 
 .blog-content td {
   padding: 0.75rem 1rem;
-  color: rgba(255, 255, 255, 0.5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(39, 52, 47, 0.72);
+  border-bottom: 1px solid rgba(36, 70, 62, 0.08);
 }
