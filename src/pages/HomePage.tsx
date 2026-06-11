@@ -18,6 +18,7 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
+import { Button } from '../components/ui/Button'
 import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, homeBreadcrumb, faqSchema } from '../components/seo/schemas'
@@ -90,7 +91,7 @@ function HeroSection() {
   const hero = t.home.hero as typeof t.home.hero & HomeHeroExtra
 
   return (
-    <section className="bustan-home-hero relative min-h-[86vh] flex flex-col items-center justify-center overflow-hidden px-0 pt-20 pb-16">
+    <section className="bustan-home-hero relative min-h-[86vh] flex flex-col items-center justify-center overflow-hidden px-0 pt-20 pb-16 text-[rgba(255,244,226,0.82)]">
       {/* Aerial background image */}
       <div className="absolute inset-0">
         <img
@@ -152,7 +153,7 @@ function HeroSection() {
 
         <motion.p
           variants={fadeUp}
-          className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg md:text-xl text-[rgba(255,244,226,0.82)] max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           {t.home.hero.subtitle}
         </motion.p>
@@ -205,7 +206,7 @@ function HeroSection() {
         {hero.trustLine && (
           <motion.p
             variants={fadeUp}
-            className="mt-8 text-sm text-white/35 tracking-wide"
+            className="mt-8 text-sm text-[rgba(255,244,226,0.82)] tracking-wide"
           >
             {hero.trustLine}
           </motion.p>
@@ -214,7 +215,7 @@ function HeroSection() {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-white/30"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-[rgba(255,244,226,0.82)]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
@@ -250,7 +251,7 @@ function StatItem({
   const value = useCountUp(target, 1800, started)
   return (
     <div className="flex flex-col items-center gap-2 px-6 py-8">
-      <div className="text-white/30 mb-1">{icon}</div>
+      <div className="text-[rgba(39,52,47,0.72)] mb-1">{icon}</div>
       <span
         className="text-4xl md:text-5xl font-bold tabular-nums"
         style={{ fontFamily: 'var(--font-serif)', color: 'var(--bustan-lagoon)' }}
@@ -258,7 +259,7 @@ function StatItem({
         {value}
         {suffix}
       </span>
-      <span className="text-sm text-white/50 text-center">{label}</span>
+      <span className="text-sm text-[rgba(39,52,47,0.72)] text-center">{label}</span>
     </div>
   )
 }
@@ -292,7 +293,7 @@ function StatsBar() {
         borderBottom: '1px solid rgba(36,70,62,0.12)',
       }}
     >
-      <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-white/[0.06]">
+      <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-[rgba(36,70,62,0.14)]">
         {stats.map((stat, i) => (
           <StatItem
             key={stat.label}
@@ -307,7 +308,7 @@ function StatsBar() {
       {/* Trust line */}
       {hero.trustLine && (
         <div className="text-center pb-6 pt-2">
-          <p className="text-xs text-white/25 tracking-widest uppercase">
+          <p className="text-xs text-[rgba(39,52,47,0.72)] tracking-widest uppercase">
             {hero.trustLine}
           </p>
         </div>
@@ -448,14 +449,14 @@ function ServicesSection() {
                 }}
               >
                 <h3 className="text-xl font-semibold mb-2">{svc.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-4">
+                <p className="text-[rgba(39,52,47,0.72)] text-sm leading-relaxed mb-4">
                   {svc.description}
                 </p>
                 <ul className="flex flex-col gap-1.5 mb-5">
                   {svc.bullets.map((b) => (
                     <li
                       key={b}
-                      className="flex items-center gap-2 text-sm text-white/40"
+                      className="flex items-center gap-2 text-sm text-[rgba(39,52,47,0.72)]"
                     >
                       <ChevronRight
                         size={12}
@@ -640,7 +641,7 @@ function WhySection() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-1.5">{feat.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
+                  <p className="text-[rgba(39,52,47,0.72)] text-sm leading-relaxed">
                     {feat.description}
                   </p>
                 </div>
@@ -679,7 +680,7 @@ function ProcessSection() {
           >
             {t.home.process.title}
           </h2>
-          <p className="text-white/50 text-base">{t.home.process.subtitle}</p>
+          <p className="text-[rgba(39,52,47,0.72)] text-base">{t.home.process.subtitle}</p>
         </div>
 
         <motion.div
@@ -732,7 +733,7 @@ function ProcessSection() {
                 {stepNums[i]}
               </div>
               <h3 className="text-base font-semibold mb-2">{step.title}</h3>
-              <p className="text-white/50 text-sm leading-relaxed">
+              <p className="text-[rgba(39,52,47,0.72)] text-sm leading-relaxed">
                 {step.description}
               </p>
             </motion.div>
@@ -871,7 +872,7 @@ function ProjectsSection() {
               >
                 <h3 className="text-lg font-semibold mb-1">{project.name}</h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/50 text-sm flex items-center gap-1">
+                  <span className="text-[rgba(39,52,47,0.72)] text-sm flex items-center gap-1">
                     <MapPin size={12} />
                     {project.location}
                   </span>
@@ -889,14 +890,10 @@ function ProjectsSection() {
 
         {projectsCopy.viewAll && (
           <div className="mt-10 flex justify-center">
-            <Link
-              to={langPath('/projects')}
-              className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
-              style={{ color: 'var(--bustan-lagoon)' }}
-            >
+            <Button variant="ghost" size="sm" to={langPath('/projects')} icon={null}>
               {projectsCopy.viewAll}
               <ArrowRight size={14} />
-            </Link>
+            </Button>
           </div>
         )}
       </div>
@@ -958,7 +955,7 @@ function FAQItem({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-5 text-sm text-white/55 leading-relaxed">
+            <p className="px-6 pb-5 text-sm text-[rgba(39,52,47,0.74)] leading-relaxed">
               {answer}
             </p>
           </motion.div>
@@ -1053,7 +1050,7 @@ function CTASection() {
           >
             {t.home.cta.title}
           </h2>
-          <p className="text-white/55 text-base md:text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-[rgba(39,52,47,0.74)] text-base md:text-lg mb-10 max-w-xl mx-auto leading-relaxed">
             {t.home.cta.subtitle}
           </p>
 
@@ -1124,7 +1121,7 @@ function CTASection() {
 
           {/* Urgency line */}
           {cta.urgency && (
-            <p className="mt-6 text-sm text-white/35">
+            <p className="mt-6 text-sm text-[rgba(39,52,47,0.72)]">
               {cta.urgency}
             </p>
           )}
@@ -1150,7 +1147,7 @@ function PartnersBar() {
       }}
     >
       <div className="max-w-5xl mx-auto">
-        <p className="text-center text-xs font-medium tracking-widest uppercase text-white/30 mb-10">
+        <p className="text-center text-xs font-medium tracking-widest uppercase text-[rgba(39,52,47,0.72)] mb-10">
           {t.home.partners.title}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-12">
@@ -1168,20 +1165,20 @@ function PartnersBar() {
                 />
               ) : (
                 <div className="h-10 flex items-center">
-                  <span className="text-2xl font-bold tracking-tight text-white">
+                  <span className="text-2xl font-bold tracking-tight text-[var(--bustan-ink)]">
                     PEA
                   </span>
                 </div>
               )}
               <div className="text-center">
-                <p className="text-xs font-semibold text-white/80">{p.name}</p>
-                <p className="text-[11px] text-white/40">{p.subtitle}</p>
+                <p className="text-xs font-semibold text-[rgba(39,52,47,0.86)]">{p.name}</p>
+                <p className="text-[11px] text-[rgba(39,52,47,0.72)]">{p.subtitle}</p>
               </div>
             </div>
           ))}
         </div>
         {/* Local SEO signal */}
-        <p className="text-center text-xs text-white/20 mt-8">
+        <p className="text-center text-xs text-[rgba(39,52,47,0.72)] mt-8">
           Serving Ko Phangan, Ko Samui, and Surat Thani Province
         </p>
       </div>
