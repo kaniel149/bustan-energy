@@ -26,9 +26,6 @@
   --radius-button: 9999px;
   /* Motion standards */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration-fast: 200ms;
-  --duration-base: 400ms;
-  --duration-slow: 700ms;
 }
 
 :root {
@@ -42,6 +39,10 @@
   --bustan-paper: #f4ead8;
   --bustan-shell: #fff4e2;
   --bustan-mist: #d8ece8;
+  /* use as duration-[var(--duration-fast)] or transition-duration: var(...) */
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 700ms;
 }
 
 html {
@@ -261,9 +262,9 @@ html, body, #root {
   left: 0;
   right: 0;
   z-index: 40;
-  background: rgba(255, 244, 226, 0.96);
+  background: rgba(10, 22, 40, 0.95);
   backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(36, 70, 62, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 4px 0;
   padding-bottom: env(safe-area-inset-bottom, 4px);
 }
