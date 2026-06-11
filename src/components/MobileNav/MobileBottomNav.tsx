@@ -21,8 +21,8 @@ export function MobileBottomNav() {
           onClick={() => setPlatformView(view)}
           className={`flex-1 flex flex-col items-center gap-0.5 py-2 transition-colors ${
             platformView === view
-              ? 'text-[#00D68F]'
-              : 'text-white/40'
+              ? 'text-[#006f6b]'
+              : 'text-[#27342f]/60'
           }`}
         >
           <Icon size={20} />
