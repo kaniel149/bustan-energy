@@ -9,7 +9,7 @@ type Props = {
 }
 
 export function SectionHeader({ tag, title, subtitle, align = 'center', className = '' }: Props) {
-  const alignCls = align === 'center' ? 'text-center mx-auto' : 'text-left'
+  const alignCls = align === 'center' ? 'text-center mx-auto' : 'text-start'
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}

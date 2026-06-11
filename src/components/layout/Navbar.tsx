@@ -134,7 +134,7 @@ export function Navbar() {
               {lang === 'en' ? 'TH' : 'EN'}
             </button>
 
-            <Button variant="primary" size="sm" href={langPath('/contact')}>
+            <Button variant="primary" size="sm" to={langPath('/contact')}>
               {t.nav.getQuote}
             </Button>
           </div>
@@ -224,7 +224,7 @@ export function Navbar() {
                 <Button
                   variant="primary"
                   size="md"
-                  href={langPath('/contact')}
+                  to={langPath('/contact')}
                   className="w-full"
                   onClick={() => setMobileOpen(false)}
                 >

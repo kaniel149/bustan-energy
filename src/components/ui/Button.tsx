@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { MessageCircle } from 'lucide-react'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'whatsapp'
@@ -10,6 +11,9 @@ interface ButtonProps {
   children: ReactNode
   className?: string
   onClick?: () => void
+  /** Internal SPA route — renders react-router <Link> (no full page reload). */
+  to?: string
+  /** External URLs only (https://, mailto:, tel:) — use `to` for internal routes. */
   href?: string
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
@@ -54,6 +58,7 @@ export function Button({
   children,
   className = '',
   onClick,
+  to,
   href,
   disabled = false,
   type = 'button',
@@ -67,7 +72,7 @@ export function Button({
     'rounded-button',
     'transition-all duration-[var(--duration-fast)] ease-out-soft',
     'active:scale-[0.98]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bustan-lagoon)] focus-visible:ring-offset-2',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bustan-lagoon)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bustan-paper)]',
     disabled ? 'opacity-40 pointer-events-none' : '',
     sizeClasses[size],
     variantClasses[variant],
@@ -86,7 +91,24 @@ export function Button({
     </>
   )
 
-  if (href) {
+  if (to || href) {
+    // Disabled link: no navigation, no click — announced as disabled.
+    if (disabled) {
+      return (
+        <a className={baseClasses} aria-disabled="true" tabIndex={-1}>
+          {content}
+        </a>
+      )
+    }
+
+    if (to) {
+      return (
+        <Link to={to} target={target} rel={rel} className={baseClasses} onClick={onClick}>
+          {content}
+        </Link>
+      )
+    }
+
     return (
       <a href={href} target={target} rel={rel} className={baseClasses} onClick={onClick}>
         {content}
