@@ -38,7 +38,7 @@ const GEMINI_KEY   = process.env.GEMINI_API_KEY || process.env.NANOBANANA_API_KE
 
 // Keep total Gemini calls ≤ 15 per run to stay comfortably inside the
 // Vercel edge 25-s wall-clock limit (Gemini vision ≈ 1-3 s each).
-const MAX_PER_RUN  = 15
+const MAX_PER_RUN  = 10
 // Minimum confidence to write existing_solar to a property row at all.
 const MIN_CONFIDENCE_WRITE = 0.5
 // Minimum confidence required to flip a stored TRUE → false (preventing
@@ -405,12 +405,26 @@ export default async function handler(req: Request): Promise<Response> {
 
   let processed = 0, detected = 0, errors = 0
 
-  // Process scan_candidates (Slot A)
-  for (const c of candidates) {
+  // Sequential processing of 15 items blew the 25-s edge wall clock
+  // (FUNCTION_INVOCATION_TIMEOUT, verified 2026-06-11). Process with a small
+  // concurrency pool instead: each worker pulls the next item off the queue.
+  type WorkItem =
+    | { table: 'scan_candidates'; row: CandidateRow }
+    | { table: 'properties'; row: PropertyRow }
+  const work: WorkItem[] = [
+    ...candidates.map((row) => ({ table: 'scan_candidates' as const, row })),
+    ...properties.map((row) => ({ table: 'properties' as const, row })),
+  ]
+
+  async function handleOne(item: WorkItem): Promise<void> {
+    const { table, row } = item
     try {
-      const r = await processItem(Number(c.lat), Number(c.lon))
-      await bPatch(`scan_candidates?id=eq.${c.id}`, {
-        existing_solar: r.has_existing_solar,
+      const r = await processItem(Number(row.lat), Number(row.lon))
+      const patch = table === 'properties'
+        ? buildPropertySolarPatch((row as PropertyRow).existing_solar, r.has_existing_solar, r.confidence)
+        : { existing_solar: r.has_existing_solar }
+      await bPatch(`${table}?id=eq.${row.id}`, {
+        ...patch,
         solar_check_confidence: r.confidence,
         solar_checked_at: now,
       })
@@ -419,35 +433,25 @@ export default async function handler(req: Request): Promise<Response> {
     } catch (err) {
       // Stamp solar_checked_at so this row exits the work queue (confidence=0
       // signals the failure; the item can be re-queued via POST if needed).
-      await bPatch(`scan_candidates?id=eq.${c.id}`, {
+      await bPatch(`${table}?id=eq.${row.id}`, {
         solar_check_confidence: 0,
         solar_checked_at: now,
       })
-      console.error(`cron-detect-solar candidate ${c.id} error:`, err instanceof Error ? err.message : err)
+      console.error(`cron-detect-solar ${table} ${row.id} error:`, err instanceof Error ? err.message : err)
       errors++
     }
   }
 
-  // Process properties (Slot B)
-  for (const p of properties) {
-    try {
-      const r = await processItem(Number(p.lat), Number(p.lon))
-      await bPatch(`properties?id=eq.${p.id}`, {
-        ...buildPropertySolarPatch(p.existing_solar, r.has_existing_solar, r.confidence),
-        solar_check_confidence: r.confidence,
-        solar_checked_at: now,
-      })
-      processed++
-      if (r.has_existing_solar) detected++
-    } catch (err) {
-      await bPatch(`properties?id=eq.${p.id}`, {
-        solar_check_confidence: 0,
-        solar_checked_at: now,
-      })
-      console.error(`cron-detect-solar property ${p.id} error:`, err instanceof Error ? err.message : err)
-      errors++
-    }
-  }
+  const CONCURRENCY = 5
+  let cursor = 0
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, work.length) }, async () => {
+      while (cursor < work.length) {
+        const item = work[cursor++]
+        await handleOne(item)
+      }
+    }),
+  )
 
   return Response.json({
     ok: true,
