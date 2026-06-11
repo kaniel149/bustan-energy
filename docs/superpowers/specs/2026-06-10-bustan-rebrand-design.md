@@ -2,7 +2,8 @@
 
 **Date:** 2026-06-10
 **Decision maker:** Kaniel Tordjman
-**Status:** Stage 1 ✅ DONE (2026-06-10). Stages 2–4 pending.
+**Status:** Stage 1 ✅ DONE (2026-06-10). Stage 2 ✅ 90% (2026-06-11): energy-tm.com + www → 301 bustan-energy.com (path-preserving, verified /p/AMIR-001) · crm.energy-tm.com → 301 crm.bustan-energy.com (live, DNS exists) · index.energy-tm.com → dormant 301 to index.bustan-energy.com (Vercel-side configured; waits on 2 GoDaddy CNAMEs + CS/CNAME file flip). Stages 3–4 pending.
+**Discovered pre-existing:** project already had bustan-energy.com primary + crm/map/proposals/solar-intelligence subdomains + bustanenergy.com (no hyphen) redirects. energy-tm.com NS = GoDaddy (not Vercel DNS — MEMORY.md outdated).
 
 **Stage 1 outcome notes:**
 - SI + CS fully swept (0 TM refs except transitional: `crm.energy-tm.com` in App.tsx, old admin emails in admin-access/admin-auth defaults, CS/CNAME)
