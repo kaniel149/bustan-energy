@@ -7,8 +7,10 @@
  * Data flow handled by useColliersPortfolio hook:
  *   fetch('/data/colliers-listings.md') → parseColliersMarkdown → summarizeColliers
  *
- * Styling: dark glassmorphism (#0A1628 background), matching PlatformPage /
- *          FilterBar aesthetic. Tier colors mirror the map legend.
+ * Styling: tropical-light brand. The body reuses the dark-styled shared
+ *          ColliersPortfolio component (also embedded in the dark PlatformPage),
+ *          so this page converts it via the `.bustan-colliers` light-scope CSS
+ *          layer in index.css — same pattern as `.bustan-admin-main`.
  */
 
 import { Helmet } from 'react-helmet-async'
@@ -28,22 +30,22 @@ export default function CollierPortfolioPage() {
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
 
-      <div className="min-h-screen bg-[#0A1628] text-white">
+      <div className="bustan-colliers min-h-screen text-ink">
         {/* HEADER */}
-        <header className="sticky top-0 z-20 bg-[#0A1628]/95 backdrop-blur-xl border-b border-white/10">
+        <header className="sticky top-0 z-20 bg-shell/92 backdrop-blur-xl border-b border-grove/14">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E8A820] to-[#E85D3A] flex items-center justify-center text-sm font-bold shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--bustan-lagoon)] to-[var(--bustan-papaya)] flex items-center justify-center text-sm font-bold text-shell shrink-0">
                 ☀
               </div>
               <div>
-                <h1 className="text-sm font-semibold text-white leading-tight">
+                <h1 className="text-sm font-semibold text-ink leading-tight">
                   Colliers Thailand — Solar Portfolio
                 </h1>
-                <p className="text-[10px] text-white/40">Demo · Bustan Energy</p>
+                <p className="text-[10px] text-ink/55">Demo · Bustan Energy</p>
               </div>
             </div>
-            <div className="ml-auto flex items-center gap-2 text-[10px] text-white/30">
+            <div className="ml-auto flex items-center gap-2 text-[10px] text-ink/45">
               <span>*Solar estimates are preliminary — demo only</span>
             </div>
           </div>
