@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 
 interface GlassCardProps {
@@ -9,13 +8,6 @@ interface GlassCardProps {
   as?: 'div' | 'article' | 'section' | 'li'
 }
 
-const motionTags = {
-  div: motion.div,
-  article: motion.article,
-  section: motion.section,
-  li: motion.li,
-}
-
 export function GlassCard({
   children,
   className = '',
@@ -23,14 +15,14 @@ export function GlassCard({
   onClick,
   as: Tag = 'div',
 }: GlassCardProps) {
-  const MotionTag = motionTags[Tag]
-
   const baseClasses = [
-    'bg-white/5',
+    'bg-[rgba(255,244,226,0.7)]',
     'backdrop-blur-xl',
-    'border border-white/10',
-    'rounded-2xl',
-    'transition-colors duration-300',
+    'border border-[rgba(36,70,62,0.14)]',
+    'rounded-card',
+    'shadow-soft',
+    'transition-all duration-[var(--duration-base)] ease-out-soft',
+    hover ? 'hover:shadow-lift hover:-translate-y-0.5' : '',
     onClick ? 'cursor-pointer' : '',
     className,
   ]
@@ -38,21 +30,8 @@ export function GlassCard({
     .join(' ')
 
   return (
-    <MotionTag
-      className={baseClasses}
-      onClick={onClick}
-      whileHover={
-        hover
-          ? {
-              y: -4,
-              borderColor: 'rgba(255,255,255,0.2)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-            }
-          : {}
-      }
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-    >
+    <Tag className={baseClasses} onClick={onClick}>
       {children}
-    </MotionTag>
+    </Tag>
   )
 }
