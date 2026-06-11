@@ -94,6 +94,8 @@ export interface Property {
   // Land-specific
   sizeM2?: number
   sizeRai?: number
+  /** Scan-candidate land tier: 'commercial' | 'farm' | 'utility' (from scan_candidates.tier) */
+  tier?: 'commercial' | 'farm' | 'utility'
   price?: number
   pricePerRai?: number
   listingLink?: string
@@ -136,6 +138,8 @@ export interface ScanRequest {
   bbox: number[] | null
   filters: Record<string, unknown>
   status: ScanStatus
+  /** 'roof' (default) or 'land'. Added in migration 010_land_scan. */
+  scan_type?: 'roof' | 'land'
   counts: Record<string, number>
   error: string | null
   created_at: string

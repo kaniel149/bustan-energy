@@ -7,6 +7,7 @@ import type { Property } from '../../types'
 
 type SortField = 'capacity' | 'area' | 'grade' | 'title'
 type SortDir = 'asc' | 'desc'
+type TypeFilter = 'all' | 'roof' | 'land'
 
 const GRADE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   A: { bg: '#00E67622', text: '#00E676', border: '#00E67644' },
@@ -30,6 +31,7 @@ export function Scanner() {
   const [sortField, setSortField] = useState<SortField>('capacity')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [gradeFilter, setGradeFilter] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
 
   const sorted = useMemo(() => {
     let items = [...filteredProperties]
@@ -40,6 +42,10 @@ export function Scanner() {
         [p.title, p.location, p.category, p.ownerName]
           .filter(Boolean).join(' ').toLowerCase().includes(q)
       )
+    }
+
+    if (typeFilter !== 'all') {
+      items = items.filter(p => p.type === typeFilter)
     }
 
     if (gradeFilter !== 'all') {
@@ -59,7 +65,7 @@ export function Scanner() {
     })
 
     return items
-  }, [filteredProperties, search, sortField, sortDir, gradeFilter])
+  }, [filteredProperties, search, sortField, sortDir, gradeFilter, typeFilter])
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -79,6 +85,27 @@ export function Scanner() {
             placeholder="Search buildings..."
             className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
           />
+        </div>
+
+        {/* Type filter */}
+        <div className="flex items-center gap-1">
+          {(['all', 'roof', 'land'] as TypeFilter[]).map(t => (
+            <button
+              key={t}
+              onClick={() => setTypeFilter(t)}
+              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all border ${
+                typeFilter === t
+                  ? t === 'roof'
+                    ? 'bg-[#2ED89A]/15 text-[#2ED89A] border-[#2ED89A]/30'
+                    : t === 'land'
+                    ? 'bg-[#E8A820]/15 text-[#E8A820] border-[#E8A820]/30'
+                    : 'bg-white/15 text-white border-white/20'
+                  : 'bg-transparent text-white/40 border-transparent hover:text-white/70'
+              }`}
+            >
+              {t === 'all' ? 'All' : t === 'roof' ? '🏠 Roofs' : '🌾 Land'}
+            </button>
+          ))}
         </div>
 
         <div className="flex items-center gap-1">
@@ -121,7 +148,7 @@ export function Scanner() {
         </div>
 
         <div className="flex items-center gap-3 ml-auto">
-          <span className="text-xs text-white/50">{sorted.length} buildings</span>
+          <span className="text-xs text-white/50">{sorted.length} {typeFilter === 'land' ? 'plots' : typeFilter === 'roof' ? 'roofs' : 'properties'}</span>
           <button
             onClick={() => exportBuildingsCSV(sorted)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white/60 hover:text-white hover:bg-white/10 transition-colors"
@@ -156,11 +183,34 @@ export function Scanner() {
   )
 }
 
+const TIER_BADGES: Record<string, { bg: string; text: string; border: string; label: string }> = {
+  farm: { bg: '#E8A82020', text: '#E8A820', border: '#E8A82040', label: 'Farm ≤9MW' },
+  utility: { bg: '#A855F720', text: '#D8B4FE', border: '#A855F740', label: 'Utility / DC-scale' },
+  commercial: { bg: '#3B82F620', text: '#93C5FD', border: '#3B82F640', label: 'Commercial' },
+}
+
 function BuildingCard({ property, inCrm, onClick }: { property: Property; inCrm: boolean; onClick: () => void }) {
   const grade = property.priority || 'B'
   const gradeColor = GRADE_COLORS[grade] || GRADE_COLORS.B
-  const area = property.area || property.sizeM2 || 0
   const isRoof = property.type === 'roof'
+  const isLand = property.type === 'land'
+
+  // Area display: for land use sizeRai if available, else sizeM2; for roof use area
+  const roofArea = property.area || 0
+  const landAreaRai = property.sizeRai
+  const landAreaM2 = property.sizeM2 || 0
+
+  // Capacity display: for land show MWp if capacityKwp >= 1000, else kWp
+  const capacityKwp = property.capacityKwp || 0
+  const isMwp = isLand && capacityKwp >= 1000
+  const capacityDisplay = capacityKwp
+    ? isMwp
+      ? (capacityKwp / 1000).toFixed(1)
+      : capacityKwp.toFixed(1)
+    : null
+  const capacityUnit = isMwp ? 'MWp' : 'kWp'
+
+  const tierBadge = isLand && property.tier ? TIER_BADGES[property.tier] : null
 
   return (
     <button
@@ -191,25 +241,59 @@ function BuildingCard({ property, inCrm, onClick }: { property: Property; inCrm:
         {property.location}
       </p>
 
+      {/* Tier badge for land candidates */}
+      {tierBadge && (
+        <div
+          className="mb-2 px-1.5 py-0.5 rounded text-[9px] font-bold inline-block"
+          style={{ backgroundColor: tierBadge.bg, color: tierBadge.text, border: `1px solid ${tierBadge.border}` }}
+        >
+          {tierBadge.label}
+        </div>
+      )}
+
       <div className="grid grid-cols-3 gap-1.5">
         <div className="bg-white/5 rounded-lg p-1.5 text-center">
           <p className="text-[9px] text-white/40">Area</p>
-          <p className="text-[11px] font-semibold text-white">{area > 0 ? area.toLocaleString() : '—'}</p>
-          <p className="text-[8px] text-white/30">sqm</p>
+          {isLand && landAreaRai != null ? (
+            <>
+              <p className="text-[11px] font-semibold text-white">{landAreaRai.toFixed(1)}</p>
+              <p className="text-[8px] text-white/30">rai</p>
+            </>
+          ) : isLand ? (
+            <>
+              <p className="text-[11px] font-semibold text-white">{landAreaM2 > 0 ? landAreaM2.toLocaleString() : '—'}</p>
+              <p className="text-[8px] text-white/30">m²</p>
+            </>
+          ) : (
+            <>
+              <p className="text-[11px] font-semibold text-white">{roofArea > 0 ? roofArea.toLocaleString() : '—'}</p>
+              <p className="text-[8px] text-white/30">sqm</p>
+            </>
+          )}
         </div>
         <div className="bg-white/5 rounded-lg p-1.5 text-center">
           <p className="text-[9px] text-white/40">Capacity</p>
           <p className="text-[11px] font-semibold text-[#E8A820]">
-            {property.capacityKwp ? property.capacityKwp.toFixed(1) : '—'}
+            {capacityDisplay ?? '—'}
           </p>
-          <p className="text-[8px] text-white/30">kWp</p>
+          <p className="text-[8px] text-white/30">{capacityDisplay ? capacityUnit : ''}</p>
         </div>
         <div className="bg-white/5 rounded-lg p-1.5 text-center">
-          <p className="text-[9px] text-white/40">Panels</p>
-          <p className="text-[11px] font-semibold text-white">
-            {property.panelCount || '—'}
-          </p>
-          <p className="text-[8px] text-white/30">units</p>
+          {isLand && landAreaRai != null ? (
+            <>
+              <p className="text-[9px] text-white/40">Size</p>
+              <p className="text-[11px] font-semibold text-white">{landAreaM2 > 0 ? (landAreaM2 / 1600).toFixed(0) : '—'}</p>
+              <p className="text-[8px] text-white/30">plots</p>
+            </>
+          ) : (
+            <>
+              <p className="text-[9px] text-white/40">Panels</p>
+              <p className="text-[11px] font-semibold text-white">
+                {property.panelCount || '—'}
+              </p>
+              <p className="text-[8px] text-white/30">units</p>
+            </>
+          )}
         </div>
       </div>
 

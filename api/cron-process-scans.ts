@@ -150,17 +150,249 @@ function pointInPolygon(lng: number, lat: number, polygon: { type: string; coord
   return inside
 }
 
+// ---------------------------------------------------------------------------
+// LAND SCAN CONSTANTS
+// ---------------------------------------------------------------------------
+// Minimum polygon area in m² to consider (~10 rai ≈ 16,000 m²; below this
+// a ground-mount farm is not economic for Thailand grid tariff).
+const LAND_MIN_AREA_M2 = 16_000
+// Fraction of raw land area assumed usable for panel placement (access roads,
+// setbacks, inverter pads deducted). Mirrors industry thumb-rule for flat land.
+const LAND_USABLE_RATIO = 0.75
+// Approximate MWp per hectare of usable area (1 ha usable ≈ 1 MWp at standard
+// mono-PERC 20% density). Conservative for mixed terrain.
+const LAND_MWP_PER_HA = 1.0
+// Spatial dedup cell for land polygons: ~150 m (much larger than the 28 m roof
+// cell — land plots are huge and we want to avoid near-duplicate tiles).
+const LAND_DEDUP_DEG = 0.00135   // ~150 m at equator
+// OSM landuse tags queried for ground-mount suitability.
+const LAND_USES = ['farmland', 'meadow', 'grass', 'greenfield', 'brownfield', 'orchard', 'farmyard', 'quarry']
+
+// Land tier thresholds (MWp)
+const FARM_MAX_MWP = 9          // ≤9 MWp = farm tier; >9 MWp = utility
+
 interface ScanRow {
   id: string
   bbox: number[] | null
   area_geojson: { type: string; coordinates: number[][][] } | null
   filters: { propertyType?: string; minRoofM2?: number; commercialOnly?: boolean } | null
   attempts?: number
+  scan_type?: string | null
 }
 
 const COMMERCIAL = new Set(['retail', 'hospitality', 'restaurant', 'office', 'industrial', 'commercial', 'hotel'])
 
+// ---------------------------------------------------------------------------
+// LAND PIPELINE
+// ---------------------------------------------------------------------------
+
+/** Compute area of a GeoJSON ring ([[lon, lat], …]) in m² using equirectangular shoelace. */
+function ringAreaM2(ring: number[][]): number {
+  if (ring.length < 3) return 0
+  const avgLat = ring.reduce((s, p) => s + p[1], 0) / ring.length
+  const latM = 111320
+  const lngM = 111320 * Math.cos((avgLat * Math.PI) / 180)
+  let area = 0
+  for (let i = 0; i < ring.length; i++) {
+    const [x1, y1] = [ring[i][0] * lngM, ring[i][1] * latM]
+    const [x2, y2] = [ring[(i + 1) % ring.length][0] * lngM, ring[(i + 1) % ring.length][1] * latM]
+    area += x1 * y2 - x2 * y1
+  }
+  return Math.abs(area) / 2
+}
+
+/** Centroid of a GeoJSON ring ([[lon, lat], …]) → [lat, lon]. */
+function ringCentroid(ring: number[][]): [number, number] {
+  const lon = ring.reduce((s, p) => s + p[0], 0) / ring.length
+  const lat = ring.reduce((s, p) => s + p[1], 0) / ring.length
+  return [lat, lon]
+}
+
+/** Derive land tier from estimated MWp. */
+function landTier(mwp: number): 'farm' | 'utility' {
+  return mwp > FARM_MAX_MWP ? 'utility' : 'farm'
+}
+
+/** Land-pipeline Overpass query: landuse polygons as ways+relations with geometry. */
+function buildLandQuery(minLat: number, minLng: number, maxLat: number, maxLng: number): string {
+  const luFilter = LAND_USES.map((lu) => `["landuse"="${lu}"]`).join('')
+  // Query each landuse tag separately so we catch all matching ways/relations.
+  const wayParts = LAND_USES.map(
+    (lu) => `way["landuse"="${lu}"](${minLat},${minLng},${maxLat},${maxLng});`,
+  ).join('')
+  const relParts = LAND_USES.map(
+    (lu) => `relation["landuse"="${lu}"](${minLat},${minLng},${maxLat},${maxLng});`,
+  ).join('')
+  // Suppress the unused-variable lint — luFilter is the compact version used only in the comment.
+  void luFilter
+  return `[out:json][timeout:60];(${wayParts}${relParts});out geom;`
+}
+
+interface LandOverpassElement {
+  type: string
+  id: number
+  tags?: Record<string, string>
+  // ways: flat geometry array
+  geometry?: Array<{ lat: number; lon: number }>
+  // relations: members with geometry
+  members?: Array<{
+    type: string
+    role: string
+    geometry?: Array<{ lat: number; lon: number }>
+  }>
+}
+
+/**
+ * Extract an outer ring ([[lon,lat],…]) from an Overpass way or relation element.
+ * Relations: use the first 'outer' member ring. Ways: use the geometry array.
+ * Returns null if the geometry is degenerate.
+ */
+function extractOuterRing(el: LandOverpassElement): number[][] | null {
+  if (el.type === 'way') {
+    if (!el.geometry || el.geometry.length < 3) return null
+    return el.geometry.map((g) => [g.lon, g.lat])
+  }
+  if (el.type === 'relation' && el.members) {
+    // Find the first 'outer' member with geometry
+    for (const m of el.members) {
+      if (m.role === 'outer' && m.geometry && m.geometry.length >= 3) {
+        return m.geometry.map((g) => [g.lon, g.lat])
+      }
+    }
+  }
+  return null
+}
+
+async function processLandScan(scan: ScanRow): Promise<Record<string, number | string>> {
+  const bbox = scan.bbox
+  if (!bbox || bbox.length !== 4) throw new Error('missing bbox')
+  const [minLng, minLat, maxLng, maxLat] = bbox
+  if (maxLng - minLng > MAX_BBOX_DEG || maxLat - minLat > MAX_BBOX_DEG) {
+    throw new Error(`area too large (max ${MAX_BBOX_DEG}° per side)`)
+  }
+  const polygon = scan.area_geojson
+
+  // 1. ACQUIRE — Overpass landuse polygons
+  const q = buildLandQuery(minLat, minLng, maxLat, maxLng)
+  const data = await fetchOverpassBuildings(q) as { elements?: LandOverpassElement[] }
+  const elements = data.elements ?? []
+  const found = elements.length
+
+  // 2. SCORE + filter
+  const scored: Array<{
+    id: string
+    name: string
+    lat: number
+    lon: number
+    land_area_m2: number
+    area_rai: number
+    estimated_mwp: number
+    tier: 'farm' | 'utility'
+    landuse: string
+    land_geom: { type: string; coordinates: number[][][] }
+    solar_potential_score: number
+  }> = []
+
+  for (const el of elements) {
+    const ring = extractOuterRing(el)
+    if (!ring) continue
+
+    const area = ringAreaM2(ring)
+    if (area < LAND_MIN_AREA_M2) continue
+
+    const [lat, lon] = ringCentroid(ring)
+
+    // Polygon containment (same guard as roof pipeline)
+    if (!pointInPolygon(lon, lat, polygon)) continue
+
+    const usable = area * LAND_USABLE_RATIO
+    const mwp = Math.round((usable / 10_000) * LAND_MWP_PER_HA * 100) / 100
+    const rai = Math.round((area / 1600) * 10) / 10
+    const tier = landTier(mwp)
+    const lu = el.tags?.landuse ?? 'unknown'
+
+    // Close ring if open
+    const closedRing = [...ring]
+    if (closedRing[0][0] !== closedRing[closedRing.length - 1][0] ||
+        closedRing[0][1] !== closedRing[closedRing.length - 1][1]) {
+      closedRing.push(closedRing[0])
+    }
+
+    // Solar potential score for land: utility > farm, scaled by MWp
+    const landScore = tier === 'utility'
+      ? Math.min(99, 70 + Math.round(Math.min(mwp - 9, 30)))
+      : Math.min(85, 50 + Math.round(Math.min(mwp, 9) * 3.5))
+
+    scored.push({
+      id: crypto.randomUUID(),
+      name: el.tags?.['name:en'] || el.tags?.name || `${lu.charAt(0).toUpperCase() + lu.slice(1)} (${Math.round(rai)} rai)`,
+      lat: Number(lat.toFixed(7)),
+      lon: Number(lon.toFixed(7)),
+      land_area_m2: Math.round(area),
+      area_rai: rai,
+      estimated_mwp: mwp,
+      tier,
+      landuse: lu,
+      land_geom: { type: 'Polygon', coordinates: [closedRing] },
+      solar_potential_score: landScore,
+    })
+  }
+
+  const kept = scored.length
+
+  // 3. DEDUP — against existing land candidates in bbox (150 m cell)
+  const existingLandCandidates = await bGet<{ lat: number; lon: number }>(
+    `scan_candidates?select=lat,lon&kind=eq.land&status=eq.pending&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=5000`,
+  )
+  const nearLand = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
+    Math.abs(a.lat - b.lat) < LAND_DEDUP_DEG && Math.abs(a.lon - b.lon) < LAND_DEDUP_DEG
+
+  const accepted: typeof scored = []
+  for (const c of scored) {
+    const dupCandidate = existingLandCandidates.some((e) => nearLand(e, c))
+    const dupSelf = accepted.some((a) => nearLand(a, c))
+    if (dupCandidate || dupSelf) continue
+    accepted.push(c)
+  }
+  const deduped = kept - accepted.length
+
+  // 4. INSERT candidates (kind='land', status='pending')
+  const candidateRows = accepted.map((c) => ({
+    id: c.id,
+    scan_request_id: scan.id,
+    name: c.name,
+    area_name: 'Scan',
+    property_type: c.landuse,
+    lat: c.lat,
+    lon: c.lon,
+    status: 'pending',
+    // kind discriminator
+    kind: 'land',
+    // land-specific
+    land_area_m2: c.land_area_m2,
+    area_rai: c.area_rai,
+    estimated_mwp: c.estimated_mwp,
+    tier: c.tier,
+    landuse: c.landuse,
+    land_geom: c.land_geom,
+    solar_potential_score: c.solar_potential_score,
+    // roof columns not applicable for land (leave null)
+    roof_geom: null,
+    roof_area_sqm: null,
+    estimated_kwp: c.estimated_mwp * 1000,  // convenience: MWp → kWp stored in existing column
+    priority: c.tier === 'utility' ? 'A' : c.estimated_mwp >= 5 ? 'B' : 'C',
+  }))
+
+  const inserted = await bInsert('scan_candidates', candidateRows)
+  if (!inserted && candidateRows.length > 0) throw new Error('failed to insert land candidates into scan_candidates')
+
+  return { found, kept, deduped, candidates: accepted.length, skipped: 0 }
+}
+
 async function processScan(scan: ScanRow): Promise<Record<string, number | string>> {
+  // Branch: land scans run a separate pipeline; roof scans continue unchanged.
+  if (scan.scan_type === 'land') return processLandScan(scan)
+
   const bbox = scan.bbox
   if (!bbox || bbox.length !== 4) throw new Error('missing bbox')
   const [minLng, minLat, maxLng, maxLat] = bbox
@@ -352,7 +584,7 @@ export default async function handler(req: Request): Promise<Response> {
   // and 'running' scans that went stale (a prior run timed out mid-flight).
   const staleBefore = new Date(Date.now() - STALE_RUNNING_MS).toISOString()
   const filter = `or=(status.eq.queued,and(status.eq.failed,attempts.lt.${MAX_ATTEMPTS}),and(status.eq.running,attempts.lt.${MAX_ATTEMPTS},updated_at.lt.${staleBefore}))`
-  const queued = await bGet<ScanRow>(`scan_requests?${filter}&order=created_at.asc&limit=${SCANS_PER_RUN}&select=id,bbox,area_geojson,filters,attempts`)
+  const queued = await bGet<ScanRow>(`scan_requests?${filter}&order=created_at.asc&limit=${SCANS_PER_RUN}&select=id,bbox,area_geojson,filters,attempts,scan_type`)
   if (queued.length === 0) return Response.json({ ok: true, processed: 0, message: 'no queued scans' })
 
   const results: Array<Record<string, unknown>> = []

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers, PenLine, Lock } from 'lucide-react'
+import { X, MapPin, Zap, Sun, DollarSign, Ruler, Phone, Globe, ExternalLink, TrendingUp, Leaf, AlertCircle, Loader2, FileDown, Send, Check, MessageCircle, Search, ChevronRight, Layers, PenLine, Lock, UserSearch, Mail, Linkedin } from 'lucide-react'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import { ProposalModal } from '../Proposal/ProposalModal'
@@ -16,6 +16,16 @@ import { generateProposal } from '../../lib/generate-proposal'
 import { enrichFromPlaces, isEnrichmentAvailable } from '../../lib/enrich-building'
 import { openLineChat, buildProposalMessage, isLineConfigured } from '../../lib/line-service'
 import { useTranslation } from '../../i18n/useTranslation'
+import { useToastStore } from '../../lib/toast-store'
+import { bustanSupabase } from '../../lib/bustan-supabase'
+
+interface FindContactResult {
+  company: { name?: string; registrationNo?: string; address?: string; phone?: string; website?: string } | null
+  decision_maker: { name?: string; role?: string; phone?: string; email?: string; linkedin?: string } | null
+  confidence: number
+  sources: string[]
+  stages: Array<{ stage: string; status: 'ok' | 'fail' | 'skip'; detail?: string }>
+}
 
 const GRADE_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   A: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', label: 'Excellent — minimal infrastructure' },
@@ -41,6 +51,7 @@ export function PropertySidebar() {
   const role = useBustanStore((s) => s.role)
   const canEditRoof = can(role, 'survey.edit') || can(role, 'crm.edit')
   const canQuote = can(role, 'crm.quote')
+  const canFindContact = can(role, 'crm.edit')
   const { t } = useTranslation()
   const tm = t.crm.map
 
@@ -50,6 +61,9 @@ export function PropertySidebar() {
   const [nasaError, setNasaError] = useState<string | null>(null)
   const [showProposalModal, setShowProposalModal] = useState(false)
   const [pdfError, setPdfError] = useState<string | null>(null)
+  const [contactLoading, setContactLoading] = useState(false)
+  const [contactResult, setContactResult] = useState<FindContactResult | null>(null)
+  const showToast = useToastStore((s) => s.showToast)
 
   useEffect(() => {
     let cancelled = false
@@ -62,6 +76,7 @@ export function PropertySidebar() {
         setNasaError(null)
         setNasaLoading(false)
         setPdfError(null)
+        setContactResult(null)
       })
       return
     }
@@ -73,6 +88,7 @@ export function PropertySidebar() {
       setNasaError(null)
       setNasaLoading(true)
       setPdfError(null)
+      setContactResult(null)
     })
 
     fetchSolarIrradiance(property.lat, property.lng)
@@ -119,6 +135,54 @@ export function PropertySidebar() {
       cancelled = true
     }
   }, [property, regionConfig])
+
+  const handleFindContact = async () => {
+    if (!property) return
+    setContactLoading(true)
+    setContactResult(null)
+    try {
+      const sessionData = await bustanSupabase?.auth.getSession()
+      const token = sessionData?.data?.session?.access_token
+      if (!token) {
+        showToast('Not authenticated — sign in to use this feature', 'error')
+        setContactLoading(false)
+        return
+      }
+      const body: Record<string, unknown> = {
+        lat: property.lat,
+        lng: property.lng,
+      }
+      if (property.id) body.propertyId = property.id
+      if (property.title) body.name = property.title
+      if (property.website) body.website = property.website
+
+      const res = await fetch('/api/admin-find-contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({})) as { error?: string }
+        showToast(err.error || `Find contact failed (${res.status})`, 'error')
+        setContactLoading(false)
+        return
+      }
+      const data = await res.json() as FindContactResult & { ok?: boolean; error?: string }
+      if (!data.ok && data.error) {
+        showToast(data.error, 'error')
+        setContactLoading(false)
+        return
+      }
+      setContactResult(data)
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : 'Find contact failed', 'error')
+    } finally {
+      setContactLoading(false)
+    }
+  }
 
   if (!property) return null
 
@@ -395,9 +459,11 @@ export function PropertySidebar() {
           <div className="rounded-xl border border-white/10 p-3">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold text-white/70 uppercase tracking-wider">Contact</h3>
-              {isEnrichmentAvailable() && !property.ownerName && (
-                <EnrichButton property={property} />
-              )}
+              <div className="flex items-center gap-2">
+                {isEnrichmentAvailable() && !property.ownerName && (
+                  <EnrichButton property={property} />
+                )}
+              </div>
             </div>
             {property.ownerName ? (
               <>
@@ -421,6 +487,128 @@ export function PropertySidebar() {
               </p>
             )}
           </div>
+
+          {/* Find Decision Maker — admin/sales only */}
+          {canFindContact && (
+            <div className="rounded-xl border border-white/10 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-semibold text-white/70 uppercase tracking-wider flex items-center gap-1.5">
+                  <UserSearch size={12} className="text-[#E8A820]" />
+                  Decision Maker
+                </h3>
+                <button
+                  onClick={handleFindContact}
+                  disabled={contactLoading}
+                  className="flex items-center gap-1 text-[10px] text-[#E8A820] hover:text-[#E8A820]/80 transition-colors disabled:opacity-50"
+                >
+                  {contactLoading ? <Loader2 size={10} className="animate-spin" /> : <Search size={10} />}
+                  {contactLoading ? 'Searching…' : 'Find'}
+                </button>
+              </div>
+
+              {contactResult && (
+                <div className="space-y-2">
+                  {/* Confidence */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${contactResult.confidence}%`,
+                          backgroundColor: contactResult.confidence >= 70 ? '#2ED89A' : contactResult.confidence >= 40 ? '#E8A820' : '#E85D3A',
+                        }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-white/50 shrink-0">{contactResult.confidence}% confident</span>
+                  </div>
+
+                  {/* Company */}
+                  {contactResult.company?.name && (
+                    <div className="bg-white/5 rounded-lg p-2 space-y-1">
+                      <p className="text-[10px] text-white/40 uppercase tracking-wider">Company</p>
+                      <p className="text-xs text-white font-medium">{contactResult.company.name}</p>
+                      {contactResult.company.registrationNo && (
+                        <p className="text-[10px] text-white/40">Reg: {contactResult.company.registrationNo}</p>
+                      )}
+                      {contactResult.company.address && (
+                        <p className="text-[10px] text-white/40 leading-relaxed">{contactResult.company.address}</p>
+                      )}
+                      {contactResult.company.phone && (
+                        <a href={`tel:${contactResult.company.phone}`} className="flex items-center gap-1 text-[10px] text-[#2ED89A] hover:underline">
+                          <Phone size={9} /> {contactResult.company.phone}
+                        </a>
+                      )}
+                      {contactResult.company.website && (
+                        <a href={contactResult.company.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-[#00aaff] hover:underline">
+                          <Globe size={9} /> {contactResult.company.website}
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Decision maker */}
+                  {contactResult.decision_maker?.name && (
+                    <div className="bg-white/5 rounded-lg p-2 space-y-1">
+                      <p className="text-[10px] text-white/40 uppercase tracking-wider">Decision Maker</p>
+                      <p className="text-xs text-white font-medium">{contactResult.decision_maker.name}</p>
+                      {contactResult.decision_maker.role && (
+                        <p className="text-[10px] text-white/50">{contactResult.decision_maker.role}</p>
+                      )}
+                      <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+                        {contactResult.decision_maker.phone && (
+                          <a href={`tel:${contactResult.decision_maker.phone}`} className="flex items-center gap-1 text-[10px] text-[#2ED89A] hover:underline">
+                            <Phone size={9} /> {contactResult.decision_maker.phone}
+                          </a>
+                        )}
+                        {contactResult.decision_maker.email && (
+                          <a href={`mailto:${contactResult.decision_maker.email}`} className="flex items-center gap-1 text-[10px] text-[#00aaff] hover:underline">
+                            <Mail size={9} /> {contactResult.decision_maker.email}
+                          </a>
+                        )}
+                        {contactResult.decision_maker.linkedin && (
+                          <a href={contactResult.decision_maker.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-[#60A5FA] hover:underline">
+                            <Linkedin size={9} /> LinkedIn
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sources */}
+                  {contactResult.sources?.length > 0 && (
+                    <p className="text-[9px] text-white/30">
+                      Sources: {contactResult.sources.join(', ')}
+                    </p>
+                  )}
+
+                  {/* Failed stages (collapsed info) */}
+                  {contactResult.stages?.some((s) => s.status === 'fail') && (
+                    <details className="group">
+                      <summary className="text-[9px] text-white/30 cursor-pointer hover:text-white/50 transition-colors list-none flex items-center gap-1">
+                        <span>▸</span> Search details
+                      </summary>
+                      <div className="mt-1 space-y-0.5">
+                        {contactResult.stages.map((s, i) => (
+                          <div key={i} className="flex items-center gap-1.5 text-[9px]">
+                            <span className={s.status === 'ok' ? 'text-[#2ED89A]' : s.status === 'fail' ? 'text-red-400' : 'text-white/30'}>
+                              {s.status === 'ok' ? '✓' : s.status === 'fail' ? '✗' : '–'}
+                            </span>
+                            <span className="text-white/40">{s.stage}</span>
+                            {s.detail && <span className="text-white/25 truncate">{s.detail}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </details>
+                  )}
+
+                  {/* No results */}
+                  {!contactResult.company?.name && !contactResult.decision_maker?.name && (
+                    <p className="text-[11px] text-white/30 text-center py-1">No contact information found</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* LINE / WhatsApp Quick Contact */}
           {(property.phone || isLineConfigured()) && financial && (

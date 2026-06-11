@@ -169,6 +169,8 @@ export function SolarMap() {
   const [confirmingCand, setConfirmingCand] = useState(false)
   const [scanning, setScanning] = useState(false)
   const [showPanelLayout, setShowPanelLayout] = useState(true)
+  // Roof/Land toggle for the scan-area draw mode
+  const [scanType, setScanType] = useState<'roof' | 'land'>('roof')
 
   // Enters the draw-scan-area mode — the user draws a polygon, then on finish
   // we build the GeoJSON + bbox and queue the scan. The actual scan submission
@@ -793,7 +795,7 @@ export function SolarMap() {
       const bbox = [minLng, minLat, maxLng, maxLat]
 
       setScanning(true)
-      const res = await createScanRequest(polygon, bbox, {})
+      const res = await createScanRequest(polygon, bbox, {}, scanType)
       setScanning(false)
 
       // Exit draw mode before showing feedback
@@ -803,7 +805,7 @@ export function SolarMap() {
         showToast(res.error || 'Failed to queue scan', 'error')
         return
       }
-      showToast('Scan queued — candidates appear for review (up to 10 min)', 'success')
+      showToast(`${scanType === 'land' ? 'Land' : 'Roof'} scan queued — candidates appear for review (up to 10 min)`, 'success')
       fetchScanRequests().then(setScanRequests).catch(() => { /* ignore */ })
     }
 
@@ -869,7 +871,7 @@ export function SolarMap() {
       if (m.getSource('scan-draw-src')) m.removeSource('scan-draw-src')
       setScanAreaVertexCount(0)
     }
-  }, [scanAreaDrawing, setScanAreaDrawing, setScanRequests, showToast])
+  }, [scanAreaDrawing, setScanAreaDrawing, setScanRequests, showToast, scanType])
 
   // ── Panel-layout preview overlay ─────────────────────────────────────────
   // Renders filled panel rectangles on the selected property's roof polygon.
@@ -1179,20 +1181,48 @@ export function SolarMap() {
     <>
       <div ref={mapContainer} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
       {canScan && !drawRoofFor && !scanAreaDrawing && !reviewCandidate && (
-        <button
-          onClick={handleScanArea}
-          disabled={scanning}
-          title="Draw a polygon to define the area to scan for rooftops"
-          aria-label="Draw scan area"
-          className="absolute top-32 left-4 z-20 px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#F59E0B]/40 text-[#FCD34D] text-xs font-semibold flex items-center gap-2 hover:bg-[#F59E0B]/15 transition-colors disabled:opacity-50 shadow-lg"
-        >
-          {scanning ? 'Queuing…' : '⊕ Draw scan area'}
-        </button>
+        <div className="absolute top-32 left-4 z-20 flex items-center gap-2">
+          {/* Roof / Land type toggle */}
+          <div className="flex rounded-xl overflow-hidden border border-white/10 bg-[#0D2137]/90 backdrop-blur-xl shadow-lg">
+            <button
+              onClick={() => setScanType('roof')}
+              className={`px-2.5 py-2 text-[11px] font-semibold transition-colors ${
+                scanType === 'roof'
+                  ? 'bg-[#F59E0B]/20 text-[#FCD34D]'
+                  : 'text-white/40 hover:text-white/70'
+              }`}
+              title="Scan for rooftops"
+            >
+              🏠 Roof
+            </button>
+            <button
+              onClick={() => setScanType('land')}
+              className={`px-2.5 py-2 text-[11px] font-semibold transition-colors border-l border-white/10 ${
+                scanType === 'land'
+                  ? 'bg-[#2ED89A]/20 text-[#2ED89A]'
+                  : 'text-white/40 hover:text-white/70'
+              }`}
+              title="Scan for land plots"
+            >
+              🌾 Land
+            </button>
+          </div>
+          <button
+            onClick={handleScanArea}
+            disabled={scanning}
+            title={`Draw a polygon to scan for ${scanType === 'land' ? 'land plots' : 'rooftops'}`}
+            aria-label="Draw scan area"
+            className="px-3 py-2 rounded-xl bg-[#0D2137]/90 backdrop-blur-xl border border-[#F59E0B]/40 text-[#FCD34D] text-xs font-semibold flex items-center gap-2 hover:bg-[#F59E0B]/15 transition-colors disabled:opacity-50 shadow-lg"
+          >
+            {scanning ? 'Queuing…' : '⊕ Draw scan area'}
+          </button>
+        </div>
       )}
       {scanAreaDrawing && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#F59E0B]/40 px-4 py-2.5 flex items-center gap-3 shadow-xl">
           <span className="text-white/80 text-xs">
-            Scan area · <strong className="text-[#FCD34D]">{scanAreaVertexCount}</strong> point{scanAreaVertexCount === 1 ? '' : 's'}
+            {scanType === 'land' ? '🌾' : '🏠'} <span className={`font-semibold ${scanType === 'land' ? 'text-[#2ED89A]' : 'text-[#FCD34D]'}`}>{scanType === 'land' ? 'Land' : 'Roof'} scan</span>
+            {' '}· <strong className="text-[#FCD34D]">{scanAreaVertexCount}</strong> point{scanAreaVertexCount === 1 ? '' : 's'}
             <span className="text-white/40"> — click to add vertices, double-click / Enter to finish</span>
           </span>
           <button
@@ -1248,10 +1278,33 @@ export function SolarMap() {
       )}
       {reviewCandidate && !drawRoofFor && !scanAreaDrawing && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 bg-[#0D2137]/95 backdrop-blur-xl rounded-xl border border-[#C026D3]/40 px-4 py-2.5 flex items-center gap-3 shadow-xl">
-          <span className="text-white/80 text-xs max-w-[220px] truncate">
-            Candidate: <strong className="text-[#E879F9]">{reviewCandidate.title}</strong>
-            {reviewCandidate.area ? <span className="text-white/40"> · {Math.round(reviewCandidate.area).toLocaleString()} m²</span> : null}
-            {reviewCandidate.capacityKwp ? <span className="text-white/40"> · {Math.round(reviewCandidate.capacityKwp)} kWp</span> : null}
+          <span className="text-white/80 text-xs max-w-xs flex items-center gap-1.5 flex-wrap">
+            <span className="shrink-0">{reviewCandidate.type === 'land' ? '🌾' : '🏠'}</span>
+            <strong className="text-[#E879F9] truncate max-w-[140px]">{reviewCandidate.title}</strong>
+            {reviewCandidate.type === 'land' ? (
+              <>
+                {reviewCandidate.sizeRai != null && (
+                  <span className="text-white/40 shrink-0"> · {reviewCandidate.sizeRai.toFixed(1)} rai</span>
+                )}
+                {reviewCandidate.capacityKwp != null && (
+                  <span className="text-white/40 shrink-0"> · {(reviewCandidate.capacityKwp / 1000).toFixed(1)} MWp</span>
+                )}
+                {reviewCandidate.tier === 'farm' && (
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#E8A820]/20 text-[#E8A820] border border-[#E8A820]/30 shrink-0">Farm ≤9MW</span>
+                )}
+                {reviewCandidate.tier === 'utility' && (
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">Utility / DC-scale</span>
+                )}
+                {reviewCandidate.tier === 'commercial' && (
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 shrink-0">Commercial</span>
+                )}
+              </>
+            ) : (
+              <>
+                {reviewCandidate.area ? <span className="text-white/40 shrink-0"> · {Math.round(reviewCandidate.area).toLocaleString()} m²</span> : null}
+                {reviewCandidate.capacityKwp ? <span className="text-white/40 shrink-0"> · {Math.round(reviewCandidate.capacityKwp)} kWp</span> : null}
+              </>
+            )}
           </span>
           <button
             onClick={handleConfirmCandidate}

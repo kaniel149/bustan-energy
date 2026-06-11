@@ -433,7 +433,8 @@ export default function PlatformPage() {
           <div className="space-y-1.5 max-h-48 overflow-y-auto">
             {scanRequests.slice(0, 8).map((s) => (
               <div key={s.id} className="flex items-center justify-between gap-2 text-[11px]">
-                <span className="text-white/60 truncate">
+                <span className="text-white/60 truncate flex items-center gap-1">
+                  <span className="shrink-0">{s.scan_type === 'land' ? '🌾' : '🏠'}</span>
                   {new Date(s.created_at).toLocaleDateString()} {new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
                 <span className="flex items-center gap-1 shrink-0">

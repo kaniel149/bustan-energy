@@ -385,15 +385,46 @@ export async function confirmDetectedRoof(c: Property): Promise<WriteResult & { 
 // --- Scan candidates (P4 review layer) -------------------------------------
 
 /**
+ * Raw scan_candidate row as returned by PostgREST (after 010_land_scan migration).
+ * Includes both roof-specific and land-specific columns; unused columns are null.
+ */
+export interface ScanCandidate {
+  id: string
+  scan_request_id: string | null
+  name: string | null
+  area_name: string | null
+  property_type: string | null
+  lat: number | null
+  lon: number | null
+  // Roof columns
+  roof_geom: GeoJSON.Polygon | null
+  roof_area_sqm: number | null
+  solar_potential_score: number | null
+  estimated_kwp: number | null
+  priority: string | null
+  status: 'pending' | 'added' | 'rejected'
+  created_at: string | null
+  // Added in 010_land_scan
+  kind: 'roof' | 'land'
+  land_area_m2: number | null
+  area_rai: number | null
+  estimated_mwp: number | null
+  tier: 'commercial' | 'farm' | 'utility' | null
+  landuse: string | null
+  land_geom: GeoJSON.Polygon | null
+}
+
+/**
  * Fetch all pending scan candidates. Maps each row to a `Property` so the
  * existing roofCandidates review layer (SolarMap store) can render and
  * interact with them without any new types.
  *
  * Mapping notes:
- *   type='roof', status='private', region derived via regionFromLead (same as confirmed leads).
+ *   type derived from kind ('roof' | 'land').
  *   id   = candidate UUID (used by setScanCandidateStatus / confirmDetectedRoof).
  *   title / location from name / area_name.
  *   area / capacityKwp / solarScore / priority / category / roofGeom from candidate columns.
+ *   Land candidates: sizeM2 / sizeRai / capacityKwp (from estimated_mwp×1000) also populated.
  *   lng maps from the column `lon` (PostgREST returns the column name as-is).
  */
 export async function fetchScanCandidates(): Promise<Property[]> {
@@ -406,19 +437,7 @@ export async function fetchScanCandidates(): Promise<Property[]> {
   const seen = new Set<string>()
   const candidates: Property[] = []
 
-  for (const row of (data ?? []) as Array<{
-    id: string
-    name: string | null
-    area_name: string | null
-    property_type: string | null
-    lat: number | null
-    lon: number | null
-    roof_geom: GeoJSON.Polygon | null
-    roof_area_sqm: number | null
-    solar_potential_score: number | null
-    estimated_kwp: number | null
-    priority: string | null
-  }>) {
+  for (const row of (data ?? []) as ScanCandidate[]) {
     const lat = num(row.lat) ?? 0
     const lng = num(row.lon) ?? 0
 
@@ -428,30 +447,45 @@ export async function fetchScanCandidates(): Promise<Property[]> {
       continue
     }
 
-    // Proximity dedup: quantize to ~1e-4 (~11m) and skip duplicates
-    const dedupKey = `${Math.round(lat * 1e4)},${Math.round(lng * 1e4)}`
+    // Proximity dedup: quantize to ~1e-4 (~11m) for roofs, ~1e-3 (~111m) for land
+    const dedupPrecision = row.kind === 'land' ? 1e3 : 1e4
+    const dedupKey = `${Math.round(lat * dedupPrecision)},${Math.round(lng * dedupPrecision)}`
     if (seen.has(dedupKey)) continue
     seen.add(dedupKey)
 
-    const capacityKwp = num(row.estimated_kwp)
+    const capacityKwp = row.kind === 'land' && row.estimated_mwp != null
+      ? num(row.estimated_mwp * 1000)   // MWp → kWp for the common capacity field
+      : num(row.estimated_kwp)
+
     candidates.push({
       id: row.id,
-      type: 'roof' as const,
+      type: (row.kind === 'land' ? 'land' : 'roof') as 'roof' | 'land',
       status: 'private' as const,
       region: regionFromLead({ areaName: row.area_name }, lat),
       title: row.name ?? row.id,
       location: row.area_name ?? '',
       lat,
       lng,
-      area: num(row.roof_area_sqm),
+      // Roof-specific
+      area: row.kind === 'roof' ? num(row.roof_area_sqm) : undefined,
       capacityKwp,
-      panelCount: row.estimated_kwp != null ? Math.round(row.estimated_kwp * 1000 / STANDARD_PANEL_WATT) : undefined,
+      panelCount: capacityKwp != null ? Math.round(capacityKwp * 1000 / STANDARD_PANEL_WATT) : undefined,
       solarScore: num(row.solar_potential_score),
       priority: (['A', 'B', 'C', 'D'] as const).includes(row.priority as 'A' | 'B' | 'C' | 'D')
         ? (row.priority as 'A' | 'B' | 'C' | 'D')
         : undefined,
-      category: row.property_type ?? undefined,
-      roofGeom: row.roof_geom ?? undefined,
+      // category: landuse string for land, property_type for roof
+      category: row.kind === 'land' ? (row.landuse ?? row.property_type ?? undefined) : (row.property_type ?? undefined),
+      // Reuse roofGeom to carry land_geom for land candidates — the existing
+      // cand-fill / cand-outline map layers read roofGeom via buildRoofFeature,
+      // so land polygons render without any new map layer code.
+      roofGeom: row.kind === 'land'
+        ? (row.land_geom ?? undefined)
+        : (row.roof_geom ?? undefined),
+      // Land-specific (mapped to Property.sizeM2 / sizeRai / tier fields)
+      sizeM2: row.kind === 'land' ? (num(row.land_area_m2) ?? undefined) : undefined,
+      sizeRai: row.kind === 'land' ? (num(row.area_rai) ?? undefined) : undefined,
+      tier: row.kind === 'land' ? (row.tier ?? undefined) : undefined,
     })
   }
 
@@ -485,21 +519,29 @@ export interface ScanFilters {
   commercialOnly?: boolean
 }
 
+export type ScanType = 'roof' | 'land'
+
 /**
  * Queue an on-demand area scan (role-checked admin/sales/engineer via the
  * create_scan_request RPC). A worker picks up the 'queued' row, acquires
- * buildings in the bbox, scores/dedups/enriches, and upserts leads.
+ * buildings (roof) or landuse polygons (land), scores/dedups, and inserts
+ * scan_candidates for operator review.
+ *
+ * @param scanType - 'roof' (default) queries OSM buildings; 'land' queries
+ *   OSM landuse polygons for ground-mount farm/utility sizing.
  */
 export async function createScanRequest(
   area: GeoJSON.Polygon,
   bbox: number[],
   filters: ScanFilters = {},
+  scanType: ScanType = 'roof',
 ): Promise<WriteResult & { id?: string }> {
   if (!bustanSupabase) return NOT_CONNECTED
   const { data, error } = await bustanSupabase.rpc('create_scan_request', {
     p_area: area as unknown as Record<string, unknown>,
     p_bbox: bbox,
     p_filters: filters as unknown as Record<string, unknown>,
+    p_scan_type: scanType,
   })
   if (error) return { ok: false, error: error.message }
   return { ok: true, id: typeof data === 'string' ? data : undefined }

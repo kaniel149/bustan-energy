@@ -4,20 +4,24 @@ import type { CrmProject } from '../types/crm'
 export function exportBuildingsCSV(properties: Property[]) {
   const headers = [
     'ID', 'Title', 'Type', 'Status', 'Region', 'Location',
-    'Lat', 'Lng', 'Area_sqm', 'Usable_Area', 'Capacity_kWp',
-    'Panel_Count', 'Annual_kWh', 'Annual_Savings_THB', 'EPC_Cost_THB',
+    'Lat', 'Lng', 'Area_sqm', 'Area_Rai', 'Usable_Area', 'Capacity_kWp', 'Capacity_MWp',
+    'Tier', 'Panel_Count', 'Annual_kWh', 'Annual_Savings_THB', 'EPC_Cost_THB',
     'Solar_Score', 'Priority', 'Category',
     'Owner', 'Phone', 'Website', 'Email',
   ]
 
-  const rows = properties.map(p => [
-    p.id, p.title, p.type, p.status, p.region, p.location,
-    p.lat, p.lng, p.area || p.sizeM2 || '', p.usableArea || '',
-    p.capacityKwp || '', p.panelCount || '', p.annualKwh || '',
-    p.annualSavings || '', p.epcCost || '', p.solarScore || '',
-    p.priority || '', p.category || '',
-    p.ownerName || '', p.phone || '', p.website || '', p.email || '',
-  ])
+  const rows = properties.map(p => {
+    const capacityMwp = p.type === 'land' && p.capacityKwp ? (p.capacityKwp / 1000).toFixed(2) : ''
+    return [
+      p.id, p.title, p.type, p.status, p.region, p.location,
+      p.lat, p.lng, p.area || p.sizeM2 || '', p.sizeRai || '', p.usableArea || '',
+      p.capacityKwp || '', capacityMwp,
+      p.tier || '', p.panelCount || '', p.annualKwh || '',
+      p.annualSavings || '', p.epcCost || '', p.solarScore || '',
+      p.priority || '', p.category || '',
+      p.ownerName || '', p.phone || '', p.website || '', p.email || '',
+    ]
+  })
 
   downloadCSV(headers, rows, `buildings_${new Date().toISOString().slice(0, 10)}`)
 }
