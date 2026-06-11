@@ -3,6 +3,13 @@ import { MessageCircle, Mail, MapPin, Phone } from 'lucide-react'
 import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
 
+// Shared link treatment — quiet ink that warms to ocean on hover.
+const footerLink =
+  'text-sm text-ink/64 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft'
+
+const iconBox =
+  'flex h-11 w-11 items-center justify-center rounded-xl bg-mist/40 border border-grove/14 text-ink/55 hover:text-ocean hover:border-ocean/30 hover:bg-mist/60 transition-colors duration-[var(--duration-fast)] ease-out-soft'
+
 export function Footer() {
   const { langPath, lang } = useLanguage()
   const { t } = useTranslation()
@@ -27,9 +34,9 @@ export function Footer() {
   ]
 
   return (
-    <footer className="bg-[var(--bustan-grove)] border-t border-[rgba(255,244,226,0.14)]">
+    <footer className="bg-shell border-t border-grove/14">
       {/* Main columns */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
 
           {/* Col 1: Brand */}
@@ -51,16 +58,17 @@ export function Footer() {
                 className="hidden items-center gap-1"
                 style={{ display: 'none' }}
               >
-                <span className="font-serif text-xl text-[var(--bustan-sun)]">
+                <span className="font-serif text-xl text-[var(--bustan-grove)]">
                   Bustan
                 </span>
-                <span className="font-sans text-sm font-medium text-[rgba(255,244,226,0.82)] tracking-wide">
+                <span className="font-sans text-sm font-medium text-ink/70 tracking-wide">
                   Energy
                 </span>
               </span>
             </Link>
 
-            <p className="text-[rgba(255,244,226,0.66)] text-sm leading-relaxed max-w-[240px]">
+            {/* Serif brand line */}
+            <p className="font-serif text-xl text-ink/80 leading-snug max-w-[260px]">
               {t.footer.tagline}
             </p>
 
@@ -70,7 +78,7 @@ export function Footer() {
                 href="https://wa.me/66946692011"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[rgba(255,244,226,0.09)] border border-[rgba(255,244,226,0.12)] flex items-center justify-center text-[rgba(255,244,226,0.62)] hover:text-[var(--bustan-shell)] hover:border-[rgba(255,244,226,0.28)] hover:bg-[rgba(255,244,226,0.14)] transition-colors"
+                className={iconBox}
                 aria-label="WhatsApp"
               >
                 <Phone size={15} />
@@ -79,14 +87,14 @@ export function Footer() {
                 href="https://line.me/R/ti/p/@bustanenergy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[rgba(255,244,226,0.09)] border border-[rgba(255,244,226,0.12)] flex items-center justify-center text-[rgba(255,244,226,0.62)] hover:text-[var(--bustan-shell)] hover:border-[rgba(255,244,226,0.28)] hover:bg-[rgba(255,244,226,0.14)] transition-colors"
+                className={iconBox}
                 aria-label="LINE"
               >
                 <MessageCircle size={15} />
               </a>
               <Link
                 to={langPath('/contact')}
-                className="w-9 h-9 rounded-xl bg-[rgba(255,244,226,0.09)] border border-[rgba(255,244,226,0.12)] flex items-center justify-center text-[rgba(255,244,226,0.62)] hover:text-[var(--bustan-shell)] hover:border-[rgba(255,244,226,0.28)] hover:bg-[rgba(255,244,226,0.14)] transition-colors"
+                className={iconBox}
                 aria-label="Contact Bustan Energy"
               >
                 <Mail size={15} />
@@ -96,16 +104,13 @@ export function Footer() {
 
           {/* Col 2: Quick Links */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[rgba(255,244,226,0.42)]">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-ink/45">
               {t.footer.quickLinks}
             </h4>
             <ul className="flex flex-col gap-2.5">
               {QUICK_LINKS.map((link) => (
                 <li key={link.path}>
-                  <Link
-                    to={langPath(link.path)}
-                    className="text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors"
-                  >
+                  <Link to={langPath(link.path)} className={footerLink}>
                     {link.label}
                   </Link>
                 </li>
@@ -115,16 +120,13 @@ export function Footer() {
 
           {/* Col 3: Services */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[rgba(255,244,226,0.42)]">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-ink/45">
               {t.footer.servicesTitle}
             </h4>
             <ul className="flex flex-col gap-2.5">
               {SERVICES.map((svc) => (
                 <li key={svc.path}>
-                  <Link
-                    to={langPath(svc.path)}
-                    className="text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors"
-                  >
+                  <Link to={langPath(svc.path)} className={footerLink}>
                     {svc.label}
                   </Link>
                 </li>
@@ -134,7 +136,7 @@ export function Footer() {
 
           {/* Col 4: Contact */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[rgba(255,244,226,0.42)]">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-ink/45">
               {t.footer.contactTitle}
             </h4>
             <ul className="flex flex-col gap-4">
@@ -143,9 +145,9 @@ export function Footer() {
                   href="https://wa.me/66946692011"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors group"
+                  className={`group flex items-start gap-3 ${footerLink}`}
                 >
-                  <Phone size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)] group-hover:text-[var(--bustan-sun)] transition-colors" />
+                  <Phone size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
                   <span>WhatsApp: +66 94 669 2011</span>
                 </a>
               </li>
@@ -154,24 +156,24 @@ export function Footer() {
                   href="https://line.me/R/ti/p/@bustanenergy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors group"
+                  className={`group flex items-start gap-3 ${footerLink}`}
                 >
-                  <MessageCircle size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)] group-hover:text-[var(--bustan-sun)] transition-colors" />
+                  <MessageCircle size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
                   <span>LINE: @bustanenergy</span>
                 </a>
               </li>
               <li>
                 <Link
                   to={langPath('/contact')}
-                  className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)] hover:text-[var(--bustan-shell)] transition-colors group"
+                  className={`group flex items-start gap-3 ${footerLink}`}
                 >
-                  <Mail size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)] group-hover:text-[var(--bustan-sun)] transition-colors" />
+                  <Mail size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
                   <span>Contact Bustan Energy</span>
                 </Link>
               </li>
               <li>
-                <div className="flex items-start gap-3 text-sm text-[rgba(255,244,226,0.66)]">
-                  <MapPin size={15} className="mt-0.5 shrink-0 text-[rgba(242,184,75,0.72)]" />
+                <div className="flex items-start gap-3 text-sm text-ink/64">
+                  <MapPin size={15} className="mt-0.5 shrink-0 text-ocean/60" />
                   <span>
                     Ko Phangan<br />
                     Surat Thani, Thailand
@@ -184,16 +186,22 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-[rgba(255,244,226,0.12)]">
+      <div className="border-t border-grove/14">
         <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[rgba(255,244,226,0.42)] text-xs">
+          <p className="text-ink/45 text-xs">
             {t.footer.copyright}
           </p>
           <div className="flex items-center gap-5">
-            <Link to={langPath('/privacy')} className="text-[rgba(255,244,226,0.42)] text-xs hover:text-[rgba(255,244,226,0.74)] transition-colors">
+            <Link
+              to={langPath('/privacy')}
+              className="text-xs text-ink/45 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
+            >
               Privacy Policy
             </Link>
-            <Link to={langPath('/terms')} className="text-[rgba(255,244,226,0.42)] text-xs hover:text-[rgba(255,244,226,0.74)] transition-colors">
+            <Link
+              to={langPath('/terms')}
+              className="text-xs text-ink/45 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
+            >
               Terms of Service
             </Link>
           </div>
