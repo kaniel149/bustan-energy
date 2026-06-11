@@ -3,7 +3,6 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   Wrench,
-  ArrowRight,
   CheckCircle2,
   Activity,
   Droplets,
@@ -15,18 +14,21 @@ import {
 import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
+import { Button } from '../../components/ui/Button'
+import { SectionHeader } from '../../components/ui/SectionHeader'
+import {
+  fadeUp,
+  stagger,
+  revealViewport,
+  cardHover,
+  ServiceHero,
+  Divider,
+  IconTile,
+  RelatedCard,
+  ServiceCTA,
+} from './shared'
 
 const BASE_URL = 'https://bustan-energy.com'
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
-}
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
 
 const services = [
   {
@@ -115,181 +117,107 @@ export default function MaintenancePage() {
         ]}
       />
 
-      <div className="min-h-screen bg-[var(--color-dark)]">
+      <div className="min-h-screen bg-[var(--bustan-paper)] text-ink">
         {/* Hero */}
-        <section className="relative pt-32 pb-24 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-dark)] to-[var(--color-dark)]" />
-          <div
-            className="absolute inset-0 opacity-15"
-            style={{
-              backgroundImage: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(232,168,32,0.25), transparent)',
-            }}
-          />
-
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
-            <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-6">
-              <motion.div variants={fadeUp}>
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase border border-[var(--color-gold)]/30 text-[var(--color-gold)] bg-[var(--color-gold)]/10">
-                  <Wrench className="w-3.5 h-3.5" />
-                  Maintenance & Support
-                </span>
-              </motion.div>
-
-              <motion.h1
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl lg:text-7xl text-white max-w-4xl mx-auto leading-tight"
-              >
-                Solar System{' '}
-                <span className="text-[var(--color-gold)]">Maintenance & Support</span>
-              </motion.h1>
-
-              <motion.p variants={fadeUp} className="text-white/55 text-xl max-w-2xl mx-auto leading-relaxed">
-                Protect your solar investment with professional monitoring, cleaning, and maintenance. We keep your system performing at its best for decades.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-                <Link
-                  to={langPath('/contact')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-                >
-                  Schedule Maintenance
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={langPath('/services')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-colors duration-200"
-                >
-                  View All Services
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
+        <ServiceHero
+          icon={<Wrench size={14} strokeWidth={1.5} aria-hidden />}
+          badge="Maintenance & Support"
+          title="Solar System"
+          titleAccent="Maintenance & Support"
+          subtitle="Protect your solar investment with professional monitoring, cleaning, and maintenance. We keep your system performing at its best for decades."
+        >
+          <Button variant="primary" size="lg" to={langPath('/contact')} className="w-full sm:w-auto">
+            Schedule Maintenance
+          </Button>
+          <Button variant="secondary" size="lg" to={langPath('/services')} className="w-full sm:w-auto">
+            View All Services
+          </Button>
+        </ServiceHero>
 
         {/* Why Maintenance */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-16"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4"
-              >
-                Why Maintenance Matters
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Solar panels are built to last, but they are not maintenance-free. On an island like Ko Phangan, proper care is essential for peak performance and longevity.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Why Maintenance Matters"
+              subtitle="Solar panels are built to last, but they are not maintenance-free. On an island like Ko Phangan, proper care is essential for peak performance and longevity."
+              className="mb-16"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
               {whyMaintenance.map((item) => (
-                <motion.div
-                  key={item.title}
-                  variants={fadeUp}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center mb-5">
-                    <item.icon className="w-6 h-6 text-[var(--color-gold)]" />
+                <motion.div key={item.title} variants={fadeUp} className="h-full">
+                  <div className={`h-full rounded-card border border-grove/14 bg-shell/76 p-8 shadow-soft ${cardHover}`}>
+                    <IconTile className="mb-5">
+                      <item.icon size={24} strokeWidth={1.5} aria-hidden />
+                    </IconTile>
+                    <h3 className="text-xl font-semibold text-ink mb-3">{item.title}</h3>
+                    <p className="text-ink/72 text-sm leading-relaxed">{item.description}</p>
                   </div>
-                  <h3 className="font-[family-name:var(--font-serif)] text-xl text-white mb-3">{item.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
+        <Divider />
 
         {/* Our Services */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-16"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4"
-              >
-                Our Maintenance Services
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Comprehensive operations and maintenance for every solar system we install — and for third-party systems that need professional care.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Our Maintenance Services"
+              subtitle="Comprehensive operations and maintenance for every solar system we install — and for third-party systems that need professional care."
+              className="mb-16"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {services.map((item) => (
-                <motion.div
-                  key={item.title}
-                  variants={fadeUp}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center mb-5">
-                    <item.icon className="w-6 h-6 text-[var(--color-gold)]" />
+                <motion.div key={item.title} variants={fadeUp} className="h-full">
+                  <div className={`h-full rounded-card border border-grove/14 bg-shell/76 p-8 shadow-soft ${cardHover}`}>
+                    <IconTile className="mb-5">
+                      <item.icon size={24} strokeWidth={1.5} aria-hidden />
+                    </IconTile>
+                    <h3 className="text-xl font-semibold text-ink mb-3">{item.title}</h3>
+                    <p className="text-ink/72 text-sm leading-relaxed">{item.text}</p>
                   </div>
-                  <h3 className="font-[family-name:var(--font-serif)] text-xl text-white mb-3">{item.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{item.text}</p>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
-
         {/* Annual Checklist */}
-        <section className="py-24">
+        <section className="py-24 bg-mist/35">
           <div className="max-w-7xl mx-auto px-6">
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
+              viewport={revealViewport}
               variants={stagger}
             >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4 text-center"
-              >
-                Annual Inspection Checklist
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto text-center mb-12">
-                Here is what our engineers check during every annual inspection. Every item is documented with photos and a written report.
-              </motion.p>
+              <SectionHeader
+                title="Annual Inspection Checklist"
+                subtitle="Here is what our engineers check during every annual inspection. Every item is documented with photos and a written report."
+                className="mb-12"
+              />
 
               <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                 {annualChecklistItems.map((item) => (
                   <motion.div key={item} variants={fadeUp} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-[var(--color-gold)] mt-0.5 flex-shrink-0" />
-                    <span className="text-white/70 text-base">{item}</span>
+                    <CheckCircle2 size={20} strokeWidth={1.5} className="text-ocean mt-0.5 flex-shrink-0" aria-hidden />
+                    <span className="text-ink/78 text-base">{item}</span>
                   </motion.div>
                 ))}
               </motion.div>
@@ -300,111 +228,50 @@ export default function MaintenancePage() {
         {/* Related Services */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="max-w-7xl mx-auto px-6 mb-6">
-              <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            </div>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-12"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4"
-              >
-                Explore Related Services
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Need a new system or an upgrade? Check out our installation services or browse all <Link to={langPath('/services')} className="text-[var(--color-gold)] hover:underline">solar solutions</Link>.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Explore Related Services"
+              subtitle={<>Need a new system or an upgrade? Check out our installation services or browse all <Link to={langPath('/services')} className="text-ocean hover:underline">solar solutions</Link>.</>}
+              className="mb-12"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/residential')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <Activity className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Residential Solar</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Rooftop solar systems for homes and villas from 3kW to 10kW.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/commercial')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <BarChart3 className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Commercial Solar</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Solar for hotels, resorts, and businesses with PPA financing.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/off-grid')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <ShieldCheck className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Off-Grid & Battery</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Huawei LUNA battery storage for blackout protection and energy independence.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
+              <RelatedCard
+                to={langPath('/services/residential')}
+                icon={<Activity size={22} strokeWidth={1.5} aria-hidden />}
+                title="Residential Solar"
+                desc="Rooftop solar systems for homes and villas from 3kW to 10kW."
+              />
+              <RelatedCard
+                to={langPath('/services/commercial')}
+                icon={<BarChart3 size={22} strokeWidth={1.5} aria-hidden />}
+                title="Commercial Solar"
+                desc="Solar for hotels, resorts, and businesses with PPA financing."
+              />
+              <RelatedCard
+                to={langPath('/services/off-grid')}
+                icon={<ShieldCheck size={22} strokeWidth={1.5} aria-hidden />}
+                title="Off-Grid & Battery"
+                desc="Huawei LUNA battery storage for blackout protection and energy independence."
+              />
             </motion.div>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="py-24">
-          <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-12 text-center"
-            >
-              <h2 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4">
-                Keep Your System Performing at Its Best
-              </h2>
-              <p className="text-white/55 text-lg mb-8 max-w-xl mx-auto">
-                Whether you need a one-time cleaning, an annual checkup, or a full O&M contract — we are here to help. Contact us to schedule a service visit or discuss a maintenance plan.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to={langPath('/contact')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-                >
-                  Schedule Maintenance
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={langPath('/pricing')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-colors duration-200"
-                >
-                  View Pricing
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </section>
+        <ServiceCTA
+          title="Keep Your System Performing at Its Best"
+          subtitle="Whether you need a one-time cleaning, an annual checkup, or a full O&M contract — we are here to help. Contact us to schedule a service visit or discuss a maintenance plan."
+          primaryLabel="Schedule Maintenance"
+          primaryTo={langPath('/contact')}
+          secondaryLabel="View Pricing"
+          secondaryTo={langPath('/pricing')}
+        />
       </div>
     </>
   )

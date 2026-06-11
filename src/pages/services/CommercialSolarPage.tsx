@@ -3,7 +3,6 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   Building2,
-  ArrowRight,
   CheckCircle2,
   Hotel,
   UtensilsCrossed,
@@ -15,18 +14,22 @@ import {
 import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
+import { Button } from '../../components/ui/Button'
+import { SectionHeader } from '../../components/ui/SectionHeader'
+import { Badge } from '../../components/ui/Badge'
+import {
+  fadeUp,
+  stagger,
+  revealViewport,
+  cardHover,
+  ServiceHero,
+  Divider,
+  IconTile,
+  RelatedCard,
+  ServiceCTA,
+} from './shared'
 
 const BASE_URL = 'https://bustan-energy.com'
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
-}
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
 
 const sectors = [
   {
@@ -109,184 +112,110 @@ export default function CommercialSolarPage() {
         ]}
       />
 
-      <div className="min-h-screen bg-[var(--color-dark)]">
+      <div className="min-h-screen bg-[var(--bustan-paper)] text-ink">
         {/* Hero */}
-        <section className="relative pt-32 pb-24 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-dark)] to-[var(--color-dark)]" />
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(10,61,92,0.5), transparent)',
-            }}
-          />
-
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
-            <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-6">
-              <motion.div variants={fadeUp}>
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase border border-[var(--color-gold)]/30 text-[var(--color-gold)] bg-[var(--color-gold)]/10">
-                  <Building2 className="w-3.5 h-3.5" />
-                  Commercial Solar
-                </span>
-              </motion.div>
-
-              <motion.h1
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl lg:text-7xl text-white max-w-4xl mx-auto leading-tight"
-              >
-                Commercial Solar for{' '}
-                <span className="text-[var(--color-gold)]">Ko Phangan Businesses</span>
-              </motion.h1>
-
-              <motion.p variants={fadeUp} className="text-white/55 text-xl max-w-2xl mx-auto leading-relaxed">
-                Lower your operating costs and strengthen your sustainability credentials. Solar energy solutions designed for hotels, resorts, restaurants, and commercial properties on Ko Phangan.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-                <Link
-                  to={langPath('/contact')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-                >
-                  Request Commercial Proposal
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={langPath('/pricing')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-colors duration-200"
-                >
-                  View Pricing & PPA Options
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
+        <ServiceHero
+          icon={<Building2 size={14} strokeWidth={1.5} aria-hidden />}
+          badge="Commercial Solar"
+          title="Commercial Solar for"
+          titleAccent="Ko Phangan Businesses"
+          subtitle="Lower your operating costs and strengthen your sustainability credentials. Solar energy solutions designed for hotels, resorts, restaurants, and commercial properties on Ko Phangan."
+        >
+          <Button variant="primary" size="lg" to={langPath('/contact')} className="w-full sm:w-auto">
+            Request Commercial Proposal
+          </Button>
+          <Button variant="secondary" size="lg" to={langPath('/pricing')} className="w-full sm:w-auto">
+            View Pricing & PPA Options
+          </Button>
+        </ServiceHero>
 
         {/* Sectors */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-16"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4"
-              >
-                Solar Solutions by Business Type
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                We design each commercial system around the load profile, roof conditions, PEA requirements, and financing model of the business.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Solar Solutions by Business Type"
+              subtitle="We design each commercial system around the load profile, roof conditions, PEA requirements, and financing model of the business."
+              className="mb-16"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
               {sectors.map((sector) => (
-                <motion.div
-                  key={sector.title}
-                  variants={fadeUp}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center mb-5">
-                    <sector.icon className="w-6 h-6 text-[var(--color-gold)]" />
+                <motion.div key={sector.title} variants={fadeUp} className="h-full">
+                  <div className={`flex h-full flex-col rounded-card border border-grove/14 bg-shell/76 p-8 shadow-soft ${cardHover}`}>
+                    <IconTile className="mb-5">
+                      <sector.icon size={24} strokeWidth={1.5} aria-hidden />
+                    </IconTile>
+                    <h3 className="text-xl font-semibold text-ink mb-3">{sector.title}</h3>
+                    <p className="text-ink/72 text-sm leading-relaxed mb-4">{sector.description}</p>
+                    <div className="mt-auto">
+                      <Badge tone="sun">Typical size: {sector.size}</Badge>
+                    </div>
                   </div>
-                  <h3 className="font-[family-name:var(--font-serif)] text-xl text-white mb-3">{sector.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed mb-4">{sector.description}</p>
-                  <span className="inline-block px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 text-[var(--color-gold)]">
-                    Typical size: {sector.size}
-                  </span>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
+        <Divider />
 
         {/* Advantages */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-16"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4"
-              >
-                Why Businesses Choose Solar
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Solar energy is not just an environmental choice — it is a sound business decision. Here is why commercial operators on Ko Phangan are investing in solar.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Why Businesses Choose Solar"
+              subtitle="Solar energy is not just an environmental choice — it is a sound business decision. Here is why commercial operators on Ko Phangan are investing in solar."
+              className="mb-16"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               {advantages.map((item) => (
-                <motion.div
-                  key={item.title}
-                  variants={fadeUp}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center mb-5">
-                    <item.icon className="w-6 h-6 text-[var(--color-gold)]" />
+                <motion.div key={item.title} variants={fadeUp} className="h-full">
+                  <div className={`h-full rounded-card border border-grove/14 bg-shell/76 p-8 shadow-soft ${cardHover}`}>
+                    <IconTile className="mb-5">
+                      <item.icon size={24} strokeWidth={1.5} aria-hidden />
+                    </IconTile>
+                    <h3 className="text-xl font-semibold text-ink mb-3">{item.title}</h3>
+                    <p className="text-ink/72 text-sm leading-relaxed">{item.text}</p>
                   </div>
-                  <h3 className="font-[family-name:var(--font-serif)] text-xl text-white mb-3">{item.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{item.text}</p>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
-
         {/* What's Included */}
-        <section className="py-24">
+        <section className="py-24 bg-mist/35">
           <div className="max-w-7xl mx-auto px-6">
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
+              viewport={revealViewport}
               variants={stagger}
             >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4 text-center"
-              >
-                Complete Commercial Package
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto text-center mb-12">
-                Every commercial installation is a full turnkey solution. We handle everything from system design through to ongoing maintenance.
-              </motion.p>
+              <SectionHeader
+                title="Complete Commercial Package"
+                subtitle="Every commercial installation is a full turnkey solution. We handle everything from system design through to ongoing maintenance."
+                className="mb-12"
+              />
 
               <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                 {included.map((item) => (
                   <motion.div key={item} variants={fadeUp} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-[var(--color-gold)] mt-0.5 flex-shrink-0" />
-                    <span className="text-white/70 text-base">{item}</span>
+                    <CheckCircle2 size={20} strokeWidth={1.5} className="text-ocean mt-0.5 flex-shrink-0" aria-hidden />
+                    <span className="text-ink/78 text-base">{item}</span>
                   </motion.div>
                 ))}
               </motion.div>
@@ -297,111 +226,50 @@ export default function CommercialSolarPage() {
         {/* Related Services */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="max-w-7xl mx-auto px-6 mb-6">
-              <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            </div>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-12"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4"
-              >
-                Explore Related Services
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Complement your commercial system with battery backup or ongoing maintenance. See all our <Link to={langPath('/services')} className="text-[var(--color-gold)] hover:underline">solar services</Link>.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Explore Related Services"
+              subtitle={<>Complement your commercial system with battery backup or ongoing maintenance. See all our <Link to={langPath('/services')} className="text-ocean hover:underline">solar services</Link>.</>}
+              className="mb-12"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/residential')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <Hotel className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Residential Solar</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Home rooftop systems from 3kW to 10kW with battery backup options.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/maintenance')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <Handshake className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Maintenance & Support</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Professional O&M services, 24/7 monitoring, and annual inspections.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/off-grid')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <TrendingUp className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Off-Grid & Battery</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Energy independence with Huawei LUNA batteries for backup and peak shaving.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
+              <RelatedCard
+                to={langPath('/services/residential')}
+                icon={<Hotel size={22} strokeWidth={1.5} aria-hidden />}
+                title="Residential Solar"
+                desc="Home rooftop systems from 3kW to 10kW with battery backup options."
+              />
+              <RelatedCard
+                to={langPath('/services/maintenance')}
+                icon={<Handshake size={22} strokeWidth={1.5} aria-hidden />}
+                title="Maintenance & Support"
+                desc="Professional O&M services, 24/7 monitoring, and annual inspections."
+              />
+              <RelatedCard
+                to={langPath('/services/off-grid')}
+                icon={<TrendingUp size={22} strokeWidth={1.5} aria-hidden />}
+                title="Off-Grid & Battery"
+                desc="Energy independence with Huawei LUNA batteries for backup and peak shaving."
+              />
             </motion.div>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="py-24">
-          <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-12 text-center"
-            >
-              <h2 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4">
-                Ready to Lower Your Operating Costs?
-              </h2>
-              <p className="text-white/55 text-lg mb-8 max-w-xl mx-auto">
-                Get a custom commercial solar proposal for your business. We will analyze your energy consumption and present a clear ROI timeline — including PPA options with zero upfront cost.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to={langPath('/contact')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-                >
-                  Request Commercial Proposal
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={langPath('/pricing')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-colors duration-200"
-                >
-                  View Pricing
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </section>
+        <ServiceCTA
+          title="Ready to Lower Your Operating Costs?"
+          subtitle="Get a custom commercial solar proposal for your business. We will analyze your energy consumption and present a clear ROI timeline — including PPA options with zero upfront cost."
+          primaryLabel="Request Commercial Proposal"
+          primaryTo={langPath('/contact')}
+          secondaryLabel="View Pricing"
+          secondaryTo={langPath('/pricing')}
+        />
       </div>
     </>
   )

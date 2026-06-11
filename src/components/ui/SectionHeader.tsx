@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 type Props = {
   tag?: string // small uppercase kicker, lagoon color
   title: string // Instrument Serif display
-  subtitle?: string
+  subtitle?: React.ReactNode
   align?: 'center' | 'left'
   className?: string
 }
