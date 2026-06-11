@@ -60,4 +60,4 @@ comment on column bustan.properties.solar_checked_at is
 -- Solar_checked_at IS NULL guards against re-processing already-stamped rows.
 create index if not exists properties_solar_queue_idx
   on bustan.properties (id)
-  where existing_solar is null and solar_checked_at is null;
+  where solar_checked_at is null;

@@ -10,13 +10,19 @@
 //   Slot A: scan_candidates where kind='roof', status='pending',
 //           solar_checked_at IS NULL — ordered priority asc, estimated_kwp desc
 //           (highest-value, most-urgent roofs first).
-//   Slot B: bustan.properties where existing_solar IS NULL and
-//           solar_checked_at IS NULL — fills any remaining budget after Slot A.
+//   Slot B: bustan.properties where solar_checked_at IS NULL (existing_solar
+//           is NOT NULL DEFAULT false — 378 unverified defaults — so we cannot
+//           filter on IS NULL there; we use solar_checked_at as the work-queue
+//           sentinel instead). Land property_types excluded (no roof to check).
+//           Ordered by roof_area_sqm DESC (biggest roofs first; estimated_kwp
+//           lives in crm_pipeline, not on the properties row itself).
 //
 // Write-back:
 //   • scan_candidates: existing_solar, solar_check_confidence, solar_checked_at
-//   • properties:      existing_solar (only when null + confidence ≥ 0.5),
-//                      solar_check_confidence, solar_checked_at
+//   • properties:      existing_solar when confidence ≥ MIN_CONFIDENCE_WRITE,
+//                      with an extra guard: stored TRUE is never overwritten to
+//                      false unless confidence ≥ MIN_CONFIDENCE_OVERTURN (0.7).
+//                      Always stamps solar_check_confidence + solar_checked_at.
 //   On per-item error: stamp solar_checked_at with confidence=0 so the row
 //   exits the queue (no infinite retry). The item can be re-queued via POST.
 //
@@ -33,9 +39,19 @@ const GEMINI_KEY   = process.env.GEMINI_API_KEY || process.env.NANOBANANA_API_KE
 // Keep total Gemini calls ≤ 15 per run to stay comfortably inside the
 // Vercel edge 25-s wall-clock limit (Gemini vision ≈ 1-3 s each).
 const MAX_PER_RUN  = 15
-// Confidence threshold above which we consider a detection reliable enough
-// to write back to bustan.properties.existing_solar.
+// Minimum confidence to write existing_solar to a property row at all.
 const MIN_CONFIDENCE_WRITE = 0.5
+// Minimum confidence required to flip a stored TRUE → false (preventing
+// low-confidence "clean" detections from clobbering a known install).
+const MIN_CONFIDENCE_OVERTURN = 0.7
+// OSM landuse values that mean ground-mount land — these are stored as
+// property_type on promoted land candidates. Properties with these types
+// have no roof, so we skip them in the PV-check queue.
+// Mirrors LAND_USES in cron-process-scans.ts.
+const LAND_PROPERTY_TYPES = new Set([
+  'farmland', 'meadow', 'grass', 'greenfield', 'brownfield',
+  'orchard', 'farmyard', 'quarry',
+])
 // Esri World Imagery tile size (pixels); 640×640 is the Esri default cap.
 const TILE_SIZE    = 640
 // Approximate half-size in degrees added as padding around the roof bbox.
@@ -222,8 +238,32 @@ interface PropertyRow {
   id: string
   lat: number
   lon: number
-  // properties don't have roof_geom in the base schema —
-  // we use a ~60 m box centred on lat/lon.
+  existing_solar: boolean | null
+  roof_area_sqm: number | null
+  property_type: string | null
+}
+
+// ----------------------------------------------------------------
+// Determine what to write back to properties.existing_solar.
+//
+// Rules:
+//   • confidence < MIN_CONFIDENCE_WRITE (0.5) → do not touch the boolean.
+//   • detected = true, confidence ≥ 0.5 → always set true.
+//   • detected = false, confidence ≥ 0.5:
+//       - stored value is already false (or null) → set false.
+//       - stored value is true → only overwrite if confidence ≥ MIN_CONFIDENCE_OVERTURN (0.7)
+//         (prevents a low-confidence "clean" image from nuking a confirmed install).
+// ----------------------------------------------------------------
+function buildPropertySolarPatch(
+  stored: boolean | null,
+  detected: boolean,
+  confidence: number,
+): { existing_solar?: boolean } {
+  if (confidence < MIN_CONFIDENCE_WRITE) return {}
+  if (detected) return { existing_solar: true }
+  // detected = false
+  if (stored === true && confidence < MIN_CONFIDENCE_OVERTURN) return {}
+  return { existing_solar: false }
 }
 
 // ----------------------------------------------------------------
@@ -287,20 +327,19 @@ export default async function handler(req: Request): Promise<Response> {
 
     for (const id of propertyIds) {
       const rows = await bGet<PropertyRow>(
-        `properties?id=eq.${id}&select=id,lat,lon&limit=1`,
+        `properties?id=eq.${id}&select=id,lat,lon,existing_solar,roof_area_sqm,property_type&limit=1`,
       )
       if (rows.length === 0) continue
       const row = rows[0]
       try {
         const r = await processItem(Number(row.lat), Number(row.lon), null)
-        const writeExisting = r.confidence >= MIN_CONFIDENCE_WRITE
         await bPatch(`properties?id=eq.${id}`, {
-          ...(writeExisting ? { existing_solar: r.has_existing_solar } : {}),
+          ...buildPropertySolarPatch(row.existing_solar, r.has_existing_solar, r.confidence),
           solar_check_confidence: r.confidence,
           solar_checked_at: now,
         })
         processed++
-        if (r.has_existing_solar && writeExisting) detected++
+        if (r.has_existing_solar) detected++
       } catch {
         await bPatch(`properties?id=eq.${id}`, { solar_check_confidence: 0, solar_checked_at: now })
         errors++
@@ -323,12 +362,23 @@ export default async function handler(req: Request): Promise<Response> {
 
   const remainingBudget = MAX_PER_RUN - candidates.length
 
-  // Slot B: properties where existing_solar has never been determined.
-  // Only fetch if we have budget left after Slot A.
+  // Slot B: properties not yet checked (solar_checked_at IS NULL).
+  // NOTE: existing_solar is NOT NULL DEFAULT false — filtering on IS NULL would
+  // match nothing. solar_checked_at is the authoritative work-queue sentinel.
+  // Exclusions:
+  //   • property_type in LAND_PROPERTY_TYPES — ground-mount land, no roof.
+  //   • lat/lon nulls — no coordinates to build an aerial bbox.
+  // Order: roof_area_sqm DESC NULLS LAST — biggest roofs checked first.
+  // (estimated_kwp lives in crm_pipeline, not on the properties row itself.)
+  // NOTE: or=(neq,neq,...) would be a tautology (x≠a OR x≠b is always true);
+  // not.in.(...) excludes the listed values, and the is.null arm keeps untyped rows.
+  const landTypeFilter = `property_type.not.in.(${[...LAND_PROPERTY_TYPES].join(',')})`
   const properties = remainingBudget > 0
     ? await bGet<PropertyRow>(
-        `properties?existing_solar=is.null&solar_checked_at=is.null` +
-        `&select=id,lat,lon` +
+        `properties?solar_checked_at=is.null&lat=not.is.null&lon=not.is.null` +
+        `&or=(property_type.is.null,${landTypeFilter})` +
+        `&order=roof_area_sqm.desc.nullslast` +
+        `&select=id,lat,lon,existing_solar,roof_area_sqm,property_type` +
         `&limit=${remainingBudget}`,
       )
     : []
@@ -367,15 +417,13 @@ export default async function handler(req: Request): Promise<Response> {
   for (const p of properties) {
     try {
       const r = await processItem(Number(p.lat), Number(p.lon), null)
-      // Only commit the boolean when confidence is high enough to be trustworthy.
-      const writeExisting = r.confidence >= MIN_CONFIDENCE_WRITE
       await bPatch(`properties?id=eq.${p.id}`, {
-        ...(writeExisting ? { existing_solar: r.has_existing_solar } : {}),
+        ...buildPropertySolarPatch(p.existing_solar, r.has_existing_solar, r.confidence),
         solar_check_confidence: r.confidence,
         solar_checked_at: now,
       })
       processed++
-      if (r.has_existing_solar && writeExisting) detected++
+      if (r.has_existing_solar) detected++
     } catch (err) {
       await bPatch(`properties?id=eq.${p.id}`, {
         solar_check_confidence: 0,
