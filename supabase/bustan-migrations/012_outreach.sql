@@ -17,7 +17,7 @@ create table if not exists bustan.outreach_templates (
 
 create table if not exists bustan.outreach_messages (
   id           uuid primary key default gen_random_uuid(),
-  property_id  uuid not null references bustan.properties(id) on delete cascade,
+  property_id  text not null references bustan.properties(id) on delete cascade,  -- text: matches bustan.properties.id (not uuid)
   template_id  uuid references bustan.outreach_templates(id),
   channel      text not null check (channel in ('line','whatsapp','email')),
   language     text not null check (language in ('th','en')),
