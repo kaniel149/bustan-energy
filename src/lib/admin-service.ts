@@ -279,6 +279,58 @@ export async function downloadSignedPDF(ref: string): Promise<void> {
   setTimeout(() => URL.revokeObjectURL(url), 60_000)
 }
 
+// ─── Outreach Messages ───────────────────────────────────────────────────────
+
+export interface OutreachMessage {
+  id: string
+  property_id: string
+  channel: string
+  language: string
+  recipient: string | null
+  subject: string | null
+  body: string
+  facts: {
+    roofSqm?: number
+    kwp?: number
+    monthlySavingThb?: number
+    companyName?: string | null
+    district?: string | null
+  }
+  status: string
+  created_at: string
+  sent_at: string | null
+}
+
+export async function fetchOutreachMessages(status: string): Promise<OutreachMessage[]> {
+  const session = await getSession()
+  if (!session?.access_token) return []
+
+  const res = await fetch(`/api/admin-outreach?status=${encodeURIComponent(status)}`, {
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  })
+  if (!res.ok) return []
+  const j = (await res.json()) as { rows?: OutreachMessage[] }
+  return j.rows ?? []
+}
+
+export async function outreachAction(
+  action: 'approve' | 'skip' | 'edit' | 'bulk_approve',
+  payload: { id?: string; ids?: string[]; body?: string; subject?: string },
+): Promise<boolean> {
+  const session = await getSession()
+  if (!session?.access_token) return false
+
+  const res = await fetch('/api/admin-outreach', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ action, ...payload }),
+  })
+  return res.ok
+}
+
 /** HTML-escape a value for safe embedding in signed certificate */
 function _esc(v: string | null | undefined): string {
   if (v == null) return '—'

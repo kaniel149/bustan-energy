@@ -41,6 +41,7 @@ const ProcurementPage = lazy(() => import('./pages/admin/ProcurementPage'))
 const PEADrawingsPage = lazy(() => import('./pages/admin/PEADrawingsPage'))
 const SuppliersPage = lazy(() => import('./pages/admin/SuppliersPage'))
 const MonitoringPage = lazy(() => import('./pages/admin/MonitoringPage'))
+const OutreachPage = lazy(() => import('./pages/admin/OutreachPage'))
 
 function LoadingScreen() {
   return (
@@ -100,6 +101,7 @@ export default function App() {
                   <Route path="suppliers" element={<SuppliersPage />} />
                   <Route path="pea" element={<PEADrawingsPage />} />
                   <Route path="monitoring" element={<MonitoringPage />} />
+                  <Route path="outreach" element={<OutreachPage />} />
                 </Route>
                 <Route path="/crm" element={<ErrorBoundary><CRMPage /></ErrorBoundary>}>
                   <Route index element={<CRMDashboard />} />
@@ -137,6 +139,7 @@ export default function App() {
                 <Route path="suppliers" element={<SuppliersPage />} />
                 <Route path="pea" element={<PEADrawingsPage />} />
                 <Route path="monitoring" element={<MonitoringPage />} />
+                <Route path="outreach" element={<OutreachPage />} />
               </Route>
 
               {/* CRM routes (also accessible via /crm on main domain) */}

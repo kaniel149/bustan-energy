@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags, Building2, Activity } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags, Building2, Activity, Send } from 'lucide-react'
 import { onAuthChange, signOut, isAdmin } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 import { AdminToast } from '../../components/admin/AdminToast'
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { to: '/admin/proposals/new', icon: FilePlus, label: 'הצעה חדשה', end: false },
   { to: '/admin/proposals', icon: FileText, label: 'כל ההצעות', end: true },
   { to: '/admin/monitoring', icon: Activity, label: 'ניטור מערכות', end: true },
+  { to: '/admin/outreach', icon: Send, label: 'פניות יזומות', end: true, internal: true },
   { to: '/admin/bom', icon: Package, label: 'BOM חדש', end: true, internal: true },
   { to: '/admin/procurement', icon: ShoppingCart, label: 'הזמנות רכש', end: true, internal: true },
   { to: '/admin/suppliers', icon: Tags, label: 'ספקים ומחירים', end: true, internal: true },
