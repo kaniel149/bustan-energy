@@ -136,6 +136,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     showGrid: true,
     showBufferZones: true,
     showRoofDetection: false,
+    showDataCenters: true,
     searchQuery: '',
   },
 

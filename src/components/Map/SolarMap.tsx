@@ -10,6 +10,8 @@ import { useToastStore } from '../../lib/toast-store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import { computePanelLayout, panelsToFeatureCollection } from '../../lib/panel-layout'
+import { DATA_CENTERS } from '../../data/datacenters'
+import type { DCStatus, DCPrecision } from '../../data/datacenters'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
@@ -133,6 +135,59 @@ function buildRoofFeature(p: {
   return { type: 'Feature', geometry: { type: 'Polygon', coordinates: [ring] }, properties: props }
 }
 
+// Status → display color for DC markers (#A855F7 = purple base, lighter shades per status)
+const DC_STATUS_COLOR: Record<DCStatus, string> = {
+  operational: '#22C55E',
+  under_construction: '#3B82F6',
+  announced: '#9CA3AF',
+}
+
+// Status → display label for DC popup badges
+const DC_STATUS_LABEL: Record<DCStatus, string> = {
+  operational: 'Operational',
+  under_construction: 'Under construction',
+  announced: 'Announced',
+}
+
+// Precisions that have a trustworthy enough coordinate to draw a 10 km radius circle
+const DC_DRAW_RADIUS_PRECISION = new Set<DCPrecision>(['address', 'estate', 'district'])
+
+/** Build GeoJSON FeatureCollection for DC markers */
+function buildDCFeatureCollection(): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: DATA_CENTERS.map((dc, i) => ({
+      type: 'Feature' as const,
+      geometry: { type: 'Point' as const, coordinates: [dc.lng, dc.lat] },
+      properties: {
+        index: i,
+        name: dc.name,
+        operator: dc.operator,
+        location_text: dc.location_text,
+        province: dc.province,
+        mw_it: dc.mw_it ?? -1,       // -1 = undisclosed (expressions can't filter null)
+        status: dc.status,
+        year: dc.year,
+        precision: dc.precision,
+        color: DC_STATUS_COLOR[dc.status],
+      },
+    })),
+  }
+}
+
+/** Build GeoJSON FeatureCollection of 10 km radius circles for estate/address entries */
+function buildDCRadiusFeatureCollection(): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: DATA_CENTERS
+      .filter((dc) => DC_DRAW_RADIUS_PRECISION.has(dc.precision))
+      .map((dc) => {
+        const circle = createCircle([dc.lng, dc.lat], 10, 64)
+        return { ...circle, properties: { name: dc.name } }
+      }),
+  }
+}
+
 export function SolarMap() {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<maplibregl.Map | null>(null)
@@ -179,6 +234,21 @@ export function SolarMap() {
     if (!map.current) return
     setScanAreaDrawing(true)
   }
+
+  // Clicking a candidate row in the review panel sets reviewCandidate — fly
+  // the map to it so the operator sees the roof/plot immediately.
+  useEffect(() => {
+    const m = map.current
+    if (!m || !reviewCandidate) return
+    if (Number.isFinite(reviewCandidate.lat) && Number.isFinite(reviewCandidate.lng)) {
+      m.flyTo({
+        center: [reviewCandidate.lng, reviewCandidate.lat],
+        zoom: reviewCandidate.type === 'land' ? 16 : 18,
+        duration: 900,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviewCandidate])
 
   const handleConfirmCandidate = async () => {
     if (!reviewCandidate) return
@@ -960,6 +1030,156 @@ export function SolarMap() {
       if (m.getSource('panel-layout-src')) m.removeSource('panel-layout-src')
     }
   }, [selectedProperty, showPanelLayout, drawRoofFor, showToast])
+
+  // ── Data-center intelligence layer ────────────────────────────────────────
+  // Purple circle markers sized by MW (unknown = base size), dashed 10 km radius
+  // circles for estate/address-precision entries. Click → popup card.
+  const dcPopupRef = useRef<maplibregl.Popup | null>(null)
+  useEffect(() => {
+    const m = map.current
+    if (!m) return
+
+    const DC_LAYERS = ['dc-radius', 'dc-circle-glow', 'dc-circle', 'dc-label']
+
+    const setup = () => {
+      // Cleanup
+      for (const id of DC_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      for (const id of ['dc-src', 'dc-radius-src']) { if (m.getSource(id)) m.removeSource(id) }
+      if (dcPopupRef.current) { dcPopupRef.current.remove(); dcPopupRef.current = null }
+
+      if (!filters.showDataCenters) return
+
+      // Sources
+      m.addSource('dc-src', { type: 'geojson', data: buildDCFeatureCollection() })
+      m.addSource('dc-radius-src', { type: 'geojson', data: buildDCRadiusFeatureCollection() })
+
+      // 10 km radius dashed ring (below markers)
+      m.addLayer({
+        id: 'dc-radius',
+        type: 'line',
+        source: 'dc-radius-src',
+        paint: {
+          'line-color': '#A855F7',
+          'line-width': 1.2,
+          'line-opacity': 0.4,
+          'line-dasharray': [4, 3],
+        },
+      })
+
+      // Outer glow
+      m.addLayer({
+        id: 'dc-circle-glow',
+        type: 'circle',
+        source: 'dc-src',
+        paint: {
+          'circle-color': ['get', 'color'],
+          'circle-radius': [
+            'interpolate', ['linear'], ['zoom'],
+            5, ['case', ['>', ['get', 'mw_it'], 0],
+              ['interpolate', ['linear'], ['get', 'mw_it'], 0, 6, 50, 9, 200, 12, 500, 16],
+              7],
+            10, ['case', ['>', ['get', 'mw_it'], 0],
+              ['interpolate', ['linear'], ['get', 'mw_it'], 0, 10, 50, 14, 200, 18, 500, 24],
+              10],
+          ],
+          'circle-opacity': 0.2,
+          'circle-blur': 0.6,
+        },
+      })
+
+      // Main circle
+      m.addLayer({
+        id: 'dc-circle',
+        type: 'circle',
+        source: 'dc-src',
+        paint: {
+          'circle-color': ['get', 'color'],
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 1.5,
+          'circle-opacity': 0.9,
+          'circle-radius': [
+            'interpolate', ['linear'], ['zoom'],
+            5, ['case', ['>', ['get', 'mw_it'], 0],
+              ['interpolate', ['linear'], ['get', 'mw_it'], 0, 4, 50, 6, 200, 8, 500, 11],
+              5],
+            10, ['case', ['>', ['get', 'mw_it'], 0],
+              ['interpolate', ['linear'], ['get', 'mw_it'], 0, 7, 50, 10, 200, 13, 500, 18],
+              7],
+          ],
+        },
+      })
+
+      // Label (operator abbreviation) at higher zooms
+      m.addLayer({
+        id: 'dc-label',
+        type: 'symbol',
+        source: 'dc-src',
+        minzoom: 8,
+        layout: {
+          'text-field': ['get', 'operator'],
+          'text-size': 9,
+          'text-offset': [0, 1.6],
+          'text-anchor': 'top',
+          'text-max-width': 8,
+        },
+        paint: {
+          'text-color': '#ffffff',
+          'text-opacity': 0.7,
+          'text-halo-color': '#000000',
+          'text-halo-width': 1,
+        },
+      })
+
+      // Hover cursor
+      m.on('mouseenter', 'dc-circle', () => { m.getCanvas().style.cursor = 'pointer' })
+      m.on('mouseleave', 'dc-circle', () => { m.getCanvas().style.cursor = '' })
+
+      // Click → popup card
+      m.on('click', 'dc-circle', (e) => {
+        if (isDrawingRef.current) return
+        const f = e.features?.[0]
+        if (!f) return
+        const p = f.properties as {
+          name: string; operator: string; location_text: string; province: string
+          mw_it: number; status: DCStatus; year: number; precision: string; color: string
+        }
+        const mwLabel = p.mw_it > 0 ? `${p.mw_it} MW IT` : 'MW undisclosed'
+        const statusColor = DC_STATUS_COLOR[p.status]
+        const statusLabel = DC_STATUS_LABEL[p.status]
+        const precisionNote = p.precision === 'city' || p.precision === 'province'
+          ? `<span style="color:#888;font-size:10px">⚠ Location approximate (${p.precision})</span>` : ''
+
+        if (dcPopupRef.current) dcPopupRef.current.remove()
+        dcPopupRef.current = new maplibregl.Popup({ offset: 14, maxWidth: '260px' })
+          .setLngLat(e.lngLat)
+          .setHTML(`<div style="font-family:system-ui;font-size:12px;color:#e2e8f0;background:#0D2137;padding:2px">
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px;line-height:1.3">${p.name}</div>
+            <div style="color:#94a3b8;margin-bottom:6px">${p.operator}</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+              <span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}44">${statusLabel}</span>
+              <span style="color:#94a3b8;font-size:11px">${p.year}</span>
+            </div>
+            <div style="color:#cbd5e1;margin-bottom:3px">${mwLabel}</div>
+            <div style="color:#64748b;font-size:11px;margin-bottom:4px">${p.location_text}</div>
+            ${precisionNote}
+          </div>`)
+          .addTo(m)
+      })
+    }
+
+    if (m.isStyleLoaded()) setup()
+    else m.once('load', setup)
+    m.on('style.load', setup)
+
+    return () => {
+      m.off('style.load', setup)
+      if (!m) return
+      for (const id of DC_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
+      for (const id of ['dc-src', 'dc-radius-src']) { if (m.getSource(id)) m.removeSource(id) }
+      if (dcPopupRef.current) { dcPopupRef.current.remove(); dcPopupRef.current = null }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.showDataCenters])
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)

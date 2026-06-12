@@ -1,4 +1,4 @@
-import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download, Home, Building } from 'lucide-react'
+import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download, Home, Building, Server } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppStore } from '../../lib/store'
@@ -203,6 +203,15 @@ export function FilterBar() {
               title="Toggle Roof Detection"
             >
               <Home size={14} />
+            </button>
+            <button
+              onClick={() => setFilter('showDataCenters', !filters.showDataCenters)}
+              className={`px-3 py-2.5 transition-colors ${
+                filters.showDataCenters ? 'text-[#A855F7]' : 'text-white/40 hover:text-white'
+              }`}
+              title="Toggle Data Centers"
+            >
+              <Server size={14} />
             </button>
             <button
               onClick={() => setShowFilters(!showFilters)}

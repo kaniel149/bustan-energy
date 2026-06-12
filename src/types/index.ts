@@ -164,6 +164,7 @@ export interface FilterState {
   showGrid: boolean
   showBufferZones: boolean
   showRoofDetection: boolean
+  showDataCenters: boolean
   searchQuery: string
 }
 

@@ -544,6 +544,7 @@ function ScanStatusPanel({
 // ── Map Legend — body only (wrapped in FloatingPanel in PlatformPage) ────────
 function MapLegend({ hasLandCandidates }: { hasLandCandidates: boolean }) {
   const [showTier, setShowTier] = useState(false)
+  const [showDC, setShowDC] = useState(false)
 
   return (
     <div className="p-3 max-w-[180px]">
@@ -557,6 +558,34 @@ function MapLegend({ hasLandCandidates }: { hasLandCandidates: boolean }) {
         <LegendItem shape="line" color="#ff8800" label="Transmission" />
         <LegendItem shape="line" color="#ffcc00" label="Distribution" />
         <LegendItem shape="line" color="#00aaff" label="Submarine Cable" />
+      </div>
+
+      {/* Collapsible DC legend */}
+      <div className="mt-2 pt-2 border-t border-white/10">
+        <button
+          onClick={() => setShowDC((v) => !v)}
+          className="text-[10px] text-white/40 hover:text-white/70 transition-colors flex items-center gap-1 w-full"
+        >
+          <span className="w-3 h-3 rounded-full inline-block shrink-0" style={{ backgroundColor: '#A855F7' }} />
+          Data Centers {showDC ? '▲' : '▼'}
+        </button>
+        {showDC && (
+          <div className="mt-1.5 space-y-1">
+            <div className="flex items-center gap-1.5">
+              <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-[#22C55E]/20 text-[#22C55E]">Live</span>
+              <span className="text-[9px] text-white/40">Operational</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-[#3B82F6]/20 text-[#3B82F6]">Build</span>
+              <span className="text-[9px] text-white/40">Under construction</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-white/10 text-white/50">Plan</span>
+              <span className="text-[9px] text-white/40">Announced</span>
+            </div>
+            <div className="text-[9px] text-white/30 mt-1">Circle = 10 km radius<br />(estate/address only)</div>
+          </div>
+        )}
       </div>
 
       {/* Collapsible tier legend — shown when land candidates are present */}
