@@ -373,3 +373,25 @@ export function Badge({ children, tone = 'lagoon', className = '' }: Props) {
 - [ ] **Step 1:** `npm run quality && npm run build` → all PASS.
 - [ ] **Step 2:** Push branch: `git push -u origin fable/premium-website`. Deploy Vercel **preview**, send preview URL to Kaniel for approval (WhatsApp per CLAUDE.md rules if no response in chat).
 - [ ] **Step 3:** After approval: merge to `main`, deploy production, verify energy-tm.com live + spot-check 3 pages.
+
+---
+
+## ADDENDUM (2026-06-11, approved by Kaniel): Full Light-Theme Conversion
+
+Baseline audit revealed only Home is light-themed; the 13 other public routes still use the old dark navy/forest theme. **Decision: convert ALL public pages to the tropical-light brand.**
+
+This extends Tasks 7–12: each page task now STARTS with dark→light conversion, then applies the polish recipe. Conversion mapping (same as Task 5 plus backgrounds):
+
+| Old (dark) | New (light brand) |
+|---|---|
+| dark page bg (`#0D1117`, navy, forest, `bg-black`, dark gradients) | `var(--bustan-paper)` / section alt `rgba(216,236,232,0.35)` |
+| `text-white` | `text-[var(--bustan-ink)]` |
+| `text-white/80`…`/70` | `text-[rgba(39,52,47,0.86)]`…`0.78` |
+| `text-white/60`…`/20` | `text-[rgba(39,52,47,0.74)]`…`0.72` |
+| `bg-white/5`-ish glass | `bg-[rgba(255,244,226,0.7)]` |
+| `border-white/*` | `border-[rgba(36,70,62,0.14)]` |
+| gold accent `#E8A820`/`--color-gold` on dark | `var(--bustan-lagoon)` for links/accents; sun gold reserved for highlights/badges |
+
+**Exception:** text sitting on photos or intentionally-dark overlay panels stays light (`rgba(255,244,226,0.82+)`). A single dark accent section per page is allowed (e.g., CTA band in `--bustan-grove` with shell text) — like Home's hero treatment.
+
+Also from audit (add to relevant tasks): fix `robots.txt` `Disallow: /p` → `/p/` (Task 14); fix /how-it-works 16px mobile overflow (Task 10); whileInView animations must not leave content invisible on load — use `viewport={{ once: true }}` and ensure above-fold content doesn't depend on scroll triggers (all page tasks); Home hero subtitle contrast fix (Task 6).

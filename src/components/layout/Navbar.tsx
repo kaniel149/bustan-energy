@@ -31,10 +31,33 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Solid surface when scrolled or when the mobile panel is open.
+  const solid = scrolled || mobileOpen
+  // Home is the only page with a dark photo hero behind the transparent navbar —
+  // there the links stay shell (light) over a subtle grove scrim. Every other
+  // page is tropical-light, so the transparent state uses ink links directly.
+  const isHome = location.pathname === langPath('/')
+  const overHero = isHome && !solid
+
   function handleSwitchLang() {
     setMobileOpen(false)
     navigate(switchLangPath())
   }
+
+  const desktopLink = (active: boolean) =>
+    [
+      'relative px-3 py-1.5 text-sm font-medium',
+      'transition-colors duration-[var(--duration-fast)] ease-out-soft',
+      active
+        ? [
+            overHero ? 'text-shell' : 'text-ink',
+            // Gold (--bustan-sun) underline marker for the current route.
+            'after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-gold',
+          ].join(' ')
+        : overHero
+          ? 'text-shell/78 hover:text-shell'
+          : 'text-ink/74 hover:text-ink',
+    ].join(' ')
 
   return (
     <>
@@ -44,13 +67,27 @@ export function Navbar() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={[
           'fixed top-0 inset-x-0 z-50',
-          'transition-all duration-300',
-          scrolled
-            ? 'bg-[rgba(255,244,226,0.92)] backdrop-blur-xl border-b border-[rgba(36,70,62,0.14)] shadow-[0_8px_28px_rgba(36,70,62,0.12)]'
-            : 'bg-[rgba(36,70,62,0.24)] backdrop-blur-md border-b border-[rgba(255,244,226,0.12)]',
+          'transition-all duration-[var(--duration-base)] ease-out-soft',
+          solid
+            ? 'bg-shell/85 backdrop-blur-md border-b border-grove/10 shadow-soft'
+            : // Not scrolled: truly transparent — the Layout wrapper behind
+              // pt-16 is paper, so light pages need no painted workaround.
+              'bg-transparent border-b border-transparent',
         ].join(' ')}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Hero scrim — only visible over the Home hero photo so the shell
+            links keep contrast against bright patches of sky. */}
+        <div
+          aria-hidden="true"
+          className={[
+            'pointer-events-none absolute inset-x-0 top-0 h-28',
+            'bg-gradient-to-b from-grove/30 to-transparent',
+            'transition-opacity duration-[var(--duration-base)] ease-out-soft',
+            overHero ? 'opacity-100' : 'opacity-0',
+          ].join(' ')}
+        />
+
+        <div className="relative max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link to={langPath('/')} className="flex items-center gap-2.5 group">
             <img
@@ -74,7 +111,7 @@ export function Navbar() {
               <span
                 className={[
                   'font-serif text-xl leading-none',
-                  scrolled ? 'text-[var(--bustan-grove)]' : 'text-[var(--bustan-sun)]',
+                  overHero ? 'text-[var(--bustan-sun)]' : 'text-[var(--bustan-grove)]',
                 ].join(' ')}
               >
                 Bustan
@@ -82,7 +119,7 @@ export function Navbar() {
               <span
                 className={[
                   'font-sans text-sm font-medium tracking-wide leading-none',
-                  scrolled ? 'text-[rgba(39,52,47,0.74)]' : 'text-[var(--bustan-shell)]',
+                  overHero ? 'text-[var(--bustan-shell)]' : 'text-ink/74',
                 ].join(' ')}
               >
                 Energy
@@ -96,21 +133,7 @@ export function Navbar() {
               const href = langPath(link.path)
               const active = location.pathname === href
               return (
-                <Link
-                  key={link.path}
-                  to={href}
-                  className={[
-                    'px-3 py-1.5 rounded-lg text-sm font-medium',
-                    'transition-colors duration-200',
-                    active
-                      ? scrolled
-                        ? 'text-[var(--bustan-lagoon)]'
-                        : 'text-[var(--bustan-sun)]'
-                      : scrolled
-                        ? 'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)]'
-                        : 'text-[rgba(255,244,226,0.78)] hover:text-[var(--bustan-shell)]',
-                  ].join(' ')}
-                >
+                <Link key={link.path} to={href} className={desktopLink(active)}>
                   {link.label}
                 </Link>
               )
@@ -124,17 +147,17 @@ export function Navbar() {
               onClick={handleSwitchLang}
               className={[
                 'px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide',
-                scrolled
-                  ? 'bg-[rgba(36,70,62,0.06)] border border-[rgba(36,70,62,0.16)] text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(36,70,62,0.10)]'
-                  : 'bg-[rgba(255,244,226,0.10)] border border-[rgba(255,244,226,0.18)] text-[rgba(255,244,226,0.74)] hover:text-[var(--bustan-shell)] hover:bg-[rgba(255,244,226,0.16)]',
-                'transition-colors duration-200 cursor-pointer',
+                overHero
+                  ? 'bg-shell/10 border border-shell/20 text-shell/75 hover:text-shell hover:bg-shell/15'
+                  : 'bg-grove/5 border border-grove/15 text-ink/70 hover:text-ink hover:bg-grove/10',
+                'transition-colors duration-[var(--duration-fast)] ease-out-soft cursor-pointer',
               ].join(' ')}
               aria-label={lang === 'en' ? 'Switch to Thai' : 'Switch to English'}
             >
               {lang === 'en' ? 'TH' : 'EN'}
             </button>
 
-            <Button variant="primary" size="sm" href={langPath('/contact')}>
+            <Button variant="primary" size="sm" to={langPath('/contact')}>
               {t.nav.getQuote}
             </Button>
           </div>
@@ -142,10 +165,11 @@ export function Navbar() {
           {/* Mobile hamburger */}
           <button
             className={[
-              'md:hidden p-2 rounded-lg transition-colors',
-              scrolled
-                ? 'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(36,70,62,0.08)]'
-                : 'text-[rgba(255,244,226,0.78)] hover:text-[var(--bustan-shell)] hover:bg-[rgba(255,244,226,0.12)]',
+              'md:hidden flex h-11 w-11 items-center justify-center rounded-lg',
+              'transition-colors duration-[var(--duration-fast)] ease-out-soft',
+              overHero
+                ? 'text-shell/80 hover:text-shell hover:bg-shell/10'
+                : 'text-ink/74 hover:text-ink hover:bg-grove/5',
             ].join(' ')}
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
@@ -164,12 +188,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className={[
-              'fixed top-16 inset-x-0 z-40',
-              'bg-[rgba(255,244,226,0.96)] backdrop-blur-xl',
-              'border-b border-[rgba(36,70,62,0.14)]',
-              'shadow-[0_16px_42px_rgba(36,70,62,0.14)]',
-            ].join(' ')}
+            className="fixed top-16 inset-x-0 z-40 bg-shell/95 backdrop-blur-md border-b border-grove/14 shadow-lift"
           >
             <nav className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
               {NAV_LINKS.map((link, i) => {
@@ -186,11 +205,11 @@ export function Navbar() {
                       to={href}
                       onClick={() => setMobileOpen(false)}
                       className={[
-                        'flex items-center px-4 py-3 rounded-xl text-base font-medium',
-                        'transition-colors duration-200',
+                        'flex min-h-11 items-center px-4 py-3 rounded-xl text-base font-medium',
+                        'transition-colors duration-[var(--duration-fast)] ease-out-soft',
                         active
-                          ? 'text-[var(--bustan-lagoon)] bg-[rgba(216,236,232,0.74)]'
-                          : 'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(216,236,232,0.55)]',
+                          ? 'text-ink bg-mist/60'
+                          : 'text-ink/74 hover:text-ink hover:bg-mist/45',
                       ].join(' ')}
                     >
                       {link.label}
@@ -209,10 +228,10 @@ export function Navbar() {
                 <button
                   onClick={handleSwitchLang}
                   className={[
-                    'px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide',
-                    'bg-[rgba(36,70,62,0.06)] border border-[rgba(36,70,62,0.16)]',
-                    'text-[rgba(39,52,47,0.72)] hover:text-[var(--bustan-grove)] hover:bg-[rgba(36,70,62,0.10)]',
-                    'transition-colors duration-200 cursor-pointer',
+                    'inline-flex min-h-11 items-center px-4 rounded-full text-xs font-semibold tracking-wide',
+                    'bg-grove/5 border border-grove/15',
+                    'text-ink/70 hover:text-ink hover:bg-grove/10',
+                    'transition-colors duration-[var(--duration-fast)] ease-out-soft cursor-pointer',
                   ].join(' ')}
                   aria-label={lang === 'en' ? 'Switch to Thai' : 'Switch to English'}
                 >
@@ -224,7 +243,7 @@ export function Navbar() {
                 <Button
                   variant="primary"
                   size="md"
-                  href={langPath('/contact')}
+                  to={langPath('/contact')}
                   className="w-full"
                   onClick={() => setMobileOpen(false)}
                 >

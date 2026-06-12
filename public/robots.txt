@@ -2,30 +2,39 @@ User-agent: Googlebot
 Allow: /
 Disallow: /admin
 Disallow: /platform
+Disallow: /th/platform
+Disallow: /he/platform
 Disallow: /crm
-Disallow: /p
+Disallow: /p/
 Disallow: /proposals
 Disallow: /proposal-templates
 Disallow: /preview-scroll
+Disallow: /colliers
 
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /platform
+Disallow: /th/platform
+Disallow: /he/platform
 Disallow: /crm
-Disallow: /p
+Disallow: /p/
 Disallow: /proposals
 Disallow: /proposal-templates
 Disallow: /preview-scroll
+Disallow: /colliers
 
 User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /platform
+Disallow: /th/platform
+Disallow: /he/platform
 Disallow: /crm
-Disallow: /p
+Disallow: /p/
 Disallow: /proposals
 Disallow: /proposal-templates
 Disallow: /preview-scroll
+Disallow: /colliers
 
 Sitemap: https://bustan-energy.com/sitemap.xml

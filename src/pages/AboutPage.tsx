@@ -1,51 +1,124 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { Shield, Users, Eye, Lightbulb, ArrowRight, Sun } from 'lucide-react'
+import { Shield, Users, Eye, Lightbulb, Sun } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
 import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { organizationSchema, breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
-}
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
+import { SectionHeader } from '../components/ui/SectionHeader'
+import {
+  fadeUp,
+  stagger,
+  heroStagger,
+  revealViewport,
+  cardHover,
+  Divider,
+  IconTile,
+  ServiceCTA,
+} from './services/shared'
 
 const valueIcons = [Shield, Users, Eye, Lightbulb]
-const valueColors = ['#E8A820', '#2E7D32', '#0A3D5C', '#E8A820']
 
-function AnimatedCounter({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+// ─── Animated counter (HomePage StatsBar pattern) ────────────────────────────
+// Eased rAF count-up, gated on a `started` flag so the trigger logic lives in
+// one place (the stats section), not per-counter.
+function useCountUp(target: number, duration = 1800, started = false) {
+  const [value, setValue] = useState(0)
+  useEffect(() => {
+    if (!started) return
+    const startTime = performance.now()
+    let frame: number
+    function tick(now: number) {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValue(Math.round(eased * target))
+      if (progress < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [started, target, duration])
+  return value
+}
+
+function StatCounter({
+  value,
+  suffix,
+  label,
+  started,
+}: {
+  value: number
+  suffix: string
+  label: string
+  started: boolean
+}) {
+  const current = useCountUp(value, 1800, started)
+  return (
+    <div className="text-center">
+      <div className="font-serif text-5xl md:text-6xl tabular-nums text-gold mb-2">
+        {current}
+        {suffix}
+      </div>
+      <div className="text-shell/82 text-sm uppercase tracking-wider">{label}</div>
+    </div>
+  )
+}
+
+// Stats section — the one grove dark accent section on this page.
+// AUDIT FIX: the old page gated counters on useInView({ margin: '-80px' }) AND
+// wrapped the whole section in a whileInView opacity stagger, so on mobile the
+// numbers could sit at "0+ / 0MW / 0" indefinitely. Now: the container is never
+// opacity-gated, the trigger uses amount: 0.3 (reliable), and a timed fallback
+// guarantees final values always render even if the observer never fires.
+function StatsSection({
+  counters,
+}: {
+  counters: { value: number; suffix: string; label: string }[]
+}) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-  const [current, setCurrent] = useState(0)
+  const inView = useInView(ref, { once: true, amount: 0.3 })
+  const [fallback, setFallback] = useState(false)
 
   useEffect(() => {
-    if (!inView) return
-    const duration = 1800
-    const steps = 60
-    const increment = value / steps
-    let step = 0
-    const timer = setInterval(() => {
-      step++
-      setCurrent(Math.min(Math.round(increment * step), value))
-      if (step >= steps) clearInterval(timer)
-    }, duration / steps)
-    return () => clearInterval(timer)
-  }, [inView, value])
+    const id = window.setTimeout(() => setFallback(true), 2500)
+    return () => window.clearTimeout(id)
+  }, [])
+
+  const started = inView || fallback
 
   return (
-    <div ref={ref} className="text-center">
-      <div className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl text-[var(--color-gold)] mb-2">
-        {current}{suffix}
+    <section className="py-20 px-6">
+      <div
+        ref={ref}
+        className="relative max-w-7xl mx-auto overflow-hidden rounded-card bg-grove px-6 py-14 md:py-16 shadow-float"
+      >
+        {/* Soft lagoon glow rising from the base */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 60% at 50% 110%, rgba(0,143,138,0.20) 0%, transparent 70%)',
+          }}
+        />
+        <div className="relative">
+          <h2 className="font-serif text-display-sm md:text-display-md leading-[1.1] text-shell text-center mb-12">
+            By The Numbers
+          </h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+            {counters.map((c) => (
+              <StatCounter
+                key={c.label}
+                value={c.value}
+                suffix={c.suffix}
+                label={c.label}
+                started={started}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="text-white/40 text-sm uppercase tracking-wider">{label}</div>
-    </div>
+    </section>
   )
 }
 
@@ -64,7 +137,7 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)]">
+    <div className="min-h-screen bg-[var(--bustan-paper)] text-ink">
       <SEOHead
         title={t.seo.about.title}
         description={t.seo.about.description}
@@ -76,28 +149,24 @@ export default function AboutPage() {
         ]}
       />
 
-      {/* Hero */}
-      <section className="relative pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-dark)] to-[var(--color-dark)]" />
+      {/* Hero — mount-animated (ServiceHero pattern, no subtitle on this page) */}
+      <section className="relative overflow-hidden px-6 pt-32 pb-20">
         <div
-          className="absolute inset-0 opacity-15"
-          style={{
-            backgroundImage: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(46,125,50,0.35), transparent)',
-          }}
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-mist/55 via-mist/20 to-transparent"
         />
-
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-6">
+        <div className="relative max-w-4xl mx-auto text-center">
+          <motion.div variants={heroStagger} initial="hidden" animate="visible" className="space-y-6">
             <motion.div variants={fadeUp}>
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase border border-[var(--color-gold)]/30 text-[var(--color-gold)] bg-[var(--color-gold)]/10">
-                <Sun className="w-3.5 h-3.5" />
+              <span className="inline-flex items-center gap-2 rounded-full border border-ocean/20 bg-shell/70 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-ocean">
+                <Sun size={14} strokeWidth={1.5} aria-hidden />
                 {p.hero.tag}
               </span>
             </motion.div>
 
             <motion.h1
               variants={fadeUp}
-              className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl lg:text-7xl text-white max-w-4xl mx-auto leading-tight"
+              className="font-serif text-display-md sm:text-display-lg md:text-display-xl leading-[1.05] tracking-tight text-ink"
             >
               {p.hero.title}
             </motion.h1>
@@ -106,45 +175,50 @@ export default function AboutPage() {
       </section>
 
       {/* Story */}
-      <section className="py-24">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={revealViewport}
             variants={stagger}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
           >
             <motion.div variants={fadeUp}>
               <img
                 src="/assets/images/strategy-01-aerial.png"
                 alt="Aerial view of Ko Phangan island showing solar energy potential across tropical rooftops"
+                width={1024}
+                height={574}
                 loading="lazy"
-                className="w-full h-[480px] object-cover rounded-3xl"
+                className="w-full h-[420px] object-cover rounded-card shadow-lift"
               />
             </motion.div>
 
             <motion.div variants={stagger} className="space-y-6">
-              <motion.h2 variants={fadeUp} className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white leading-tight">
+              <motion.h2
+                variants={fadeUp}
+                className="font-serif text-display-sm md:text-display-md leading-[1.1] text-ink"
+              >
                 {p.story.title}
               </motion.h2>
 
               {p.story.paragraphs.map((paragraph, i) => (
-                <motion.p key={i} variants={fadeUp} className="text-white/55 text-lg leading-relaxed">
+                <motion.p key={i} variants={fadeUp} className="text-ink/74 text-lg leading-relaxed">
                   {paragraph}
                 </motion.p>
               ))}
 
               <motion.div variants={fadeUp} className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-                  <div className="text-[var(--color-gold)] text-xs uppercase tracking-widest font-bold mb-2">Mission</div>
-                  <p className="text-white/65 text-sm leading-relaxed">
+                <div className="rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft">
+                  <div className="text-ocean text-xs uppercase tracking-widest font-bold mb-2">Mission</div>
+                  <p className="text-ink/74 text-sm leading-relaxed">
                     {p.mission}
                   </p>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-                  <div className="text-[var(--color-gold)] text-xs uppercase tracking-widest font-bold mb-2">Vision</div>
-                  <p className="text-white/65 text-sm leading-relaxed">
+                <div className="rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft">
+                  <div className="text-ocean text-xs uppercase tracking-widest font-bold mb-2">Vision</div>
+                  <p className="text-ink/74 text-sm leading-relaxed">
                     {p.vision}
                   </p>
                 </div>
@@ -154,88 +228,66 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <Divider />
+
       {/* Values */}
-      <section className="py-24">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
-            <motion.h2
-              variants={fadeUp}
-              className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white text-center mb-12"
-            >
-              {p.values.title}
-            </motion.h2>
+          <SectionHeader title={p.values.title} className="mb-14" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {p.values.items.map((v, i) => {
-                const Icon = valueIcons[i] ?? Shield
-                const color = valueColors[i] ?? '#E8A820'
-                return (
-                  <motion.div
-                    key={v.title}
-                    variants={fadeUp}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-colors duration-300 group"
-                  >
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110"
-                      style={{ backgroundColor: `${color}15`, border: `1px solid ${color}35` }}
-                    >
-                      <Icon className="w-6 h-6" style={{ color }} />
-                    </div>
-                    <h3 className="text-white font-bold text-lg mb-2">{v.title}</h3>
-                    <p className="text-white/45 text-sm leading-relaxed">{v.description}</p>
-                  </motion.div>
-                )
-              })}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Numbers */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={revealViewport}
             variants={stagger}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            <motion.h2
-              variants={fadeUp}
-              className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white text-center mb-16"
-            >
-              By The Numbers
-            </motion.h2>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              {counters.map((c) => (
-                <AnimatedCounter key={c.label} value={c.value} suffix={c.suffix} label={c.label} />
-              ))}
-            </div>
+            {p.values.items.map((v, i) => {
+              const Icon = valueIcons[i] ?? Shield
+              return (
+                <motion.div key={v.title} variants={fadeUp} className="h-full">
+                  {/* Hover transforms live on this plain inner div (never the motion.div) */}
+                  <div
+                    className={`h-full rounded-card border border-grove/14 bg-shell/76 p-6 shadow-soft hover:border-ocean/30 ${cardHover}`}
+                  >
+                    <IconTile className="mb-5">
+                      <Icon size={22} strokeWidth={1.5} aria-hidden />
+                    </IconTile>
+                    <h3 className="text-lg font-semibold text-ink mb-2">{v.title}</h3>
+                    <p className="text-ink/60 text-sm leading-relaxed">{v.description}</p>
+                  </div>
+                </motion.div>
+              )
+            })}
           </motion.div>
         </div>
       </section>
+
+      {/* Numbers — grove dark accent section (counters never stay hidden) */}
+      <StatsSection counters={counters} />
 
       {/* Team photo / visual */}
-      <section className="py-16 pb-24">
+      <section className="py-4 pb-20">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={revealViewport}
             variants={fadeUp}
-            className="relative rounded-3xl overflow-hidden"
+            className="relative rounded-card overflow-hidden shadow-lift"
           >
             <img
               src="/assets/images/sales-10-happy.png"
               alt="Bustan Energy solar installation team on Ko Phangan ready for a commercial project"
+              width={1024}
+              height={574}
               loading="lazy"
               className="w-full h-[400px] object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D1117]/70 via-[#0D1117]/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-grove/75 via-grove/25 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8">
-              <p className="text-white/50 text-sm mb-2 uppercase tracking-wider">Meet the team</p>
-              <p className="text-white text-xl font-medium max-w-lg">
+              <p className="text-shell/82 text-sm mb-2 uppercase tracking-wider">Meet the team</p>
+              <p className="text-shell text-xl font-medium max-w-lg">
                 Local experts committed to making solar accessible for every property on the island.
               </p>
             </div>
@@ -244,31 +296,12 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="pb-32">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-12 text-center"
-          >
-            <h3 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4">
-              {p.cta.title}
-            </h3>
-            <p className="text-white/50 text-lg mb-8 max-w-xl mx-auto">
-              {p.cta.subtitle}
-            </p>
-            <Link
-              to={langPath('/contact')}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-            >
-              {p.cta.button}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+      <ServiceCTA
+        title={p.cta.title}
+        subtitle={p.cta.subtitle}
+        primaryLabel={p.cta.button}
+        primaryTo={langPath('/contact')}
+      />
     </div>
   )
 }

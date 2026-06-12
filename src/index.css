@@ -12,6 +12,25 @@
   --color-sand: #f4ead8;
   --color-dark: #27342f;
   --color-navy: #24463e;
+  /* Semantic brand tokens — preferred idiom: text-ink/72, bg-shell/70, border-grove/14 */
+  --color-ink: #27342f;
+  --color-shell: #fff4e2;
+  --color-grove: #24463e;
+  --color-mist: #d8ece8;
+  /* Type scale (Instrument Serif display / DM Sans body) */
+  --text-display-xl: 4.5rem;
+  --text-display-lg: 3.5rem;
+  --text-display-md: 2.5rem;
+  --text-display-sm: 1.875rem;
+  /* Shadow scale — warm-tinted, 3 levels */
+  --shadow-soft: 0 2px 12px rgba(39, 52, 47, 0.07);
+  --shadow-lift: 0 8px 28px rgba(39, 52, 47, 0.12);
+  --shadow-float: 0 20px 50px rgba(39, 52, 47, 0.18);
+  /* Radius scale */
+  --radius-card: 1.25rem;
+  --radius-button: 9999px;
+  /* Motion standards */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
@@ -25,6 +44,10 @@
   --bustan-paper: #f4ead8;
   --bustan-shell: #fff4e2;
   --bustan-mist: #d8ece8;
+  /* use as duration-[var(--duration-fast)] or transition-duration: var(...) */
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 700ms;
 }
 
 html {
@@ -49,59 +72,11 @@ html, body, #root {
   color: var(--bustan-ink);
 }
 
-.bustan-home .text-white { color: var(--bustan-ink) !important; }
-.bustan-home .text-white\/80 { color: rgba(39, 52, 47, 0.86) !important; }
-.bustan-home .text-white\/70 { color: rgba(39, 52, 47, 0.78) !important; }
-.bustan-home .text-white\/60,
-.bustan-home .text-white\/55 { color: rgba(39, 52, 47, 0.74) !important; }
-.bustan-home .text-white\/50,
-.bustan-home .text-white\/40,
-.bustan-home .text-white\/35,
-.bustan-home .text-white\/30,
-.bustan-home .text-white\/25,
-.bustan-home .text-white\/20 { color: rgba(39, 52, 47, 0.72) !important; }
-.bustan-home .bg-white\/5,
-.bustan-home .bg-white\/8,
-.bustan-home .bg-white\/\[0\.03\],
-.bustan-home .bg-white\/\[0\.04\] {
-  background: rgba(255, 244, 226, 0.7) !important;
-}
-.bustan-home .border-white\/8,
-.bustan-home .border-white\/10,
-.bustan-home .border-white\/15,
-.bustan-home .border-white\/20,
-.bustan-home .border-white\/25,
-.bustan-home .border-white\/\[0\.06\],
-.bustan-home .border-white\/\[0\.07\],
-.bustan-home .border-white\/\[0\.08\] {
-  border-color: rgba(36, 70, 62, 0.14) !important;
-}
-.bustan-home .divide-white\/\[0\.06\] > :not(:last-child) {
-  border-color: rgba(36, 70, 62, 0.14) !important;
-}
-
-.bustan-home .bustan-home-hero,
-.bustan-home .bustan-home-hero .text-white,
-.bustan-home .bustan-home-hero .text-white\/80,
-.bustan-home .bustan-home-hero .text-white\/70,
-.bustan-home .bustan-home-hero .text-white\/60,
-.bustan-home .bustan-home-hero .text-white\/55,
-.bustan-home .bustan-home-hero .text-white\/50,
-.bustan-home .bustan-home-hero .text-white\/40,
-.bustan-home .bustan-home-hero .text-white\/35,
-.bustan-home .bustan-home-hero .text-white\/30 {
-  color: rgba(255, 244, 226, 0.82) !important;
-}
-
-.bustan-home .bustan-home-image-caption,
-.bustan-home .bustan-home-image-caption .text-white,
-.bustan-home .bustan-home-image-caption .text-white\/80,
-.bustan-home .bustan-home-image-caption .text-white\/50,
-.bustan-home .bustan-home-image-caption .text-white\/40 {
-  color: rgba(255, 244, 226, 0.86) !important;
-}
-
-.bustan-admin-main {
+/* Light-scope conversion layer — renders dark-styled shared components on the
+   tropical-light brand without modifying them. Scopes:
+   .bustan-admin-main → admin pages · .bustan-colliers → /colliers sales demo
+   (the shared ColliersPortfolio component stays dark inside PlatformPage). */
+:is(.bustan-admin-main, .bustan-colliers) {
   background:
     linear-gradient(140deg, rgba(216, 236, 232, 0.55), transparent 34%),
     linear-gradient(20deg, rgba(242, 184, 75, 0.15), transparent 42%),
@@ -109,53 +84,82 @@ html, body, #root {
   color: var(--bustan-ink);
 }
 
-.bustan-admin-main .text-white { color: var(--bustan-ink) !important; }
-.bustan-admin-main .text-white\/80 { color: rgba(39, 52, 47, 0.8) !important; }
-.bustan-admin-main .text-white\/70 { color: rgba(39, 52, 47, 0.72) !important; }
-.bustan-admin-main .text-white\/60 { color: rgba(39, 52, 47, 0.64) !important; }
-.bustan-admin-main .text-white\/55 { color: rgba(39, 52, 47, 0.58) !important; }
-.bustan-admin-main .text-white\/50 { color: rgba(39, 52, 47, 0.54) !important; }
-.bustan-admin-main .text-white\/45 { color: rgba(39, 52, 47, 0.5) !important; }
-.bustan-admin-main .text-white\/40 { color: rgba(39, 52, 47, 0.46) !important; }
-.bustan-admin-main .text-white\/35 { color: rgba(39, 52, 47, 0.4) !important; }
-.bustan-admin-main .text-white\/30 { color: rgba(39, 52, 47, 0.36) !important; }
-.bustan-admin-main .text-white\/25 { color: rgba(39, 52, 47, 0.32) !important; }
-.bustan-admin-main .text-white\/20 { color: rgba(39, 52, 47, 0.28) !important; }
-.bustan-admin-main .placeholder\:text-white\/30::placeholder,
-.bustan-admin-main .placeholder-white\/25::placeholder,
-.bustan-admin-main .placeholder-white\/20::placeholder {
+:is(.bustan-admin-main, .bustan-colliers) .text-white { color: var(--bustan-ink) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/80 { color: rgba(39, 52, 47, 0.8) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/70 { color: rgba(39, 52, 47, 0.72) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/60 { color: rgba(39, 52, 47, 0.64) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/55 { color: rgba(39, 52, 47, 0.58) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/50 { color: rgba(39, 52, 47, 0.54) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/45 { color: rgba(39, 52, 47, 0.5) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/40 { color: rgba(39, 52, 47, 0.46) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/35 { color: rgba(39, 52, 47, 0.4) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/30 { color: rgba(39, 52, 47, 0.36) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/25 { color: rgba(39, 52, 47, 0.32) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .text-white\/20 { color: rgba(39, 52, 47, 0.28) !important; }
+:is(.bustan-admin-main, .bustan-colliers) .placeholder\:text-white\/30::placeholder,
+:is(.bustan-admin-main, .bustan-colliers) .placeholder-white\/25::placeholder,
+:is(.bustan-admin-main, .bustan-colliers) .placeholder-white\/20::placeholder {
   color: rgba(39, 52, 47, 0.34) !important;
 }
-.bustan-admin-main .bg-white\/5,
-.bustan-admin-main .bg-white\/\[0\.03\],
-.bustan-admin-main .bg-white\/\[0\.07\] {
+:is(.bustan-admin-main, .bustan-colliers) .bg-white\/5,
+:is(.bustan-admin-main, .bustan-colliers) .bg-white\/\[0\.03\],
+:is(.bustan-admin-main, .bustan-colliers) .bg-white\/\[0\.07\] {
   background: rgba(255, 244, 226, 0.76) !important;
 }
-.bustan-admin-main .hover\:bg-white\/10:hover,
-.bustan-admin-main .hover\:bg-white\/\[0\.03\]:hover,
-.bustan-admin-main .hover\:bg-white\/\[0\.07\]:hover {
+:is(.bustan-admin-main, .bustan-colliers) .hover\:bg-white\/10:hover,
+:is(.bustan-admin-main, .bustan-colliers) .hover\:bg-white\/\[0\.03\]:hover,
+:is(.bustan-admin-main, .bustan-colliers) .hover\:bg-white\/\[0\.07\]:hover {
   background: rgba(216, 236, 232, 0.7) !important;
 }
-.bustan-admin-main .border-white\/10,
-.bustan-admin-main .border-white\/\[0\.06\],
-.bustan-admin-main .border-white\/5 {
+:is(.bustan-admin-main, .bustan-colliers) .border-white\/10,
+:is(.bustan-admin-main, .bustan-colliers) .border-white\/\[0\.06\],
+:is(.bustan-admin-main, .bustan-colliers) .border-white\/5 {
   border-color: rgba(36, 70, 62, 0.14) !important;
 }
-.bustan-admin-main .divide-white\/5 > :not(:last-child) {
+:is(.bustan-admin-main, .bustan-colliers) .divide-white\/5 > :not(:last-child) {
   border-color: rgba(36, 70, 62, 0.12) !important;
 }
-.bustan-admin-main .bg-black\/15,
-.bustan-admin-main .bg-black\/30 {
+:is(.bustan-admin-main, .bustan-colliers) .bg-black\/15,
+:is(.bustan-admin-main, .bustan-colliers) .bg-black\/30 {
   background: rgba(36, 70, 62, 0.1) !important;
 }
-.bustan-admin-main .from-\[\#E8A820\] {
+:is(.bustan-admin-main, .bustan-colliers) .from-\[\#E8A820\] {
   --tw-gradient-from: var(--bustan-lagoon) var(--tw-gradient-from-position) !important;
   --tw-gradient-to: rgb(0 111 107 / 0) var(--tw-gradient-to-position) !important;
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
 }
-.bustan-admin-main .to-\[\#E85D3A\] {
+:is(.bustan-admin-main, .bustan-colliers) .to-\[\#E85D3A\] {
   --tw-gradient-to: var(--bustan-papaya) var(--tw-gradient-to-position) !important;
 }
+
+/* /colliers extras — classes the shared ColliersPortfolio component uses that
+   the admin scope doesn't cover. Text hierarchy follows the admin mapping. */
+.bustan-colliers .text-white\/90 { color: rgba(39, 52, 47, 0.9) !important; }
+.bustan-colliers .text-white\/85 { color: rgba(39, 52, 47, 0.86) !important; }
+.bustan-colliers .text-white\/10 { color: rgba(39, 52, 47, 0.2) !important; }
+.bustan-colliers .hover\:text-white\/70:hover { color: rgba(39, 52, 47, 0.72) !important; }
+.bustan-colliers .bg-white\/\[0\.02\] { background: rgba(36, 70, 62, 0.04) !important; }
+.bustan-colliers .bg-white\/\[0\.04\] { background: rgba(255, 244, 226, 0.72) !important; }
+.bustan-colliers .bg-\[\#0D2137\]\/80,
+.bustan-colliers .bg-\[\#0D2137\]\/60 {
+  background: rgba(255, 244, 226, 0.82) !important;
+}
+.bustan-colliers option {
+  background-color: var(--bustan-shell) !important;
+  color: var(--bustan-ink) !important;
+}
+/* Amber/teal/green accents darkened for light-bg contrast (matches Badge sun tone) */
+.bustan-colliers .text-\[\#E8A820\] { color: #9a6b12 !important; }
+.bustan-colliers .text-\[\#E8A820\]\/90 { color: rgba(154, 107, 18, 0.92) !important; }
+.bustan-colliers .text-\[\#E8A820\]\/60 { color: rgba(154, 107, 18, 0.66) !important; }
+.bustan-colliers .hover\:text-\[\#E8A820\]:hover { color: #9a6b12 !important; }
+.bustan-colliers .focus\:border-\[\#E8A820\]\/50:focus { border-color: rgba(154, 107, 18, 0.5) !important; }
+.bustan-colliers .text-\[\#00aaff\] { color: #0072ad !important; }
+.bustan-colliers .text-\[\#2ED89A\] { color: #0e8c5f !important; }
+/* Error state legibility on light */
+.bustan-colliers .text-red-300 { color: #b91c1c !important; }
+.bustan-colliers .text-red-400 { color: #dc2626 !important; }
+.bustan-colliers .text-red-400\/70 { color: rgba(220, 38, 38, 0.75) !important; }
 
 /* Platform page (GIS) needs fixed dimensions */
 .platform-layout {
@@ -228,12 +232,12 @@ html, body, #root {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(36, 70, 62, 0.25);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(36, 70, 62, 0.4);
 }
 
 /* Mobile bottom navigation */
@@ -257,17 +261,17 @@ html, body, #root {
   }
 }
 
-/* Blog post content typography */
+/* Blog post content typography — light theme (ink on paper) */
 .blog-content {
   font-size: 1.125rem;
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(39, 52, 47, 0.78);
 }
 
 .blog-content h2 {
   font-family: var(--font-serif);
   font-size: 1.875rem;
-  color: white;
+  color: var(--bustan-ink);
   margin-top: 3rem;
   margin-bottom: 1.5rem;
   line-height: 1.3;
@@ -276,7 +280,7 @@ html, body, #root {
 .blog-content h3 {
   font-family: var(--font-serif);
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(39, 52, 47, 0.92);
   margin-top: 2rem;
   margin-bottom: 1rem;
   line-height: 1.4;
@@ -288,12 +292,12 @@ html, body, #root {
 }
 
 .blog-content strong {
-  color: white;
+  color: var(--bustan-ink);
   font-weight: 600;
 }
 
 .blog-content a {
-  color: var(--color-gold);
+  color: var(--bustan-lagoon);
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -330,15 +334,15 @@ html, body, #root {
 
 .blog-content th {
   text-align: left;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(39, 52, 47, 0.85);
   font-weight: 600;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(216, 236, 232, 0.45);
+  border-bottom: 1px solid rgba(36, 70, 62, 0.14);
 }
 
 .blog-content td {
   padding: 0.75rem 1rem;
-  color: rgba(255, 255, 255, 0.5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(39, 52, 47, 0.72);
+  border-bottom: 1px solid rgba(36, 70, 62, 0.08);
 }

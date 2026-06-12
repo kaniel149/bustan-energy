@@ -3,7 +3,6 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   BatteryFull,
-  ArrowRight,
   CheckCircle2,
   Unplug,
   ShieldCheck,
@@ -15,18 +14,21 @@ import {
 import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
+import { Button } from '../../components/ui/Button'
+import { SectionHeader } from '../../components/ui/SectionHeader'
+import {
+  fadeUp,
+  stagger,
+  revealViewport,
+  cardHover,
+  ServiceHero,
+  Divider,
+  IconTile,
+  RelatedCard,
+  ServiceCTA,
+} from './shared'
 
 const BASE_URL = 'https://bustan-energy.com'
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
-}
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
 
 const whyOffGrid = [
   {
@@ -120,6 +122,8 @@ const included = [
   'Commissioning, testing, and full system handover',
 ]
 
+const systemTypeIcons = [Cable, Unplug, Sun]
+
 export default function OffGridSolarPage() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
   const { langPath } = useLanguage()
@@ -144,148 +148,83 @@ export default function OffGridSolarPage() {
         ]}
       />
 
-      <div className="min-h-screen bg-[var(--color-dark)]">
+      <div className="min-h-screen bg-[var(--bustan-paper)] text-ink">
         {/* Hero */}
-        <section className="relative pt-32 pb-24 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-dark)] to-[var(--color-dark)]" />
-          <div
-            className="absolute inset-0 opacity-15"
-            style={{
-              backgroundImage: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(46,125,50,0.4), transparent)',
-            }}
-          />
-
-          <div className="relative max-w-7xl mx-auto px-6 text-center">
-            <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-6">
-              <motion.div variants={fadeUp}>
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase border border-[var(--color-gold)]/30 text-[var(--color-gold)] bg-[var(--color-gold)]/10">
-                  <BatteryFull className="w-3.5 h-3.5" />
-                  Off-Grid & Battery
-                </span>
-              </motion.div>
-
-              <motion.h1
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl lg:text-7xl text-white max-w-4xl mx-auto leading-tight"
-              >
-                Off-Grid Solar &{' '}
-                <span className="text-[var(--color-gold)]">Battery Storage</span>
-              </motion.h1>
-
-              <motion.p variants={fadeUp} className="text-white/55 text-xl max-w-2xl mx-auto leading-relaxed">
-                Energy independence for Ko Phangan. No more blackouts, no more surging electricity bills. Solar and battery systems that keep your power on around the clock.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-                <Link
-                  to={langPath('/contact')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-                >
-                  Get Battery Assessment
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={langPath('/services/residential')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-colors duration-200"
-                >
-                  Residential Solar
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
+        <ServiceHero
+          icon={<BatteryFull size={14} strokeWidth={1.5} aria-hidden />}
+          badge="Off-Grid & Battery"
+          title="Off-Grid Solar &"
+          titleAccent="Battery Storage"
+          subtitle="Energy independence for Ko Phangan. No more blackouts, no more surging electricity bills. Solar and battery systems that keep your power on around the clock."
+        >
+          <Button variant="primary" size="lg" to={langPath('/contact')} className="w-full sm:w-auto">
+            Get Battery Assessment
+          </Button>
+          <Button variant="secondary" size="lg" to={langPath('/services/residential')} className="w-full sm:w-auto">
+            Residential Solar
+          </Button>
+        </ServiceHero>
 
         {/* Why Off-Grid */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-16"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4"
-              >
-                Why Battery Storage on Ko Phangan?
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Island life comes with unique energy challenges. Battery-backed solar addresses every one of them.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Why Battery Storage on Ko Phangan?"
+              subtitle="Island life comes with unique energy challenges. Battery-backed solar addresses every one of them."
+              className="mb-16"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               {whyOffGrid.map((item) => (
-                <motion.div
-                  key={item.title}
-                  variants={fadeUp}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center mb-5">
-                    <item.icon className="w-6 h-6 text-[var(--color-gold)]" />
+                <motion.div key={item.title} variants={fadeUp} className="h-full">
+                  <div className={`h-full rounded-card border border-grove/14 bg-shell/76 p-8 shadow-soft ${cardHover}`}>
+                    <IconTile className="mb-5">
+                      <item.icon size={24} strokeWidth={1.5} aria-hidden />
+                    </IconTile>
+                    <h3 className="text-xl font-semibold text-ink mb-3">{item.title}</h3>
+                    <p className="text-ink/72 text-sm leading-relaxed">{item.text}</p>
                   </div>
-                  <h3 className="font-[family-name:var(--font-serif)] text-xl text-white mb-3">{item.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{item.text}</p>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
+        <Divider />
 
         {/* Battery Options */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-16"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4"
-              >
-                Battery Storage Options
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                We install Huawei LUNA2000 modular lithium batteries. Start with the capacity you need and expand as your requirements grow.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Battery Storage Options"
+              subtitle="We install Huawei LUNA2000 modular lithium batteries. Start with the capacity you need and expand as your requirements grow."
+              className="mb-16"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
               {batteryOptions.map((bat) => (
-                <motion.div
-                  key={bat.name}
-                  variants={fadeUp}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-[var(--color-gold)]/30 transition-colors duration-300 text-center"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center mx-auto mb-5">
-                    <BatteryFull className="w-7 h-7 text-[var(--color-gold)]" />
+                <motion.div key={bat.name} variants={fadeUp} className="h-full">
+                  <div className={`h-full rounded-card border border-grove/14 bg-shell/76 p-8 text-center shadow-soft hover:border-ocean/30 ${cardHover}`}>
+                    <IconTile className="mx-auto mb-5 h-14 w-14">
+                      <BatteryFull size={28} strokeWidth={1.5} aria-hidden />
+                    </IconTile>
+                    <h3 className="text-xl font-semibold text-ink mb-1">{bat.name}</h3>
+                    <p className="text-ocean font-serif text-3xl mb-2">{bat.capacity}</p>
+                    <p className="text-ink/78 text-sm font-medium mb-3">{bat.best}</p>
+                    <p className="text-ink/55 text-xs leading-relaxed">{bat.note}</p>
                   </div>
-                  <h3 className="font-[family-name:var(--font-serif)] text-xl text-white mb-1">{bat.name}</h3>
-                  <p className="text-[var(--color-gold)] text-2xl font-bold mb-2">{bat.capacity}</p>
-                  <p className="text-white/70 text-sm font-medium mb-3">{bat.best}</p>
-                  <p className="text-white/40 text-xs leading-relaxed">{bat.note}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -295,113 +234,88 @@ export default function OffGridSolarPage() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeUp}
-              className="text-center text-white/30 text-sm mt-8"
+              className="text-center text-ink/55 text-sm mt-8"
             >
-              All LUNA2000 batteries are modular — add capacity anytime without replacing existing units. <Link to={langPath('/pricing')} className="text-[var(--color-gold)] hover:underline">View pricing details</Link>.
+              All LUNA2000 batteries are modular — add capacity anytime without replacing existing units. <Link to={langPath('/pricing')} className="text-ocean hover:underline">View pricing details</Link>.
             </motion.p>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
+        <Divider />
 
         {/* System Types */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-16"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4"
-              >
-                Choose Your System Type
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                We design three types of battery-integrated solar systems. Each serves a different level of grid independence.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Choose Your System Type"
+              subtitle="We design three types of battery-integrated solar systems. Each serves a different level of grid independence."
+              className="mb-16"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="space-y-6"
             >
-              {systemTypes.map((sys, idx) => (
-                <motion.div
-                  key={sys.title}
-                  variants={fadeUp}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-colors duration-300"
-                >
-                  <div className="flex flex-col lg:flex-row gap-8">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center">
-                          {idx === 0 && <Cable className="w-5 h-5 text-[var(--color-gold)]" />}
-                          {idx === 1 && <Unplug className="w-5 h-5 text-[var(--color-gold)]" />}
-                          {idx === 2 && <Sun className="w-5 h-5 text-[var(--color-gold)]" />}
+              {systemTypes.map((sys, idx) => {
+                const TypeIcon = systemTypeIcons[idx]
+                return (
+                  <motion.div key={sys.title} variants={fadeUp}>
+                    <div className={`rounded-card border border-grove/14 bg-shell/76 p-8 shadow-soft ${cardHover}`}>
+                      <div className="flex flex-col lg:flex-row gap-8">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-3">
+                            <IconTile className="h-11 w-11">
+                              <TypeIcon size={22} strokeWidth={1.5} aria-hidden />
+                            </IconTile>
+                            <div>
+                              <h3 className="text-xl font-semibold text-ink">{sys.title}</h3>
+                              <span className="text-ocean text-xs font-semibold uppercase tracking-wider">{sys.subtitle}</span>
+                            </div>
+                          </div>
+                          <p className="text-ink/72 text-sm leading-relaxed">{sys.description}</p>
                         </div>
-                        <div>
-                          <h3 className="font-[family-name:var(--font-serif)] text-xl text-white">{sys.title}</h3>
-                          <span className="text-[var(--color-gold)] text-xs font-semibold uppercase tracking-wider">{sys.subtitle}</span>
+                        <div className="lg:w-80 flex-shrink-0">
+                          <ul className="space-y-2">
+                            {sys.benefits.map((b) => (
+                              <li key={b} className="flex items-start gap-2">
+                                <CheckCircle2 size={16} strokeWidth={1.5} className="text-ocean mt-0.5 flex-shrink-0" aria-hidden />
+                                <span className="text-ink/74 text-sm">{b}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       </div>
-                      <p className="text-white/50 text-sm leading-relaxed">{sys.description}</p>
                     </div>
-                    <div className="lg:w-80 flex-shrink-0">
-                      <ul className="space-y-2">
-                        {sys.benefits.map((b) => (
-                          <li key={b} className="flex items-start gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-[var(--color-gold)] mt-0.5 flex-shrink-0" />
-                            <span className="text-white/65 text-sm">{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                )
+              })}
             </motion.div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
-
         {/* What's Included */}
-        <section className="py-24">
+        <section className="py-24 bg-mist/35">
           <div className="max-w-7xl mx-auto px-6">
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
+              viewport={revealViewport}
               variants={stagger}
             >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-white mb-4 text-center"
-              >
-                What Every System Includes
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto text-center mb-12">
-                Turnkey installation with premium equipment and full after-sales support.
-              </motion.p>
+              <SectionHeader
+                title="What Every System Includes"
+                subtitle="Turnkey installation with premium equipment and full after-sales support."
+                className="mb-12"
+              />
 
               <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                 {included.map((item) => (
                   <motion.div key={item} variants={fadeUp} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-[var(--color-gold)] mt-0.5 flex-shrink-0" />
-                    <span className="text-white/70 text-base">{item}</span>
+                    <CheckCircle2 size={20} strokeWidth={1.5} className="text-ocean mt-0.5 flex-shrink-0" aria-hidden />
+                    <span className="text-ink/78 text-base">{item}</span>
                   </motion.div>
                 ))}
               </motion.div>
@@ -412,111 +326,50 @@ export default function OffGridSolarPage() {
         {/* Related Services */}
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="max-w-7xl mx-auto px-6 mb-6">
-              <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            </div>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-80px' }}
-              variants={stagger}
-              className="text-center mb-12"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4"
-              >
-                Explore Related Services
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-2xl mx-auto">
-                Battery systems pair perfectly with our residential and commercial installations. Browse all <Link to={langPath('/services')} className="text-[var(--color-gold)] hover:underline">solar services</Link>.
-              </motion.p>
-            </motion.div>
+            <SectionHeader
+              title="Explore Related Services"
+              subtitle={<>Battery systems pair perfectly with our residential and commercial installations. Browse all <Link to={langPath('/services')} className="text-ocean hover:underline">solar services</Link>.</>}
+              className="mb-12"
+            />
 
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={revealViewport}
               variants={stagger}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/residential')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <Sun className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Residential Solar</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Rooftop systems for homes and villas from 3kW to 10kW.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/commercial')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <Zap className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Commercial Solar</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Hotel, resort, and business systems with PPA financing options.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
-              <motion.div variants={fadeUp}>
-                <Link
-                  to={langPath('/services/maintenance')}
-                  className="block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-[var(--color-gold)]/30 hover:-translate-y-1 transition-all duration-300 h-full"
-                >
-                  <ShieldCheck className="w-6 h-6 text-[var(--color-gold)] mb-4" />
-                  <h3 className="font-[family-name:var(--font-serif)] text-lg text-white mb-2">Maintenance & Support</h3>
-                  <p className="text-white/45 text-sm leading-relaxed mb-4">Keep your battery and solar system at peak performance.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[var(--color-gold)] text-sm font-medium">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </Link>
-              </motion.div>
+              <RelatedCard
+                to={langPath('/services/residential')}
+                icon={<Sun size={22} strokeWidth={1.5} aria-hidden />}
+                title="Residential Solar"
+                desc="Rooftop systems for homes and villas from 3kW to 10kW."
+              />
+              <RelatedCard
+                to={langPath('/services/commercial')}
+                icon={<Zap size={22} strokeWidth={1.5} aria-hidden />}
+                title="Commercial Solar"
+                desc="Hotel, resort, and business systems with PPA financing options."
+              />
+              <RelatedCard
+                to={langPath('/services/maintenance')}
+                icon={<ShieldCheck size={22} strokeWidth={1.5} aria-hidden />}
+                title="Maintenance & Support"
+                desc="Keep your battery and solar system at peak performance."
+              />
             </motion.div>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="py-24">
-          <div className="max-w-7xl mx-auto px-6">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-12 text-center"
-            >
-              <h2 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4">
-                Ready for Energy Independence?
-              </h2>
-              <p className="text-white/55 text-lg mb-8 max-w-xl mx-auto">
-                Stop worrying about blackouts and rising electricity costs. Contact us for a free battery and solar assessment tailored to your property.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to={langPath('/contact')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-                >
-                  Get Battery Assessment
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to={langPath('/pricing')}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-colors duration-200"
-                >
-                  View Pricing
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </section>
+        <ServiceCTA
+          title="Ready for Energy Independence?"
+          subtitle="Stop worrying about blackouts and rising electricity costs. Contact us for a free battery and solar assessment tailored to your property."
+          primaryLabel="Get Battery Assessment"
+          primaryTo={langPath('/contact')}
+          secondaryLabel="View Pricing"
+          secondaryTo={langPath('/pricing')}
+        />
       </div>
     </>
   )

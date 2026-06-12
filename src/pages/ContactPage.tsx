@@ -1,22 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { MessageCircle, Mail, MapPin, Clock, Send, Phone } from 'lucide-react'
+import { MessageCircle, Mail, MapPin, Clock, Send, Phone, ChevronDown } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
 import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
 import { trackEvent, trackLeadConversion, getMetaClickIds, newEventId } from '../lib/analytics'
 import { getAttribution } from '../lib/attribution'
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
-}
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-}
+import { Button } from '../components/ui/Button'
+import {
+  fadeUp,
+  stagger,
+  revealViewport,
+  cardHover,
+  ServiceHero,
+  IconTile,
+  WHATSAPP_URL,
+} from './services/shared'
 
 interface FormState {
   name: string
@@ -35,6 +35,9 @@ const emptyForm: FormState = {
   systemInterest: '',
   message: '',
 }
+
+const fieldClasses =
+  'w-full rounded-xl border border-grove/20 bg-shell/70 px-4 py-3 text-sm text-ink placeholder:text-ink/40 outline-none transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-[var(--bustan-lagoon)]'
 
 function InputField({
   id,
@@ -55,8 +58,8 @@ function InputField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-white/60 text-sm mb-1.5">
-        {label}{required && <span className="text-[var(--color-gold)] ml-1">*</span>}
+      <label htmlFor={id} className="block text-ink/74 text-sm mb-1.5">
+        {label}{required && <span className="text-ocean ml-1">*</span>}
       </label>
       <input
         id={id}
@@ -65,7 +68,7 @@ function InputField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[var(--color-gold)]/50 focus:bg-white/8 transition-all duration-200"
+        className={fieldClasses}
       />
     </div>
   )
@@ -88,19 +91,27 @@ function SelectField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-white/60 text-sm mb-1.5">{label}</label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[var(--color-gold)]/50 transition-all duration-200 appearance-none cursor-pointer"
-        style={{ colorScheme: 'dark' }}
-      >
-        <option value="" className="bg-[#0D1117] text-white/40">{placeholder ?? 'Select...'}</option>
-        {options.map((o) => (
-          <option key={o} value={o} className="bg-[#0D1117] text-white">{o}</option>
-        ))}
-      </select>
+      <label htmlFor={id} className="block text-ink/74 text-sm mb-1.5">{label}</label>
+      <div className="relative">
+        <select
+          id={id}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={`${fieldClasses} appearance-none cursor-pointer pr-10 ${value ? 'text-ink' : 'text-ink/40'}`}
+          style={{ colorScheme: 'light' }}
+        >
+          <option value="">{placeholder ?? 'Select...'}</option>
+          {options.map((o) => (
+            <option key={o} value={o}>{o}</option>
+          ))}
+        </select>
+        <ChevronDown
+          size={16}
+          strokeWidth={1.5}
+          aria-hidden
+          className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink/45"
+        />
+      </div>
     </div>
   )
 }
@@ -175,7 +186,7 @@ export default function ContactPage() {
   const form_ = t.contact.form
   const info = t.contact.info
 
-  // Split hero title: everything up to the last word is plain, last word is gold
+  // Split hero title: everything up to the last word is plain, last word is accented
   const titleWords = hero.title.split(' ')
   const titleMain = titleWords.slice(0, -1).join(' ')
   const titleAccent = titleWords[titleWords.length - 1]
@@ -184,7 +195,7 @@ export default function ContactPage() {
   void langPath
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)]">
+    <div className="min-h-screen bg-[var(--bustan-paper)] text-ink">
       <SEOHead
         title={t.seo.contact.title}
         description={t.seo.contact.description}
@@ -194,54 +205,67 @@ export default function ContactPage() {
       />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-dark)] to-[var(--color-dark)]" />
-        <div
-          className="absolute inset-0 opacity-15"
-          style={{
-            backgroundImage: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(46,125,50,0.3), transparent)',
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-6">
-            <motion.div variants={fadeUp}>
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase border border-[var(--color-gold)]/30 text-[var(--color-gold)] bg-[var(--color-gold)]/10">
-                <Phone className="w-3.5 h-3.5" />
-                {hero.tag}
-              </span>
-            </motion.div>
-
-            <motion.h1
-              variants={fadeUp}
-              className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl lg:text-7xl text-white max-w-3xl mx-auto leading-tight"
-            >
-              {titleMain}{' '}
-              <span className="text-[var(--color-gold)]">{titleAccent}</span>
-            </motion.h1>
-
-            <motion.p variants={fadeUp} className="text-white/55 text-xl max-w-xl mx-auto leading-relaxed">
-              {hero.subtitle}
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
+      <ServiceHero
+        icon={<Phone size={14} strokeWidth={1.5} aria-hidden />}
+        badge={hero.tag}
+        title={titleMain}
+        titleAccent={titleAccent}
+        subtitle={hero.subtitle}
+      />
 
       {/* Main content */}
-      <section className="py-8 pb-32">
+      <section className="pb-32">
         <div className="max-w-7xl mx-auto px-6">
+
+          {/* WhatsApp — primary contact path (moved above the form) */}
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-10">
+            <div className="relative overflow-hidden rounded-card border border-[#25D366]/30 bg-shell/82 p-6 sm:p-8 shadow-soft">
+              {/* Soft green glow */}
+              <div
+                aria-hidden
+                className="absolute inset-0 rounded-card pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse 60% 90% at 8% 50%, rgba(37,211,102,0.10) 0%, transparent 70%)',
+                }}
+              />
+              <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#25D366]/30 bg-[#25D366]/10 text-[#16a34a]">
+                    <MessageCircle size={22} strokeWidth={1.5} aria-hidden />
+                  </div>
+                  <div>
+                    <div className="text-[#16a34a] font-semibold text-sm mb-0.5">{info.whatsapp.label}</div>
+                    <div className="text-ink font-medium text-lg">{info.whatsapp.value}</div>
+                    <div className="text-ink/60 text-sm mt-0.5">{info.whatsapp.cta}</div>
+                  </div>
+                </div>
+                <Button
+                  variant="whatsapp"
+                  size="lg"
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto shrink-0"
+                >
+                  WhatsApp Us
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
 
             {/* Contact Form */}
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
+              viewport={revealViewport}
               variants={fadeUp}
               className="lg:col-span-3"
             >
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-                <h2 className="font-[family-name:var(--font-serif)] text-2xl text-white mb-6">
+              <div id="contact-form" className="rounded-card border border-grove/14 bg-shell/82 p-8 shadow-soft">
+                <h2 className="font-serif text-2xl text-ink mb-6">
                   {form_.submit}
                 </h2>
 
@@ -251,16 +275,16 @@ export default function ContactPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center py-12"
                   >
-                    <div className="w-16 h-16 rounded-full bg-[var(--color-gold)]/15 border border-[var(--color-gold)]/30 flex items-center justify-center mx-auto mb-5">
-                      <Send className="w-7 h-7 text-[var(--color-gold)]" />
+                    <div className="w-16 h-16 rounded-full border border-ocean/20 bg-mist/72 flex items-center justify-center mx-auto mb-5">
+                      <Send className="w-7 h-7 text-ocean" strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-white text-xl font-semibold mb-2">{form_.success.title}</h3>
-                    <p className="text-white/50 text-sm max-w-sm mx-auto mb-6">
+                    <h3 className="text-ink text-xl font-semibold mb-2">{form_.success.title}</h3>
+                    <p className="text-ink/60 text-sm max-w-sm mx-auto mb-6">
                       {form_.success.subtitle}
                     </p>
                     <button
                       onClick={() => { setForm(emptyForm); setSubmitted(false) }}
-                      className="text-[var(--color-gold)] text-sm hover:underline"
+                      className="text-ocean text-sm hover:underline cursor-pointer"
                     >
                       {form_.success.again}
                     </button>
@@ -268,7 +292,7 @@ export default function ContactPage() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     {submitError && (
-                      <div className="rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                      <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
                         {submitError}
                       </div>
                     )}
@@ -322,34 +346,34 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="contact-message" className="block text-white/60 text-sm mb-1.5">{form_.message}</label>
+                      <label htmlFor="contact-message" className="block text-ink/74 text-sm mb-1.5">{form_.message}</label>
                       <textarea
                         id="contact-message"
                         value={form.message}
                         onChange={(e) => update('message')(e.target.value)}
                         placeholder={form_.messagePlaceholder}
                         rows={5}
-                        className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[var(--color-gold)]/50 focus:bg-white/8 transition-all duration-200 resize-none"
+                        className={`${fieldClasses} resize-none`}
                       />
                     </div>
 
-                    <button
+                    <Button
                       type="submit"
+                      variant="primary"
+                      size="md"
                       disabled={sending || !form.name || !form.email}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold text-sm hover:bg-[var(--color-gold-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      icon={sending ? null : <Send size={16} aria-hidden />}
+                      className="w-full"
                     >
                       {sending ? (
                         <span className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-[var(--color-dark)]/30 border-t-[var(--color-dark)] rounded-full animate-spin" />
+                          <span className="w-4 h-4 border-2 border-[var(--bustan-shell)]/40 border-t-[var(--bustan-shell)] rounded-full animate-spin" />
                           {form_.sending}
                         </span>
                       ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          {form_.submit}
-                        </>
+                        form_.submit
                       )}
-                    </button>
+                    </Button>
                   </form>
                 )}
               </div>
@@ -359,90 +383,75 @@ export default function ContactPage() {
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
+              viewport={revealViewport}
               variants={stagger}
               className="lg:col-span-2 space-y-4"
             >
-              {/* WhatsApp */}
-              <motion.a
-                variants={fadeUp}
-                href="https://wa.me/66946692011"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start gap-4 bg-green-500/10 border border-green-500/25 rounded-2xl p-5 hover:border-green-500/50 transition-colors duration-300 group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-green-500/15 border border-green-500/30 flex items-center justify-center flex-shrink-0">
-                  <MessageCircle className="w-5 h-5 text-green-400" />
-                </div>
-                <div>
-                  <div className="text-green-400 font-semibold text-sm mb-0.5">{info.whatsapp.label}</div>
-                  <div className="text-white font-medium">{info.whatsapp.value}</div>
-                  <div className="text-white/40 text-xs mt-0.5">{info.whatsapp.cta}</div>
-                </div>
-              </motion.a>
-
               {/* LINE */}
-              <motion.a
-                variants={fadeUp}
-                href="https://line.me/R/ti/p/@bustanenergy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start gap-4 bg-green-500/10 border border-green-500/25 rounded-2xl p-5 hover:border-green-500/50 transition-colors duration-300"
-              >
-                <div className="w-10 h-10 rounded-xl bg-green-500/15 border border-green-500/30 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-green-400 font-semibold text-sm mb-0.5">{info.line.label}</div>
-                  <div className="text-white font-medium">{info.line.value}</div>
-                  <div className="text-white/40 text-xs mt-0.5">{info.line.cta}</div>
-                </div>
-              </motion.a>
+              <motion.div variants={fadeUp}>
+                <a
+                  href="https://line.me/R/ti/p/@bustanenergy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex min-h-11 items-start gap-4 rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft hover:border-ocean/30 ${cardHover}`}
+                >
+                  <IconTile>
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                      <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+                    </svg>
+                  </IconTile>
+                  <div>
+                    <div className="text-ocean font-semibold text-sm mb-0.5">{info.line.label}</div>
+                    <div className="text-ink font-medium">{info.line.value}</div>
+                    <div className="text-ink/60 text-xs mt-0.5">{info.line.cta}</div>
+                  </div>
+                </a>
+              </motion.div>
 
-              {/* Email */}
-              <motion.div
-                variants={fadeUp}
-                className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-colors duration-300"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[var(--color-gold)]/15 border border-[var(--color-gold)]/30 flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-5 h-5 text-[var(--color-gold)]" />
-                </div>
-                <div>
-                  <div className="text-[var(--color-gold)] font-semibold text-sm mb-0.5">{info.email.label}</div>
-                  <div className="text-white font-medium">{info.email.value}</div>
-                  <div className="text-white/40 text-xs mt-0.5">{info.email.cta}</div>
-                </div>
+              {/* Contact form (this page) */}
+              <motion.div variants={fadeUp}>
+                <a
+                  href="#contact-form"
+                  className={`flex min-h-11 items-start gap-4 rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft hover:border-ocean/30 ${cardHover}`}
+                >
+                  <IconTile>
+                    <Mail className="w-5 h-5" strokeWidth={1.5} aria-hidden />
+                  </IconTile>
+                  <div>
+                    <div className="text-ocean font-semibold text-sm mb-0.5">{info.email.label}</div>
+                    <div className="text-ink font-medium">{info.email.value}</div>
+                    <div className="text-ink/60 text-xs mt-0.5">{info.email.cta}</div>
+                  </div>
+                </a>
               </motion.div>
 
               {/* Office */}
               <motion.div
                 variants={fadeUp}
-                className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-2xl p-5"
+                className="flex min-h-11 items-start gap-4 rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft"
               >
-                <div className="w-10 h-10 rounded-xl bg-white/8 border border-white/15 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 text-white/50" />
-                </div>
+                <IconTile>
+                  <MapPin className="w-5 h-5" strokeWidth={1.5} aria-hidden />
+                </IconTile>
                 <div>
-                  <div className="text-white/50 font-semibold text-sm mb-0.5">{info.office.label}</div>
-                  <div className="text-white font-medium">{info.office.value}</div>
-                  <div className="text-white/40 text-xs mt-0.5">{info.office.sub}</div>
+                  <div className="text-ocean font-semibold text-sm mb-0.5">{info.office.label}</div>
+                  <div className="text-ink font-medium">{info.office.value}</div>
+                  <div className="text-ink/60 text-xs mt-0.5">{info.office.sub}</div>
                 </div>
               </motion.div>
 
               {/* Hours */}
               <motion.div
                 variants={fadeUp}
-                className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-2xl p-5"
+                className="flex min-h-11 items-start gap-4 rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft"
               >
-                <div className="w-10 h-10 rounded-xl bg-white/8 border border-white/15 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 text-white/50" />
-                </div>
+                <IconTile>
+                  <Clock className="w-5 h-5" strokeWidth={1.5} aria-hidden />
+                </IconTile>
                 <div>
-                  <div className="text-white/50 font-semibold text-sm mb-0.5">{info.hours.label}</div>
-                  <div className="text-white font-medium">{info.hours.value}</div>
-                  <div className="text-white/40 text-xs mt-0.5">{info.hours.sub}</div>
+                  <div className="text-ocean font-semibold text-sm mb-0.5">{info.hours.label}</div>
+                  <div className="text-ink font-medium">{info.hours.value}</div>
+                  <div className="text-ink/60 text-xs mt-0.5">{info.hours.sub}</div>
                 </div>
               </motion.div>
             </motion.div>
@@ -452,15 +461,22 @@ export default function ContactPage() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={revealViewport}
             variants={fadeUp}
-            className="mt-10 rounded-2xl overflow-hidden bg-white/5 border border-white/10 h-64 flex items-center justify-center relative"
+            className="mt-10 rounded-card overflow-hidden border border-grove/14 bg-mist/35 h-64 flex items-center justify-center relative shadow-soft"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-navy)]/60 to-[var(--color-ocean)]/40" />
+            <div
+              aria-hidden
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(ellipse 70% 80% at 50% 110%, rgba(0,111,107,0.10) 0%, transparent 70%)',
+              }}
+            />
             <div className="relative text-center">
               <div className="text-4xl mb-3">📍</div>
-              <p className="text-white font-semibold text-lg">{info.office.value}, Thailand</p>
-              <p className="text-white/40 text-sm mt-1">{info.office.sub}</p>
+              <p className="text-ink font-semibold text-lg">{info.office.value}, Thailand</p>
+              <p className="text-ink/60 text-sm mt-1">{info.office.sub}</p>
             </div>
           </motion.div>
         </div>

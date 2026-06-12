@@ -7,24 +7,17 @@ import { useTranslation } from '../i18n/useTranslation'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, pageBreadcrumb, articleSchema } from '../components/seo/schemas'
 import { blogPostsBySlug } from '../data/blogPosts'
+import { Badge } from '../components/ui/Badge'
+import { fadeUp, heroStagger, ServiceCTA } from './services/shared'
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
-}
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
-
-const tagColors: Record<string, { bg: string; border: string; text: string }> = {
-  Regulations: { bg: 'rgba(10,61,92,0.4)', border: 'rgba(10,61,92,0.8)', text: '#60B4FF' },
-  Finance: { bg: 'rgba(232,168,32,0.15)', border: 'rgba(232,168,32,0.4)', text: '#E8A820' },
-  Guide: { bg: 'rgba(46,125,50,0.2)', border: 'rgba(46,125,50,0.5)', text: '#66BB6A' },
-  Technology: { bg: 'rgba(103,58,183,0.2)', border: 'rgba(103,58,183,0.5)', text: '#CE93D8' },
-  Tips: { bg: 'rgba(0,150,136,0.2)', border: 'rgba(0,150,136,0.5)', text: '#4DB6AC' },
-  Business: { bg: 'rgba(230,81,0,0.2)', border: 'rgba(230,81,0,0.5)', text: '#FFB74D' },
+// Category → Badge tone (same mapping as the blog index).
+const tagTones: Record<string, 'lagoon' | 'sun' | 'grove'> = {
+  Regulations: 'lagoon',
+  Finance: 'sun',
+  Guide: 'grove',
+  Technology: 'lagoon',
+  Tips: 'grove',
+  Business: 'sun',
 }
 
 export default function BlogPostPage() {
@@ -41,10 +34,10 @@ export default function BlogPostPage() {
     return <Navigate to={langPath('/blog')} replace />
   }
 
-  const colors = tagColors[post.category] ?? tagColors['Guide']
+  const tone = tagTones[post.category] ?? 'grove'
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)]">
+    <div className="min-h-screen bg-[var(--bustan-paper)] text-ink">
       <SEOHead
         title={`${post.title} | Bustan Energy Blog`}
         description={post.excerpt}
@@ -68,56 +61,50 @@ export default function BlogPostPage() {
         ]}
       />
 
-      {/* Hero */}
-      <section className="relative pt-32 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-navy)] via-[var(--color-dark)] to-[var(--color-dark)]" />
+      {/* Hero — mount-animated serif post header on a soft mist wash */}
+      <section className="relative overflow-hidden pt-32 pb-16">
         <div
-          className="absolute inset-0 opacity-15"
-          style={{
-            backgroundImage: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(103,58,183,0.3), transparent)',
-          }}
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-mist/55 via-mist/20 to-transparent"
         />
 
         <div className="relative max-w-4xl mx-auto px-6">
-          <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-6">
+          <motion.div initial="hidden" animate="visible" variants={heroStagger} className="space-y-6">
             {/* Back link */}
             <motion.div variants={fadeUp}>
               <Link
                 to={langPath('/blog')}
-                className="inline-flex items-center gap-2 text-white/40 text-sm hover:text-white/70 transition-colors"
+                className="inline-flex items-center gap-2 text-ink/55 text-sm transition-colors duration-[var(--duration-fast)] ease-out-soft hover:text-ocean"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft size={16} strokeWidth={1.5} aria-hidden />
                 {lang === 'th' ? 'กลับไปบทความ' : 'Back to Blog'}
               </Link>
             </motion.div>
 
             {/* Tag */}
             <motion.div variants={fadeUp}>
-              <span
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
-                style={{ backgroundColor: colors.bg, border: `1px solid ${colors.border}`, color: colors.text }}
-              >
-                <Tag className="w-3 h-3" />
+              <Badge tone={tone}>
+                <Tag size={12} strokeWidth={1.5} aria-hidden />
                 {post.category}
-              </span>
+              </Badge>
             </motion.div>
 
             {/* Title */}
             <motion.h1
               variants={fadeUp}
-              className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl lg:text-6xl text-white leading-tight"
+              className="font-serif text-display-md sm:text-display-lg md:text-[4rem] leading-[1.08] tracking-tight text-ink"
             >
               {post.title}
             </motion.h1>
 
             {/* Meta */}
-            <motion.div variants={fadeUp} className="flex items-center gap-6 text-white/40 text-sm">
+            <motion.div variants={fadeUp} className="flex items-center gap-6 text-ink/55 text-sm">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
+                <Calendar size={16} strokeWidth={1.5} aria-hidden />
                 <span>{post.dateDisplay}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
+                <Clock size={16} strokeWidth={1.5} aria-hidden />
                 <span>{post.readTime}</span>
               </div>
             </motion.div>
@@ -139,30 +126,12 @@ export default function BlogPostPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="pb-32">
-        <div className="max-w-4xl mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-12 text-center"
-          >
-            <h3 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-white mb-4">
-              {t.blog.cta.title}
-            </h3>
-            <p className="text-white/50 text-lg mb-8 max-w-xl mx-auto">
-              {t.blog.cta.subtitle}
-            </p>
-            <Link
-              to={langPath('/contact')}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--color-gold)] text-[var(--color-dark)] font-semibold hover:bg-[var(--color-gold-light)] transition-colors duration-200"
-            >
-              {t.blog.cta.button}
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+      <ServiceCTA
+        title={t.blog.cta.title}
+        subtitle={t.blog.cta.subtitle}
+        primaryLabel={t.blog.cta.button}
+        primaryTo={langPath('/contact')}
+      />
     </div>
   )
 }
