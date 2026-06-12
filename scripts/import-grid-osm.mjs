@@ -359,16 +359,23 @@ console.log(`  New: ${newRows.length} rows | Skipped (already imported): ${skipp
 if (newRows.length === 0) {
   console.log('\nAll features already in DB. Nothing to insert.')
 } else {
-  // Upsert in batches of 200 (PostgREST body limit safety)
-  const BATCH = 200
-  let done = 0
-  for (let i = 0; i < newRows.length; i += BATCH) {
-    const batch = newRows.slice(i, i + BATCH)
-    await upsertBatch(batch)
-    done += batch.length
-    console.log(`  Upserted ${done}/${newRows.length}`)
+  // Upsert in batches of 200 (PostgREST body limit safety).
+  // DB failures are non-fatal: the map reads the static GeoJSON (merged below),
+  // the DB table is only for future server-side scoring. (grid_features may not
+  // exist yet on the prod project — migration 003 pending.)
+  try {
+    const BATCH = 200
+    let done = 0
+    for (let i = 0; i < newRows.length; i += BATCH) {
+      const batch = newRows.slice(i, i + BATCH)
+      await upsertBatch(batch)
+      done += batch.length
+      console.log(`  Upserted ${done}/${newRows.length}`)
+    }
+    console.log(`\nDB insert complete.`)
+  } catch (err) {
+    console.warn(`\nWARN: DB upsert failed (${err.message.slice(0, 120)}) — continuing to GeoJSON merge.`)
   }
-  console.log(`\nDB insert complete.`)
 }
 
 // ── Merge into static GeoJSON for the frontend ────────────────────────────────
