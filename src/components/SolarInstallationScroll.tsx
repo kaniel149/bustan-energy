@@ -1,5 +1,12 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  AnimatePresence,
+  useReducedMotion,
+} from 'framer-motion';
 
 const HOUSE_TYPES = [
   { id: 'concrete', label: 'Concrete Roof', labelTh: 'หลังคาคอนกรีต' },
@@ -9,179 +16,214 @@ const HOUSE_TYPES = [
 
 type HouseType = (typeof HOUSE_TYPES)[number]['id'];
 
-const FRAME_COUNT = 63;
+/** 6 narrative beats (Apple-style), each owns a slice of scroll progress. */
+const BEATS = [
+  {
+    label: 'Your Roof Today',
+    description: 'Every system starts with the roof you already own.',
+    side: 'left',
+    until: 0.12,
+  },
+  {
+    label: 'Wiring & Safety',
+    description: 'Conduit, surge protection and routing — done right, hidden well.',
+    side: 'right',
+    until: 0.27,
+  },
+  {
+    label: 'Mounting Structure',
+    description: 'Marine-grade aluminum rails, engineered for island wind loads.',
+    side: 'left',
+    until: 0.45,
+  },
+  {
+    label: 'Panels Go On',
+    description: 'Tier-1 panels, precision-placed for maximum yield.',
+    side: 'right',
+    until: 0.62,
+  },
+  {
+    label: 'Fully Installed',
+    description: 'Producing from day one — cutting your PEA bill every month.',
+    side: 'left',
+    until: 0.78,
+  },
+  {
+    label: 'Built To Last',
+    description: 'Walk around it — clean from every angle, engineered for 25+ years.',
+    side: 'right',
+    until: 1,
+  },
+] as const;
 
-const STAGES = [
-  { label: 'Your Roof Today', description: 'Every solar journey starts here' },
-  { label: 'Electrical Wiring', description: 'Professional cable routing & conduit' },
-  { label: 'Mounting Structure', description: 'Aluminum rail system installation' },
-  { label: 'Panel Placement', description: 'Precision panel mounting begins' },
-  { label: 'Nearly Complete', description: 'Final panels being secured' },
-  { label: 'Fully Installed', description: 'Your complete solar system' },
-  { label: 'Front View', description: 'Complete system overview' },
-  { label: 'Left Angle', description: 'Clean, professional finish' },
-  { label: 'Side View', description: 'Sleek low-profile design' },
-  { label: 'Rear Left', description: 'Full coverage from every angle' },
-  { label: 'Rear View', description: 'Optimized roof coverage' },
-  { label: 'Rear Right', description: 'Inverter & battery placement' },
-  { label: 'Right Side', description: 'Built to last 25+ years' },
-];
+type Manifest = { ext: string } & Record<HouseType, number>;
 
-function getFramePath(type: HouseType, frame: number) {
-  return `/frames/${type}/${String(frame).padStart(3, '0')}.jpg`;
+const LEGACY: Manifest = { ext: 'jpg', concrete: 63, villa: 63, tropical: 63 };
+
+function framePath(type: HouseType, frame: number, ext: string) {
+  const dir = ext === 'webp' ? 'frames-smooth' : 'frames';
+  return `/${dir}/${type}/${String(frame).padStart(3, '0')}.${ext}`;
 }
 
-function useFrameSequence(type: HouseType, enabled: boolean) {
-  const [frames, setFrames] = useState<HTMLImageElement[]>([]);
-  const [loaded, setLoaded] = useState(false);
-  const [progress, setProgress] = useState(0);
+/** Load order: coarse pass (every 4th frame) then fine fill — canvas always has
+ *  a nearby frame to show long before the full set arrives. */
+function loadOrder(count: number): number[] {
+  const coarse: number[] = [];
+  const fine: number[] = [];
+  for (let i = 1; i <= count; i++) (i % 4 === 1 ? coarse : fine).push(i);
+  return [...coarse, ...fine];
+}
+
+function useFrameSequence(type: HouseType, manifest: Manifest) {
+  const cache = useRef<Partial<Record<string, (HTMLImageElement | undefined)[]>>>({});
+  const [, bump] = useState(0); // re-render signal as frames decode
+  const count = manifest[type];
+  const key = `${type}-${manifest.ext}`;
 
   useEffect(() => {
-    // Don't start the ~4MB frame download until the section nears the
-    // viewport — it otherwise competes with the hero LCP image at page load.
-    if (!enabled) return;
-    setLoaded(false);
-    setProgress(0);
-    let count = 0;
-    const images: HTMLImageElement[] = new Array(FRAME_COUNT);
+    let cancelled = false;
+    const store = (cache.current[key] ??= new Array(count));
+    const queue = loadOrder(count).filter((i) => !store[i - 1]);
+    let inFlight = 0;
+    const CONCURRENCY = 8;
 
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      img.src = getFramePath(type, i);
-      img.onload = () => {
-        images[i - 1] = img;
-        count++;
-        setProgress(count / FRAME_COUNT);
-        if (count === FRAME_COUNT) {
-          setFrames(images);
-          setLoaded(true);
-        }
-      };
-      img.onerror = () => {
-        count++;
-        setProgress(count / FRAME_COUNT);
-        if (count === FRAME_COUNT) {
-          setFrames(images);
-          setLoaded(true);
-        }
-      };
-    }
-  }, [type, enabled]);
+    const next = () => {
+      if (cancelled) return;
+      while (inFlight < CONCURRENCY && queue.length) {
+        const i = queue.shift()!;
+        inFlight++;
+        const img = new Image();
+        img.src = framePath(type, i, manifest.ext);
+        img
+          .decode()
+          .catch(() => undefined) // decode errors: keep going
+          .finally(() => {
+            inFlight--;
+            if (!cancelled) {
+              store[i - 1] = img;
+              bump((n) => n + 1);
+              next();
+            }
+          });
+      }
+    };
+    next();
+    return () => {
+      cancelled = true;
+    };
+  }, [key, type, count, manifest.ext]);
 
-  return { frames, loaded, progress };
+  const frames = cache.current[key] ?? [];
+  const loadedCount = frames.filter(Boolean).length;
+  return { frames, count, loadedCount };
+}
+
+/** Nearest decoded frame to the requested index (so scrubbing never blanks). */
+function nearestLoaded(frames: (HTMLImageElement | undefined)[], idx: number) {
+  if (frames[idx]) return idx;
+  for (let d = 1; d < frames.length; d++) {
+    if (idx - d >= 0 && frames[idx - d]) return idx - d;
+    if (idx + d < frames.length && frames[idx + d]) return idx + d;
+  }
+  return -1;
 }
 
 export default function SolarInstallationScroll() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeType, setActiveType] = useState<HouseType>('concrete');
-  const [currentStage, setCurrentStage] = useState(0);
-  const [nearView, setNearView] = useState(false);
-  const currentFrameRef = useRef(0);
+  const [manifest, setManifest] = useState<Manifest>(LEGACY);
+  const [beat, setBeat] = useState(0);
+  const drawnRef = useRef(-1);
+  const everDrawnRef = useRef(false);
+  const reducedMotion = useReducedMotion();
 
-  // Start loading frames only once the section is within ~800px of the
-  // viewport (the loading bar covers the brief gap on fast scrolls).
+  // Smooth frame manifest (falls back to legacy 63-frame JPEGs)
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    if (!('IntersectionObserver' in window)) {
-      setNearView(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setNearView(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '800px 0px' }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    fetch('/frames-smooth/manifest.json')
+      .then((r) => (r.ok ? r.json() : LEGACY))
+      .then((m: Manifest) => setManifest(m && m.ext ? m : LEGACY))
+      .catch(() => setManifest(LEGACY));
   }, []);
 
-  const { frames, loaded, progress: loadProgress } = useFrameSequence(activeType, nearView);
+  const { frames, count, loadedCount } = useFrameSequence(activeType, manifest);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Map scroll → frame index
-  const frameIndex = useTransform(scrollYProgress, [0, 1], [0, FRAME_COUNT - 1]);
+  // Physical glide: spring between scroll and frame index
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 28,
+    restDelta: 0.0001,
+  });
+  const progressSource = reducedMotion ? scrollYProgress : smoothProgress;
+  const frameIndex = useTransform(progressSource, [0, 1], [0, count - 1]);
 
-  // Map scroll → stage index for labels
-  const stageIndex = useTransform(scrollYProgress, [0, 1], [0, STAGES.length - 1]);
-
-  // Draw frame to canvas
-  const drawFrame = useCallback((index: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas || !frames[index]) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const img = frames[index];
-
-    // Set canvas size on first draw
-    if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-    }
-
-    ctx.drawImage(img, 0, 0);
-  }, [frames]);
-
-  // Draw on scroll
-  useEffect(() => {
-    const unsubscribe = frameIndex.on('change', (v) => {
-      const idx = Math.min(Math.round(v), FRAME_COUNT - 1);
-      if (idx !== currentFrameRef.current) {
-        currentFrameRef.current = idx;
-        drawFrame(idx);
+  const drawFrame = useCallback(
+    (idx: number) => {
+      const canvas = canvasRef.current;
+      const target = nearestLoaded(frames, idx);
+      if (!canvas || target < 0) return;
+      const img = frames[target]!;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
       }
+      ctx.drawImage(img, 0, 0);
+      drawnRef.current = target;
+      everDrawnRef.current = true;
+    },
+    [frames]
+  );
+
+  // Scroll → frame
+  useEffect(() => {
+    const unsub = frameIndex.on('change', (v) => {
+      const idx = Math.max(0, Math.min(Math.round(v), count - 1));
+      if (idx !== drawnRef.current) drawFrame(idx);
     });
-    return unsubscribe;
-  }, [frameIndex, drawFrame]);
+    return unsub;
+  }, [frameIndex, drawFrame, count]);
 
-  // Track stage for labels
+  // Scroll → beat
   useEffect(() => {
-    const unsubscribe = stageIndex.on('change', (v) => {
-      setCurrentStage(Math.round(v));
+    const unsub = progressSource.on('change', (v) => {
+      const b = BEATS.findIndex((s) => v <= s.until);
+      setBeat(b === -1 ? BEATS.length - 1 : b);
     });
-    return unsubscribe;
-  }, [stageIndex]);
+    return unsub;
+  }, [progressSource]);
 
-  // Draw first frame when loaded
+  // First paint + type-switch continuity: redraw current position as soon as
+  // frames decode — previous type's pixels stay on canvas until then.
   useEffect(() => {
-    if (loaded && frames[0]) {
-      drawFrame(0);
-    }
-  }, [loaded, frames, drawFrame]);
+    if (loadedCount === 0) return;
+    const idx = Math.max(0, Math.min(Math.round(frameIndex.get()), count - 1));
+    drawFrame(idx);
+  }, [loadedCount, drawFrame, frameIndex, count]);
 
-  // Preload other types in background — only after the active sequence has
-  // fully loaded, so the ~8MB of inactive frames never contend with the
-  // visible content (or the page's LCP) for bandwidth.
+  // Preload inactive types after the active one is fully decoded
   useEffect(() => {
-    if (!loaded) return;
-    HOUSE_TYPES.forEach((type) => {
-      if (type.id === activeType) return;
-      for (let i = 1; i <= FRAME_COUNT; i++) {
+    if (loadedCount < count) return;
+    HOUSE_TYPES.forEach((t) => {
+      if (t.id === activeType) return;
+      for (let i = 1; i <= manifest[t.id]; i++) {
         const img = new Image();
-        img.src = getFramePath(type.id, i);
+        img.src = framePath(t.id, i, manifest.ext);
       }
     });
-  }, [activeType, loaded]);
+  }, [loadedCount, count, activeType, manifest]);
 
-  const stageProgress = ((currentStage + 1) / STAGES.length) * 100;
+  const switching = loadedCount === 0;
+  const active = useMemo(() => BEATS[beat], [beat]);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative"
-      style={{ height: '500vh' }}
-    >
+    <section ref={containerRef} className="relative" style={{ height: '500vh' }}>
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-[var(--bustan-shell)]">
         {/* House type tabs */}
         <div className="absolute top-6 z-20 flex gap-2">
@@ -191,96 +233,122 @@ export default function SolarInstallationScroll() {
               onClick={() => setActiveType(type.id)}
               className={`
                 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300
-                ${activeType === type.id
-                  ? 'bg-[var(--bustan-lagoon)] text-[var(--bustan-shell)] shadow-[0_14px_32px_rgba(0,111,107,0.20)]'
-                  : 'bg-[rgba(216,236,232,0.72)] text-[rgba(39,52,47,0.68)] hover:bg-[rgba(216,236,232,0.96)]'
+                ${
+                  activeType === type.id
+                    ? 'bg-[var(--bustan-lagoon)] text-[var(--bustan-shell)] shadow-[0_14px_32px_rgba(0,111,107,0.20)]'
+                    : 'bg-[rgba(216,236,232,0.72)] text-[rgba(39,52,47,0.68)] hover:bg-[rgba(216,236,232,0.96)]'
                 }
               `}
             >
               {type.label}
+              {activeType === type.id && switching && (
+                <span className="ml-2 inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin align-middle" />
+              )}
             </button>
           ))}
         </div>
 
-        {/* Progress bar */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-64 z-20">
-          <div className="h-1 bg-[rgba(36,70,62,0.12)] rounded-full overflow-hidden">
+        {/* Vertical progress rail (desktop) */}
+        <div className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-20 flex-col items-center">
+          <div className="relative w-px h-64 bg-[rgba(36,70,62,0.14)]">
             <motion.div
-              className="h-full bg-[var(--bustan-lagoon)] rounded-full"
-              style={{ width: `${stageProgress}%` }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="absolute top-0 left-0 w-px bg-[var(--bustan-lagoon)]"
+              animate={{ height: `${((beat + 1) / BEATS.length) * 100}%` }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
             />
-          </div>
-          <div className="flex justify-between mt-2">
-            {STAGES.map((_, i) => (
+            {BEATS.map((_, i) => (
               <div
                 key={i}
-                className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-                  i <= currentStage ? 'bg-[var(--bustan-lagoon)]' : 'bg-[rgba(36,70,62,0.18)]'
+                className={`absolute -left-[3px] w-[7px] h-[7px] rounded-full transition-colors duration-300 ${
+                  i <= beat ? 'bg-[var(--bustan-lagoon)]' : 'bg-[rgba(36,70,62,0.2)]'
                 }`}
+                style={{ top: `${(i / (BEATS.length - 1)) * 100}%` }}
               />
             ))}
           </div>
         </div>
 
-        {/* Canvas - frame sequence */}
+        {/* Canvas */}
         <div className="relative w-full max-w-5xl aspect-video mx-auto px-8">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full object-contain"
-          />
+          <canvas ref={canvasRef} className="w-full h-full object-contain" />
 
-          {/* Loading bar */}
-          {!loaded && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-              <div className="w-48 h-1.5 bg-[rgba(36,70,62,0.12)] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[var(--bustan-lagoon)] rounded-full transition-all duration-200"
-                  style={{ width: `${loadProgress * 100}%` }}
+          {/* Beat card — alternates sides on desktop */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={beat}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+              className={`
+                hidden md:block absolute top-1/2 -translate-y-1/2 max-w-[260px] z-10
+                ${active.side === 'left' ? 'left-0 lg:-left-10' : 'right-0 lg:-right-10'}
+              `}
+            >
+              <div className="bg-[rgba(255,255,255,0.78)] backdrop-blur-md rounded-2xl p-5 shadow-[0_18px_44px_rgba(20,45,40,0.10)] border border-[rgba(36,70,62,0.08)]">
+                <span className="text-[11px] font-mono text-[var(--bustan-lagoon)]">
+                  {String(beat + 1).padStart(2, '0')} / {String(BEATS.length).padStart(2, '0')}
+                </span>
+                <h3 className="text-xl font-semibold text-[var(--bustan-ink)] mt-1 mb-1.5">
+                  {active.label}
+                </h3>
+                <p className="text-[13px] leading-relaxed text-[rgba(39,52,47,0.62)]">
+                  {active.description}
+                </p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* First-visit loading shimmer (only while canvas is still empty) */}
+          {switching && !everDrawnRef.current && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-44 h-1.5 bg-[rgba(36,70,62,0.12)] rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full w-1/3 bg-[var(--bustan-lagoon)] rounded-full"
+                  animate={{ x: ['-100%', '300%'] }}
+                  transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
                 />
               </div>
-              <span className="text-[rgba(39,52,47,0.48)] text-xs">
-                Loading {Math.round(loadProgress * 100)}%
-              </span>
             </div>
           )}
         </div>
 
-        {/* Stage label */}
-        <div className="absolute bottom-16 text-center z-20">
+        {/* Beat card — mobile (docked bottom) */}
+        <div className="md:hidden absolute bottom-10 left-4 right-4 z-10">
           <AnimatePresence mode="wait">
             <motion.div
-              key={currentStage}
-              initial={{ opacity: 0, y: 10 }}
+              key={beat}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3 }}
+              className="bg-[rgba(255,255,255,0.82)] backdrop-blur-md rounded-xl px-4 py-3 text-center shadow-[0_12px_30px_rgba(20,45,40,0.10)]"
             >
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-xs font-mono text-[rgba(39,52,47,0.46)]">
-                  {String(currentStage + 1).padStart(2, '0')}/{String(STAGES.length).padStart(2, '0')}
-                </span>
-                <h3 className="text-2xl font-semibold text-[var(--bustan-ink)]">
-                  {STAGES[currentStage].label}
-                </h3>
-              </div>
-              <p className="text-[rgba(39,52,47,0.58)] text-sm">
-                {STAGES[currentStage].description}
-              </p>
+              <span className="text-[10px] font-mono text-[var(--bustan-lagoon)]">
+                {String(beat + 1).padStart(2, '0')}/{String(BEATS.length).padStart(2, '0')}
+              </span>
+              <h3 className="text-base font-semibold text-[var(--bustan-ink)]">{active.label}</h3>
+              <p className="text-xs text-[rgba(39,52,47,0.6)] mt-0.5">{active.description}</p>
             </motion.div>
           </AnimatePresence>
         </div>
 
         {/* Scroll hint */}
-        {currentStage === 0 && loaded && (
+        {beat === 0 && !switching && (
           <motion.div
-            className="absolute bottom-6 text-[rgba(39,52,47,0.48)] text-xs flex flex-col items-center gap-1"
+            className="absolute bottom-3 text-[rgba(39,52,47,0.48)] text-xs flex flex-col items-center gap-1"
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             <span>Scroll to explore</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M8 3v10M4 9l4 4 4-4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </motion.div>
         )}
