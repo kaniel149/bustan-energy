@@ -20,6 +20,8 @@ export default function OutreachPage() {
   const [editing, setEditing] = useState<OutreachMessage | null>(null)
   const [editBody, setEditBody] = useState('')
   const [loading, setLoading] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -36,8 +38,12 @@ export default function OutreachPage() {
     action: 'approve' | 'skip' | 'edit' | 'bulk_approve',
     payload: Parameters<typeof outreachAction>[1],
   ) => {
-    await outreachAction(action, payload)
+    setBusy(true)
+    setError(null)
+    const ok = await outreachAction(action, payload)
+    if (!ok) setError('הפעולה נכשלה — נסה שוב')
     await load()
+    setBusy(false)
   }
 
   const toggle = (id: string) => {
@@ -74,11 +80,15 @@ export default function OutreachPage() {
       {tab === 'draft' && selected.size > 0 && (
         <button
           onClick={() => act('bulk_approve', { ids: [...selected] })}
-          className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors"
+          disabled={busy}
+          className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors disabled:opacity-50"
         >
           ✅ אשר {selected.size} הודעות
         </button>
       )}
+
+      {/* Error banner */}
+      {error && <p className="text-red-400 text-sm">{error}</p>}
 
       {/* Content */}
       {loading ? (
@@ -140,7 +150,8 @@ export default function OutreachPage() {
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => act('approve', { id: m.id })}
-                    className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-500 transition-colors"
+                    disabled={busy}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-500 transition-colors disabled:opacity-50"
                   >
                     ✅ אשר
                   </button>
@@ -149,13 +160,15 @@ export default function OutreachPage() {
                       setEditing(m)
                       setEditBody(m.body)
                     }}
-                    className="px-3 py-1.5 rounded-lg bg-white/10 text-white/70 text-sm hover:bg-white/15 transition-colors"
+                    disabled={busy}
+                    className="px-3 py-1.5 rounded-lg bg-white/10 text-white/70 text-sm hover:bg-white/15 transition-colors disabled:opacity-50"
                   >
                     ✏️ ערוך
                   </button>
                   <button
                     onClick={() => act('skip', { id: m.id })}
-                    className="px-3 py-1.5 rounded-lg bg-white/10 text-white/70 text-sm hover:bg-white/15 transition-colors"
+                    disabled={busy}
+                    className="px-3 py-1.5 rounded-lg bg-white/10 text-white/70 text-sm hover:bg-white/15 transition-colors disabled:opacity-50"
                   >
                     ⏭️ דלג
                   </button>
@@ -189,10 +202,12 @@ export default function OutreachPage() {
               </button>
               <button
                 onClick={async () => {
+                  if (!editBody.trim()) return
                   await act('edit', { id: editing.id, body: editBody })
                   setEditing(null)
                 }}
-                className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-500 transition-colors"
+                disabled={busy || !editBody.trim()}
+                className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-500 transition-colors disabled:opacity-50"
               >
                 שמור
               </button>
