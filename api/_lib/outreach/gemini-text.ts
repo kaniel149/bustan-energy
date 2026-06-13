@@ -29,16 +29,23 @@ export function splitSubject(text: string): SubjectBody {
     : { subject: 'Solar savings for your roof', body: text.trim() }
 }
 
+/** Never throws — network failures return { ok:false, error }. 20s timeout. */
 export async function geminiText(prompt: string): Promise<GeminiTextResult> {
   const key = process.env.GEMINI_API_KEY
   if (!key) return { ok: false, error: 'gemini_not_configured' }
-  const r = await fetch(`${GEMINI_URL}?key=${key}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-  })
-  if (r.status === 429) return { ok: false, quotaExhausted: true }
-  if (!r.ok) return { ok: false, error: `gemini_${r.status}` }
-  const text = parseGeminiResponse(await r.json())
-  return text ? { ok: true, text } : { ok: false, error: 'empty_response' }
+  try {
+    const r = await fetch(`${GEMINI_URL}?key=${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+      signal: AbortSignal.timeout(20_000),
+    })
+    if (r.status === 429) return { ok: false, quotaExhausted: true }
+    if (!r.ok) return { ok: false, error: `gemini_${r.status}` }
+    const text = parseGeminiResponse(await r.json())
+    return text ? { ok: true, text } : { ok: false, error: 'empty_response' }
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return { ok: false, error: /abort|signal|timeout/i.test(msg) ? 'network_timeout' : 'network_error' }
+  }
 }
