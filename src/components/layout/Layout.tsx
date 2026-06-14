@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
+import { StickyWhatsApp } from './StickyWhatsApp'
 
 /**
  * Layout wraps every marketing page with Navbar + main + Footer.
@@ -24,6 +25,7 @@ export default function Layout() {
       </main>
 
       <Footer />
+      <StickyWhatsApp />
     </div>
   )
 }
