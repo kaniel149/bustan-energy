@@ -16,6 +16,8 @@ import {
   Battery,
   MapPin,
   ChevronRight,
+  Factory,
+  CheckCircle2,
 } from 'lucide-react'
 import { useTranslation } from '../i18n/useTranslation'
 import { Button } from '../components/ui/Button'
@@ -220,6 +222,90 @@ function HeroSection() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 1b. GATEWAY SPLIT — route factory/C&I buyers vs. villa/home buyers
+// ═══════════════════════════════════════════════════════════════════════════
+type GatewayCard = { title: string; body: string; points: string[]; cta: string }
+type GatewayCopy = {
+  tag: string
+  title: string
+  factory: GatewayCard
+  villa: GatewayCard
+}
+
+function GatewaySplit() {
+  const { t } = useTranslation()
+  const { langPath } = useLanguage()
+  const g = (t.home as typeof t.home & { gateway?: GatewayCopy }).gateway
+  if (!g) return null
+
+  const cards = [
+    {
+      data: g.factory,
+      to: langPath('/factory-electricity-bill-solar-assessment'),
+      icon: <Factory size={26} strokeWidth={1.5} aria-hidden />,
+      card: 'bg-grove text-shell',
+      iconWrap: 'bg-shell/12 text-gold',
+      chip: 'border-shell/20 bg-shell/[0.08] text-shell/85',
+      cta: 'bg-gold text-grove',
+    },
+    {
+      data: g.villa,
+      to: langPath('/services/residential'),
+      icon: <Home size={26} strokeWidth={1.5} aria-hidden />,
+      card: 'bg-white text-grove border border-grove/12',
+      iconWrap: 'bg-ocean/10 text-ocean',
+      chip: 'border-grove/12 bg-[var(--bustan-paper)] text-grove',
+      cta: 'bg-ocean text-shell',
+    },
+  ]
+
+  return (
+    <section className="relative z-20 -mt-12 px-6 pb-6 md:-mt-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-6 text-center">
+          <span className="text-xs font-bold uppercase tracking-[0.18em] text-ocean">{g.tag}</span>
+          <h2 className="mx-auto mt-2 max-w-3xl font-serif text-2xl leading-tight tracking-tight text-grove md:text-3xl">
+            {g.title}
+          </h2>
+        </div>
+        <div className="grid gap-5 md:grid-cols-2">
+          {cards.map((c) => (
+            <Link
+              key={c.data.title}
+              to={c.to}
+              className={`group flex flex-col rounded-[2rem] p-7 shadow-[0_24px_70px_rgba(36,70,62,0.16)] transition hover:-translate-y-1 md:p-9 ${c.card}`}
+            >
+              <div className={`mb-5 inline-grid h-14 w-14 place-items-center rounded-2xl ${c.iconWrap}`}>
+                {c.icon}
+              </div>
+              <h3 className="text-2xl font-semibold tracking-tight md:text-3xl">{c.data.title}</h3>
+              <p className="mt-3 text-sm leading-6 opacity-80">{c.data.body}</p>
+              <ul className="mt-5 grid gap-2">
+                {c.data.points.map((p) => (
+                  <li
+                    key={p}
+                    className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium ${c.chip}`}
+                  >
+                    <CheckCircle2 size={15} strokeWidth={2} className="shrink-0" aria-hidden />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+              <span
+                className={`mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-6 py-3 font-semibold shadow-lg transition group-hover:gap-3 ${c.cta}`}
+              >
+                {c.data.cta}
+                <ArrowRight size={18} strokeWidth={1.5} aria-hidden />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // 2. STATS BAR
 // ═══════════════════════════════════════════════════════════════════════════
 function StatItem({
@@ -250,7 +336,15 @@ function StatItem({
 
 function StatsBar() {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-60px 0px' })
+  const inView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' })
+  // Fallback: never let the counters get stuck at 0 if useInView misjudges
+  // (e.g. paid traffic that converts without scrolling, short viewports).
+  const [forceStart, setForceStart] = useState(false)
+  useEffect(() => {
+    const id = setTimeout(() => setForceStart(true), 1200)
+    return () => clearTimeout(id)
+  }, [])
+  const started = inView || forceStart
   const { t } = useTranslation()
   const hero = t.home.hero as typeof t.home.hero & HomeHeroExtra
 
@@ -276,7 +370,7 @@ function StatsBar() {
             target={stat.value}
             suffix={stat.suffix}
             label={stat.label}
-            started={inView}
+            started={started}
             icon={icons[i]}
           />
         ))}
@@ -1029,6 +1123,7 @@ export default function HomePage() {
         style={{ background: 'var(--bustan-paper)', color: 'var(--bustan-ink)' }}
       >
         <HeroSection />
+        <GatewaySplit />
         <StatsBar />
         <ServicesSection />
         <ScrollAnimationSection />

@@ -49,11 +49,27 @@ const en = {
       ctaSecondary: 'WhatsApp Us',
       trustLine: 'PEA documentation support · Tier-1 equipment options · Monitoring · O&M',
     },
+    gateway: {
+      tag: 'CHOOSE YOUR PATH',
+      title: 'Built for factories, resorts, villas and island properties',
+      factory: {
+        title: 'Factories & Large Customers',
+        body: 'Solar PPA / EPC for high electricity bills — bill review, ROI estimate, and a clear path from survey to funded installation.',
+        points: ['Solar PPA / EPC for high bills', 'No upfront CAPEX options', 'Bill review + ROI estimate'],
+        cta: 'I manage a factory / large site',
+      },
+      villa: {
+        title: 'Homes, Villas & Small Businesses',
+        body: 'Rooftop solar and battery backup designed for tropical island conditions — reduce bills and stay powered during outages.',
+        points: ['Rooftop solar & battery backup', 'Free site survey', 'Designed for island conditions'],
+        cta: 'I own a villa / small business',
+      },
+    },
     stats: {
-      installations: { value: 10, suffix: '', label: 'Sales Steps' },
-      installed: { value: 3, suffix: '', label: 'Deal Models' },
-      savings: { value: 25, suffix: ' yr', label: 'Model Horizon' },
-      experience: { value: 4, suffix: '', label: 'Core Tools' },
+      installations: { value: 8, suffix: '+', label: 'Years Experience' },
+      installed: { value: 3, suffix: '', label: 'Solar Models (EPC · PPA · Hybrid)' },
+      savings: { value: 25, suffix: ' yr', label: 'Panel Warranty' },
+      experience: { value: 100, suffix: '%', label: 'PEA Compliant' },
     },
     services: {
       sectionTag: 'WHAT WE DO',
@@ -869,11 +885,27 @@ const th = {
       ctaSecondary: 'แชท WhatsApp',
       trustLine: 'ช่วยเตรียมเอกสาร กฟภ. · อุปกรณ์ Tier-1 · Monitoring · O&M',
     },
+    gateway: {
+      tag: 'เลือกเส้นทางของคุณ',
+      title: 'ออกแบบสำหรับโรงงาน รีสอร์ท วิลล่า และอสังหาฯ บนเกาะ',
+      factory: {
+        title: 'โรงงานและลูกค้ารายใหญ่',
+        body: 'Solar PPA / EPC สำหรับค่าไฟสูง — ตรวจบิล ประเมิน ROI และเส้นทางชัดเจนจากการสำรวจสู่การติดตั้ง',
+        points: ['Solar PPA / EPC สำหรับค่าไฟสูง', 'ทางเลือกไม่ต้องลงทุนก้อนใหญ่', 'ตรวจบิล + ประเมิน ROI'],
+        cta: 'ฉันดูแลโรงงาน / ไซต์ขนาดใหญ่',
+      },
+      villa: {
+        title: 'บ้าน วิลล่า และธุรกิจขนาดเล็ก',
+        body: 'โซลาร์รูฟท็อปและแบตเตอรี่สำรองไฟ ออกแบบสำหรับสภาพอากาศเกาะเขตร้อน — ลดค่าไฟและมีไฟใช้ตอนไฟดับ',
+        points: ['โซลาร์รูฟท็อป + แบตเตอรี่สำรอง', 'สำรวจหน้างานฟรี', 'ออกแบบเพื่อสภาพบนเกาะ'],
+        cta: 'ฉันมีวิลล่า / ธุรกิจขนาดเล็ก',
+      },
+    },
     stats: {
-      installations: { value: 10, suffix: '', label: 'ขั้นตอนฝ่ายขาย' },
-      installed: { value: 3, suffix: '', label: 'รูปแบบดีล' },
-      savings: { value: 25, suffix: ' ปี', label: 'ช่วงโมเดล' },
-      experience: { value: 4, suffix: '', label: 'เครื่องมือหลัก' },
+      installations: { value: 8, suffix: '+', label: 'ปีประสบการณ์' },
+      installed: { value: 3, suffix: '', label: 'รูปแบบโซลาร์ (EPC · PPA · ไฮบริด)' },
+      savings: { value: 25, suffix: ' ปี', label: 'รับประกันแผง' },
+      experience: { value: 100, suffix: '%', label: 'ผ่านมาตรฐาน PEA' },
     },
     services: {
       sectionTag: 'บริการของเรา',
