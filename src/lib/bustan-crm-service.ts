@@ -435,6 +435,26 @@ export interface ScanCandidate {
  *   lng maps from the column `lon` (PostgREST returns the column name as-is).
  */
 /**
+ * Location of the highest-kWp pending roof candidate (globally). Used to
+ * auto-land the user on a region that actually has scanned work when their home
+ * region is empty. Returns null if nothing pending.
+ */
+export async function fetchTopPendingCandidateLocation(): Promise<{ lat: number; lon: number } | null> {
+  if (!bustanSupabase) return null
+  const { data, error } = await bustanSupabase
+    .from('scan_candidates')
+    .select('lat,lon')
+    .eq('status', 'pending')
+    .eq('kind', 'roof')
+    .order('estimated_kwp', { ascending: false, nullsFirst: false })
+    .limit(1)
+  if (error) return null
+  const row = (data ?? [])[0] as { lat: number | null; lon: number | null } | undefined
+  if (!row || row.lat == null || row.lon == null) return null
+  return { lat: Number(row.lat), lon: Number(row.lon) }
+}
+
+/**
  * Fetch pending scan candidates. With 14k+ pending across regions, PostgREST's
  * 1000-row default would silently truncate — so pass the active region's
  * `bounds` ([[minLng,minLat],[maxLng,maxLat]]) to scope the query to that region

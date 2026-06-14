@@ -1,4 +1,18 @@
-import type { RegionConfig } from '../types'
+import type { RegionConfig, Region } from '../types'
+
+/**
+ * Find the region whose bounds contain a point ([lng, lat]). Used to auto-land
+ * the user on a region that actually has scanned candidates. Skips the wide
+ * 'colliers' catch-all so a real geographic region wins when both match.
+ */
+export function regionContaining(lng: number, lat: number): Region | null {
+  for (const r of Object.values(REGIONS)) {
+    if (r.id === 'colliers') continue
+    const [[minLng, minLat], [maxLng, maxLat]] = r.bounds
+    if (lng >= minLng && lng <= maxLng && lat >= minLat && lat <= maxLat) return r.id
+  }
+  return null
+}
 
 export const REGIONS: Record<string, RegionConfig> = {
   koh_phangan: {

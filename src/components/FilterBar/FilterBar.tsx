@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase'
 import { signOutBustan } from '../../lib/bustan-supabase'
 import { isCrmConnected } from '../../lib/crm-service'
 import { REGIONS } from '../../lib/regions'
+import { DragScroll } from '../ui/DragScroll'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import { exportLeadsCSV } from '../../lib/csv-export'
 import { useTranslation } from '../../i18n/useTranslation'
@@ -133,14 +134,14 @@ export function FilterBar() {
           </div>
         )}
 
-        {/* Region selector — scrollable pill group so adding more regions never clips labels */}
+        {/* Region selector — drag side-to-side to reach every scanned region. */}
         {(isMapView || isScannerView) && (
-          <div className="hidden lg:flex shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 overflow-x-auto max-w-[340px] scrollbar-none">
+          <DragScroll className="hidden lg:flex shrink-0 bg-[#0D2137]/90 backdrop-blur-xl rounded-xl border border-white/10 max-w-[520px]">
             {Object.values(REGIONS).map((r) => (
               <button
                 key={r.id}
                 onClick={() => setRegion(r.id)}
-                className={`shrink-0 px-2.5 py-2.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                className={`shrink-0 px-2.5 py-2.5 text-xs font-medium transition-colors whitespace-nowrap select-none ${
                   filters.region === r.id
                     ? 'bg-[#E8A820]/20 text-[#E8A820]'
                     : 'text-white/60 hover:text-white hover:bg-white/5'
@@ -149,7 +150,7 @@ export function FilterBar() {
                 {r.nameEn}
               </button>
             ))}
-          </div>
+          </DragScroll>
         )}
 
         {/* Search — absorbs leftover space, constrained so it doesn't crowd neighbours */}

@@ -41,6 +41,7 @@ import { useToastStore } from '../../lib/toast-store'
 import { FloatingPanel } from '../ui/FloatingPanel'
 import { RejectReasonMenu } from './RejectReasonMenu'
 import { rejectionLabel } from '../../lib/rejection-reason-label'
+import { triggerFindContact } from '../../lib/trigger-find-contact'
 import type { RejectionReason } from '../../lib/bustan-crm-service'
 import type { Property } from '../../types'
 
@@ -339,7 +340,8 @@ export function CandidateReviewPanel() {
       setSelected((prev) => { const next = new Set(prev); next.delete(c.id); return next })
       if (useAppStore.getState().reviewCandidate?.id === c.id) setReviewCandidate(null)
       incrementApprovedToday()
-      showToast('Lead added to map', 'success')
+      triggerFindContact(promoted)   // auto-start owner / decision-maker discovery
+      showToast('Lead added — searching for contact…', 'success')
     } catch {
       showToast('Failed to approve candidate', 'error')
     } finally {
@@ -392,6 +394,7 @@ export function CandidateReviewPanel() {
           setProperties([...useAppStore.getState().properties, promoted])
           removeRoofCandidate(c.id)
           incrementApprovedToday()
+          triggerFindContact(promoted)   // auto-start contact discovery per approved lead
           approved++
         }
       } catch { /* continue with next */ }

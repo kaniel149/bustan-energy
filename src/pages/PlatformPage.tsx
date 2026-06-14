@@ -5,10 +5,10 @@ import { identifyUser, resetAnalytics } from '../lib/analytics'
 import { getCrmProjects } from '../lib/crm-service'
 import { useRealtimeSync } from '../lib/realtime'
 import { isBustanConnected, bustanSupabase } from '../lib/bustan-supabase'
-import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests, fetchScanCandidates } from '../lib/bustan-crm-service'
+import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests, fetchScanCandidates, fetchTopPendingCandidateLocation } from '../lib/bustan-crm-service'
 import type { Property, ScanRequest } from '../types'
 import { parseColliersMarkdown, attachGeocodes, colliersToProperties } from '../lib/colliers'
-import { REGIONS } from '../lib/regions'
+import { REGIONS, regionContaining } from '../lib/regions'
 import { useColliersGeocodes } from '../hooks/useColliersGeocodes'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
@@ -61,6 +61,9 @@ export default function PlatformPage() {
   // Active region drives which candidates we load (the pending set is 14k+ across
   // regions — PostgREST caps at 1000, so we scope the fetch to the region bounds).
   const regionId = useAppStore((s) => s.filters.region)
+  const setRegion = useAppStore((s) => s.setRegion)
+  // Guards the one-time auto-jump to a region that has scanned candidates.
+  const autoRegionTriedRef = useRef(false)
   const setScanRequests = useAppStore((s) => s.setScanRequests)
   const scanRequests = useAppStore((s) => s.scanRequests)
   const setGridData = useAppStore((s) => s.setGridData)
@@ -169,7 +172,22 @@ export default function PlatformPage() {
           // Auto-enable the detection layer so candidates are immediately visible
           setFilter('showRoofDetection', true)
         } else {
-          // No live candidates — try static json as a fallback (best-effort)
+          // Active region has no pending candidates. Once per session, jump to
+          // the region that actually has scanned work (so pink roofs show on
+          // open instead of an empty home map). Guarded so it runs only once.
+          if (!autoRegionTriedRef.current) {
+            autoRegionTriedRef.current = true
+            const loc = await fetchTopPendingCandidateLocation()
+            if (cancelled) return
+            if (loc) {
+              const target = regionContaining(loc.lon, loc.lat)
+              if (target && target !== regionId) {
+                setRegion(target)   // → regionId changes → this effect re-runs for the target region
+                return
+              }
+            }
+          }
+          // No live candidates anywhere — try static json as a fallback (best-effort)
           fetch('/data/roof-candidates.json')
             .then((r) => (r.ok ? r.json() : []))
             .then((rows) => {
@@ -187,7 +205,7 @@ export default function PlatformPage() {
 
     void loadCandidates()
     return () => { cancelled = true }
-  }, [user, setRoofCandidates, setFilter, regionId])
+  }, [user, setRoofCandidates, setFilter, regionId, setRegion])
 
   // Stable ref so the poll interval callback can read the latest scanRequests without
   // being in the dep array (which would tear down and recreate the interval each cycle).

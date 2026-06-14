@@ -26,6 +26,7 @@ import {
 } from '../../lib/bustan-crm-service'
 import type { RejectionReason } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
+import { triggerFindContact } from '../../lib/trigger-find-contact'
 import { RejectReasonMenu } from '../Candidates/RejectReasonMenu'
 import { rejectionLabel } from '../../lib/rejection-reason-label'
 import type { Property } from '../../types'
@@ -82,8 +83,9 @@ export function CandidateSidebarSection({ candidate: c }: Props) {
       setProperties([...useAppStore.getState().properties, promoted])
       removeRoofCandidate(c.id)
       incrementApprovedToday()
+      triggerFindContact(promoted)   // auto-start owner / decision-maker discovery
       dismiss()
-      showToast('Lead added to map', 'success')
+      showToast('Lead added — searching for contact…', 'success')
     } catch {
       showToast('Failed to approve candidate', 'error')
     } finally {
