@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import Layout from './components/layout/Layout'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { SEO_PAGES } from './content/seoPages'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const ServicesPage = lazy(() => import('./pages/ServicesPage'))
@@ -29,6 +30,7 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const CollierPortfolioPage = lazy(() => import('./pages/CollierPortfolioPage'))
 const ResortSolarAssessmentPage = lazy(() => import('./pages/ResortSolarAssessmentPage'))
 const FactoryBillAssessmentPage = lazy(() => import('./pages/FactoryBillAssessmentPage'))
+const SeoLandingPage = lazy(() => import('./pages/seo/SeoLandingPage'))
 
 // Admin pages — lazy loaded, separate auth context
 const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'))
@@ -73,6 +75,10 @@ function PageRoutes() {
       <Route path="blog/:slug" element={<BlogPostPage />} />
       <Route path="contact" element={<ContactPage />} />
       <Route path="tools" element={<ToolsPage />} />
+      {/* SEO keyword/location landing pages (content-driven) */}
+      {SEO_PAGES.map((p) => (
+        <Route key={p.slug} path={p.slug} element={<SeoLandingPage page={p} />} />
+      ))}
       <Route path="*" element={<NotFoundPage />} />
     </>
   )

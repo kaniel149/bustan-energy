@@ -254,4 +254,165 @@
     <priority>0.9</priority>
   </url>
 
+  <!-- SEO keyword/location pages -->
+  <url>
+    <loc>https://bustan-energy.com/solar-ppa-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-ppa-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-ppa-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-ppa-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/solar-ppa-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-ppa-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-ppa-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-ppa-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/solar-epc-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-epc-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/solar-epc-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-epc-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/ppa-vs-epc-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/ppa-vs-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/ppa-vs-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/ppa-vs-epc-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/ppa-vs-epc-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/ppa-vs-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/ppa-vs-epc-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/ppa-vs-epc-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/factories-commercial-solar-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/factories-commercial-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/factories-commercial-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/factories-commercial-solar-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/factories-commercial-solar-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/factories-commercial-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/factories-commercial-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/factories-commercial-solar-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/solar-battery-storage-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-battery-storage-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-battery-storage-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-battery-storage-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/solar-battery-storage-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-battery-storage-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-battery-storage-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-battery-storage-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/villa-home-solar-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/villa-home-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/villa-home-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/villa-home-solar-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/villa-home-solar-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/villa-home-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/villa-home-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/villa-home-solar-thailand" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/solar-rooftop-ko-phangan</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-rooftop-ko-phangan" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-rooftop-ko-phangan" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-rooftop-ko-phangan" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/solar-rooftop-ko-phangan</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-rooftop-ko-phangan" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-rooftop-ko-phangan" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-rooftop-ko-phangan" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/solar-installation-ko-samui</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-installation-ko-samui" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-installation-ko-samui" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-installation-ko-samui" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/solar-installation-ko-samui</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-installation-ko-samui" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-installation-ko-samui" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-installation-ko-samui" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/solar-rooftop-rayong</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-rooftop-rayong" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-rooftop-rayong" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-rooftop-rayong" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/solar-rooftop-rayong</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-rooftop-rayong" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-rooftop-rayong" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-rooftop-rayong" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/solar-rooftop-chonburi</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-rooftop-chonburi" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-rooftop-chonburi" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-rooftop-chonburi" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/solar-rooftop-chonburi</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/solar-rooftop-chonburi" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/solar-rooftop-chonburi" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-rooftop-chonburi" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
