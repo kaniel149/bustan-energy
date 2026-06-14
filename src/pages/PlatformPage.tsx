@@ -8,6 +8,7 @@ import { isBustanConnected, bustanSupabase } from '../lib/bustan-supabase'
 import { fetchBustanLeads, mapLeadToProperty, fetchScanRequests, fetchScanCandidates } from '../lib/bustan-crm-service'
 import type { Property, ScanRequest } from '../types'
 import { parseColliersMarkdown, attachGeocodes, colliersToProperties } from '../lib/colliers'
+import { REGIONS } from '../lib/regions'
 import { useColliersGeocodes } from '../hooks/useColliersGeocodes'
 import { fetchCurrentRole } from '../lib/bustan-permissions'
 import { useBustanStore } from '../lib/bustan-store'
@@ -57,6 +58,9 @@ function ViewLoader() {
 export default function PlatformPage() {
   const setProperties = useAppStore((s) => s.setProperties)
   const setFilter = useAppStore((s) => s.setFilter)
+  // Active region drives which candidates we load (the pending set is 14k+ across
+  // regions — PostgREST caps at 1000, so we scope the fetch to the region bounds).
+  const regionId = useAppStore((s) => s.filters.region)
   const setScanRequests = useAppStore((s) => s.setScanRequests)
   const scanRequests = useAppStore((s) => s.scanRequests)
   const setGridData = useAppStore((s) => s.setGridData)
@@ -158,7 +162,7 @@ export default function PlatformPage() {
 
     const loadCandidates = async () => {
       try {
-        const live = await fetchScanCandidates()
+        const live = await fetchScanCandidates(REGIONS[regionId]?.bounds)
         if (cancelled) return
         if (live.length > 0) {
           setRoofCandidates(live)
@@ -183,7 +187,7 @@ export default function PlatformPage() {
 
     void loadCandidates()
     return () => { cancelled = true }
-  }, [user, setRoofCandidates, setFilter])
+  }, [user, setRoofCandidates, setFilter, regionId])
 
   // Stable ref so the poll interval callback can read the latest scanRequests without
   // being in the dep array (which would tear down and recreate the interval each cycle).
@@ -205,7 +209,10 @@ export default function PlatformPage() {
     const interval = setInterval(async () => {
       if (cancelled) return
       try {
-        const [requests, candidates] = await Promise.all([fetchScanRequests(), fetchScanCandidates()])
+        const [requests, candidates] = await Promise.all([
+          fetchScanRequests(),
+          fetchScanCandidates(REGIONS[regionId]?.bounds),
+        ])
         if (cancelled) return
         setScanRequests(requests)
         // MERGE: add newly returned candidates, keep existing ones the poll didn't return.
@@ -230,7 +237,7 @@ export default function PlatformPage() {
     }
     // scanRequests intentionally excluded — read via scanRequestsRef to avoid
     // tearing down the interval on every poll cycle.
-  }, [user, setScanRequests, setRoofCandidates, setFilter])
+  }, [user, setScanRequests, setRoofCandidates, setFilter, regionId])
 
   // Load Colliers dataset — independent of demo/bustan loads, runs once.
   // Uses shared geocode hook to fetch both precise (URL-keyed) and district

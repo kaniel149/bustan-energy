@@ -434,12 +434,27 @@ export interface ScanCandidate {
  *   Land candidates: sizeM2 / sizeRai / capacityKwp (from estimated_mwp×1000) also populated.
  *   lng maps from the column `lon` (PostgREST returns the column name as-is).
  */
-export async function fetchScanCandidates(): Promise<Property[]> {
+/**
+ * Fetch pending scan candidates. With 14k+ pending across regions, PostgREST's
+ * 1000-row default would silently truncate — so pass the active region's
+ * `bounds` ([[minLng,minLat],[maxLng,maxLat]]) to scope the query to that region
+ * and raise the cap to 5000. Without bounds it loads up to 5000 (legacy behaviour).
+ */
+export async function fetchScanCandidates(
+  bounds?: [[number, number], [number, number]],
+): Promise<Property[]> {
   if (!bustanSupabase) return []
-  const { data, error } = await bustanSupabase
+  let q = bustanSupabase
     .from('scan_candidates')
     .select('*')
     .eq('status', 'pending')
+  if (bounds) {
+    const [[minLng, minLat], [maxLng, maxLat]] = bounds
+    q = q.gte('lat', minLat).lte('lat', maxLat).gte('lon', minLng).lte('lon', maxLng)
+  }
+  // Highest-value first so the 5000 cap (if hit in a dense region) keeps the
+  // biggest roofs rather than an arbitrary slice.
+  const { data, error } = await q.order('estimated_kwp', { ascending: false, nullsFirst: false }).limit(5000)
   if (error) throw error
   const seen = new Set<string>()
   const candidates: Property[] = []
