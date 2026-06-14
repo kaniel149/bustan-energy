@@ -96,7 +96,7 @@ function buildOwnerLead(property: OwnerDecisionPropertyLocal): Property | null {
     id: property.id,
     type: 'roof',
     status: 'private',
-    region: regionFromLead({ areaName: property.areaName }, lat),
+    region: regionFromLead({ areaName: property.areaName }, lat, lng),
     title: property.name || 'Solar Intelligence lead',
     location: property.areaName || 'Koh Phangan',
     lat,

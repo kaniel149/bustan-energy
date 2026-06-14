@@ -29,9 +29,11 @@ export function useFilteredProperties() {
       // Region
       if (p.region !== filters.region) return false
 
-      // Property type
-      if (filters.activeTab === 'rooftops' && p.type !== 'roof') return false
-      if (filters.activeTab === 'community-solar' && p.type !== 'land') return false
+      // NOTE: no activeTab (Rooftops/Land) type filter here. The map shows BOTH
+      // roofs and lands together — consistent with the candidate (pink) layer,
+      // which is type-agnostic — so an approved roof OR land always appears as a
+      // marker. The Scanner has its own type filter; the data tabs drive the
+      // FilterBar badges, not the map's property set.
 
       // Status
       if (filters.status !== 'all' && p.status !== filters.status) return false
