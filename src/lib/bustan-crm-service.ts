@@ -522,6 +522,40 @@ export async function setScanCandidateStatus(
   return { ok: true }
 }
 
+/** Reasons an operator can give when rejecting a roof candidate. */
+export type RejectionReason = 'has_pv' | 'not_a_roof' | 'too_small' | 'other'
+
+/**
+ * Reject a candidate WITH a reason (global learning). Spatial reasons
+ * (not_a_roof / too_small / other) seed a global `scan_exclusions` row so the
+ * scan worker never re-surfaces that spot for any scanner. 'has_pv' relies on
+ * the existing existing_solar detection instead. RPC: bustan.reject_scan_candidate.
+ */
+export async function rejectScanCandidate(
+  id: string,
+  reason: RejectionReason,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.rpc('reject_scan_candidate', {
+    p_id: id,
+    p_reason: reason,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
+}
+
+/**
+ * Re-apply learned lessons to the CURRENT pending list: bulk-rejects pending
+ * roof candidates that (a) have existing PV, or (b) sit within ~30 m of a
+ * location you previously rejected. RPC: bustan.apply_learned_filters → count.
+ */
+export async function applyLearnedFilters(): Promise<WriteResult & { removed?: number }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { data, error } = await bustanSupabase.rpc('apply_learned_filters')
+  if (error) return { ok: false, error: error.message }
+  return { ok: true, removed: typeof data === 'number' ? data : 0 }
+}
+
 /**
  * Correct a ROOF candidate's area during review (the detected footprint is
  * sometimes wrong). The SECURITY DEFINER RPC `bustan.update_scan_candidate_area`

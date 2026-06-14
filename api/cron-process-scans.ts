@@ -529,13 +529,19 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
 
   const kept = scored.length   // OSM + Overture combined (pre-dedup)
 
-  // 3. DEDUP — drop buildings near an existing lead OR an existing pending candidate
-  const [existing, existingCandidates] = await Promise.all([
+  // 3. DEDUP — drop buildings near an existing lead, a pending candidate, OR a
+  //    globally-excluded location (a spot a reviewer rejected as not-a-roof /
+  //    too-small / other). Exclusions are global → the worker never re-surfaces
+  //    a rejected spot for any scanner (migration 014).
+  const [existing, existingCandidates, exclusions] = await Promise.all([
     bGet<{ lat: number; lon: number }>(
       `properties?select=lat,lon&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
     ),
     bGet<{ lat: number; lon: number }>(
       `scan_candidates?select=lat,lon&status=eq.pending&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
+    ),
+    bGet<{ lat: number; lon: number }>(
+      `scan_exclusions?select=lat,lon&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
     ),
   ])
   const near = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
@@ -544,8 +550,9 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   for (const c of scored) {
     const dupExisting = existing.some((e) => near(e, c))
     const dupCandidate = existingCandidates.some((e) => near(e, c))
+    const dupExcluded = exclusions.some((e) => near(e, c))
     const dupSelf = accepted.some((a) => near(a, c))
-    if (dupExisting || dupCandidate || dupSelf) continue
+    if (dupExisting || dupCandidate || dupExcluded || dupSelf) continue
     accepted.push(c)
   }
   // kept = osmKept + overture candidates that passed polygon filter.

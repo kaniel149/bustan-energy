@@ -18,6 +18,7 @@ import { openLineChat, buildProposalMessage, isLineConfigured } from '../../lib/
 import { useTranslation } from '../../i18n/useTranslation'
 import { useToastStore } from '../../lib/toast-store'
 import { bustanSupabase } from '../../lib/bustan-supabase'
+import { CandidateSidebarSection } from './CandidateSidebarSection'
 
 interface FindContactResult {
   company: { name?: string; registrationNo?: string; address?: string; phone?: string; website?: string } | null
@@ -54,6 +55,10 @@ export function PropertySidebar() {
   const canFindContact = can(role, 'crm.edit')
   const { t } = useTranslation()
   const tm = t.crm.map
+
+  // Detect if the selected property is a pending scan candidate
+  const roofCandidates = useAppStore((s) => s.roofCandidates)
+  const isCandidate = !!property && roofCandidates.some((c) => c.id === property.id)
 
   const [nasaData, setNasaData] = useState<NasaPowerData | null>(null)
   const [financial, setFinancial] = useState<FinancialAnalysis | null>(null)
@@ -238,7 +243,15 @@ export function PropertySidebar() {
           </div>
         </div>
 
-        <div className="p-4 space-y-4">
+        {/* Pending-candidate section — rendered instead of the CRM/proposal content
+            when the selected property is still in the review queue. This keeps the
+            sidebar useful for triage without showing meaningless proposal/CRM UI
+            for an unapproved candidate. */}
+        {isCandidate && (
+          <CandidateSidebarSection candidate={property} />
+        )}
+
+        <div className="p-4 space-y-4" style={isCandidate ? { display: 'none' } : undefined}>
           {/* Existing PV banner — shown when solar panels detected on this roof */}
           {property.existingSolar === true && (
             <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-400">

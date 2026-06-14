@@ -648,7 +648,10 @@ export function SolarMap() {
         if (!f) return
         const id = (f.properties as Record<string, string>).id
         const cand = roofCandidates.find((c) => c.id === id)
-        if (cand) setReviewCandidate(cand)
+        if (cand) {
+          setReviewCandidate(cand)    // highlight on map + in review panel
+          setSelectedProperty(cand)   // open sidebar with approve/reject for this pending candidate
+        }
       })
     }
 
@@ -662,7 +665,7 @@ export function SolarMap() {
       for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
       candHandlers.current = []
     }
-  }, [roofCandidates, filters.showRoofDetection, setReviewCandidate])
+  }, [roofCandidates, filters.showRoofDetection, setReviewCandidate, setSelectedProperty])
 
   // Roof draw mode — P2 (custom polygon: click vertices, double-click/Finish to save)
   useEffect(() => {
