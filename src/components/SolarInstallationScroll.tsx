@@ -181,14 +181,22 @@ export default function SolarInstallationScroll() {
     [frames]
   );
 
-  // Scroll → frame
+  // Keep the latest drawFrame in a ref so the long-lived scroll subscription
+  // never goes stale. drawFrame closes over `frames`, which changes as frames
+  // decode and when the active type switches; binding it directly into the
+  // frameIndex listener left the subscription stuck on an early empty-frames
+  // closure (canvas froze on one frame after switching house types).
+  const drawFrameRef = useRef(drawFrame);
+  drawFrameRef.current = drawFrame;
+
+  // Scroll → frame (subscribe once; always invoke the freshest drawFrame)
   useEffect(() => {
     const unsub = frameIndex.on('change', (v) => {
       const idx = Math.max(0, Math.min(Math.round(v), count - 1));
-      if (idx !== drawnRef.current) drawFrame(idx);
+      if (idx !== drawnRef.current) drawFrameRef.current(idx);
     });
     return unsub;
-  }, [frameIndex, drawFrame, count]);
+  }, [frameIndex, count]);
 
   // Scroll → beat
   useEffect(() => {
