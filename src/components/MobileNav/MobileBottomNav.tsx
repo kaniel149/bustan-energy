@@ -1,10 +1,11 @@
-import { Map, Grid3X3, Kanban, BarChart3 } from 'lucide-react'
+import { Map, Grid3X3, Send, Kanban, BarChart3 } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import type { PlatformView } from '../../types'
 
 const NAV_ITEMS: { view: PlatformView; icon: typeof Map; label: string }[] = [
   { view: 'map', icon: Map, label: 'Map' },
   { view: 'scanner', icon: Grid3X3, label: 'Scanner' },
+  { view: 'outreach', icon: Send, label: 'Outreach' },
   { view: 'pipeline', icon: Kanban, label: 'Pipeline' },
   { view: 'dashboard', icon: BarChart3, label: 'Dashboard' },
 ]
