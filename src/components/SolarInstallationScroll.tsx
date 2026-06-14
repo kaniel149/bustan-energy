@@ -12,6 +12,9 @@ const HOUSE_TYPES = [
   { id: 'concrete', label: 'Concrete Roof', labelTh: 'หลังคาคอนกรีต' },
   { id: 'villa', label: 'Tile Roof Villa', labelTh: 'หลังคากระเบื้อง' },
   { id: 'tropical', label: 'Tropical Wood', labelTh: 'หลังคาไม้เขตร้อน' },
+  { id: 'factory', label: 'Factory Roof', labelTh: 'หลังคาโรงงาน' },
+  { id: 'largeroof', label: 'Large Roof', labelTh: 'หลังคาขนาดใหญ่' },
+  { id: 'field', label: 'Solar Field', labelTh: 'โซลาร์ฟาร์ม' },
 ] as const;
 
 type HouseType = (typeof HOUSE_TYPES)[number]['id'];
@@ -56,9 +59,37 @@ const BEATS = [
   },
 ] as const;
 
+/** Per-context copy for the 6 beats. Ground-mount ("field") tells a land story;
+ *  everything with a roof (incl. factory / large roof) uses the roof story. */
+const BEAT_COPY = {
+  roof: BEATS.map((b) => ({ label: b.label, description: b.description })),
+  field: [
+    { label: 'Your Land Today', description: 'Every solar field starts with the land you already have.' },
+    { label: 'Civil & Foundations', description: 'Ground screws or concrete footings — set for decades of stability.' },
+    { label: 'Mounting & Racking', description: 'Hot-dip galvanized tables, engineered for wind and tropical soil.' },
+    { label: 'Panels Go On', description: 'Tier-1 modules at optimal tilt — row after row, maximum yield.' },
+    { label: 'Energized & Exporting', description: 'Inverters, transformer and grid tie — utility-scale power online.' },
+    { label: 'Built To Last', description: 'Walk the rows — clean alignment, engineered for 25+ years.' },
+  ],
+} as const;
+
+function beatKind(type: HouseType): keyof typeof BEAT_COPY {
+  return type === 'field' ? 'field' : 'roof';
+}
+
 type Manifest = { ext: string } & Record<HouseType, number>;
 
-const LEGACY: Manifest = { ext: 'jpg', concrete: 63, villa: 63, tropical: 63 };
+// Legacy 63-frame JPEG fallback. New types are 0 here (no legacy set) — they
+// only appear as tabs once the smooth manifest reports frames for them.
+const LEGACY: Manifest = {
+  ext: 'jpg',
+  concrete: 63,
+  villa: 63,
+  tropical: 63,
+  factory: 0,
+  largeroof: 0,
+  field: 0,
+};
 
 function framePath(type: HouseType, frame: number, ext: string) {
   const dir = ext === 'webp' ? 'frames-smooth' : 'frames';
@@ -228,14 +259,25 @@ export default function SolarInstallationScroll() {
   }, [loadedCount, count, activeType, manifest]);
 
   const switching = loadedCount === 0;
-  const active = useMemo(() => BEATS[beat], [beat]);
+  const active = useMemo(() => {
+    const base = BEATS[beat];
+    const copy = BEAT_COPY[beatKind(activeType)][beat];
+    return { side: base.side, label: copy.label, description: copy.description };
+  }, [beat, activeType]);
+
+  // Only show tabs for types that actually have frames (smooth manifest or
+  // legacy). Keeps new types dormant until their frames + manifest land.
+  const availableTypes = useMemo(
+    () => HOUSE_TYPES.filter((t) => typeof manifest[t.id] === 'number' && manifest[t.id] > 0),
+    [manifest]
+  );
 
   return (
     <section ref={containerRef} className="relative" style={{ height: '500vh' }}>
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden bg-[var(--bustan-shell)]">
         {/* House type tabs */}
-        <div className="absolute top-6 z-20 flex gap-2">
-          {HOUSE_TYPES.map((type) => (
+        <div className="absolute top-6 z-20 flex flex-wrap justify-center gap-2 px-4">
+          {availableTypes.map((type) => (
             <button
               key={type.id}
               onClick={() => setActiveType(type.id)}

@@ -6,10 +6,19 @@ cd "$(dirname "$0")/.."
 
 SRC="public/frames"
 OUT="public/frames-smooth"
-TYPES=(concrete villa tropical)
+TYPES=(concrete villa tropical factory largeroof field)
 
 manifest="{"
 for type in "${TYPES[@]}"; do
+  # Skip types that don't have source frames yet (new types added incrementally).
+  if [ ! -f "$SRC/$type/001.jpg" ]; then
+    echo "── $type: no source frames at $SRC/$type — skipping"
+    if [ -d "$OUT/$type" ]; then
+      count=$(ls "$OUT/$type" | grep -c '.webp' || true)
+      [ "$count" -gt 0 ] && manifest="$manifest\"$type\":$count,"
+    fi
+    continue
+  fi
   tmp=$(mktemp -d)
   echo "── $type: interpolating…"
   nice -n 15 ffmpeg -y -loglevel error -framerate 25 -i "$SRC/$type/%03d.jpg" \
