@@ -15,6 +15,7 @@ const HOUSE_TYPES = [
   { id: 'factory', label: 'Factory Roof', labelTh: 'หลังคาโรงงาน' },
   { id: 'largeroof', label: 'Large Roof', labelTh: 'หลังคาขนาดใหญ่' },
   { id: 'field', label: 'Solar Field', labelTh: 'โซลาร์ฟาร์ม' },
+  { id: 'parking', label: 'Parking Canopy', labelTh: 'หลังคาที่จอดรถ' },
 ] as const;
 
 type HouseType = (typeof HOUSE_TYPES)[number]['id'];
@@ -71,10 +72,20 @@ const BEAT_COPY = {
     { label: 'Energized & Exporting', description: 'Inverters, transformer and grid tie — utility-scale power online.' },
     { label: 'Built To Last', description: 'Walk the rows — clean alignment, engineered for 25+ years.' },
   ],
+  parking: [
+    { label: 'Your Parking Lot Today', description: 'Every solar carport starts with the asphalt you already have.' },
+    { label: 'Foundations & Columns', description: 'Galvanized steel columns set on engineered footings.' },
+    { label: 'Canopy Structure', description: 'The carport frame goes up — shade and strength in one.' },
+    { label: 'Panels Go On', description: 'Tier-1 panels cap the canopy — power above, parking below.' },
+    { label: 'Fully Installed', description: 'Producing clean power while shading every bay.' },
+    { label: 'Built To Last', description: 'Walk the rows — engineered for sun, storms and 25+ years.' },
+  ],
 } as const;
 
 function beatKind(type: HouseType): keyof typeof BEAT_COPY {
-  return type === 'field' ? 'field' : 'roof';
+  if (type === 'field') return 'field';
+  if (type === 'parking') return 'parking';
+  return 'roof';
 }
 
 type Manifest = { ext: string } & Record<HouseType, number>;
@@ -89,6 +100,7 @@ const LEGACY: Manifest = {
   factory: 0,
   largeroof: 0,
   field: 0,
+  parking: 0,
 };
 
 function framePath(type: HouseType, frame: number, ext: string) {
