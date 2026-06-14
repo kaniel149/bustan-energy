@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { area as turfArea } from '@turf/area'
 import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
+import type { Property } from '../../types'
 import { REGIONS } from '../../lib/regions'
 import { updateRoofGeom, confirmDetectedRoof, createScanRequest, fetchScanRequests, setScanCandidateStatus } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
@@ -247,7 +248,6 @@ export function SolarMap() {
         duration: 900,
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviewCandidate])
 
   const handleConfirmCandidate = async () => {
@@ -604,27 +604,59 @@ export function SolarMap() {
   }, [filteredProperties, filters.showRoofDetection, properties, setSelectedProperty])
 
   // Detected-roof candidate layer (review) — P3
+  // Perf at scale (up to 5000 candidates per region): the source is built ONCE
+  // and updated via setData() on every roofCandidates change (approve/reject of
+  // a single candidate must NOT tear down + re-add 5000 polygons). Geometry is
+  // memoised per candidate, and the click handler resolves via an id→candidate
+  // Map (O(1)) read through a ref so handlers never need rebinding.
   const candHandlers = useRef<Array<{ type: LayerMouseEventType; layer: string; handler: LayerMouseHandler }>>([])
+  const candByIdRef = useRef<Map<string, Property>>(new Map())
+  const candFeatureCacheRef = useRef<Map<string, GeoJSON.Feature | null>>(new Map())
   useEffect(() => {
     const m = map.current
     if (!m) return
 
     const CAND_LAYERS = ['cand-fill', 'cand-outline']
 
-    const setup = () => {
+    // Build the FeatureCollection, reusing cached geometry per candidate
+    // (key = id:area so an area-edit invalidates just that one). Also refresh
+    // the id→candidate lookup the click handler reads.
+    const buildFC = (): GeoJSON.FeatureCollection => {
+      const cache = candFeatureCacheRef.current
+      const byId = new Map<string, Property>()
+      const liveKeys = new Set<string>()
+      const features: GeoJSON.Feature[] = []
+      for (const c of roofCandidates) {
+        byId.set(c.id, c)
+        const key = `${c.id}:${c.area ?? ''}`
+        liveKeys.add(key)
+        let f = cache.get(key)
+        if (f === undefined) { f = buildRoofFeature(c); cache.set(key, f) }
+        if (f) features.push(f)
+      }
+      for (const k of cache.keys()) if (!liveKeys.has(k)) cache.delete(k)
+      candByIdRef.current = byId
+      return { type: 'FeatureCollection', features }
+    }
+
+    const teardown = () => {
       for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
       candHandlers.current = []
       for (const id of CAND_LAYERS) { if (m.getLayer(id)) m.removeLayer(id) }
       if (m.getSource('cand-src')) m.removeSource('cand-src')
+    }
 
-      if (!filters.showRoofDetection || roofCandidates.length === 0) return
+    const setup = () => {
+      if (!filters.showRoofDetection || roofCandidates.length === 0) { teardown(); return }
 
-      const features = roofCandidates
-        .map((c) => buildRoofFeature(c))
-        .filter((f): f is GeoJSON.Feature => f !== null)
-      if (features.length === 0) return
+      const fc = buildFC()
+      if (fc.features.length === 0) { teardown(); return }
 
-      m.addSource('cand-src', { type: 'geojson', data: { type: 'FeatureCollection', features } })
+      // FAST PATH: source already exists → just push new data, keep layers/handlers.
+      const existing = m.getSource('cand-src') as maplibregl.GeoJSONSource | undefined
+      if (existing) { existing.setData(fc); return }
+
+      m.addSource('cand-src', { type: 'geojson', data: fc })
       const candBeforeId = ['cluster-glow', 'props-roofs-glow', 'props-land-glow', 'clusters'].find((id) => m.getLayer(id))
       const safeCandBeforeId = candBeforeId && m.getLayer(candBeforeId) ? candBeforeId : undefined
       m.addLayer({
@@ -647,7 +679,7 @@ export function SolarMap() {
         const f = e.features?.[0]
         if (!f) return
         const id = (f.properties as Record<string, string>).id
-        const cand = roofCandidates.find((c) => c.id === id)
+        const cand = candByIdRef.current.get(id)   // O(1), reads latest via ref
         if (cand) {
           setReviewCandidate(cand)    // highlight on map + in review panel
           setSelectedProperty(cand)   // open sidebar with approve/reject for this pending candidate
@@ -657,13 +689,12 @@ export function SolarMap() {
 
     if (m.isStyleLoaded()) setup()
     else m.once('load', setup)
-    m.on('style.load', setup)
+    // style.load wipes layers → rebuild from scratch (handlers gone with the style)
+    const onStyleLoad = () => { candHandlers.current = []; setup() }
+    m.on('style.load', onStyleLoad)
 
     return () => {
-      m.off('style.load', setup)
-      if (!m) return
-      for (const { type, layer, handler } of candHandlers.current) m.off(type, layer, handler)
-      candHandlers.current = []
+      m.off('style.load', onStyleLoad)
     }
   }, [roofCandidates, filters.showRoofDetection, setReviewCandidate, setSelectedProperty])
 
@@ -1181,12 +1212,14 @@ export function SolarMap() {
       for (const id of ['dc-src', 'dc-radius-src']) { if (m.getSource(id)) m.removeSource(id) }
       if (dcPopupRef.current) { dcPopupRef.current.remove(); dcPopupRef.current = null }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.showDataCenters])
 
   // Track if layers have been set up (to avoid re-creating on data-only changes)
   const propsLayersReady = useRef(false)
   const eventHandlers = useRef<Array<{ type: LayerMouseEventType; layer: string; handler: LayerMouseHandler }>>([])
+  // id→property lookup the click handler reads (O(1), and always current even
+  // when the handler was bound on an earlier filteredProperties via setData path).
+  const propsByIdRef = useRef<Map<string, Property>>(new Map())
 
   // Properties layer with clustering
   useEffect(() => {
@@ -1194,6 +1227,11 @@ export function SolarMap() {
     if (!m) return
 
     const PROP_LAYERS = ['cluster-glow', 'clusters', 'cluster-count', 'props-roofs-glow', 'props-roofs', 'props-land-glow', 'props-land']
+
+    // Refresh the O(1) click lookup on every data change (cheap; up to ~5k entries).
+    const byId = new Map<string, Property>()
+    for (const p of filteredProperties) byId.set(p.id, p)
+    propsByIdRef.current = byId
 
     const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',
@@ -1383,9 +1421,9 @@ export function SolarMap() {
           const f = e.features?.[0]
           if (!f) return
           const propId = (f.properties as Record<string, string>).id
-          // Look up in filteredProperties (includes the merged Colliers properties)
-          // — `properties` alone excludes Colliers, so their markers couldn't be selected.
-          const property = filteredProperties.find((p) => p.id === propId)
+          // O(1) lookup via ref (kept current on every data change); includes the
+          // merged Colliers properties that `properties` alone would exclude.
+          const property = propsByIdRef.current.get(propId)
           if (property) setSelectedProperty(property)
         })
       }
@@ -1409,7 +1447,9 @@ export function SolarMap() {
       eventHandlers.current = []
       propsLayersReady.current = false
     }
-  }, [filteredProperties, properties, setSelectedProperty])
+    // `filteredProperties` already derives from `properties`, so it's the single
+    // source of truth — depending on `properties` too would double-run this effect.
+  }, [filteredProperties, setSelectedProperty])
 
   return (
     <>
