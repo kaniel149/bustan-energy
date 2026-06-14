@@ -52,6 +52,7 @@ interface AppState {
   roofCandidates: Property[]
   setRoofCandidates: (candidates: Property[]) => void
   removeRoofCandidate: (id: string) => void
+  updateRoofCandidate: (id: string, patch: Partial<Property>) => void
   reviewCandidate: Property | null
   setReviewCandidate: (candidate: Property | null) => void
 
@@ -178,6 +179,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   setRoofCandidates: (candidates) => set({ roofCandidates: candidates }),
   removeRoofCandidate: (id) =>
     set((state) => ({ roofCandidates: state.roofCandidates.filter((c) => c.id !== id) })),
+  updateRoofCandidate: (id, patch) =>
+    set((state) => ({
+      roofCandidates: state.roofCandidates.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+      reviewCandidate:
+        state.reviewCandidate?.id === id ? { ...state.reviewCandidate, ...patch } : state.reviewCandidate,
+    })),
   reviewCandidate: null,
   setReviewCandidate: (candidate) => set({ reviewCandidate: candidate }),
 

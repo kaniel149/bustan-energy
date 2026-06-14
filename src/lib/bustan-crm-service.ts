@@ -26,7 +26,7 @@ import {
   type PropertyInput,
 } from './owner-decision-layer'
 import { regionFromLead } from './region-utils'
-import type { Property, ScanRequest } from '../types'
+import type { Property, ScanRequest, RoofPriority } from '../types'
 
 export interface BustanPropertyRow {
   id: string
@@ -520,6 +520,70 @@ export async function setScanCandidateStatus(
   })
   if (error) return { ok: false, error: error.message }
   return { ok: true }
+}
+
+/** Reasons an operator can give when rejecting a roof candidate. */
+export type RejectionReason = 'has_pv' | 'not_a_roof' | 'too_small' | 'other'
+
+/**
+ * Reject a candidate WITH a reason (global learning). Spatial reasons
+ * (not_a_roof / too_small / other) seed a global `scan_exclusions` row so the
+ * scan worker never re-surfaces that spot for any scanner. 'has_pv' relies on
+ * the existing existing_solar detection instead. RPC: bustan.reject_scan_candidate.
+ */
+export async function rejectScanCandidate(
+  id: string,
+  reason: RejectionReason,
+): Promise<WriteResult> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { error } = await bustanSupabase.rpc('reject_scan_candidate', {
+    p_id: id,
+    p_reason: reason,
+  })
+  if (error) return { ok: false, error: error.message }
+  return { ok: true }
+}
+
+/**
+ * Re-apply learned lessons to the CURRENT pending list: bulk-rejects pending
+ * roof candidates that (a) have existing PV, or (b) sit within ~30 m of a
+ * location you previously rejected. RPC: bustan.apply_learned_filters → count.
+ */
+export async function applyLearnedFilters(): Promise<WriteResult & { removed?: number }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { data, error } = await bustanSupabase.rpc('apply_learned_filters')
+  if (error) return { ok: false, error: error.message }
+  return { ok: true, removed: typeof data === 'number' ? data : 0 }
+}
+
+/**
+ * Correct a ROOF candidate's area during review (the detected footprint is
+ * sometimes wrong). The SECURITY DEFINER RPC `bustan.update_scan_candidate_area`
+ * (role-gated admin/sales/engineer) writes roof_area_sqm and recomputes
+ * estimated_kwp + priority with the scan worker's formula, returning the new
+ * values so the UI can update without a refetch.
+ */
+export async function updateScanCandidateArea(
+  id: string,
+  areaSqm: number,
+): Promise<WriteResult & { areaSqm?: number; kwp?: number; priority?: RoofPriority }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { data, error } = await bustanSupabase.rpc('update_scan_candidate_area', {
+    p_id: id,
+    p_area_sqm: areaSqm,
+  })
+  if (error) return { ok: false, error: error.message }
+  // RPC returns a single-row table: [{ id, roof_area_sqm, estimated_kwp, priority }]
+  const row = Array.isArray(data) ? data[0] : data
+  const prio = typeof row?.priority === 'string' ? row.priority : undefined
+  return {
+    ok: true,
+    areaSqm: row?.roof_area_sqm != null ? Number(row.roof_area_sqm) : areaSqm,
+    kwp: row?.estimated_kwp != null ? Number(row.estimated_kwp) : undefined,
+    priority: (['A', 'B', 'C', 'D'] as const).includes(prio as RoofPriority)
+      ? (prio as RoofPriority)
+      : undefined,
+  }
 }
 
 // --- On-demand scan engine (P4) --------------------------------------------

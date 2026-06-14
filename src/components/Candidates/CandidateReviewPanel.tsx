@@ -13,22 +13,35 @@
  *   - "Hide existing PV" toggle in the panel header (default ON) filters them out.
  *     The count of hidden rows is displayed: "N hidden (existing PV)".
  *
- * Uses existing service calls — no new backend surface:
- *   setScanCandidateStatus  → marks 'added' | 'rejected' in scan_candidates
- *   confirmDetectedRoof     → inserts property row (called after marking 'added')
- *   setReviewCandidate      → focuses the map overlay on the selected candidate
+ * Reject-reason flow (Task 1):
+ *   Clicking ✕ on a row opens the RejectReasonMenu inline (replaces action
+ *   buttons) for that specific row. Picking a reason calls rejectScanCandidate
+ *   (reason-aware RPC) then removes the row + shows a toast.
+ *   Bulk-reject uses 'other' as reason for each item (no per-item picker).
+ *
+ * Re-scan list (Task 2):
+ *   "🔄 Re-scan list" button in the tally bar calls applyLearnedFilters()
+ *   then does a real refetch via fetchScanCandidates() and updates the store.
  */
 import { useState, useMemo, useCallback } from 'react'
-import { Check, X, ChevronDown, ChevronUp, MapPin, Zap, Loader2, Eye, EyeOff } from 'lucide-react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
+import { Check, X, ChevronDown, ChevronUp, MapPin, Zap, Loader2, Eye, EyeOff, Pencil, RefreshCw } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import {
   setScanCandidateStatus,
   confirmDetectedRoof,
+  updateScanCandidateArea,
+  rejectScanCandidate,
+  applyLearnedFilters,
+  fetchScanCandidates,
 } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
 import { FloatingPanel } from '../ui/FloatingPanel'
+import { RejectReasonMenu } from './RejectReasonMenu'
+import { rejectionLabel } from '../../lib/rejection-reason-label'
+import type { RejectionReason } from '../../lib/bustan-crm-service'
 import type { Property } from '../../types'
 
 // ── Tier badge config ────────────────────────────────────────────────────────
@@ -43,13 +56,31 @@ interface RowProps {
   candidate: Property
   selected: boolean
   working: boolean
+  canEdit: boolean
+  rejectingId: string | null
   onSelect: (id: string) => void
   onFocus: (c: Property) => void
   onApprove: (c: Property) => void
-  onReject: (c: Property) => void
+  onRejectStart: (id: string) => void
+  onRejectPick: (c: Property, reason: RejectionReason) => void
+  onRejectCancel: () => void
+  onEditArea: (c: Property, areaSqm: number) => Promise<void>
 }
 
-function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onApprove, onReject }: RowProps) {
+function CandidateRow({
+  candidate: c,
+  selected,
+  working,
+  canEdit,
+  rejectingId,
+  onSelect,
+  onFocus,
+  onApprove,
+  onRejectStart,
+  onRejectPick,
+  onRejectCancel,
+  onEditArea,
+}: RowProps) {
   const isLand = c.type === 'land'
   const kwp = c.capacityKwp ?? 0
   const capacityLabel = isLand && kwp >= 1000
@@ -60,9 +91,32 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
     ? c.sizeRai != null ? `${c.sizeRai.toFixed(1)} rai` : c.sizeM2 ? `${(c.sizeM2 / 1600).toFixed(1)} rai` : ''
     : c.area ? `${Math.round(c.area).toLocaleString()} m²` : ''
 
+  // Inline roof-area edit (roof candidates only — the detected footprint is
+  // sometimes wrong; reviewer corrects it and kWp/priority recompute server-side).
+  const canEditArea = canEdit && !isLand
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const beginEdit = (e: ReactMouseEvent) => {
+    e.stopPropagation()
+    setDraft(c.area ? String(Math.round(c.area)) : '')
+    setEditing(true)
+  }
+  const commitEdit = async () => {
+    const v = Math.round(Number(draft))
+    if (!Number.isFinite(v) || v <= 0) { setEditing(false); return }
+    if (c.area && Math.round(c.area) === v) { setEditing(false); return }
+    setSaving(true)
+    await onEditArea(c, v)
+    setSaving(false)
+    setEditing(false)
+  }
+
   const tier = c.tier ? TIER_STYLE[c.tier] : null
   const hasPv = c.existingSolar === true
   const pvPending = c.existingSolar === undefined && c.solarCheckedAt === undefined
+  const isRejectingThis = rejectingId === c.id
 
   return (
     <div
@@ -107,11 +161,51 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
           )}
         </div>
         <div className="flex items-center gap-2 mt-0.5">
-          {areaLabel && (
-            <span className="text-[10px] text-white/40 flex items-center gap-0.5">
-              <MapPin size={8} className="shrink-0" />
-              {areaLabel}
+          {editing ? (
+            <span
+              className="flex items-center gap-1"
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <MapPin size={8} className="shrink-0 text-white/40" />
+              <input
+                type="number"
+                inputMode="numeric"
+                autoFocus
+                value={draft}
+                disabled={saving}
+                onChange={(e) => setDraft(e.target.value)}
+                onBlur={commitEdit}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); commitEdit() }
+                  if (e.key === 'Escape') { e.preventDefault(); setEditing(false) }
+                }}
+                className="w-16 bg-white/10 border border-[#E8A820]/50 rounded px-1 py-0.5 text-[10px] text-white outline-none focus:border-[#E8A820]"
+              />
+              <span className="text-[9px] text-white/40">m²</span>
+              {saving && <Loader2 size={9} className="animate-spin text-[#E8A820]" />}
             </span>
+          ) : (
+            areaLabel && (
+              <span className="text-[10px] text-white/40 flex items-center gap-0.5">
+                <MapPin size={8} className="shrink-0" />
+                {areaLabel}
+                {canEditArea && (
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={beginEdit}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => { if (e.key === 'Enter') beginEdit(e as unknown as ReactMouseEvent) }}
+                    className="ml-0.5 text-white/30 hover:text-[#E8A820] transition-colors cursor-pointer"
+                    title="Edit roof area"
+                    aria-label="Edit roof area"
+                  >
+                    <Pencil size={8} />
+                  </span>
+                )}
+              </span>
+            )
           )}
           {capacityLabel !== '—' && (
             <span className="text-[10px] text-[#E8A820] flex items-center gap-0.5">
@@ -122,10 +216,17 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
         </div>
       </button>
 
-      {/* Action buttons */}
+      {/* Action buttons OR reason picker */}
       <div className="flex items-center gap-1 shrink-0">
         {working ? (
           <Loader2 size={14} className="animate-spin text-white/40" />
+        ) : isRejectingThis ? (
+          // Inline reason picker replaces the action buttons for this row
+          <RejectReasonMenu
+            compact
+            onPick={(reason) => onRejectPick(c, reason)}
+            onCancel={onRejectCancel}
+          />
         ) : (
           <>
             <button
@@ -136,7 +237,7 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
               <Check size={12} />
             </button>
             <button
-              onClick={() => onReject(c)}
+              onClick={() => onRejectStart(c.id)}
               className="w-7 h-7 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition-colors"
               title="Reject"
             >
@@ -153,6 +254,8 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
 export function CandidateReviewPanel() {
   const roofCandidates = useAppStore((s) => s.roofCandidates)
   const removeRoofCandidate = useAppStore((s) => s.removeRoofCandidate)
+  const updateRoofCandidate = useAppStore((s) => s.updateRoofCandidate)
+  const setRoofCandidates = useAppStore((s) => s.setRoofCandidates)
   const setReviewCandidate = useAppStore((s) => s.setReviewCandidate)
   const setProperties = useAppStore((s) => s.setProperties)
   const approvedTodayCount = useAppStore((s) => s.approvedTodayCount)
@@ -171,6 +274,10 @@ export function CandidateReviewPanel() {
   const [bulkWorking, setBulkWorking] = useState(false)
   // Hide existing PV toggle (default ON)
   const [hideExistingPv, setHideExistingPv] = useState(true)
+  // Which row currently has its reason menu open (only one at a time)
+  const [rejectingId, setRejectingId] = useState<string | null>(null)
+  // Re-scan running flag
+  const [reScanWorking, setReScanWorking] = useState(false)
 
   // Sort by capacity desc (highest potential first)
   const sorted = useMemo(
@@ -207,6 +314,18 @@ export function CandidateReviewPanel() {
     setReviewCandidate(c)
   }, [setReviewCandidate])
 
+  // Correct a roof candidate's area → server recomputes kWp + priority.
+  const handleEditArea = useCallback(async (c: Property, areaSqm: number) => {
+    const res = await updateScanCandidateArea(c.id, areaSqm)
+    if (!res.ok) { showToast(res.error ?? 'Failed to update area', 'error'); return }
+    updateRoofCandidate(c.id, {
+      area: res.areaSqm ?? areaSqm,
+      capacityKwp: res.kwp ?? c.capacityKwp,
+      priority: res.priority ?? c.priority,
+    })
+    showToast(`Area updated → ${res.kwp != null ? `${Math.round(res.kwp)} kWp` : 'recomputed'}`, 'success')
+  }, [updateRoofCandidate, showToast])
+
   // Approve single candidate
   const handleApprove = useCallback(async (c: Property) => {
     setWorking((w) => ({ ...w, [c.id]: true }))
@@ -228,14 +347,27 @@ export function CandidateReviewPanel() {
     }
   }, [removeRoofCandidate, setProperties, setReviewCandidate, incrementApprovedToday, showToast])
 
-  // Reject single candidate
-  const handleReject = useCallback(async (c: Property) => {
+  // Open the reason picker for a specific row
+  const handleRejectStart = useCallback((id: string) => {
+    setRejectingId(id)
+  }, [])
+
+  // Close the reason picker without rejecting
+  const handleRejectCancel = useCallback(() => {
+    setRejectingId(null)
+  }, [])
+
+  // Commit a rejection with a reason
+  const handleRejectPick = useCallback(async (c: Property, reason: RejectionReason) => {
+    setRejectingId(null)
     setWorking((w) => ({ ...w, [c.id]: true }))
     try {
-      await setScanCandidateStatus(c.id, 'rejected')
+      const res = await rejectScanCandidate(c.id, reason)
+      if (!res.ok) { showToast(res.error ?? 'Failed to reject', 'error'); return }
       removeRoofCandidate(c.id)
       setSelected((prev) => { const next = new Set(prev); next.delete(c.id); return next })
       if (useAppStore.getState().reviewCandidate?.id === c.id) setReviewCandidate(null)
+      showToast(`Rejected: ${rejectionLabel(reason)}`, 'info')
     } catch {
       showToast('Failed to reject candidate', 'error')
     } finally {
@@ -270,7 +402,7 @@ export function CandidateReviewPanel() {
     showToast(`${approved} candidate${approved !== 1 ? 's' : ''} approved`, 'success')
   }, [selected, roofCandidates, setProperties, removeRoofCandidate, setReviewCandidate, incrementApprovedToday, showToast])
 
-  // Bulk reject
+  // Bulk reject — uses 'other' as reason per item (no per-item picker for bulk)
   const handleBulkReject = useCallback(async () => {
     const ids = [...selected]
     if (ids.length === 0) return
@@ -279,7 +411,7 @@ export function CandidateReviewPanel() {
       const c = roofCandidates.find((x) => x.id === id)
       if (!c) continue
       try {
-        await setScanCandidateStatus(c.id, 'rejected')
+        await rejectScanCandidate(c.id, 'other')
         removeRoofCandidate(c.id)
       } catch { /* continue */ }
     }
@@ -288,6 +420,32 @@ export function CandidateReviewPanel() {
     setReviewCandidate(null)
     showToast(`${ids.length} candidate${ids.length !== 1 ? 's' : ''} rejected`, 'info')
   }, [selected, roofCandidates, removeRoofCandidate, setReviewCandidate, showToast])
+
+  // Re-scan list: apply learned filters server-side, then real-refetch candidates
+  const handleReScan = useCallback(async () => {
+    setReScanWorking(true)
+    try {
+      const res = await applyLearnedFilters()
+      if (!res.ok) {
+        showToast(res.error ?? 'Re-scan failed', 'error')
+        return
+      }
+      // Real refetch so the list reflects the server state
+      const refreshed = await fetchScanCandidates()
+      setRoofCandidates(refreshed)
+      const removed = res.removed ?? 0
+      showToast(
+        removed > 0
+          ? `Removed ${removed} (learned: existing PV + rejected zones)`
+          : 'List up to date — no new matches',
+        'info',
+      )
+    } catch {
+      showToast('Re-scan failed', 'error')
+    } finally {
+      setReScanWorking(false)
+    }
+  }, [setRoofCandidates, showToast])
 
   if (!canReview || sorted.length === 0) return null
 
@@ -318,6 +476,18 @@ export function CandidateReviewPanel() {
         {approvedTodayCount > 0 && (
           <span className="text-[10px] text-[#2ED89A]">· {approvedTodayCount} approved today</span>
         )}
+        {/* Re-scan list button */}
+        <button
+          onClick={handleReScan}
+          disabled={reScanWorking}
+          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-[#E8A820]/40 text-[#E8A820]/80 text-[9px] hover:border-[#E8A820]/70 hover:text-[#E8A820] transition-colors disabled:opacity-50"
+          title="Auto-reject pending roofs with panels or near spots you rejected"
+        >
+          {reScanWorking
+            ? <Loader2 size={9} className="animate-spin" />
+            : <RefreshCw size={9} />}
+          Re-scan list
+        </button>
       </div>
       <div className="flex items-center gap-1">
         {selected.size > 0 ? (
@@ -368,10 +538,15 @@ export function CandidateReviewPanel() {
           candidate={c}
           selected={selected.has(c.id)}
           working={!!working[c.id]}
+          canEdit={canReview}
+          rejectingId={rejectingId}
           onSelect={toggleSelect}
           onFocus={handleFocus}
           onApprove={handleApprove}
-          onReject={handleReject}
+          onRejectStart={handleRejectStart}
+          onRejectPick={handleRejectPick}
+          onRejectCancel={handleRejectCancel}
+          onEditArea={handleEditArea}
         />
       ))}
     </div>

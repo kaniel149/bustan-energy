@@ -7,8 +7,11 @@
 export const config = { runtime: 'edge' }
 
 import { isAllowedAdmin } from './_lib/admin-access.js'
-import { supaGetAll, supaPatch } from './_lib/supa.js'
+import { bGet, bPatch } from './_lib/bustan-db.js'
 
+// SUPABASE_URL/KEY here are used ONLY to verify the admin session against the
+// main project's auth (users live in the main project). The outreach_messages
+// data lives in the separate bustan project, reached via bGet/bPatch.
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
@@ -50,7 +53,7 @@ export default async function handler(req: Request): Promise<Response> {
     if (!VALID_STATUSES.includes(status as (typeof VALID_STATUSES)[number])) {
       return Response.json({ ok: false, error: 'bad_status' }, { status: 400 })
     }
-    const rows = await supaGetAll(
+    const rows = await bGet(
       `outreach_messages?status=eq.${status}` +
         `&select=id,property_id,channel,language,recipient,subject,body,facts,status,created_at,sent_at` +
         `&order=created_at.desc&limit=200`,
@@ -64,7 +67,7 @@ export default async function handler(req: Request): Promise<Response> {
     const now = new Date().toISOString()
 
     if (b.action === 'approve' && b.id && UUID_RE.test(b.id)) {
-      await supaPatch(`outreach_messages?id=eq.${b.id}&status=eq.draft`, {
+      await bPatch(`outreach_messages?id=eq.${b.id}&status=eq.draft`, {
         status: 'approved', approved_by: admin, approved_at: now,
       })
       return Response.json({ ok: true })
@@ -77,13 +80,13 @@ export default async function handler(req: Request): Promise<Response> {
       b.ids.every((i) => UUID_RE.test(i))
     ) {
       const list = b.ids.map((i) => `"${i}"`).join(',')
-      await supaPatch(`outreach_messages?id=in.(${list})&status=eq.draft`, {
+      await bPatch(`outreach_messages?id=in.(${list})&status=eq.draft`, {
         status: 'approved', approved_by: admin, approved_at: now,
       })
       return Response.json({ ok: true, count: b.ids.length })
     }
     if (b.action === 'skip' && b.id && UUID_RE.test(b.id)) {
-      await supaPatch(`outreach_messages?id=eq.${b.id}&status=eq.draft`, { status: 'skipped' })
+      await bPatch(`outreach_messages?id=eq.${b.id}&status=eq.draft`, { status: 'skipped' })
       return Response.json({ ok: true })
     }
     if (
@@ -93,7 +96,7 @@ export default async function handler(req: Request): Promise<Response> {
       typeof b.body === 'string' &&
       b.body.trim()
     ) {
-      await supaPatch(`outreach_messages?id=eq.${b.id}&status=eq.draft`, {
+      await bPatch(`outreach_messages?id=eq.${b.id}&status=eq.draft`, {
         body: b.body,
         ...(typeof b.subject === 'string' ? { subject: b.subject } : {}),
       })

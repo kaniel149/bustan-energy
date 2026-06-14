@@ -30,6 +30,7 @@ const Scanner = lazy(() => import('../components/Scanner/Scanner').then((m) => (
 const MobileBottomNav = lazy(() => import('../components/MobileNav/MobileBottomNav').then((m) => ({ default: m.MobileBottomNav })))
 const CRMDashboard = lazy(() => import('../components/CRM/Dashboard'))
 const CRMPipeline = lazy(() => import('../components/CRM/Pipeline'))
+const OutreachPanel = lazy(() => import('../components/Outreach/OutreachPanel'))
 const ColliersPortfolio = lazy(() =>
   import('../components/Colliers/ColliersPortfolio').then((m) => ({ default: m.ColliersPortfolio })),
 )
@@ -365,6 +366,15 @@ export default function PlatformPage() {
             <Scanner />
           </Suspense>
         )
+      )}
+
+      {/* Outreach view — personalized first-touch approval queue */}
+      {platformView === 'outreach' && (
+        <div className="absolute inset-0 top-[52px] z-10 bg-[#0A1628] overflow-y-auto">
+          <Suspense fallback={<ViewLoader />}>
+            <OutreachPanel />
+          </Suspense>
+        </div>
       )}
 
       {/* Pipeline view */}

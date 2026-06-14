@@ -1,4 +1,4 @@
-import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download, Home, Building, Server } from 'lucide-react'
+import { Search, Map, Satellite, Globe, Zap, ZapOff, SlidersHorizontal, X, Circle, Building2, LogIn, LogOut, Grid3X3, Kanban, BarChart3, Download, Home, Building, Server, Send } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppStore } from '../../lib/store'
@@ -37,9 +37,10 @@ const CATEGORY_CONFIG: Record<CategoryFilter, { label: string; icon: string }> =
   other: { label: 'Other', icon: '📍' },
 }
 
-const VIEW_TAB_DEFS: { view: PlatformView; icon: typeof Map; key: 'map' | 'scanner' | 'pipeline' | 'dashboard' | 'colliers' }[] = [
+const VIEW_TAB_DEFS: { view: PlatformView; icon: typeof Map; key: 'map' | 'scanner' | 'outreach' | 'pipeline' | 'dashboard' | 'colliers' }[] = [
   { view: 'map', icon: Map, key: 'map' },
   { view: 'scanner', icon: Grid3X3, key: 'scanner' },
+  { view: 'outreach', icon: Send, key: 'outreach' },
   { view: 'pipeline', icon: Kanban, key: 'pipeline' },
   { view: 'dashboard', icon: BarChart3, key: 'dashboard' },
   { view: 'colliers', icon: Building, key: 'colliers' },
