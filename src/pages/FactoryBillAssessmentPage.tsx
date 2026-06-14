@@ -15,6 +15,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { SEOHead } from '../components/seo/SEOHead'
+import { StickyWhatsApp } from '../components/layout/StickyWhatsApp'
 import { useLanguage } from '../i18n/useLanguage'
 
 const whatsappBase = 'https://wa.me/66946692011'
@@ -476,6 +477,8 @@ export default function FactoryBillAssessmentPage() {
           </a>
         </div>
       </section>
+
+      <StickyWhatsApp />
     </main>
   )
 }

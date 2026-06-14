@@ -13,6 +13,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { SEOHead } from '../components/seo/SEOHead'
+import { StickyWhatsApp } from '../components/layout/StickyWhatsApp'
 import { useLanguage } from '../i18n/useLanguage'
 
 const checklistUrl = '/assets/lead-magnets/bustan-resort-solar-battery-checklist.pdf'
@@ -388,6 +389,8 @@ export default function ResortSolarAssessmentPage() {
           </a>
         </div>
       </section>
+
+      <StickyWhatsApp />
     </main>
   )
 }
