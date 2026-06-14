@@ -13,7 +13,7 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-import { supaGetAll, supaPost } from './_lib/supa.js'
+import { bGet, bPost } from './_lib/bustan-db.js'
 import { calcSolar } from './_lib/outreach/assumptions.js'
 import {
   pickLanguage, buildPrompt, validateDraft, type OutreachFacts,
@@ -49,7 +49,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // 0. Capacity check
-  const pending = await supaGetAll<MsgRow>(
+  const pending = await bGet<MsgRow>(
     `outreach_messages?status=eq.draft&select=property_id`,
   )
   if (pending.length >= DRAFT_CAP) {
@@ -57,7 +57,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // 1. Contacts with an email
-  const owners = await supaGetAll<OwnerRow>(`owner_decision?select=property_id,data`)
+  const owners = await bGet<OwnerRow>(`owner_decision?select=property_id,data`)
   const withEmail = new Map<string, OwnerRow>()
   for (const o of owners) {
     const email = o.data?.decision_maker?.email || o.data?.company?.email
@@ -65,13 +65,13 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // 2. Properties already messaged on email channel (any live status)
-  const existing = await supaGetAll<MsgRow>(
+  const existing = await bGet<MsgRow>(
     `outreach_messages?channel=eq.email&status=not.in.(skipped,bounced)&select=property_id`,
   )
   const messaged = new Set(existing.map((m) => m.property_id))
 
   // 3. Candidate properties, biggest roofs first
-  const props = await supaGetAll<PropertyRow>(
+  const props = await bGet<PropertyRow>(
     `properties?roof_area_sqm=not.is.null&select=id,title,roof_area_sqm,area_name` +
     `&order=roof_area_sqm.desc.nullslast&limit=500`,
   )
@@ -87,7 +87,7 @@ export default async function handler(req: Request): Promise<Response> {
     manualIds ? manualIds.includes(p.id) : withEmail.has(p.id) && !messaged.has(p.id),
   )
 
-  const templates = await supaGetAll<TemplateRow>(
+  const templates = await bGet<TemplateRow>(
     `outreach_templates?channel=eq.email&active=eq.true&select=id,key,language,prompt`,
   )
 
@@ -122,7 +122,7 @@ export default async function handler(req: Request): Promise<Response> {
     const check = validateDraft(body, facts, 'email')
     if (!check.ok) { invalid++; continue } // discarded; regenerated on a future tick
 
-    if (await supaPost('outreach_messages', {
+    if (await bPost('outreach_messages', {
       property_id: prop.id,
       template_id: template.id,
       channel: 'email',

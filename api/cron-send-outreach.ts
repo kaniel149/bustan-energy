@@ -18,7 +18,7 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-import { supaGetAll, supaPatch } from './_lib/supa.js'
+import { bGet, bPatch } from './_lib/bustan-db.js'
 import { sendOutreachEmail, textToHtml } from './_lib/channels/email.js'
 
 const DAILY_CAP = 20
@@ -42,7 +42,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Daily cap: count emails sent since midnight UTC
   const today = new Date().toISOString().slice(0, 10)
-  const sentToday = await supaGetAll<{ id: string }>(
+  const sentToday = await bGet<{ id: string }>(
     `outreach_messages?channel=eq.email&status=eq.sent&sent_at=gte.${today}T00:00:00Z&select=id`,
   )
   const budget = DAILY_CAP - sentToday.length
@@ -50,7 +50,7 @@ export default async function handler(req: Request): Promise<Response> {
     return Response.json({ ok: true, skipped: 'daily_cap', sentToday: sentToday.length })
   }
 
-  const approved = await supaGetAll<OutMsg>(
+  const approved = await bGet<OutMsg>(
     `outreach_messages?channel=eq.email&status=eq.approved` +
     `&select=id,recipient,subject,body,status&order=approved_at.asc&limit=${budget}`,
   )
@@ -65,7 +65,7 @@ export default async function handler(req: Request): Promise<Response> {
   let sent = 0, failed = 0, patchFailed = 0
   for (const msg of approved) {
     if (!msg.recipient) {
-      await supaPatch(`outreach_messages?id=eq.${msg.id}&status=eq.approved`, {
+      await bPatch(`outreach_messages?id=eq.${msg.id}&status=eq.approved`, {
         status: 'bounced', error: 'no_recipient',
       })
       failed++
@@ -78,12 +78,12 @@ export default async function handler(req: Request): Promise<Response> {
 
     const res = await sendOutreachEmail(to, subject, textToHtml(msg.body))
     if (res.error) {
-      await supaPatch(`outreach_messages?id=eq.${msg.id}&status=eq.approved`, {
+      await bPatch(`outreach_messages?id=eq.${msg.id}&status=eq.approved`, {
         status: 'bounced', error: res.error,
       })
       failed++
     } else {
-      const patchRes = await supaPatch(`outreach_messages?id=eq.${msg.id}&status=eq.approved`, {
+      const patchRes = await bPatch(`outreach_messages?id=eq.${msg.id}&status=eq.approved`, {
         status: 'sent', sent_at: new Date().toISOString(), thread_ref: res.id ?? null,
       })
       if (!patchRes.ok) patchFailed++
