@@ -45,6 +45,13 @@ const REGIONS = {
   'chiang-mai':        [ 98.800, 18.600,  99.200, 19.100],
   'khon-kaen':         [102.600, 16.200, 103.200, 16.700],
   'nakhon-ratchasima': [101.800, 14.800, 102.400, 15.300],
+  // High-value industrial / commercial belts (factory roofs + ground-mount land)
+  'samut-prakan':      [100.550, 13.450, 100.850, 13.660],  // Bang Phli / Bang Pu estates
+  'samut-sakhon':      [100.150, 13.450, 100.450, 13.680],  // Mahachai industrial
+  'ayutthaya':         [100.450, 14.180, 100.820, 14.460],  // Rojana / Hi-Tech / Bang Pa-in
+  'chachoengsao':      [100.950, 13.450, 101.400, 13.950],  // Gateway City + EEC data centers
+  'prachinburi':       [101.200, 13.800, 101.780, 14.220],  // 304 Industrial Park
+  'phuket':            [ 98.270,  7.780,  98.450,  8.020],  // resorts + hotels (commercial PPA)
   'thailand':          [ 97.300,  5.600, 105.700, 20.500],
 }
 
