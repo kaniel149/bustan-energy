@@ -19,13 +19,15 @@
  *   setReviewCandidate      → focuses the map overlay on the selected candidate
  */
 import { useState, useMemo, useCallback } from 'react'
-import { Check, X, ChevronDown, ChevronUp, MapPin, Zap, Loader2, Eye, EyeOff } from 'lucide-react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
+import { Check, X, ChevronDown, ChevronUp, MapPin, Zap, Loader2, Eye, EyeOff, Pencil } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import {
   setScanCandidateStatus,
   confirmDetectedRoof,
+  updateScanCandidateArea,
 } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
 import { FloatingPanel } from '../ui/FloatingPanel'
@@ -43,13 +45,15 @@ interface RowProps {
   candidate: Property
   selected: boolean
   working: boolean
+  canEdit: boolean
   onSelect: (id: string) => void
   onFocus: (c: Property) => void
   onApprove: (c: Property) => void
   onReject: (c: Property) => void
+  onEditArea: (c: Property, areaSqm: number) => Promise<void>
 }
 
-function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onApprove, onReject }: RowProps) {
+function CandidateRow({ candidate: c, selected, working, canEdit, onSelect, onFocus, onApprove, onReject, onEditArea }: RowProps) {
   const isLand = c.type === 'land'
   const kwp = c.capacityKwp ?? 0
   const capacityLabel = isLand && kwp >= 1000
@@ -59,6 +63,28 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
   const areaLabel = isLand
     ? c.sizeRai != null ? `${c.sizeRai.toFixed(1)} rai` : c.sizeM2 ? `${(c.sizeM2 / 1600).toFixed(1)} rai` : ''
     : c.area ? `${Math.round(c.area).toLocaleString()} m²` : ''
+
+  // Inline roof-area edit (roof candidates only — the detected footprint is
+  // sometimes wrong; reviewer corrects it and kWp/priority recompute server-side).
+  const canEditArea = canEdit && !isLand
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const beginEdit = (e: ReactMouseEvent) => {
+    e.stopPropagation()
+    setDraft(c.area ? String(Math.round(c.area)) : '')
+    setEditing(true)
+  }
+  const commitEdit = async () => {
+    const v = Math.round(Number(draft))
+    if (!Number.isFinite(v) || v <= 0) { setEditing(false); return }
+    if (c.area && Math.round(c.area) === v) { setEditing(false); return }
+    setSaving(true)
+    await onEditArea(c, v)
+    setSaving(false)
+    setEditing(false)
+  }
 
   const tier = c.tier ? TIER_STYLE[c.tier] : null
   const hasPv = c.existingSolar === true
@@ -107,11 +133,51 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
           )}
         </div>
         <div className="flex items-center gap-2 mt-0.5">
-          {areaLabel && (
-            <span className="text-[10px] text-white/40 flex items-center gap-0.5">
-              <MapPin size={8} className="shrink-0" />
-              {areaLabel}
+          {editing ? (
+            <span
+              className="flex items-center gap-1"
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <MapPin size={8} className="shrink-0 text-white/40" />
+              <input
+                type="number"
+                inputMode="numeric"
+                autoFocus
+                value={draft}
+                disabled={saving}
+                onChange={(e) => setDraft(e.target.value)}
+                onBlur={commitEdit}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); commitEdit() }
+                  if (e.key === 'Escape') { e.preventDefault(); setEditing(false) }
+                }}
+                className="w-16 bg-white/10 border border-[#E8A820]/50 rounded px-1 py-0.5 text-[10px] text-white outline-none focus:border-[#E8A820]"
+              />
+              <span className="text-[9px] text-white/40">m²</span>
+              {saving && <Loader2 size={9} className="animate-spin text-[#E8A820]" />}
             </span>
+          ) : (
+            areaLabel && (
+              <span className="text-[10px] text-white/40 flex items-center gap-0.5">
+                <MapPin size={8} className="shrink-0" />
+                {areaLabel}
+                {canEditArea && (
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={beginEdit}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => { if (e.key === 'Enter') beginEdit(e as unknown as ReactMouseEvent) }}
+                    className="ml-0.5 text-white/30 hover:text-[#E8A820] transition-colors cursor-pointer"
+                    title="Edit roof area"
+                    aria-label="Edit roof area"
+                  >
+                    <Pencil size={8} />
+                  </span>
+                )}
+              </span>
+            )
           )}
           {capacityLabel !== '—' && (
             <span className="text-[10px] text-[#E8A820] flex items-center gap-0.5">
@@ -153,6 +219,7 @@ function CandidateRow({ candidate: c, selected, working, onSelect, onFocus, onAp
 export function CandidateReviewPanel() {
   const roofCandidates = useAppStore((s) => s.roofCandidates)
   const removeRoofCandidate = useAppStore((s) => s.removeRoofCandidate)
+  const updateRoofCandidate = useAppStore((s) => s.updateRoofCandidate)
   const setReviewCandidate = useAppStore((s) => s.setReviewCandidate)
   const setProperties = useAppStore((s) => s.setProperties)
   const approvedTodayCount = useAppStore((s) => s.approvedTodayCount)
@@ -206,6 +273,18 @@ export function CandidateReviewPanel() {
   const handleFocus = useCallback((c: Property) => {
     setReviewCandidate(c)
   }, [setReviewCandidate])
+
+  // Correct a roof candidate's area → server recomputes kWp + priority.
+  const handleEditArea = useCallback(async (c: Property, areaSqm: number) => {
+    const res = await updateScanCandidateArea(c.id, areaSqm)
+    if (!res.ok) { showToast(res.error ?? 'Failed to update area', 'error'); return }
+    updateRoofCandidate(c.id, {
+      area: res.areaSqm ?? areaSqm,
+      capacityKwp: res.kwp ?? c.capacityKwp,
+      priority: res.priority ?? c.priority,
+    })
+    showToast(`Area updated → ${res.kwp != null ? `${Math.round(res.kwp)} kWp` : 'recomputed'}`, 'success')
+  }, [updateRoofCandidate, showToast])
 
   // Approve single candidate
   const handleApprove = useCallback(async (c: Property) => {
@@ -368,10 +447,12 @@ export function CandidateReviewPanel() {
           candidate={c}
           selected={selected.has(c.id)}
           working={!!working[c.id]}
+          canEdit={canReview}
           onSelect={toggleSelect}
           onFocus={handleFocus}
           onApprove={handleApprove}
           onReject={handleReject}
+          onEditArea={handleEditArea}
         />
       ))}
     </div>

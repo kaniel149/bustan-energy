@@ -26,7 +26,7 @@ import {
   type PropertyInput,
 } from './owner-decision-layer'
 import { regionFromLead } from './region-utils'
-import type { Property, ScanRequest } from '../types'
+import type { Property, ScanRequest, RoofPriority } from '../types'
 
 export interface BustanPropertyRow {
   id: string
@@ -520,6 +520,36 @@ export async function setScanCandidateStatus(
   })
   if (error) return { ok: false, error: error.message }
   return { ok: true }
+}
+
+/**
+ * Correct a ROOF candidate's area during review (the detected footprint is
+ * sometimes wrong). The SECURITY DEFINER RPC `bustan.update_scan_candidate_area`
+ * (role-gated admin/sales/engineer) writes roof_area_sqm and recomputes
+ * estimated_kwp + priority with the scan worker's formula, returning the new
+ * values so the UI can update without a refetch.
+ */
+export async function updateScanCandidateArea(
+  id: string,
+  areaSqm: number,
+): Promise<WriteResult & { areaSqm?: number; kwp?: number; priority?: RoofPriority }> {
+  if (!bustanSupabase) return NOT_CONNECTED
+  const { data, error } = await bustanSupabase.rpc('update_scan_candidate_area', {
+    p_id: id,
+    p_area_sqm: areaSqm,
+  })
+  if (error) return { ok: false, error: error.message }
+  // RPC returns a single-row table: [{ id, roof_area_sqm, estimated_kwp, priority }]
+  const row = Array.isArray(data) ? data[0] : data
+  const prio = typeof row?.priority === 'string' ? row.priority : undefined
+  return {
+    ok: true,
+    areaSqm: row?.roof_area_sqm != null ? Number(row.roof_area_sqm) : areaSqm,
+    kwp: row?.estimated_kwp != null ? Number(row.estimated_kwp) : undefined,
+    priority: (['A', 'B', 'C', 'D'] as const).includes(prio as RoofPriority)
+      ? (prio as RoofPriority)
+      : undefined,
+  }
 }
 
 // --- On-demand scan engine (P4) --------------------------------------------
