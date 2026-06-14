@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 
 SRC="public/frames"
 OUT="public/frames-smooth"
-TYPES=(concrete villa tropical factory largeroof field)
+TYPES=(concrete villa tropical factory largeroof field parking)
 
 manifest="{"
 for type in "${TYPES[@]}"; do
