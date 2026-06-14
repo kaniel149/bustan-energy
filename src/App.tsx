@@ -28,6 +28,7 @@ const ToolsPage = lazy(() => import('./pages/ToolsPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const CollierPortfolioPage = lazy(() => import('./pages/CollierPortfolioPage'))
 const ResortSolarAssessmentPage = lazy(() => import('./pages/ResortSolarAssessmentPage'))
+const FactoryBillAssessmentPage = lazy(() => import('./pages/FactoryBillAssessmentPage'))
 
 // Admin pages — lazy loaded, separate auth context
 const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage'))
@@ -158,6 +159,11 @@ export default function App() {
               {/* Bustan resort lead magnet funnel */}
               <Route path="/resort-solar-assessment" element={<ResortSolarAssessmentPage />} />
               <Route path="/th/resort-solar-assessment" element={<ResortSolarAssessmentPage />} />
+
+              {/* C&I / factory bill-audit funnel — primary paid-ads landing page */}
+              <Route path="/factory-electricity-bill-solar-assessment" element={<FactoryBillAssessmentPage />} />
+              <Route path="/th/factory-electricity-bill-solar-assessment" element={<FactoryBillAssessmentPage />} />
+              <Route path="/he/factory-electricity-bill-solar-assessment" element={<FactoryBillAssessmentPage />} />
 
               {/* Internal platform — language set by URL prefix (en/th/he, RTL for he) */}
               <Route path="/platform" element={<PlatformPage />} />
