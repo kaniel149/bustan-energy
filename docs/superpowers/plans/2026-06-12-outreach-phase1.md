@@ -9,6 +9,17 @@
 **Tech Stack:** Vercel Edge functions (`export const config = { runtime: 'edge' }`), Supabase REST via `api/_lib/supa.ts` helpers, Gemini 2.0 Flash (text), Resend, React + react-router admin (`src/pages/admin/`), Vitest.
 
 **Spec:** `docs/superpowers/specs/2026-06-12-marketing-outreach-layer-design.md`
+**Spec amendment discovered during E2E (2026-06-14):** the scan/enrich/outreach
+data lives in a SEPARATE Supabase project (`BUSTAN_SUPABASE_URL`, default
+`ygoiaabzkuvdsyyduvhv`) under a non-default `bustan` schema, reached via
+`Accept-Profile`/`Content-Profile: bustan` headers — NOT the main project's
+`public` schema that `supa.ts` targets. The outreach crons + admin API use a new
+`api/_lib/bustan-db.ts` (bGet/bPost/bPatch) instead of supa.ts (commit 028431e).
+Verified E2E: generator reads 384 `owner_decision` rows, send delivers via Resend
+(status→sent). **Data reality:** of 384 enriched contacts, **0 currently have an
+email** — the email channel has no real recipients until enrichment captures
+emails. Generator correctly produces 0 drafts today.
+
 **Spec amendments discovered during planning:**
 - `outreach_messages` gains a `recipient` column (email/phone snapshot at generation time).
 - Email sends directly via Resend from `cron-send-outreach.ts` instead of inserting into `email_queue` (reason above).
