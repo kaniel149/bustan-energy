@@ -22,6 +22,15 @@
  * Re-scan list (Task 2):
  *   "🔄 Re-scan list" button in the tally bar calls applyLearnedFilters()
  *   then does a real refetch via fetchScanCandidates() and updates the store.
+ *
+ * Filter + grid scoring (Task 3):
+ *   - TYPE FILTER pill row: All / Roofs / Small fields / Large fields.
+ *   - SIZE FILTER dropdown: adapts to context (kWp buckets for roofs, MWp buckets
+ *     for land/mixed).
+ *   - GRID-PROXIMITY SCORE: computed once per render cycle for all land candidates
+ *     via computeGridProximity(); shown as a compact ⚡ badge on each land row.
+ *   - SORT TOGGLE: Size (default, kWp desc) vs Grid (land: grid score desc then
+ *     MWp desc; roofs appended after land or sorted by kWp).
  */
 import { useState, useMemo, useCallback } from 'react'
 import type { MouseEvent as ReactMouseEvent } from 'react'
@@ -42,14 +51,59 @@ import { FloatingPanel } from '../ui/FloatingPanel'
 import { RejectReasonMenu } from './RejectReasonMenu'
 import { rejectionLabel } from '../../lib/rejection-reason-label'
 import { triggerFindContact } from '../../lib/trigger-find-contact'
+import { computeGridProximity } from '../../lib/grid-proximity'
+import type { GridProximity as GridProximityResult } from '../../lib/grid-proximity'
 import type { RejectionReason } from '../../lib/bustan-crm-service'
 import type { Property } from '../../types'
+
+// ── Type-filter options ───────────────────────────────────────────────────────
+type TypeFilter = 'all' | 'roof' | 'small-field' | 'large-field'
+
+// ── Size-filter options ───────────────────────────────────────────────────────
+// kWp buckets (roofs)  →  all | <30 | 30–100 | 100–500 | 500+
+// MWp buckets (land)   →  all | <2  | 2–9   | 9–20   | 20+
+type SizeFilter = 'all' | 'bucket1' | 'bucket2' | 'bucket3' | 'bucket4'
+
+// ── Sort options ──────────────────────────────────────────────────────────────
+type SortBy = 'size' | 'grid'
 
 // ── Tier badge config ────────────────────────────────────────────────────────
 const TIER_STYLE: Record<string, { bg: string; text: string; label: string }> = {
   farm:       { bg: 'bg-[#E8A820]/20',  text: 'text-[#E8A820]',  label: 'Farm' },
   utility:    { bg: 'bg-purple-500/20', text: 'text-purple-300',  label: 'Utility' },
   commercial: { bg: 'bg-blue-500/20',   text: 'text-blue-300',    label: 'Commercial' },
+}
+
+// ── Grid proximity badge ──────────────────────────────────────────────────────
+function GridBadge({ proximity }: { proximity: GridProximityResult }) {
+  if (proximity.distM === null || proximity.via === null) {
+    return (
+      <span className="shrink-0 text-[9px] text-white/25 flex items-center gap-0.5" title="No grid data for this area">
+        <Zap size={8} />
+        <span>no grid data</span>
+      </span>
+    )
+  }
+
+  const km = (proximity.distM / 1000).toFixed(1)
+  const colorClass =
+    proximity.distM < 2000
+      ? 'text-[#2ED89A]'
+      : proximity.distM < 5000
+        ? 'text-[#E8A820]'
+        : 'text-white/40'
+
+  const tooltip = `Nearest ${proximity.via}: ${proximity.distM} m · grid score ${proximity.score}`
+
+  return (
+    <span
+      className={`shrink-0 text-[9px] flex items-center gap-0.5 ${colorClass}`}
+      title={tooltip}
+    >
+      <Zap size={8} className="shrink-0" />
+      <span>{km} km</span>
+    </span>
+  )
 }
 
 // ── Row component ─────────────────────────────────────────────────────────────
@@ -59,6 +113,7 @@ interface RowProps {
   working: boolean
   canEdit: boolean
   rejectingId: string | null
+  gridProximity?: GridProximityResult
   onSelect: (id: string) => void
   onFocus: (c: Property) => void
   onApprove: (c: Property) => void
@@ -74,6 +129,7 @@ function CandidateRow({
   working,
   canEdit,
   rejectingId,
+  gridProximity,
   onSelect,
   onFocus,
   onApprove,
@@ -161,7 +217,7 @@ function CandidateRow({
             <span className="shrink-0 text-[8px] text-white/25 italic">⏳ PV check pending</span>
           )}
         </div>
-        <div className="flex items-center gap-2 mt-0.5">
+        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
           {editing ? (
             <span
               className="flex items-center gap-1"
@@ -214,6 +270,10 @@ function CandidateRow({
               {capacityLabel}
             </span>
           )}
+          {/* Grid proximity badge — land only */}
+          {isLand && gridProximity && (
+            <GridBadge proximity={gridProximity} />
+          )}
         </div>
       </button>
 
@@ -251,6 +311,40 @@ function CandidateRow({
   )
 }
 
+// ── Helpers: size-filter matching ─────────────────────────────────────────────
+
+/** True if the candidate passes the active size bucket. */
+function matchesSizeFilter(c: Property, typeFilter: TypeFilter, sizeFilter: SizeFilter): boolean {
+  if (sizeFilter === 'all') return true
+  const kwp = c.capacityKwp ?? 0
+  if (typeFilter === 'roof') {
+    // kWp buckets: <30 | 30–100 | 100–500 | 500+
+    if (sizeFilter === 'bucket1') return kwp < 30
+    if (sizeFilter === 'bucket2') return kwp >= 30 && kwp < 100
+    if (sizeFilter === 'bucket3') return kwp >= 100 && kwp < 500
+    if (sizeFilter === 'bucket4') return kwp >= 500
+  } else {
+    // MWp buckets: <2 | 2–9 | 9–20 | 20+
+    const mwp = kwp / 1000
+    if (sizeFilter === 'bucket1') return mwp < 2
+    if (sizeFilter === 'bucket2') return mwp >= 2 && mwp < 9
+    if (sizeFilter === 'bucket3') return mwp >= 9 && mwp < 20
+    if (sizeFilter === 'bucket4') return mwp >= 20
+  }
+  return true
+}
+
+// ── Size filter label helpers ─────────────────────────────────────────────────
+function sizeFilterLabel(bucket: SizeFilter, isRoofMode: boolean): string {
+  if (bucket === 'all') return 'All sizes'
+  if (isRoofMode) {
+    const labels: Record<SizeFilter, string> = { all: 'All sizes', bucket1: '<30 kWp', bucket2: '30–100 kWp', bucket3: '100–500 kWp', bucket4: '500+ kWp' }
+    return labels[bucket]
+  }
+  const labels: Record<SizeFilter, string> = { all: 'All sizes', bucket1: '<2 MWp', bucket2: '2–9 MWp', bucket3: '9–20 MWp', bucket4: '20+ MWp' }
+  return labels[bucket]
+}
+
 // ── Main panel ────────────────────────────────────────────────────────────────
 export function CandidateReviewPanel() {
   const roofCandidates = useAppStore((s) => s.roofCandidates)
@@ -261,6 +355,7 @@ export function CandidateReviewPanel() {
   const setProperties = useAppStore((s) => s.setProperties)
   const approvedTodayCount = useAppStore((s) => s.approvedTodayCount)
   const incrementApprovedToday = useAppStore((s) => s.incrementApprovedToday)
+  const gridData = useAppStore((s) => s.gridData)
   const role = useBustanStore((s) => s.role)
   const canReview = can(role, 'crm.edit')
   const showToast = useToastStore((s) => s.showToast)
@@ -280,20 +375,66 @@ export function CandidateReviewPanel() {
   // Re-scan running flag
   const [reScanWorking, setReScanWorking] = useState(false)
 
-  // Sort by capacity desc (highest potential first)
-  const sorted = useMemo(
-    () => [...roofCandidates].sort((a, b) => (b.capacityKwp ?? 0) - (a.capacityKwp ?? 0)),
-    [roofCandidates],
-  )
+  // ── NEW filter/sort state ─────────────────────────────────────────────────
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
+  const [sizeFilter, setSizeFilter] = useState<SizeFilter>('all')
+  const [sortBy, setSortBy] = useState<SortBy>('size')
+
+  // ── Grid proximity: computed once for all land candidates ─────────────────
+  const gridById = useMemo<Map<string, GridProximityResult>>(() => {
+    const m = new Map<string, GridProximityResult>()
+    for (const c of roofCandidates) {
+      if (c.type === 'land') {
+        m.set(c.id, computeGridProximity(c.lat, c.lng, gridData))
+      }
+    }
+    return m
+  }, [roofCandidates, gridData])
+
+  // ── Sort ──────────────────────────────────────────────────────────────────
+  const sorted = useMemo(() => {
+    const all = [...roofCandidates]
+    if (sortBy === 'size') {
+      // Original behaviour: kWp desc for everyone
+      return all.sort((a, b) => (b.capacityKwp ?? 0) - (a.capacityKwp ?? 0))
+    }
+    // Grid sort: land by grid score desc then MWp desc; roofs after land by kWp
+    const land = all.filter((c) => c.type === 'land')
+    const roofs = all.filter((c) => c.type !== 'land')
+    land.sort((a, b) => {
+      const sa = gridById.get(a.id)?.score ?? -1
+      const sb = gridById.get(b.id)?.score ?? -1
+      if (sb !== sa) return sb - sa
+      return (b.capacityKwp ?? 0) - (a.capacityKwp ?? 0)
+    })
+    roofs.sort((a, b) => (b.capacityKwp ?? 0) - (a.capacityKwp ?? 0))
+    return [...land, ...roofs]
+  }, [roofCandidates, sortBy, gridById])
 
   // Count of hidden (existing PV) rows
   const pvCount = useMemo(() => sorted.filter((c) => c.existingSolar === true).length, [sorted])
 
-  // Visible rows after the PV filter
-  const visible = useMemo(
-    () => hideExistingPv ? sorted.filter((c) => c.existingSolar !== true) : sorted,
-    [sorted, hideExistingPv],
-  )
+  // ── Visible rows after all filters ───────────────────────────────────────
+  const visible = useMemo(() => {
+    let list = hideExistingPv ? sorted.filter((c) => c.existingSolar !== true) : sorted
+
+    // Type filter
+    if (typeFilter !== 'all') {
+      list = list.filter((c) => {
+        if (typeFilter === 'roof') return c.type === 'roof'
+        if (typeFilter === 'small-field') return c.type === 'land' && c.tier !== 'utility'
+        if (typeFilter === 'large-field') return c.type === 'land' && c.tier === 'utility'
+        return true
+      })
+    }
+
+    // Size filter — active only when a bucket is chosen
+    if (sizeFilter !== 'all') {
+      list = list.filter((c) => matchesSizeFilter(c, typeFilter, sizeFilter))
+    }
+
+    return list
+  }, [sorted, hideExistingPv, typeFilter, sizeFilter])
 
   const toggleSelect = useCallback((id: string) => {
     setSelected((prev) => {
@@ -452,6 +593,19 @@ export function CandidateReviewPanel() {
 
   if (!canReview || sorted.length === 0) return null
 
+  // ── Type filter pills ─────────────────────────────────────────────────────
+  const TYPE_PILLS: { id: TypeFilter; label: string }[] = [
+    { id: 'all',         label: 'All' },
+    { id: 'roof',        label: '🏠 Roofs' },
+    { id: 'small-field', label: '🌾 Small' },
+    { id: 'large-field', label: '🏭 Large' },
+  ]
+
+  // Whether the active size buckets are kWp (roof mode) or MWp (land/all mode)
+  const isRoofMode = typeFilter === 'roof'
+
+  const SIZE_BUCKETS: SizeFilter[] = ['all', 'bucket1', 'bucket2', 'bucket3', 'bucket4']
+
   // ── Sub-header: PV filter + tally ─────────────────────────────────────────
   const pvFilterBar = pvCount > 0 && (
     <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5 bg-amber-500/5">
@@ -466,6 +620,63 @@ export function CandidateReviewPanel() {
       {hideExistingPv && pvCount > 0 && (
         <span className="text-[10px] text-amber-400/60">{pvCount} hidden</span>
       )}
+    </div>
+  )
+
+  // ── Filter bar: type pills + size dropdown + sort toggle ──────────────────
+  const filterBar = (
+    <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/5 flex-wrap">
+      {/* Type pills */}
+      <div className="flex items-center gap-1 flex-wrap">
+        {TYPE_PILLS.map((pill) => (
+          <button
+            key={pill.id}
+            onClick={() => {
+              setTypeFilter(pill.id)
+              setSizeFilter('all') // reset size when switching type
+            }}
+            className={`px-2 py-0.5 rounded-full text-[9px] font-medium border transition-colors ${
+              typeFilter === pill.id
+                ? 'bg-[#E8A820]/20 border-[#E8A820]/60 text-[#E8A820]'
+                : 'border-white/15 text-white/40 hover:border-white/30 hover:text-white/60'
+            }`}
+          >
+            {pill.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Size dropdown */}
+      <div className="relative">
+        <select
+          value={sizeFilter}
+          onChange={(e) => setSizeFilter(e.target.value as SizeFilter)}
+          className="appearance-none bg-[#0A1628]/80 border border-white/15 rounded-md text-[9px] text-white/60 pl-2 pr-5 py-0.5 outline-none focus:border-[#E8A820]/50 cursor-pointer hover:border-white/30 transition-colors"
+          style={{ backgroundImage: 'none' }}
+          title={isRoofMode ? 'Filter by kWp' : 'Filter by MWp'}
+        >
+          {SIZE_BUCKETS.map((b) => (
+            <option key={b} value={b} className="bg-[#0D2137]">
+              {sizeFilterLabel(b, isRoofMode)}
+            </option>
+          ))}
+        </select>
+        <ChevronDown size={8} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+      </div>
+
+      {/* Sort toggle */}
+      <button
+        onClick={() => setSortBy((s) => s === 'size' ? 'grid' : 'size')}
+        className={`flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-medium border transition-colors ${
+          sortBy === 'grid'
+            ? 'bg-[#2ED89A]/15 border-[#2ED89A]/40 text-[#2ED89A]'
+            : 'border-white/15 text-white/40 hover:border-white/30 hover:text-white/60'
+        }`}
+        title={sortBy === 'grid' ? 'Currently sorted by grid proximity — click for size' : 'Sort by grid proximity'}
+      >
+        <Zap size={8} className="shrink-0" />
+        {sortBy === 'grid' ? 'Grid' : 'Size'}
+      </button>
     </div>
   )
 
@@ -543,6 +754,7 @@ export function CandidateReviewPanel() {
           working={!!working[c.id]}
           canEdit={canReview}
           rejectingId={rejectingId}
+          gridProximity={c.type === 'land' ? gridById.get(c.id) : undefined}
           onSelect={toggleSelect}
           onFocus={handleFocus}
           onApprove={handleApprove}
@@ -566,6 +778,7 @@ export function CandidateReviewPanel() {
         minWidth={288}
       >
         {pvFilterBar}
+        {filterBar}
         {tallyBar}
         <div className="flex flex-col overflow-hidden" style={{ maxHeight: 'calc(100vh - 200px)' }}>
           {listBody}
@@ -597,6 +810,7 @@ export function CandidateReviewPanel() {
         {mobileOpen && (
           <div className="flex flex-col" style={{ maxHeight: '55vh' }}>
             {pvFilterBar}
+            {filterBar}
             {tallyBar}
             {listBody}
           </div>
