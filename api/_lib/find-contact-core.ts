@@ -38,6 +38,7 @@ export const BUSTAN_KEY = process.env.BUSTAN_SUPABASE_SERVICE_ROLE_KEY!
 
 export const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.NANOBANANA_API_KEY
 const FIRECRAWL_KEY = process.env.FIRECRAWL_API_KEY
+const GOOGLE_MAPS_KEY = process.env.GOOGLE_MAPS_API_KEY
 
 // ---------------------------------------------------------------------------
 // Exported types
@@ -85,6 +86,9 @@ const OVERPASS_API = 'https://overpass-api.de/api/interpreter'
 const DBD_BASE = 'https://openapi.dbd.go.th/api/v1/juristic_person'
 const FIRECRAWL_SEARCH_URL = 'https://api.firecrawl.dev/v1/search'
 const FIRECRAWL_SCRAPE_URL = 'https://api.firecrawl.dev/v1/scrape'
+// Places API (New) — the legacy maps/api/place/* endpoints are disabled on this
+// project (REQUEST_DENIED "legacy API not enabled"); the New API is enabled.
+const PLACES_SEARCH_NEARBY_URL = 'https://places.googleapis.com/v1/places:searchNearby'
 // Uses gemini-2.0-flash — adequate for text extraction (not vision);
 // keeping same model as original for consistency.
 export const USER_AGENT = 'solar-intelligence/1.0 (k@kanielt.com)'
@@ -116,6 +120,22 @@ export function extractJuristicId(s: string | undefined): string | undefined {
   if (!s) return undefined
   const m = s.replace(/[\s-]/g, '').match(/\b\d{13}\b/)
   return m ? m[0] : undefined
+}
+
+/**
+ * Import placeholders carry no business identity — e.g. "Building (25359m²)",
+ * bare area labels, or "Untitled". Treated as no-name so the geocode / Overpass
+ * / Places identity stages actually run instead of being short-circuited by a
+ * useless seed name (which then gets searched verbatim and finds nothing).
+ */
+export function isPlaceholderName(name: string | undefined): boolean {
+  if (!name) return true
+  const s = name.trim()
+  if (s.length < 3) return true
+  if (/^building\b/i.test(s)) return true          // "Building", "Building (12345m²)"
+  if (/^\(?\d[\d,.\s]*m²?\)?$/i.test(s)) return true // "(25359m²)", "1234 m2"
+  if (/^untitled$/i.test(s)) return true
+  return false
 }
 
 export async function timedFetch(url: string, init: RequestInit, ms: number): Promise<Response> {
@@ -285,6 +305,66 @@ out center 5;`
       if (n && n.trim()) return n.trim()
     }
     return null
+  } catch {
+    return null
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Stage 3.5: Google Places business identity (by coordinates)
+//
+// The single best real-identity source when OSM names are placeholders and DBD
+// is unavailable. Places API (New) searchNearby (rank by distance) returns the
+// nearest business to the roof centroid; a single call with a field mask yields
+// name + phone + website. Returns null on any error / zero results so the
+// pipeline falls back to existing behaviour.
+// ---------------------------------------------------------------------------
+
+export interface PlacesResult {
+  name?: string
+  phone?: string
+  website?: string
+  placeId?: string
+}
+
+export async function googlePlacesLookup(lat: number, lng: number): Promise<PlacesResult | null> {
+  if (!GOOGLE_MAPS_KEY) return null
+  try {
+    const r = await timedFetch(PLACES_SEARCH_NEARBY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': GOOGLE_MAPS_KEY,
+        'X-Goog-FieldMask':
+          'places.id,places.displayName,places.internationalPhoneNumber,places.nationalPhoneNumber,places.websiteUri',
+      },
+      body: JSON.stringify({
+        maxResultCount: 1,
+        rankPreference: 'DISTANCE',
+        locationRestriction: {
+          circle: { center: { latitude: lat, longitude: lng }, radius: 200 },
+        },
+      }),
+    }, TIMEOUT_SHORT)
+    if (!r.ok) return null
+    const data = await r.json() as {
+      places?: Array<{
+        id?: string
+        displayName?: { text?: string }
+        internationalPhoneNumber?: string
+        nationalPhoneNumber?: string
+        websiteUri?: string
+      }>
+    }
+    const top = data.places?.[0]
+    if (!top) return null
+    const result: PlacesResult = {
+      name: cleanStr(top.displayName?.text),
+      phone: cleanStr(top.internationalPhoneNumber ?? top.nationalPhoneNumber),
+      website: cleanStr(top.websiteUri),
+      placeId: top.id,
+    }
+    return result.name || result.phone || result.website ? result : null
   } catch {
     return null
   }
@@ -656,7 +736,7 @@ export async function persistToProperty(
     researchStatus,
     operationalContactName: '',
     operationalContactRole: '',
-    operationalContactPhone: '',
+    operationalContactPhone: company.phone ?? '', // business phone (e.g. Google Places) for future phone/LINE channel
     operationalContactEmail: '',
     existingSolarInstallerName: '',
     existingSolarDeveloperName: '',
@@ -806,9 +886,12 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
 
   let lat = seedLat
   let lng = seedLng
-  let companyName = seedName
+  // Placeholder seed names ("Building (25359m²)") carry no identity — drop them
+  // so the geocode / Overpass / Places stages run instead of short-circuiting.
+  let companyName = isPlaceholderName(seedName) ? undefined : seedName
   let juristicId = seedJuristicId ?? extractJuristicId(seedName)
   let website = seedWebsite
+  let companyPhone: string | undefined
 
   // ── Stage 1: property_load ─────────────────────────────────────────────────
   if (propertyId) {
@@ -817,7 +900,7 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
       if (row) {
         if (!lat && row.lat != null) lat = row.lat
         if (!lng && row.lng != null) lng = row.lng
-        if (!companyName && row.owner_name) companyName = row.owner_name
+        if (!companyName && !isPlaceholderName(row.owner_name ?? undefined)) companyName = row.owner_name ?? undefined
         if (!website && row.website) website = row.website
         if (!juristicId) juristicId = extractJuristicId(row.owner_name ?? undefined)
         stages.push({ stage: 'property_load', status: 'ok', detail: `loaded: ${row.title ?? propertyId}` })
@@ -871,6 +954,36 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
     stages.push({ stage: 'overpass', status: 'skipped', detail: 'no coordinates' })
   } else {
     stages.push({ stage: 'overpass', status: 'skipped', detail: 'name already known' })
+  }
+
+  // ── Stage 3.5: Google Places business identity ────────────────────────────
+  if (!GOOGLE_MAPS_KEY) {
+    stages.push({ stage: 'google_places', status: 'skipped', detail: 'GOOGLE_MAPS_API_KEY not set' })
+  } else if (lat === undefined || lng === undefined) {
+    stages.push({ stage: 'google_places', status: 'skipped', detail: 'no coordinates' })
+  } else if (companyName && website) {
+    stages.push({ stage: 'google_places', status: 'skipped', detail: 'name + website already known' })
+  } else {
+    try {
+      const place = await googlePlacesLookup(lat, lng)
+      if (place && (place.name || place.phone || place.website)) {
+        if (!companyName && place.name) companyName = place.name
+        if (!website && place.website) website = place.website
+        if (!companyPhone && place.phone) companyPhone = place.phone
+        const parts = [
+          place.name ? `Business: ${place.name}` : '',
+          place.phone ? `Phone: ${place.phone}` : '',
+          place.website ? `Website: ${place.website}` : '',
+        ].filter(Boolean).join('\n')
+        textChunks.push(`Google Places business at coordinates:\n${parts}`)
+        sources.push(`google-places: ${place.name ?? place.placeId ?? 'nearby'}`)
+        stages.push({ stage: 'google_places', status: 'ok', detail: place.name ?? place.phone ?? 'found' })
+      } else {
+        stages.push({ stage: 'google_places', status: 'ok', detail: 'no establishment found' })
+      }
+    } catch (e) {
+      stages.push({ stage: 'google_places', status: 'failed', detail: e instanceof Error ? e.message : 'error' })
+    }
   }
 
   // ── Stage 4: DBD juristic lookup ──────────────────────────────────────────
@@ -969,10 +1082,10 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
       // Transient quota — propagate upward so cron can defer without stamping
       geminiQuotaExhausted = true
       stages.push({ stage: 'gemini', status: 'failed', detail: result.error ?? 'gemini_quota_429' })
-      company = { name: companyName, website }
+      company = { name: companyName, website, phone: companyPhone }
     } else if (result.error) {
       stages.push({ stage: 'gemini', status: 'failed', detail: result.error })
-      company = { name: companyName, website }
+      company = { name: companyName, website, phone: companyPhone }
     } else {
       company = result.company
       decisionMaker = result.decision_maker
@@ -982,6 +1095,7 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
       }
       if (!company.name && companyName) company.name = companyName
       if (!company.website && website) company.website = website
+      if (!company.phone && companyPhone) company.phone = companyPhone
       stages.push({ stage: 'gemini', status: 'ok', detail: `confidence ${confidence.toFixed(2)}` })
     }
   } else if (!GEMINI_KEY) {

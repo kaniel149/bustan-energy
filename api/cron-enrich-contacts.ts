@@ -116,32 +116,44 @@ async function buildQueue(): Promise<QueueRow[]> {
       .map((r) => r.property_id),
   )
 
-  // Step 3: fetch candidate properties — land types excluded, coords required,
-  // biggest roofs first. Over-fetch so we can filter and still fill MAX_PER_TICK.
+  // Step 3+4: page through candidate properties (biggest roofs first) filtering
+  // out already-stamped rows, until MAX_PER_TICK unenriched rows are collected.
+  //
+  // BUGFIX: the previous code over-fetched a fixed window of MAX_PER_TICK*3 (=12)
+  // rows and filtered in JS. Once the 12 biggest roofs were all stamped, that
+  // window returned nothing but stamped ids → queue permanently empty → the
+  // cron froze (this is exactly what happened after 2026-06-14). Pagination
+  // guarantees forward progress no matter how large the stamped prefix grows.
   const landTypeFilter = `property_type.not.in.(${[...LAND_PROPERTY_TYPES].join(',')})`
-  const props = await bGet<BustanPropertyMinRow>(
-    `properties?lat=not.is.null&lon=not.is.null` +
-    `&or=(property_type.is.null,${landTypeFilter})` +
-    `&order=roof_area_sqm.desc.nullslast` +
-    `&select=id,name,lat,lon,property_type,roof_area_sqm` +
-    `&limit=${MAX_PER_TICK * 3}`,
-  )
+  const PAGE = 250
+  const MAX_PAGES = 12 // safety bound: scans at most 3000 candidates per tick
 
-  // Step 4: filter to unenriched properties and slice to budget
   const queue: QueueRow[] = []
-  for (const p of props) {
-    if (stampedIds.has(p.id)) continue
-    const ownerRow = ownerRows.find((o) => o.property_id === p.id)
-    queue.push({
-      id: p.id,
-      name: p.name,
-      lat: p.lat,
-      lon: p.lon,
-      property_type: p.property_type,
-      roof_area_sqm: p.roof_area_sqm,
-      last_researched_at: (ownerRow?.data?.['lastResearchedAt'] as string | null) ?? null,
-    })
-    if (queue.length >= MAX_PER_TICK) break
+  for (let page = 0; page < MAX_PAGES && queue.length < MAX_PER_TICK; page++) {
+    const props = await bGet<BustanPropertyMinRow>(
+      `properties?lat=not.is.null&lon=not.is.null` +
+      `&or=(property_type.is.null,${landTypeFilter})` +
+      `&order=roof_area_sqm.desc.nullslast` +
+      `&select=id,name,lat,lon,property_type,roof_area_sqm` +
+      `&limit=${PAGE}&offset=${page * PAGE}`,
+    )
+    if (props.length === 0) break // no more rows
+
+    for (const p of props) {
+      if (stampedIds.has(p.id)) continue
+      queue.push({
+        id: p.id,
+        name: p.name,
+        lat: p.lat,
+        lon: p.lon,
+        property_type: p.property_type,
+        roof_area_sqm: p.roof_area_sqm,
+        last_researched_at: null,
+      })
+      if (queue.length >= MAX_PER_TICK) break
+    }
+
+    if (props.length < PAGE) break // reached the last page
   }
 
   return queue

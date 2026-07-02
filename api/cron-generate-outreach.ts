@@ -23,16 +23,28 @@ import { geminiText, splitSubject } from './_lib/outreach/gemini-text.js'
 const MAX_PER_TICK = 6  // 6 × ~3s typical Gemini latency keeps us inside the edge time budget
 const DRAFT_CAP = 50
 
+// owner_decision.data is written by find-contact-core.persistToProperty as a
+// FLAT camelCase object (legalOwnerName / decisionMakerEmail / …). The previous
+// nested reads (data.decision_maker.email / data.company.email) never matched,
+// so no draft was ever generated. Read the flat keys the pipeline actually writes.
 interface OwnerRow {
   property_id: string
   data: {
-    company?: { name?: string | null; email?: string | null }
-    decision_maker?: { name?: string | null; email?: string | null }
+    legalOwnerName?: string | null
+    decisionMakerName?: string | null
+    decisionMakerEmail?: string | null
+    operationalContactEmail?: string | null
   } | null
 }
+
+/** The email the outreach draft is addressed to (empty string → falsy → skipped). */
+function ownerEmail(o: OwnerRow): string | null {
+  return o.data?.decisionMakerEmail || o.data?.operationalContactEmail || null
+}
+
 interface PropertyRow {
   id: string
-  title: string | null
+  name: string | null
   roof_area_sqm: number | null
   area_name?: string | null
 }
@@ -60,8 +72,7 @@ export default async function handler(req: Request): Promise<Response> {
   const owners = await bGet<OwnerRow>(`owner_decision?select=property_id,data`)
   const withEmail = new Map<string, OwnerRow>()
   for (const o of owners) {
-    const email = o.data?.decision_maker?.email || o.data?.company?.email
-    if (email) withEmail.set(o.property_id, o)
+    if (ownerEmail(o)) withEmail.set(o.property_id, o)
   }
 
   // 2. Properties already messaged on email channel (any live status)
@@ -71,8 +82,10 @@ export default async function handler(req: Request): Promise<Response> {
   const messaged = new Set(existing.map((m) => m.property_id))
 
   // 3. Candidate properties, biggest roofs first
+  // BUGFIX: selected a non-existent `title` column → PostgREST 400 → bGet
+  // returned [] → zero candidates → zero drafts. bustan.properties uses `name`.
   const props = await bGet<PropertyRow>(
-    `properties?roof_area_sqm=not.is.null&select=id,title,roof_area_sqm,area_name` +
+    `properties?roof_area_sqm=not.is.null&select=id,name,roof_area_sqm,area_name` +
     `&order=roof_area_sqm.desc.nullslast&limit=500`,
   )
 
@@ -101,13 +114,13 @@ export default async function handler(req: Request): Promise<Response> {
     const solar = calcSolar(prop.roof_area_sqm ?? 0)
     if (!solar) continue // too small / no roof data
 
-    const companyName = owner.data?.company?.name ?? null
+    const companyName = owner.data?.legalOwnerName || null
     const facts: OutreachFacts = {
       ...solar,
       roofSqm: prop.roof_area_sqm!,
       district: prop.area_name ?? null,
       companyName,
-      contactName: owner.data?.decision_maker?.name ?? null,
+      contactName: owner.data?.decisionMakerName || null,
     }
     const language = pickLanguage(companyName)
     const template = templates.find((t) => t.language === language)
@@ -127,7 +140,7 @@ export default async function handler(req: Request): Promise<Response> {
       template_id: template.id,
       channel: 'email',
       language,
-      recipient: owner.data?.decision_maker?.email || owner.data?.company?.email,
+      recipient: ownerEmail(owner),
       subject,
       body,
       facts,
