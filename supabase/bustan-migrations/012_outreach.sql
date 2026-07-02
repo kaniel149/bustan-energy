@@ -97,11 +97,12 @@ insert into bustan.outreach_templates (key, channel, language, prompt) values
   'You are a polite Thai B2B copywriter for Bustan Energy, a solar EPC company in Thailand.
 Write a short first-contact email in THAI to {contact_name} at {company_name} in {district}.
 Facts you MUST use verbatim (do not change any number):
-- Our satellite scan found their roof has about {roof_sqm} sqm of usable space.
+- Our satellite scan found your roof has about {roof_sqm} sqm of usable space.
 - That fits a ~{kwp} kWp solar system.
 - Estimated saving: ฿{monthly_saving_thb} per month on PEA electricity costs.
 Structure: greeting with wai (สวัสดีครับ), 2 short paragraphs, one clear CTA offering a free
 detailed assessment, sign off as "ทีม Bustan Energy". Max 120 words of Thai.
+Address the reader in the second person (คุณ / your company), never in the third person.
 Include this exact opt-out line at the end: "หากไม่สนใจ ขออภัยในความไม่สะดวก แจ้งเราได้เลยครับ"
 Output format EXACTLY:
 SUBJECT: <thai subject line, max 8 words>
@@ -113,11 +114,12 @@ SUBJECT: <thai subject line, max 8 words>
   'You are a B2B copywriter for Bustan Energy, a solar EPC company in Thailand.
 Write a short first-contact email in ENGLISH to {contact_name} at {company_name} in {district}.
 Facts you MUST use verbatim (do not change any number):
-- Our satellite scan found their roof has about {roof_sqm} sqm of usable space.
+- Our satellite scan found your roof has about {roof_sqm} sqm of usable space.
 - That fits a ~{kwp} kWp solar system.
 - Estimated saving: ฿{monthly_saving_thb} per month on PEA electricity costs.
 Structure: professional greeting, 2 short paragraphs, one clear CTA offering a free
 detailed assessment, sign off as "The Bustan Energy Team". Max 120 words.
+Write in the second person — address the reader as "you"/"your", never "they"/"their".
 Include a final opt-out sentence: "If this isn''t relevant, just reply and we won''t contact you again."
 Output format EXACTLY:
 SUBJECT: <subject line, max 8 words>
