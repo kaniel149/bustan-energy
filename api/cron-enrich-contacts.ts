@@ -35,6 +35,7 @@
 // edge 25-s ceiling. Node gives a 60-s budget so a full parallel batch fits.
 export const config = { maxDuration: 60 }
 
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import {
   bGet,
   BUSTAN_KEY,
@@ -197,35 +198,55 @@ async function processOne(row: QueueRow): Promise<ProcessResult> {
 
 // ---------------------------------------------------------------------------
 // Main handler
+//
+// Node runtime (classic req/res signature) — required because the per-property
+// pipeline chains several network hops (Places + Firecrawl search + scrape +
+// Gemini) whose worst-case sum exceeds the edge 25-s ceiling. The other api/*
+// functions stay on edge; this one needs the longer maxDuration above.
 // ---------------------------------------------------------------------------
 
-export default async function handler(req: Request): Promise<Response> {
+function sendJson(res: ServerResponse, status: number, body: unknown): void {
+  res.statusCode = status
+  res.setHeader('content-type', 'application/json')
+  res.end(JSON.stringify(body))
+}
+
+function readJsonBody(req: IncomingMessage): Promise<Record<string, unknown>> {
+  return new Promise((resolve) => {
+    let raw = ''
+    req.on('data', (c) => { raw += c })
+    req.on('end', () => {
+      try { resolve(raw ? JSON.parse(raw) as Record<string, unknown> : {}) } catch { resolve({}) }
+    })
+    req.on('error', () => resolve({}))
+  })
+}
+
+export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (!CRON_SECRET) {
-    return Response.json({ ok: false, error: 'server_misconfigured' }, { status: 500 })
+    return sendJson(res, 500, { ok: false, error: 'server_misconfigured' })
   }
-  const secret = req.headers.get('authorization')?.match(/^Bearer\s+(\S+)$/i)?.[1]
+  const authHeader = req.headers['authorization']
+  const secret = typeof authHeader === 'string' ? authHeader.match(/^Bearer\s+(\S+)$/i)?.[1] : undefined
   if (!secret || secret !== CRON_SECRET) {
-    return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
+    return sendJson(res, 401, { ok: false, error: 'unauthorized' })
   }
   if (!BUSTAN_KEY) {
-    return Response.json({ ok: false, error: 'BUSTAN_SUPABASE_SERVICE_ROLE_KEY not set' }, { status: 500 })
+    return sendJson(res, 500, { ok: false, error: 'BUSTAN_SUPABASE_SERVICE_ROLE_KEY not set' })
   }
 
+  const method = (req.method ?? 'GET').toUpperCase()
+
   // ── POST: manual batch by propertyIds ────────────────────────────────────
-  if (req.method === 'POST') {
-    let body: { propertyIds?: unknown }
-    try {
-      body = await req.json() as { propertyIds?: unknown }
-    } catch {
-      return Response.json({ ok: false, error: 'Invalid JSON body' }, { status: 400 })
-    }
+  if (method === 'POST') {
+    const body = await readJsonBody(req) as { propertyIds?: unknown }
 
     const propertyIds = Array.isArray(body.propertyIds)
       ? (body.propertyIds as unknown[]).filter((id): id is string => typeof id === 'string')
       : []
 
     if (propertyIds.length === 0) {
-      return Response.json({ ok: false, error: 'propertyIds must be a non-empty string array' }, { status: 400 })
+      return sendJson(res, 400, { ok: false, error: 'propertyIds must be a non-empty string array' })
     }
 
     let processed = 0, found_dm = 0, found_company = 0, deferred = 0, errors = 0
@@ -262,18 +283,18 @@ export default async function handler(req: Request): Promise<Response> {
       }
     }
 
-    return Response.json({ ok: true, processed, found_dm, found_company, deferred, errors })
+    return sendJson(res, 200, { ok: true, processed, found_dm, found_company, deferred, errors })
   }
 
   // ── GET: scheduled run ────────────────────────────────────────────────────
-  if (req.method !== 'GET') {
-    return Response.json({ ok: false, error: 'Method not allowed' }, { status: 405 })
+  if (method !== 'GET') {
+    return sendJson(res, 405, { ok: false, error: 'Method not allowed' })
   }
 
   const queue = await buildQueue()
 
   if (queue.length === 0) {
-    return Response.json({
+    return sendJson(res, 200, {
       ok: true,
       processed: 0,
       found_dm: 0,
@@ -286,9 +307,9 @@ export default async function handler(req: Request): Promise<Response> {
 
   let processed = 0, found_dm = 0, found_company = 0, deferred = 0, errors = 0
 
-  // Concurrency pool — each worker pulls the next item off the queue.
-  // CONCURRENCY=2 keeps total wall time ~10-12 s for 4 items while staying
-  // well inside the Vercel edge 25-s limit.
+  // Concurrency pool — each worker pulls the next item off the queue. With
+  // CONCURRENCY === MAX_PER_TICK all items run in parallel, so wall time ≈ the
+  // slowest single property, comfortably inside the 60-s Node budget.
   let cursor = 0
 
   async function worker(): Promise<void> {
@@ -319,7 +340,7 @@ export default async function handler(req: Request): Promise<Response> {
     Array.from({ length: Math.min(CONCURRENCY, queue.length) }, () => worker()),
   )
 
-  return Response.json({
+  return sendJson(res, 200, {
     ok: true,
     processed,
     found_dm,
