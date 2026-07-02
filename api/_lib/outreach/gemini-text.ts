@@ -4,8 +4,12 @@
 // (mirrors the deferral pattern in find-contact-core.ts).
 // ============================================================
 
+// gemini-2.0-flash was retired (generateContent → 404 "no longer available"),
+// which silently failed every outreach draft (empty text → counted as invalid).
+// gemini-2.5-flash is the current GA successor.
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash'
 const GEMINI_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+  `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
 
 export interface GeminiTextResult {
   ok: boolean

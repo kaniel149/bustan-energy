@@ -89,8 +89,8 @@ const FIRECRAWL_SCRAPE_URL = 'https://api.firecrawl.dev/v1/scrape'
 // Places API (New) — the legacy maps/api/place/* endpoints are disabled on this
 // project (REQUEST_DENIED "legacy API not enabled"); the New API is enabled.
 const PLACES_SEARCH_NEARBY_URL = 'https://places.googleapis.com/v1/places:searchNearby'
-// Uses gemini-2.0-flash — adequate for text extraction (not vision);
-// keeping same model as original for consistency.
+// Uses the GEMINI_MODELS fallback chain (2.5-flash-lite → 2.5-flash) for text
+// extraction; rolls to the next model on 429 quota.
 export const USER_AGENT = 'solar-intelligence/1.0 (k@kanielt.com)'
 
 export const TIMEOUT_SHORT = 8_000
@@ -572,7 +572,8 @@ const GEMINI_MODELS = [
   ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
   'gemini-2.5-flash-lite',
   'gemini-2.5-flash',
-  'gemini-2.0-flash',
+  // gemini-2.0-flash removed — retired (generateContent → 404), so as a last-resort
+  // fallback it guaranteed total failure once the 2.5 models were quota-exhausted.
 ]
 
 export async function geminiExtract(

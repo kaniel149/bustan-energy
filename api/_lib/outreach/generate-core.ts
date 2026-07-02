@@ -35,6 +35,19 @@ export function buildPrompt(template: string, facts: OutreachFacts): string {
 
 export interface DraftCheck { ok: boolean; reason?: string }
 
+/**
+ * Digit-normalise text so number matching is tolerant of formatting: converts
+ * Thai numerals to Arabic and strips thousands separators / spaces. This keeps
+ * the anti-hallucination guarantee (the exact numeric VALUE must still appear)
+ * while accepting "100000", "100,000", "100 000" or Thai-digit variants — the
+ * LLM does not always echo the en-US comma format.
+ */
+function normalizeDigits(s: string): string {
+  return s
+    .replace(/[๐-๙]/g, (d) => String(d.charCodeAt(0) - 0x0e50)) // Thai → Arabic
+    .replace(/[,\s  .]/g, '')                                    // strip separators
+}
+
 export function validateDraft(
   body: string,
   facts: OutreachFacts,
@@ -42,8 +55,10 @@ export function validateDraft(
 ): DraftCheck {
   if (!body.trim()) return { ok: false, reason: 'empty' }
   if (body.length > MAX_LEN[channel]) return { ok: false, reason: `too_long:${body.length}` }
-  const thb = facts.monthlySavingThb.toLocaleString('en-US')
-  if (!body.includes(thb)) return { ok: false, reason: 'missing_or_wrong_saving_figure' }
-  if (!body.includes(String(facts.kwp))) return { ok: false, reason: 'missing_kwp' }
+  const normalized = normalizeDigits(body)
+  if (!normalized.includes(String(facts.monthlySavingThb))) {
+    return { ok: false, reason: 'missing_or_wrong_saving_figure' }
+  }
+  if (!normalized.includes(String(facts.kwp))) return { ok: false, reason: 'missing_kwp' }
   return { ok: true }
 }
