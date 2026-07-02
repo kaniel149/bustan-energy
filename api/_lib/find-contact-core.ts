@@ -914,6 +914,39 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
     stages.push({ stage: 'property_load', status: 'skipped', detail: 'no propertyId' })
   }
 
+  // ── Stage 1.5: Google Places business identity ────────────────────────────
+  // Runs first (best real-identity source). When it resolves a name, the
+  // geocode + Overpass stages below skip (their `!companyName` guard), which
+  // also avoids two extra sequential public-API round-trips per property.
+  if (!GOOGLE_MAPS_KEY) {
+    stages.push({ stage: 'google_places', status: 'skipped', detail: 'GOOGLE_MAPS_API_KEY not set' })
+  } else if (lat === undefined || lng === undefined) {
+    stages.push({ stage: 'google_places', status: 'skipped', detail: 'no coordinates' })
+  } else if (companyName && website) {
+    stages.push({ stage: 'google_places', status: 'skipped', detail: 'name + website already known' })
+  } else {
+    try {
+      const place = await googlePlacesLookup(lat, lng)
+      if (place && (place.name || place.phone || place.website)) {
+        if (!companyName && place.name) companyName = place.name
+        if (!website && place.website) website = place.website
+        if (!companyPhone && place.phone) companyPhone = place.phone
+        const parts = [
+          place.name ? `Business: ${place.name}` : '',
+          place.phone ? `Phone: ${place.phone}` : '',
+          place.website ? `Website: ${place.website}` : '',
+        ].filter(Boolean).join('\n')
+        textChunks.push(`Google Places business at coordinates:\n${parts}`)
+        sources.push(`google-places: ${place.name ?? place.placeId ?? 'nearby'}`)
+        stages.push({ stage: 'google_places', status: 'ok', detail: place.name ?? place.phone ?? 'found' })
+      } else {
+        stages.push({ stage: 'google_places', status: 'ok', detail: 'no establishment found' })
+      }
+    } catch (e) {
+      stages.push({ stage: 'google_places', status: 'failed', detail: e instanceof Error ? e.message : 'error' })
+    }
+  }
+
   // ── Stage 2: geocode (Nominatim) ──────────────────────────────────────────
   if (lat !== undefined && lng !== undefined && !companyName) {
     try {
@@ -954,36 +987,6 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
     stages.push({ stage: 'overpass', status: 'skipped', detail: 'no coordinates' })
   } else {
     stages.push({ stage: 'overpass', status: 'skipped', detail: 'name already known' })
-  }
-
-  // ── Stage 3.5: Google Places business identity ────────────────────────────
-  if (!GOOGLE_MAPS_KEY) {
-    stages.push({ stage: 'google_places', status: 'skipped', detail: 'GOOGLE_MAPS_API_KEY not set' })
-  } else if (lat === undefined || lng === undefined) {
-    stages.push({ stage: 'google_places', status: 'skipped', detail: 'no coordinates' })
-  } else if (companyName && website) {
-    stages.push({ stage: 'google_places', status: 'skipped', detail: 'name + website already known' })
-  } else {
-    try {
-      const place = await googlePlacesLookup(lat, lng)
-      if (place && (place.name || place.phone || place.website)) {
-        if (!companyName && place.name) companyName = place.name
-        if (!website && place.website) website = place.website
-        if (!companyPhone && place.phone) companyPhone = place.phone
-        const parts = [
-          place.name ? `Business: ${place.name}` : '',
-          place.phone ? `Phone: ${place.phone}` : '',
-          place.website ? `Website: ${place.website}` : '',
-        ].filter(Boolean).join('\n')
-        textChunks.push(`Google Places business at coordinates:\n${parts}`)
-        sources.push(`google-places: ${place.name ?? place.placeId ?? 'nearby'}`)
-        stages.push({ stage: 'google_places', status: 'ok', detail: place.name ?? place.phone ?? 'found' })
-      } else {
-        stages.push({ stage: 'google_places', status: 'ok', detail: 'no establishment found' })
-      }
-    } catch (e) {
-      stages.push({ stage: 'google_places', status: 'failed', detail: e instanceof Error ? e.message : 'error' })
-    }
   }
 
   // ── Stage 4: DBD juristic lookup ──────────────────────────────────────────

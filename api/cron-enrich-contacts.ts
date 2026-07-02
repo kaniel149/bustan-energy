@@ -29,7 +29,11 @@
 //   Useful for re-running specific IDs after env vars are added (DBD/Firecrawl).
 //   Does NOT apply the land-type or lastResearchedAt filters; processes ids as-is.
 // ============================================================
-export const config = { runtime: 'edge' }
+// Node runtime (not edge): the enrichment pipeline now does Google Places +
+// Firecrawl search + scrape + Gemini per property. With real company names the
+// scrape actually runs and a single property can approach ~20 s, which blows the
+// edge 25-s ceiling. Node gives a 60-s budget so a full parallel batch fits.
+export const config = { maxDuration: 60 }
 
 import {
   bGet,
@@ -49,13 +53,12 @@ const LAND_PROPERTY_TYPES = new Set([
   'orchard', 'farmyard', 'quarry',
 ])
 
-// Keep total Gemini calls ≤ 4 per tick to share free-tier quota with
-// cron-detect-solar (which runs ≤ 10 calls/tick on a 10-min schedule).
-// Contact enrichment is heavier per call (~4-5 s including Firecrawl),
-// so 4 items fits well within the Vercel edge 25-s wall-clock limit when
-// run sequentially. Concurrency 2 is used as a safe middle ground.
-const MAX_PER_TICK = 4
-const CONCURRENCY = 2
+// Process 3 properties per tick, all fully in parallel (CONCURRENCY === MAX_PER_TICK)
+// so wall time ≈ the slowest single property (~10-20 s) rather than the sum.
+// 3 concurrent Firecrawl/Gemini calls stays within free-tier rate limits and the
+// 60-s Node budget with wide margin.
+const MAX_PER_TICK = 3
+const CONCURRENCY = 3
 
 // ---------------------------------------------------------------------------
 // Types for the work-queue rows
