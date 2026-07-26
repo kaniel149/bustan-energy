@@ -174,10 +174,20 @@ gdalinfo input.tif  # check bounds, CRS, resolution
 ---
 
 ## API Keys & Credentials
-- **Supabase anon key**: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydmdwZ3BzcXZ2ZHN1ZHBnd3BtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTE3OTIsImV4cCI6MjA4ODk2Nzc5Mn0.iRx9JiEo6dZL8K5sMUKLS8Sbi5QEZ_BSXvWI9rgTENw
-- **Supabase URL**: https://trvgpgpsqvvdsudpgwpm.supabase.co
-- **Gemini API**: AIzaSyCXoQ1be8uSmHY4CGXx-mm4-e-rqyu8NkQ
+
+> ⚠️ Never paste key values into this file. Read them from the environment.
+> The values that used to live here were committed to git and must be treated
+> as compromised — see rotation note below.
+
+- **Supabase anon key**: `$VITE_SUPABASE_ANON_KEY`
+- **Supabase URL**: `$VITE_SUPABASE_URL` (project ref `trvgpgpsqvvdsudpgwpm`)
+- **Gemini API**: `$GEMINI_API_KEY`
 - **GitHub**: kaniel149/copenhagen-solar
+
+**Rotation status (2026-07-26):** a live Gemini API key and the Supabase anon
+key were hardcoded here and are present in git history. Removing them from the
+working tree does not invalidate them — rotate the Gemini key in Google Cloud
+Console and re-issue the Supabase key if RLS coverage is not fully trusted.
 
 ---
 
