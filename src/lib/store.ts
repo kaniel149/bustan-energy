@@ -20,9 +20,15 @@ function readStoredMapStyle(): MapStyleId {
     const v = localStorage.getItem(MAP_STYLE_KEY) as MapStyleId | null
     if (v && MAP_STYLES.includes(v)) return v
   } catch { /* SSR / private mode */ }
-  // Default to the freshest imagery (Mapbox Satellite = Maxar 2025-26) when a
-  // token is configured; otherwise fall back to the EOX Sentinel-2 layer.
-  return import.meta.env.VITE_MAPBOX_TOKEN ? 'mapbox' : 'sentinel2024'
+  // Default to Esri World Imagery. Measured over Ko Phangan on 2026-08-23 via
+  // Esri's own metadata service: Vantor "Vivid Standard TH02 26Q2", WorldView
+  // Legion, 0.34 m native, captured 2026-01-14 to 2026-04-07 across the island.
+  // That is the only basemap here whose capture date we can actually verify —
+  // Mapbox publishes no per-tile vintage, and its 30 cm tier covers metros over
+  // 500k people, which Ko Phangan is not. Esri also caps at z18 here, so it is
+  // the fresher-but-coarser choice; switch to Mapbox in the UI when zoom matters
+  // more than recency.
+  return 'esri'
 }
 
 function persistMapStyle(style: MapStyleId): void {

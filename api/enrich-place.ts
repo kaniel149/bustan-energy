@@ -79,6 +79,18 @@ export default async function handler(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: 'invalid_coordinates' }, { status: 400 })
   }
 
+  // This endpoint is unauthenticated by necessity: action=satellite produces the
+  // <img src> on client-facing proposal pages, which are opened by prospects who
+  // have no login. That makes it a spend proxy on our Google billing account, so
+  // the blast radius is bounded geographically — Bustan only operates in Thailand,
+  // and every legitimate call is for a Thai rooftop. Requests outside the country
+  // are abuse, not use, and are refused before any billable call is made.
+  const IN_THAILAND =
+    latN >= 5.5 && latN <= 20.5 && lngN >= 97.0 && lngN <= 106.0
+  if (!IN_THAILAND) {
+    return Response.json({ ok: false, error: 'out_of_service_area' }, { status: 403 })
+  }
+
   // Sanitize size param — must match NNNxNNN pattern, max 640x640
   const sizeMatch = /^(\d{1,4})x(\d{1,4})$/.exec(size)
   if (!sizeMatch) {

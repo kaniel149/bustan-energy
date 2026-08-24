@@ -13,5 +13,12 @@ export function isAllowedAdmin(email?: string | null): boolean {
   const normalized = email.trim().toLowerCase()
   const explicitEmails = list(process.env.ADMIN_EMAILS, DEFAULT_ADMIN_EMAILS)
   const allowedDomains = list(process.env.ADMIN_EMAIL_DOMAINS)
-  return explicitEmails.includes(normalized) || allowedDomains.some((domain) => normalized.endsWith(domain))
+  // Match on the domain part only. A bare endsWith() would accept
+  // attacker@notbustan-energy.com for the allowed domain "bustan-energy.com".
+  const at = normalized.lastIndexOf('@')
+  if (at < 1 || at === normalized.length - 1) return false
+  const domainPart = normalized.slice(at + 1)
+
+  return explicitEmails.includes(normalized) ||
+    allowedDomains.some((domain) => domainPart === domain.replace(/^@/, ''))
 }

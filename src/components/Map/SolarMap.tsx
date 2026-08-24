@@ -40,12 +40,36 @@ const TILE_SOURCES: Record<string, string[]> = {
   ],
 }
 
+// Native zoom ceiling per source. Beyond this MapLibre upscales the last real
+// tile instead of requesting one that does not exist.
+//
+// Esri's World_Imagery answers 200 at any zoom, but over Ko Phangan anything
+// above z18 is a ~2.5 KB "no data available" placeholder rather than imagery
+// (verified 2026-08-23: Phangan z18 = 13.6 KB photo, z19 = 2.5 KB placeholder;
+// Bangkok z19 = 15.6 KB real). Capping at 18 keeps the map looking sharp-ish
+// instead of going blank grey when a user zooms into a roof.
+const TILE_MAXZOOM: Record<string, number> = {
+  esri: 18,
+  sentinel2024: 15,
+  street: 19,
+  mapbox: 20,
+  satellite: 20,
+}
+
+const TILE_ATTRIBUTION =
+  '© Esri/Vantor (WorldView Legion) · © Mapbox © Maxar · EOX Sentinel-2 cloudless · © OpenStreetMap'
+
 // Resolve the tile URLs for a style id, with safe fallbacks:
 // - mapbox needs a token; without it fall back to the EOX Sentinel-2 layer
-// - any unknown style falls back to Google satellite (never undefined → no crash)
+// - any unknown style falls back to Esri (never undefined → no crash)
 function resolveTiles(style: string): string[] {
   if (style === 'mapbox' && !MAPBOX_TOKEN) return TILE_SOURCES.sentinel2024
-  return TILE_SOURCES[style] ?? TILE_SOURCES.satellite
+  return TILE_SOURCES[style] ?? TILE_SOURCES.esri
+}
+
+function resolveMaxZoom(style: string): number {
+  if (style === 'mapbox' && !MAPBOX_TOKEN) return TILE_MAXZOOM.sentinel2024
+  return TILE_MAXZOOM[style] ?? TILE_MAXZOOM.esri
 }
 
 type LayerMouseEventType = 'click' | 'mouseenter' | 'mouseleave' | 'mousemove'
@@ -293,8 +317,8 @@ export function SolarMap() {
             type: 'raster',
             tiles: resolveTiles(mapStyle),
             tileSize: 256,
-            maxzoom: 20,
-            attribution: '© Mapbox © Maxar · Esri · EOX Sentinel-2 cloudless · © OpenStreetMap',
+            maxzoom: resolveMaxZoom(mapStyle),
+            attribution: TILE_ATTRIBUTION,
           },
         },
         layers: [
@@ -320,7 +344,26 @@ export function SolarMap() {
     if (!m) return
     const apply = () => {
       const src = m.getSource('raster-tiles') as maplibregl.RasterTileSource
-      if (src) src.setTiles(resolveTiles(mapStyle))
+      if (!src) return
+      // setTiles() swaps the URLs but cannot change the source's maxzoom, and the
+      // sources differ there (Esri stops at z18 over Ko Phangan, Mapbox goes to
+      // z20). Keeping a stale maxzoom either blanks the map past the real ceiling
+      // or throws away detail below it, so rebuild the source when it changes.
+      const nextMaxZoom = resolveMaxZoom(mapStyle)
+      if (src.maxzoom === nextMaxZoom) {
+        src.setTiles(resolveTiles(mapStyle))
+        return
+      }
+      if (m.getLayer('raster-layer')) m.removeLayer('raster-layer')
+      m.removeSource('raster-tiles')
+      m.addSource('raster-tiles', {
+        type: 'raster',
+        tiles: resolveTiles(mapStyle),
+        tileSize: 256,
+        maxzoom: nextMaxZoom,
+        attribution: TILE_ATTRIBUTION,
+      })
+      m.addLayer({ id: 'raster-layer', type: 'raster', source: 'raster-tiles' }, m.getStyle().layers[0]?.id)
     }
     if (m.isStyleLoaded()) apply()
     else m.once('load', apply)

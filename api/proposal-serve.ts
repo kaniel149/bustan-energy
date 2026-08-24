@@ -24,6 +24,9 @@ interface ProposalServeRow {
   password_hash?: string | null
   metadata?: {
     rendered_html?: string
+    /** Password-gate throttle state; see recordGateAttempt below. */
+    access_gate?: { fails?: number; locked_until?: string }
+    [key: string]: unknown
   } | null
 }
 
@@ -165,6 +168,64 @@ async function loadProposal(ref: string): Promise<ProposalServeRow | null> {
   return Array.isArray(arr) && arr.length ? arr[0] as ProposalServeRow : null
 }
 
+// ── Brute-force throttle ──────────────────────────────────────────────────
+// A proposal password is a 6-digit code: 900,000 possibilities, which an
+// unthrottled endpoint gives up in hours, and an offline attacker with the
+// unsalted SHA-256 hash gives up in milliseconds. Raising the entropy would
+// mean handing clients a long code to type, so the defence is here instead:
+// after MAX_FAILS wrong guesses the ref is frozen for LOCK_MINUTES.
+//
+// State lives in the proposal's existing `metadata` JSONB — deliberately, so
+// this ships without a migration. Counting per-ref rather than per-IP is the
+// point: the attacker rotates IPs, but the thing being attacked is one ref.
+// The lockout is short so a griefer can annoy a client, not lock them out.
+const MAX_FAILS = 8
+const LOCK_MINUTES = 15
+
+interface GateState { fails?: number; locked_until?: string }
+
+function gateState(meta: Record<string, unknown> | null | undefined): GateState {
+  const g = (meta as { access_gate?: GateState } | null)?.access_gate
+  return g && typeof g === 'object' ? g : {}
+}
+
+function lockRemainingMs(meta: Record<string, unknown> | null | undefined): number {
+  const until = gateState(meta).locked_until
+  if (!until) return 0
+  const ms = Date.parse(until) - Date.now()
+  return Number.isFinite(ms) && ms > 0 ? ms : 0
+}
+
+async function recordGateAttempt(
+  ref: string,
+  meta: Record<string, unknown> | null | undefined,
+  success: boolean,
+): Promise<void> {
+  const current = gateState(meta)
+  const fails = success ? 0 : (current.fails || 0) + 1
+  const next: GateState = fails >= MAX_FAILS
+    ? { fails: 0, locked_until: new Date(Date.now() + LOCK_MINUTES * 60_000).toISOString() }
+    : { fails }
+
+  try {
+    await fetch(
+      `${SUPABASE_URL}/rest/v1/proposals?ref_number=eq.${encodeURIComponent(ref)}`,
+      {
+        method: 'PATCH',
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ metadata: { ...(meta || {}), access_gate: next } }),
+      },
+    )
+  } catch {
+    // Never let throttle bookkeeping break a legitimate client's access.
+  }
+}
+
 async function logProposalView(req: Request, ref: string, password: string): Promise<void> {
   try {
     await fetch(new URL('/api/proposal-view', req.url), {
@@ -225,17 +286,34 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   if (req.method === 'POST') {
+    const lockedMs = lockRemainingMs(proposal.metadata)
+    if (lockedMs > 0) {
+      return Response.json(
+        { ok: false, error: 'too_many_attempts', retry_after_seconds: Math.ceil(lockedMs / 1000) },
+        {
+          status: 429,
+          headers: { ...securityHeaders, 'Retry-After': String(Math.ceil(lockedMs / 1000)) },
+        },
+      )
+    }
+
     const body = await req.json().catch(() => null) as { password?: string } | null
     const password = String(body?.password || '').trim()
-    const correct = proposal.password_hash && (await sha256hex(password)) === proposal.password_hash
-    await logProposalView(req, ref, password)
+    const correct = Boolean(
+      proposal.password_hash && (await sha256hex(password)) === proposal.password_hash,
+    )
+    await recordGateAttempt(ref, proposal.metadata, correct)
 
     if (!correct) {
+      // Only log an actual view, not a failed guess — logProposalView emails the
+      // team, and a brute-force run would otherwise become a mail flood.
       return Response.json({ ok: false, error: 'wrong_password' }, {
         status: 401,
         headers: securityHeaders,
       })
     }
+
+    await logProposalView(req, ref, password)
 
     const session = await createProposalSession(ref)
     return new Response(stripLegacyClientGate(html), {

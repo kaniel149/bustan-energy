@@ -50,3 +50,23 @@ export async function bPatch(path: string, body: unknown): Promise<Response> {
     body: JSON.stringify(body),
   })
 }
+
+/**
+ * PATCH that reports how many rows it actually touched.
+ *
+ * `bPatch` sends `Prefer: return=minimal`, so PostgREST answers 204 whether it
+ * updated one row or none — which makes it useless for optimistic locking. This
+ * variant asks for the updated rows back, so a caller can tell "I claimed it"
+ * from "someone else already did". Returns null when the request itself failed.
+ */
+export async function bPatchReturning<T = Record<string, unknown>>(
+  path: string,
+  body: unknown,
+): Promise<T[] | null> {
+  const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, {
+    method: 'PATCH',
+    headers: { ...bustanHeaders(true), Prefer: 'return=representation' },
+    body: JSON.stringify(body),
+  })
+  return r.ok ? r.json() : null
+}
