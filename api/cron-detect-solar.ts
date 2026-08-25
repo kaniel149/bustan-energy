@@ -3,7 +3,7 @@
 //
 // Runs every 10 min (offset 5-55/10 from cron-process-scans's */10).
 // Fetches up to MAX_PER_RUN unchecked roof candidates + properties,
-// pulls an Esri World Imagery aerial tile, and asks Gemini 2.0 Flash
+// pulls an Esri World Imagery aerial tile, and asks a Gemini vision model
 // whether PV panels are already installed.
 //
 // Queue logic (≤ MAX_PER_RUN = 15 Gemini calls per tick):
@@ -86,9 +86,19 @@ async function bPatch(path: string, body: unknown): Promise<boolean> {
 // ----------------------------------------------------------------
 // NOTE: the World_Imagery `export` endpoint returns HTTP 500 (verified
 // 2026-06-11), so we use the reliable XYZ tile endpoint instead: a 2×2 grid
-// of z19 tiles (~150×150 m combined at Thai latitudes) chosen so the target
-// point sits nearest the shared corner. Falls back to the single centre tile.
+// chosen so the target point sits nearest the shared corner. Falls back to the
+// single centre tile.
+// Esri's imagery ceiling is regional. It answers HTTP 200 at any zoom, but where
+// it has no imagery at that zoom it returns a small "no data available"
+// placeholder rather than a 404 — so a naive fetch silently feeds the model a
+// blank square and gets back "no solar" for every roof.
+//
+// Measured 2026-08-23: over Ko Phangan a z18 tile is ~13.6 KB of imagery while
+// z19 is a 2.5 KB placeholder; over Bangkok z19 is a real 15.6 KB tile. So we
+// ask for z19, detect the placeholder by size, and drop to z18 for that point.
 const TILE_ZOOM = 19
+const TILE_ZOOM_FALLBACK = 18
+const MIN_TILE_BYTES = 4000
 const ESRI_TILE = (z: number, y: number, x: number) =>
   `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`
 
@@ -110,18 +120,23 @@ async function fetchTile(z: number, y: number, x: number): Promise<string> {
     if (!res.ok) throw new Error(`esri_tile_${res.status}`)
     const mime = res.headers.get('content-type') ?? ''
     if (!mime.startsWith('image/')) throw new Error('esri_tile_not_image')
-    return bufToB64(await res.arrayBuffer())
+    const buf = await res.arrayBuffer()
+    // Placeholder tiles are valid JPEGs, just tiny and empty — size is the only
+    // signal Esri gives us that this zoom has no imagery here.
+    if (buf.byteLength < MIN_TILE_BYTES) throw new Error('esri_tile_placeholder')
+    return bufToB64(buf)
   } finally {
     clearTimeout(t)
   }
 }
 
-async function fetchAerialBase64(
+async function fetchAerialAtZoom(
   lat: number,
   lon: number,
+  zoom: number,
 ): Promise<{ images: string[]; mime: string; grid: boolean }> {
   // Slippy-map fractional tile coords
-  const n = 2 ** TILE_ZOOM
+  const n = 2 ** zoom
   const xf = ((lon + 180) / 360) * n
   const latRad = (lat * Math.PI) / 180
   const yf = ((1 - Math.asinh(Math.tan(latRad)) / Math.PI) / 2) * n
@@ -135,12 +150,27 @@ async function fetchAerialBase64(
   ]
 
   try {
-    const images = await Promise.all(coords.map(([y, x]) => fetchTile(TILE_ZOOM, y, x)))
+    const images = await Promise.all(coords.map(([y, x]) => fetchTile(zoom, y, x)))
     return { images, mime: 'image/jpeg', grid: true }
   } catch {
-    // Fall back to the single tile containing the point
-    const single = await fetchTile(TILE_ZOOM, Math.floor(yf), Math.floor(xf))
+    // Fall back to the single tile containing the point. This still throws on a
+    // placeholder, which is what lets the caller drop a zoom level.
+    const single = await fetchTile(zoom, Math.floor(yf), Math.floor(xf))
     return { images: [single], mime: 'image/jpeg', grid: false }
+  }
+}
+
+async function fetchAerialBase64(
+  lat: number,
+  lon: number,
+): Promise<{ images: string[]; mime: string; grid: boolean }> {
+  try {
+    return await fetchAerialAtZoom(lat, lon, TILE_ZOOM)
+  } catch (e) {
+    // Only a missing-imagery result is worth retrying lower; a network or HTTP
+    // failure would fail the same way at z18 and should surface as-is.
+    if (!String(e).includes('placeholder')) throw e
+    return fetchAerialAtZoom(lat, lon, TILE_ZOOM_FALLBACK)
   }
 }
 
@@ -172,11 +202,20 @@ interface SolarDetectResult {
 // Model fallback chain: free-tier quotas are tracked PER MODEL, so when one
 // model is 429-exhausted we roll to the next (verified 2026-06-11: 2.0-flash
 // exhausted while 2.5-flash-lite / 2.5-flash still had quota).
+// Model fallback chain: free-tier quota is tracked PER MODEL, so a 429 on one
+// rolls to the next.
+//
+// gemini-2.5-flash-lite was removed 2026-08-25: it is RETIRED and now answers
+// 404 "This model models/gemini-2.5-flash-lite is no longer available". Being
+// first in the chain, it turned every call into a wasted round-trip before the
+// real model ran. gemini-3.1-flash-lite verified working the same day and
+// returns clean unfenced JSON; 3.5-flash-lite wraps output in ```json fences,
+// which the parsers here already strip.
 const GEMINI_MODELS = [
   ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
-  'gemini-2.5-flash-lite',
+  'gemini-3.1-flash-lite',
+  'gemini-3.5-flash-lite',
   'gemini-2.5-flash',
-  // gemini-2.0-flash removed — retired (generateContent → 404).
 ]
 
 async function callGemini(images: string[], mime: string): Promise<SolarDetectResult> {

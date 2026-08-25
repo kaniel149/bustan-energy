@@ -568,12 +568,20 @@ export interface GeminiExtractResult {
 }
 
 // Model fallback chain: mirrors cron-detect-solar approach for text extraction.
+// Model fallback chain: free-tier quota is tracked PER MODEL, so a 429 on one
+// rolls to the next.
+//
+// gemini-2.5-flash-lite was removed 2026-08-25: it is RETIRED and now answers
+// 404 "This model models/gemini-2.5-flash-lite is no longer available". Being
+// first in the chain, it turned every call into a wasted round-trip before the
+// real model ran. gemini-3.1-flash-lite verified working the same day and
+// returns clean unfenced JSON; 3.5-flash-lite wraps output in ```json fences,
+// which the parsers here already strip.
 const GEMINI_MODELS = [
   ...(process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : []),
-  'gemini-2.5-flash-lite',
+  'gemini-3.1-flash-lite',
+  'gemini-3.5-flash-lite',
   'gemini-2.5-flash',
-  // gemini-2.0-flash removed — retired (generateContent → 404), so as a last-resort
-  // fallback it guaranteed total failure once the 2.5 models were quota-exhausted.
 ]
 
 export async function geminiExtract(
