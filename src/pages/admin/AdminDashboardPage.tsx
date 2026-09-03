@@ -6,6 +6,7 @@ import { useAdminStore } from '../../lib/admin-store'
 import { STATUS_BADGE } from '../../types/proposals'
 import type { ProposalStats } from '../../lib/admin-service'
 import AnalyticsSection from '../../components/admin/AnalyticsSection'
+import FunnelSection from '../../components/admin/FunnelSection'
 
 function StatCard({
   icon: Icon,
@@ -82,7 +83,7 @@ export default function AdminDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-white">דשבורד</h1>
-          <p className="text-sm text-white/40 mt-1">סקירת הצעות מחיר</p>
+          <p className="text-sm text-white/40 mt-1">משפך עסקי — סריקות עד חתימה</p>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <button
@@ -102,6 +103,9 @@ export default function AdminDashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Business funnel (both DBs) */}
+      <FunnelSection />
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
