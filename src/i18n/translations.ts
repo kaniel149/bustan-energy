@@ -521,6 +521,34 @@ const en = {
         "Schedule a visit to our office in Thong Sala — we'd love to meet you and talk solar over coffee.",
       button: 'Schedule a Visit',
     },
+    trust: {
+      team: {
+        title: 'Who you work with',
+        members: [
+          { name: 'Kaniel Tordjman', role: 'Founder · engineering, software, proposals' },
+          { name: 'Erez', role: 'Operations & contracts, Ko Phangan' },
+        ],
+      },
+      licensing: {
+        title: 'Licensing & grid connection',
+        body: 'Grid-tied systems in Thailand are licensed through the Provincial Electricity Authority (PEA). We prepare the full application — single-line diagram, panel layout, PEA summary — and manage the inspection and meter change.',
+        link: 'See a real PEA application package',
+      },
+      pea: {
+        title: 'From signature to grid in 6–8 weeks',
+        steps: [
+          { title: 'Survey & design', body: 'Site measurement, electrical assessment, system design (week 1)' },
+          { title: 'PEA application & procurement', body: 'SLD, layout and summary filed; equipment ordered on the 40% deposit (weeks 1–3)' },
+          { title: 'Installation', body: 'Mounting, panels, inverters, wiring (weeks 4–6)' },
+          { title: 'Inspection & go-live', body: 'PEA inspection, grid connection, monitoring handover; 20% on commissioning (weeks 6–8)' },
+        ],
+      },
+      academy: {
+        title: 'Learn how it works',
+        body: 'Our free academy explains solar, batteries and EV charging for Thailand — in English, Thai and Hebrew.',
+        cta: 'Open the academy',
+      },
+    },
   },
 
   blog: {
@@ -1443,6 +1471,16 @@ const th = {
         'นัดหมายเยี่ยมชมสำนักงานของเราที่ทองสาลา เราอยากพบคุณและพูดคุยเรื่องโซลาร์เซลล์สบายๆ',
       button: 'นัดหมายเยี่ยมชม',
     },
+    trust: {
+      team: { title: 'ทีมที่คุณจะได้ร่วมงานด้วย' },
+      licensing: { title: 'ใบอนุญาตและการเชื่อมต่อกริด' },
+      pea: { title: 'จากเซ็นสัญญาถึงเชื่อมต่อกริดใน 6–8 สัปดาห์' },
+      academy: {
+        title: 'เรียนรู้ว่าระบบทำงานอย่างไร',
+        body: 'อคาเดมีฟรีของเราอธิบายเรื่องโซลาร์ แบตเตอรี่ และการชาร์จ EV สำหรับประเทศไทย — ภาษาอังกฤษ ไทย และฮีบรู',
+        cta: 'เปิดอคาเดมี',
+      },
+    },
   },
 
   blog: {
@@ -1784,6 +1822,18 @@ const he = {
     partners: {
       title: 'שותפים ומשקיעים — סולארי EPC/PPA בקו פנגן',
       description: 'השקעה או שותפות עם Bustan Energy: צבר גגות סרוק, מודלים EPC ו-PPA, מימון Krungsri. בקשו גישה ל-Data Room.',
+    },
+  },
+  about: {
+    trust: {
+      team: { title: 'עם מי עובדים' },
+      licensing: { title: 'רישוי וחיבור לרשת' },
+      pea: { title: 'מחתימה לחיבור לרשת ב-6–8 שבועות' },
+      academy: {
+        title: 'איך זה עובד',
+        body: 'האקדמיה החינמית שלנו מסבירה סולארי, סוללות וטעינת רכב חשמלי בתאילנד — באנגלית, תאית ועברית.',
+        cta: 'לאקדמיה',
+      },
     },
   },
   crm: {
