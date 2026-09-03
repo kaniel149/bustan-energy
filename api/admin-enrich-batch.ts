@@ -14,6 +14,7 @@
 // Gemini); a parallel batch needs the 60-s budget, not the edge 25-s ceiling.
 export const config = { runtime: 'nodejs', maxDuration: 60 }
 
+import { nodeHandler } from './_lib/node-web-adapter.js'
 import { isAllowedAdmin } from './_lib/admin-access.js'
 import { BUSTAN_KEY, runFindContactPipeline } from './_lib/find-contact-core.js'
 import { selectUnenrichedProperties, countUnenriched } from './_lib/enrich-queue.js'
@@ -41,7 +42,7 @@ async function verifyAdmin(req: Request): Promise<string | null> {
   return email && isAllowedAdmin(email) ? email : null
 }
 
-export default async function handler(req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return Response.json({ ok: false, error: 'method_not_allowed' }, { status: 405 })
   if (!SUPABASE_URL || !SUPABASE_KEY) return Response.json({ ok: false, error: 'server_misconfigured' }, { status: 500 })
   if (!BUSTAN_KEY) return Response.json({ ok: false, error: 'BUSTAN_SUPABASE_SERVICE_ROLE_KEY not set' }, { status: 500 })
@@ -90,3 +91,6 @@ export default async function handler(req: Request): Promise<Response> {
   const remaining = await countUnenriched()
   return Response.json({ ok: true, processed, deferred, found_dm, found_company, errors, remaining, batch: queue.length })
 }
+
+// Node runtime passes (IncomingMessage, ServerResponse) — adapt to the web handler above.
+export default nodeHandler(handler)

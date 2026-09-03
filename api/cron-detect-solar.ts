@@ -35,6 +35,7 @@
 // batch size. Node gives a 60-s budget.
 export const config = { runtime: 'nodejs', maxDuration: 60 }
 
+import { nodeHandler } from './_lib/node-web-adapter.js'
 import { buildOutlinedCrop } from './_lib/aerial-tiles.js'
 
 const CRON_SECRET  = process.env.CRON_SECRET
@@ -274,7 +275,7 @@ async function processItem(lat: number, lon: number, geom: RoofGeom): Promise<{
 // ----------------------------------------------------------------
 // Main handler
 // ----------------------------------------------------------------
-export default async function handler(req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   if (!CRON_SECRET) return Response.json({ ok: false, error: 'server_misconfigured' }, { status: 500 })
   const secret = req.headers.get('authorization')?.match(/^Bearer\s+(\S+)$/i)?.[1]
   if (!secret || secret !== CRON_SECRET) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 })
@@ -448,3 +449,6 @@ export default async function handler(req: Request): Promise<Response> {
     slots: { candidates: candidates.length, properties: properties.length },
   })
 }
+
+// Node runtime passes (IncomingMessage, ServerResponse) — adapt to the web handler above.
+export default nodeHandler(handler)

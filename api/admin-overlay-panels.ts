@@ -10,6 +10,7 @@ export const config = {
   maxDuration: 60,
 }
 
+import { nodeHandler } from './_lib/node-web-adapter.js'
 import { isAllowedAdmin } from './_lib/admin-access.js'
 
 const SUPABASE_URL = process.env.SUPABASE_URL!
@@ -30,7 +31,7 @@ async function verifyAdmin(req: Request): Promise<string | null> {
   return email && allowed(email.toLowerCase()) ? email : null
 }
 
-export default async function handler(req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 })
 
   try {
@@ -150,3 +151,6 @@ export default async function handler(req: Request): Promise<Response> {
     return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 })
   }
 }
+
+// Node runtime passes (IncomingMessage, ServerResponse) — adapt to the web handler above.
+export default nodeHandler(handler)

@@ -18,6 +18,7 @@
 // ============================================================
 export const config = { runtime: 'nodejs' }
 
+import { nodeHandler } from './_lib/node-web-adapter.js'
 import { isAllowedAdmin } from './_lib/admin-access.js'
 import { bGet, bPost, bPatch } from './_lib/bustan-db.js'
 import { sendWhatsApp, isWhatsAppConfigured } from './_lib/whatsapp.js'
@@ -54,7 +55,7 @@ function pickPhone(data: Record<string, unknown> | null): string | null {
   return null
 }
 
-export default async function handler(req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return Response.json({ ok: false, error: 'method_not_allowed' }, { status: 405 })
   if (!SUPABASE_URL || !SUPABASE_KEY || !BUSTAN_KEY) return Response.json({ ok: false, error: 'server_misconfigured' }, { status: 500 })
 
@@ -107,3 +108,6 @@ export default async function handler(req: Request): Promise<Response> {
   if (!result.ok) return Response.json({ ok: false, test: target.test, error: result.error }, { status: 502 })
   return Response.json({ ok: true, test: target.test, idMessage: result.idMessage, recipient: target.phone })
 }
+
+// Node runtime passes (IncomingMessage, ServerResponse) — adapt to the web handler above.
+export default nodeHandler(handler)
