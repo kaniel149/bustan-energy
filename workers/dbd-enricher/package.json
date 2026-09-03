@@ -5,11 +5,12 @@
   "type": "module",
   "main": "index.mjs",
   "scripts": {
-    "start": "node index.mjs",
-    "dev": "node --watch index.mjs"
+    "start": "node --import ./instrument.mjs index.mjs",
+    "dev": "node --watch --import ./instrument.mjs index.mjs"
   },
   "dependencies": {
     "@crawlee/cheerio": "^3.10.0",
+    "@sentry/node": "^10.68.0",
     "cheerio": "^1.0.0"
   },
   "engines": {
