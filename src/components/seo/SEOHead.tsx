@@ -3,7 +3,7 @@ import { localBusinessSchema } from './schemas'
 import type { Lang } from '../../i18n/translations'
 
 const BASE_URL = 'https://bustan-energy.com'
-const DEFAULT_OG_IMAGE = `${BASE_URL}/assets/images/og-default.jpg`
+const DEFAULT_OG_IMAGE = `${BASE_URL}/assets/images/strategy-01-aerial.jpg` // matches index.html og:image; og-default.jpg never existed
 
 interface SEOHeadProps {
   /** Page title — will be appended with " | Bustan Energy" */
