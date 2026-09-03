@@ -12,6 +12,7 @@ const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
+const PartnersPage = lazy(() => import('./pages/PartnersPage'))
 const BlogPage = lazy(() => import('./pages/BlogPage'))
 const ContactPage = lazy(() => import('./pages/ContactPage'))
 const PlatformPage = lazy(() => import('./pages/PlatformPage'))
@@ -77,6 +78,7 @@ function PageRoutes() {
       <Route path="blog/:slug" element={<BlogPostPage />} />
       <Route path="contact" element={<ContactPage />} />
       <Route path="tools" element={<ToolsPage />} />
+      <Route path="partners" element={<PartnersPage />} />
       {/* SEO keyword/location landing pages (content-driven) */}
       {SEO_PAGES.map((p) => (
         <Route key={p.slug} path={p.slug} element={<SeoLandingPage page={p} />} />

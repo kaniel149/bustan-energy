@@ -714,7 +714,54 @@ const en = {
     },
   },
 
+  partners: {
+    hero: {
+      tag: 'Partners & Investors',
+      title: 'Own the sun on Ko Phangan',
+      subtitle: 'Island electricity costs ฿5–7/kWh and rises yearly. Bustan Energy builds and operates rooftop solar under EPC and PPA — and opens both to partners: lenders, PPA capital, and EPC/installer partners.',
+    },
+    why: [
+      { title: 'A scanned pipeline, not a wish list', body: 'Every roof on the island has been mapped and graded; candidates flow through owner research, proposals and e-signature in one system.' },
+      { title: 'Two revenue models', body: 'EPC (client owns the system) for cash flow; PPA (we own it, the client buys power) for long-dated yield.' },
+      { title: 'PEA-ready delivery', body: 'Single-line diagrams, layouts and application packages are produced in-house; grid connection is part of the scope.' },
+    ],
+    facts: {
+      title: 'Key figures',
+      badge: 'Figures under review',
+      badgeHint: 'Three inputs differ between the financing deck and the business-plan workbook and await a final decision.',
+      validated: 'Workbook validated',
+      labels: {
+        peaTariff: 'PEA retail tariff',
+        ppaTariff: 'PPA tariff',
+        installedCostPerKwp: 'Installed cost',
+        salePricePerKwp: 'EPC sale price',
+        sunHours: 'Peak sun hours',
+        loanRate: 'Krungsri solar loan rate',
+        loanTermYears: 'Loan term',
+      },
+    },
+    deck: { title: 'Financing deep-dive', open: 'Open the deck full screen' },
+    form: {
+      title: 'Request the data room',
+      subtitle: 'Business plan workbook, scan inventory, proposal pipeline and PPA model. We reply within 2 business days.',
+      name: 'Full name',
+      email: 'Work email',
+      company: 'Company / fund',
+      role: 'I am a…',
+      roles: { investor: 'Investor / PPA capital', lender: 'Bank / lender', epc: 'EPC or installer partner', other: 'Other' },
+      message: 'What are you evaluating?',
+      submit: 'Request access',
+      sent: 'Thanks — we will send the data-room link by email.',
+      error: 'Could not send right now. Please reach us on WhatsApp.',
+    },
+  },
+
   seo: {
+    partners: {
+      title: 'Partners & Investors — Solar EPC/PPA on Ko Phangan',
+      description:
+        'Invest in or partner with Bustan Energy: island-scale solar pipeline, EPC and PPA models, Krungsri financing, PEA-ready delivery. Request the data room.',
+    },
     home: {
       title: "Bustan Energy — Solar EPC & PPA on Ko Phangan | Solar Panels Thailand",
       description:
@@ -1589,7 +1636,27 @@ const th = {
     },
   },
 
+  partners: {
+    hero: { tag: 'พันธมิตรและนักลงทุน', title: 'ร่วมเป็นเจ้าของพลังงานแสงอาทิตย์บนเกาะพะงัน' },
+    facts: { title: 'ตัวเลขสำคัญ', badge: 'ตัวเลขอยู่ระหว่างตรวจสอบ' },
+    deck: { title: 'เจาะลึกการเงิน', open: 'เปิดเต็มจอ' },
+    form: {
+      title: 'ขอเข้าถึงข้อมูล',
+      name: 'ชื่อ-นามสกุล',
+      email: 'อีเมล',
+      company: 'บริษัท / กองทุน',
+      submit: 'ขอเข้าถึง',
+      sent: 'ขอบคุณ — เราจะส่งลิงก์ทางอีเมล',
+      error: 'ส่งไม่ได้ในขณะนี้ กรุณาติดต่อทาง WhatsApp',
+    },
+  },
+
   seo: {
+    partners: {
+      title: 'พันธมิตรและนักลงทุน — โซลาร์ EPC/PPA เกาะพะงัน',
+      description:
+        'ร่วมลงทุนหรือเป็นพันธมิตรกับ Bustan Energy: โครงการโซลาร์ทั่วเกาะ โมเดล EPC และ PPA สินเชื่อกรุงศรี ขอเข้าถึง data room',
+    },
     home: {
       title: 'Bustan Energy — ติดตั้งโซลาร์เซลล์เกาะพะงัน อันดับ 1 | แผงโซลาร์ สุราษฎร์ธานี',
       description:
@@ -1697,6 +1764,26 @@ const he = {
   home: {
     hero: {
       ctaLearn: 'אקדמיה סולארית חינם →',
+    },
+  },
+  partners: {
+    hero: { tag: 'שותפים ומשקיעים', title: 'להיות הבעלים של השמש בקו פנגן' },
+    facts: { title: 'מספרים מרכזיים', badge: 'הנתונים בבדיקה' },
+    deck: { title: 'מצגת מימון', open: 'פתח במסך מלא' },
+    form: {
+      title: 'בקשת גישה ל-Data Room',
+      name: 'שם מלא',
+      email: 'אימייל',
+      company: 'חברה / קרן',
+      submit: 'בקש גישה',
+      sent: 'תודה — נשלח קישור במייל',
+      error: 'לא ניתן לשלוח כרגע. פנו אלינו בוואטסאפ',
+    },
+  },
+  seo: {
+    partners: {
+      title: 'שותפים ומשקיעים — סולארי EPC/PPA בקו פנגן',
+      description: 'השקעה או שותפות עם Bustan Energy: צבר גגות סרוק, מודלים EPC ו-PPA, מימון Krungsri. בקשו גישה ל-Data Room.',
     },
   },
   crm: {
