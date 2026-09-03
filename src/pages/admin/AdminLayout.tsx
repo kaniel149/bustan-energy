@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags, Building2, Activity, Send, ScanSearch } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags, Building2, Activity, Send, ScanSearch, BookOpen } from 'lucide-react'
 import { onAuthChange, signOut, isAdmin } from '../../lib/admin-auth'
 import { useAdminStore } from '../../lib/admin-store'
 import { AdminToast } from '../../components/admin/AdminToast'
@@ -10,6 +10,7 @@ import type { User } from '@supabase/supabase-js'
 const NAV_ITEMS = [
   { to: '/admin', icon: LayoutDashboard, label: 'דשבורד', end: true },
   { to: '/admin/scan', icon: ScanSearch, label: 'סורק גגות', end: true },
+  { to: '/admin/knowledge', icon: BookOpen, label: 'מאגר ידע', end: true },
   { to: '/admin/proposals/new', icon: FilePlus, label: 'הצעה חדשה', end: false },
   { to: '/admin/proposals', icon: FileText, label: 'כל ההצעות', end: true },
   { to: '/admin/monitoring', icon: Activity, label: 'ניטור מערכות', end: true },

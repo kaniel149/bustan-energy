@@ -1,0 +1,618 @@
+[
+  {
+    "title": "Data cleanup / island scan (2026-03-29)",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/docs/plans/2026-03-29-data-cleanup-island-scan.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Drone orthomosaic handoff",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/DRONE_ORTHOMOSAIC_HANDOFF.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Drone scan plan",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/DRONE_SCAN_PLAN.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "EV charging research",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/ev-charging-research.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "KP Solar Pro improvement design (2026-03-29)",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/docs/plans/2026-03-29-kp-solar-pro-improvement-design.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Platform plan",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/platform/PLATFORM_PLAN.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Proposal v2 design (2026-03-13)",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/docs/plans/2026-03-13-proposal-v2-design.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Proposal v2 plan (2026-03-13)",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/docs/plans/2026-03-13-proposal-v2-plan.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Scan process (SCAN_PROCESS.md)",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/SCAN_PROCESS.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Scan report Aug-2026",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/SCAN_REPORT.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Solar intelligence platform design (2026-03-13)",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/docs/plans/2026-03-13-solar-intelligence-platform-design.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Value chain (VALUE_CHAIN.md)",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/VALUE_CHAIN.md",
+    "layer": "internal",
+    "group": "plans",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 01 — Market overview",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/01-market-overview.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 02 — Regulations",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/02-regulations.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 03 — On-grid",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/03-on-grid.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 04 — Micro-grid island",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/04-micro-grid-island.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 05 — Permitting",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/05-permitting.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 06 — Grid technical",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/06-grid-technical.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 07 — Costs & pricing",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/07-costs-pricing.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 08 — BESS storage",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/08-bess-storage.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 09 — Financial models",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/09-financial-models.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 10 — Case studies",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/10-case-studies.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 11 — Key players",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/11-key-players.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar research 12 — Koh Phangan",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/12-koh-phangan.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Verification 2026-03",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/research/VERIFICATION_2026_03.md",
+    "layer": "internal",
+    "group": "research",
+    "lang": "en"
+  },
+  {
+    "title": "Competitor research (internal)",
+    "url": "https://bustan-energy.com/bustan-competitor-research-full-internal-2026-05-31.html",
+    "layer": "internal",
+    "group": "strategy",
+    "lang": "en"
+  },
+  {
+    "title": "Financial dashboard",
+    "url": "https://index.bustan-energy.com/financial-dashboard.html",
+    "layer": "internal",
+    "group": "strategy",
+    "lang": "en"
+  },
+  {
+    "title": "אסטרטגיה עסקית",
+    "url": "https://index.bustan-energy.com/strategy.html",
+    "layer": "internal",
+    "group": "strategy",
+    "lang": "he"
+  },
+  {
+    "title": "מימון",
+    "url": "https://index.bustan-energy.com/financing.html",
+    "layer": "internal",
+    "group": "strategy",
+    "lang": "he"
+  },
+  {
+    "title": "פיננסים — תכנון מקיף",
+    "url": "https://index.bustan-energy.com/pnl-plan.html",
+    "layer": "internal",
+    "group": "strategy",
+    "lang": "he"
+  },
+  {
+    "title": "תוכנית עסקית שנה 1",
+    "url": "https://index.bustan-energy.com/business-plan.html",
+    "layer": "internal",
+    "group": "strategy",
+    "lang": "he"
+  },
+  {
+    "title": "Bill scanner",
+    "url": "https://index.bustan-energy.com/bill-scanner.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "en"
+  },
+  {
+    "title": "Drone mission plan",
+    "url": "https://index.bustan-energy.com/drone-mission-plan.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "en"
+  },
+  {
+    "title": "Drone ops",
+    "url": "https://index.bustan-energy.com/drone-ops.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "he"
+  },
+  {
+    "title": "GIS mapper",
+    "url": "https://index.bustan-energy.com/gis-mapper/",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "en"
+  },
+  {
+    "title": "Planning tracker",
+    "url": "https://index.bustan-energy.com/planning-tracker.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "he"
+  },
+  {
+    "title": "Power grid map",
+    "url": "https://index.bustan-energy.com/power-grid-map.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "en"
+  },
+  {
+    "title": "Roof scanner (v1)",
+    "url": "https://index.bustan-energy.com/roof-scanner.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "en"
+  },
+  {
+    "title": "Solar atlas",
+    "url": "https://index.bustan-energy.com/solar-atlas.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "en"
+  },
+  {
+    "title": "Solar farm scout",
+    "url": "https://index.bustan-energy.com/solar-farm-scout.html",
+    "layer": "internal",
+    "group": "tools",
+    "lang": "en"
+  },
+  {
+    "title": "Academy hub",
+    "url": "https://index.bustan-energy.com/academy/index.html",
+    "layer": "team",
+    "group": "academy",
+    "lang": "en"
+  },
+  {
+    "title": "Electrician training research",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/academy/research/electrician-training-research.md",
+    "layer": "team",
+    "group": "academy",
+    "lang": "en"
+  },
+  {
+    "title": "Syllabus",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/academy/SYLLABUS.md",
+    "layer": "team",
+    "group": "academy",
+    "lang": "en"
+  },
+  {
+    "title": "Video library",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/academy/VIDEO_LIBRARY.md",
+    "layer": "team",
+    "group": "academy",
+    "lang": "en"
+  },
+  {
+    "title": "Ads pro (8 HTML ads)",
+    "url": "https://index.bustan-energy.com/ads-pro/index.html",
+    "layer": "team",
+    "group": "brand",
+    "lang": "en"
+  },
+  {
+    "title": "Brand kit",
+    "url": "https://index.bustan-energy.com/brand-kit.html",
+    "layer": "team",
+    "group": "brand",
+    "lang": "he"
+  },
+  {
+    "title": "Print templates",
+    "url": "https://index.bustan-energy.com/brand-kit/print-templates.html",
+    "layer": "team",
+    "group": "brand",
+    "lang": "he"
+  },
+  {
+    "title": "Solar farm guide",
+    "url": "https://index.bustan-energy.com/solar-farm-guide.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "en"
+  },
+  {
+    "title": "Thailand solar farm masterclass",
+    "url": "https://index.bustan-energy.com/thailand-solar-farm-masterclass.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "en"
+  },
+  {
+    "title": "מדריך סריקת גגות ברחפן",
+    "url": "https://index.bustan-energy.com/drone-guide.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "he"
+  },
+  {
+    "title": "ניטור ותחזוקה",
+    "url": "https://index.bustan-energy.com/monitoring-maintenance.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "he"
+  },
+  {
+    "title": "רישוי ורגולציה",
+    "url": "https://index.bustan-energy.com/licensing.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "he"
+  },
+  {
+    "title": "רכש והנדסה",
+    "url": "https://index.bustan-energy.com/procurement-engineering.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "he"
+  },
+  {
+    "title": "רשימת ציוד",
+    "url": "https://index.bustan-energy.com/equipment-list.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "he"
+  },
+  {
+    "title": "תהליך הקמה",
+    "url": "https://index.bustan-energy.com/installation.html",
+    "layer": "team",
+    "group": "ops",
+    "lang": "he"
+  },
+  {
+    "title": "Layout Beamtech",
+    "url": "https://index.bustan-energy.com/pea-docs/layout-beamtech.html",
+    "layer": "team",
+    "group": "pea",
+    "lang": "en"
+  },
+  {
+    "title": "PEA application package",
+    "url": "https://index.bustan-energy.com/pea-docs/pea-application-package.html",
+    "layer": "team",
+    "group": "pea",
+    "lang": "en"
+  },
+  {
+    "title": "PEA summary Beamtech 32.5 kWp",
+    "url": "https://index.bustan-energy.com/pea-docs/pea-summary-beamtech.html",
+    "layer": "team",
+    "group": "pea",
+    "lang": "en"
+  },
+  {
+    "title": "SLD Beamtech",
+    "url": "https://index.bustan-energy.com/pea-docs/sld-beamtech.html",
+    "layer": "team",
+    "group": "pea",
+    "lang": "en"
+  },
+  {
+    "title": "SLD concrete factory",
+    "url": "https://index.bustan-energy.com/pea-docs/sld-concrete-factory.html",
+    "layer": "team",
+    "group": "pea",
+    "lang": "en"
+  },
+  {
+    "title": "CRM Step 1 — ליד נכנס",
+    "url": "https://index.bustan-energy.com/crm-step1-lead-capture.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 10 — חיבור + O&M",
+    "url": "https://index.bustan-energy.com/crm-step10-om.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 2 — סקר ראשוני",
+    "url": "https://index.bustan-energy.com/crm-step2-site-survey.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 3 — ניתוח חשמל",
+    "url": "https://index.bustan-energy.com/crm-step3-electricity.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 4 — עיצוב מערכת",
+    "url": "https://index.bustan-energy.com/crm-step4-design.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 5 — הצעת מחיר",
+    "url": "https://index.bustan-energy.com/crm-step5-sld.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 6 — חוזה + תשלום",
+    "url": "https://index.bustan-energy.com/crm-step6-proposal.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 7 — הגשה לרישיון PEA",
+    "url": "https://index.bustan-energy.com/crm-step7-contract.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 8 — הזמנת חומר",
+    "url": "https://index.bustan-energy.com/crm-step8-inventory.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM Step 9 — התקנה",
+    "url": "https://index.bustan-energy.com/crm-step9-installation.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "CRM value chain (15 slides)",
+    "url": "https://index.bustan-energy.com/crm-value-chain.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "Posting guide",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/marketing/POSTING-GUIDE.md",
+    "layer": "team",
+    "group": "sales",
+    "lang": "en"
+  },
+  {
+    "title": "Social media plan",
+    "url": "https://github.com/kaniel149/bustan-index/blob/main/marketing/social-media-plan.md",
+    "layer": "team",
+    "group": "sales",
+    "lang": "en"
+  },
+  {
+    "title": "אווטרי לקוחות",
+    "url": "https://index.bustan-energy.com/customer-avatars.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "שיווק ומכירות",
+    "url": "https://index.bustan-energy.com/sales-marketing.html",
+    "layer": "team",
+    "group": "sales",
+    "lang": "he"
+  },
+  {
+    "title": "EPC contract",
+    "url": "https://index.bustan-energy.com/epc-contract.html",
+    "layer": "client",
+    "group": "legal",
+    "lang": "he"
+  },
+  {
+    "title": "NDA template",
+    "url": "https://index.bustan-energy.com/legal/nda-bustan-energy-template.html",
+    "layer": "client",
+    "group": "legal",
+    "lang": "en"
+  },
+  {
+    "title": "PPA contract",
+    "url": "https://index.bustan-energy.com/ppa-contract.html",
+    "layer": "client",
+    "group": "legal",
+    "lang": "he"
+  },
+  {
+    "title": "משפטי, חוזים והסכמים",
+    "url": "https://index.bustan-energy.com/legal-contracts.html",
+    "layer": "client",
+    "group": "legal",
+    "lang": "he"
+  },
+  {
+    "title": "Community solar research",
+    "url": "https://index.bustan-energy.com/presentations/community-solar-research.html",
+    "layer": "client",
+    "group": "presentations",
+    "lang": "he"
+  },
+  {
+    "title": "Company presentation 2026",
+    "url": "https://index.bustan-energy.com/presentations/bustan-energy-company-2026.html",
+    "layer": "client",
+    "group": "presentations",
+    "lang": "en"
+  },
+  {
+    "title": "EV charging Koh Phangan (EN)",
+    "url": "https://index.bustan-energy.com/presentations/ev-charging-koh-phangan.html",
+    "layer": "client",
+    "group": "presentations",
+    "lang": "en"
+  },
+  {
+    "title": "EV charging Koh Phangan (HE)",
+    "url": "https://index.bustan-energy.com/presentations/ev-charging-koh-phangan-he.html",
+    "layer": "client",
+    "group": "presentations",
+    "lang": "he"
+  },
+  {
+    "title": "Financing deck",
+    "url": "https://bustan-energy.com/bustan-financing-deck.html",
+    "layer": "client",
+    "group": "presentations",
+    "lang": "he"
+  },
+  {
+    "title": "Client proposal portal example",
+    "url": "https://bustan-energy.com/p/",
+    "layer": "client",
+    "group": "public",
+    "lang": "en"
+  },
+  {
+    "title": "Landing page",
+    "url": "https://index.bustan-energy.com/index.html",
+    "layer": "client",
+    "group": "public",
+    "lang": "en"
+  },
+  {
+    "title": "Marketing site",
+    "url": "https://bustan-energy.com",
+    "layer": "client",
+    "group": "public",
+    "lang": "en"
+  },
+  {
+    "title": "Proposal builder (legacy)",
+    "url": "https://index.bustan-energy.com/proposal.html",
+    "layer": "client",
+    "group": "public",
+    "lang": "en"
+  }
+]
