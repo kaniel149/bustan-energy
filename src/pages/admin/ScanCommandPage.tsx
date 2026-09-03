@@ -366,7 +366,8 @@ export default function ScanCommandPage() {
 
       {/* Map */}
       <div className="relative flex-1 min-h-0 h-1/2 lg:h-full">
-        <div ref={containerRef} className="absolute inset-0" />
+        {/* w-full h-full: maplibre CSS forces position:relative on its container, so inset-0 alone collapses to 0 height */}
+        <div ref={containerRef} className="absolute inset-0 w-full h-full" />
         {zoomTooLow && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 px-3 py-1.5 rounded-lg bg-[#0b1a16]/80 text-[#FFF4E2] text-xs">
             התקרב כדי לטעון מועמדים

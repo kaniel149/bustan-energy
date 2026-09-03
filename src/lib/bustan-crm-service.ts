@@ -519,16 +519,25 @@ export async function fetchScanCandidateRows(
 ): Promise<ScanCandidate[]> {
   if (!bustanSupabase) return []
   const [[minLng, minLat], [maxLng, maxLat]] = bounds
-  const { data, error } = await bustanSupabase
-    .from('scan_candidates')
-    .select('*')
-    .in('status', statuses)
-    .eq('kind', 'roof')
-    .gte('lat', minLat).lte('lat', maxLat).gte('lon', minLng).lte('lon', maxLng)
-    .order('estimated_kwp', { ascending: false, nullsFirst: false })
-    .limit(5000)
-  if (error) throw error
-  return (data ?? []) as ScanCandidate[]
+  // PostgREST caps a single response at max-rows (1000) regardless of .limit(); page with .range().
+  const PAGE = 1000
+  const rows: ScanCandidate[] = []
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await bustanSupabase
+      .from('scan_candidates')
+      .select('*')
+      .in('status', statuses)
+      .eq('kind', 'roof')
+      .gte('lat', minLat).lte('lat', maxLat).gte('lon', minLng).lte('lon', maxLng)
+      .order('estimated_kwp', { ascending: false, nullsFirst: false })
+      .order('id', { ascending: true })
+      .range(from, from + PAGE - 1)
+    if (error) throw error
+    const page = (data ?? []) as ScanCandidate[]
+    rows.push(...page)
+    if (page.length < PAGE || rows.length >= 10000) break
+  }
+  return rows
 }
 
 export async function fetchScanCandidates(
