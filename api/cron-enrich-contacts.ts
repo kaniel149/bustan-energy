@@ -41,18 +41,13 @@ import {
   BUSTAN_KEY,
   runFindContactPipeline,
 } from './_lib/find-contact-core.js'
+import { selectUnenrichedProperties } from './_lib/enrich-queue.js'
 
 // ---------------------------------------------------------------------------
 // Env
 // ---------------------------------------------------------------------------
 
 const CRON_SECRET = process.env.CRON_SECRET
-
-// OSM landuse values → no commercial owner to research (mirrors cron-detect-solar).
-const LAND_PROPERTY_TYPES = new Set([
-  'farmland', 'meadow', 'grass', 'greenfield', 'brownfield',
-  'orchard', 'farmyard', 'quarry',
-])
 
 // Process 3 properties per tick, all fully in parallel (CONCURRENCY === MAX_PER_TICK)
 // so wall time ≈ the slowest single property (~10-20 s) rather than the sum.
@@ -77,26 +72,8 @@ interface QueueRow {
 }
 
 // ---------------------------------------------------------------------------
-// Queue fetch
-//
-// Strategy: we need bustan.properties LEFT JOIN bustan.owner_decision on the
-// sentinel column data->>'lastResearchedAt'. PostgREST does not support JOIN
-// expressions directly, so we fetch both tables and compute the unenriched set
-// in JS — same approach used by cron-detect-solar for the solar_checked_at queue.
-//
-// Steps:
-//   1. Fetch all owner_decision rows (property_id + data->>'lastResearchedAt').
-//   2. Build a Set of property_ids that are already stamped.
-//   3. Fetch properties with land-type filter + valid coords, ordered by
-//      roof_area_sqm DESC, limit MAX_PER_TICK * 3 (over-fetch to fill the
-//      budget after filtering out already-stamped rows).
-//   4. Filter out stamped ids in JS, then slice to MAX_PER_TICK.
+// Queue fetch — shared with /api/admin-enrich-batch (see _lib/enrich-queue.ts)
 // ---------------------------------------------------------------------------
-
-interface OwnerDecisionMinRow {
-  property_id: string
-  data: Record<string, unknown> | null
-}
 
 interface BustanPropertyMinRow {
   id: string
@@ -108,59 +85,16 @@ interface BustanPropertyMinRow {
 }
 
 async function buildQueue(): Promise<QueueRow[]> {
-  // Step 1: fetch all owner_decision rows (small table — property_ids + sentinel only)
-  const ownerRows = await bGet<OwnerDecisionMinRow>(
-    `owner_decision?select=property_id,data`,
-  )
-
-  // Step 2: stamped ids = those with a non-null lastResearchedAt in data jsonb
-  const stampedIds = new Set(
-    ownerRows
-      .filter((r) => r.data?.['lastResearchedAt'] != null)
-      .map((r) => r.property_id),
-  )
-
-  // Step 3+4: page through candidate properties (biggest roofs first) filtering
-  // out already-stamped rows, until MAX_PER_TICK unenriched rows are collected.
-  //
-  // BUGFIX: the previous code over-fetched a fixed window of MAX_PER_TICK*3 (=12)
-  // rows and filtered in JS. Once the 12 biggest roofs were all stamped, that
-  // window returned nothing but stamped ids → queue permanently empty → the
-  // cron froze (this is exactly what happened after 2026-06-14). Pagination
-  // guarantees forward progress no matter how large the stamped prefix grows.
-  const landTypeFilter = `property_type.not.in.(${[...LAND_PROPERTY_TYPES].join(',')})`
-  const PAGE = 250
-  const MAX_PAGES = 12 // safety bound: scans at most 3000 candidates per tick
-
-  const queue: QueueRow[] = []
-  for (let page = 0; page < MAX_PAGES && queue.length < MAX_PER_TICK; page++) {
-    const props = await bGet<BustanPropertyMinRow>(
-      `properties?lat=not.is.null&lon=not.is.null` +
-      `&or=(property_type.is.null,${landTypeFilter})` +
-      `&order=roof_area_sqm.desc.nullslast` +
-      `&select=id,name,lat,lon,property_type,roof_area_sqm` +
-      `&limit=${PAGE}&offset=${page * PAGE}`,
-    )
-    if (props.length === 0) break // no more rows
-
-    for (const p of props) {
-      if (stampedIds.has(p.id)) continue
-      queue.push({
-        id: p.id,
-        name: p.name,
-        lat: p.lat,
-        lon: p.lon,
-        property_type: p.property_type,
-        roof_area_sqm: p.roof_area_sqm,
-        last_researched_at: null,
-      })
-      if (queue.length >= MAX_PER_TICK) break
-    }
-
-    if (props.length < PAGE) break // reached the last page
-  }
-
-  return queue
+  const props = await selectUnenrichedProperties(MAX_PER_TICK)
+  return props.map((p) => ({
+    id: p.id,
+    name: p.name,
+    lat: p.lat,
+    lon: p.lon,
+    property_type: p.property_type,
+    roof_area_sqm: p.roof_area_sqm,
+    last_researched_at: null,
+  }))
 }
 
 // ---------------------------------------------------------------------------
