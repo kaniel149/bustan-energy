@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity, Search, ExternalLink, ChevronDown, ChevronUp, Zap, CheckCircle, X } from 'lucide-react'
+import { Lock, Loader2, Phone, FileText, ClipboardCheck, Activity, Search, ExternalLink, ChevronDown, ChevronUp, Zap, CheckCircle, X, MessageCircle } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { useToastStore } from '../../lib/toast-store'
@@ -16,7 +16,9 @@ import {
   type SiteSurvey,
   type OmSite,
   type WriteResult,
+  fetchBustanLeads,
 } from '../../lib/bustan-crm-service'
+import { getAdminToken } from '../../lib/admin-token'
 import { buildOwnerResearchLinks } from '../../lib/owner-resolution'
 import { autoBuildSystem } from '../../lib/bom'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
@@ -99,6 +101,13 @@ export function BustanLeadEditor() {
   // --- Auto-enrich (Firecrawl) state ---------------------------------------
   /** Whether the Firecrawl enrichment call is in flight. */
   const [enriching, setEnriching] = useState(false)
+  // --- Contact actions: find-contact pipeline + WhatsApp (SELF_SEND-safe) ----
+  const setLeads = useBustanStore((s) => s.setLeads)
+  const [findingContact, setFindingContact] = useState(false)
+  const [waOpen, setWaOpen] = useState(false)
+  const [waText, setWaText] = useState('')
+  const [waSending, setWaSending] = useState(false)
+  const [waTest, setWaTest] = useState(false)
   /** Result payload returned by /api/enrich-owner. */
   const [enrichResult, setEnrichResult] = useState<EnrichResult | null>(null)
   /** Whether the rep has applied the enriched data into the owner fields. */
@@ -192,6 +201,77 @@ export function BustanLeadEditor() {
       } finally {
         setGeocoding(false)
       }
+    }
+  }
+
+  /** First phone we know for this lead (promotion seed → enrichment → ops contact). */
+  const waPhone = (['phone', 'decisionMakerPhone', 'operationalContactPhone', 'businessPhone'] as const)
+    .map((k) => data[k])
+    .find((v): v is string => typeof v === 'string' && v.trim().length > 0) ?? null
+
+  /** 2-line TH/EN intro using the lead's kWp — editable before sending. */
+  const waTemplate = () => {
+    const name = lead.property.name || 'your property'
+    const kwp = lead.pipeline?.estimated_kwp != null ? Math.round(Number(lead.pipeline.estimated_kwp)) : null
+    const th = `สวัสดีครับ จาก Bustan Energy — หลังคาของ ${name} ติดตั้งโซลาร์ได้${kwp ? `ประมาณ ${kwp} kWp` : ''} ช่วยลดค่าไฟได้มากครับ`
+    const en = `Hi from Bustan Energy — ${name}'s roof could host ${kwp ? `~${kwp} kWp of` : 'a'} solar${kwp ? '' : ' system'} and cut the electricity bill significantly. Can we send you a free proposal?`
+    return `${th}\n${en}`
+  }
+
+  /** Run the full find-contact pipeline for this lead now (same core as the cron). */
+  const handleFindContact = async () => {
+    if (findingContact) return
+    setFindingContact(true)
+    try {
+      const token = await getAdminToken()
+      if (!token) { showToast('Sign in required for contact search', 'error'); return }
+      const res = await fetch('/api/admin-find-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ propertyId: selected.id, lat, lng, name: lead.property.name ?? undefined }),
+      })
+      const json = (await res.json().catch(() => ({}))) as {
+        error?: string
+        decision_maker?: { name?: string | null }
+        company?: { name?: string | null }
+      }
+      if (!res.ok) { showToast(json.error ?? `Find contact failed (${res.status})`, 'error'); return }
+      setLeads(await fetchBustanLeads())
+      const who = json.decision_maker?.name || json.company?.name
+      showToast(who ? `Contact found: ${who}` : 'No contact found — marked as researched', who ? 'success' : 'info')
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Find contact failed', 'error')
+    } finally {
+      setFindingContact(false)
+    }
+  }
+
+  /** Send the composed WhatsApp via /api/admin-send-whatsapp (logged to outreach_messages). */
+  const handleSendWhatsApp = async () => {
+    if (waSending || !waText.trim()) return
+    setWaSending(true)
+    try {
+      const token = await getAdminToken()
+      if (!token) { showToast('Sign in required to send WhatsApp', 'error'); return }
+      const res = await fetch('/api/admin-send-whatsapp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ propertyId: selected.id, message: waText.trim(), language: 'en' }),
+      })
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; test?: boolean; error?: string; recipient?: string }
+      setWaTest(Boolean(json.test))
+      if (!res.ok || !json.ok) {
+        const msg = json.error === 'no_phone' ? 'No phone on this lead — run Find contact first'
+          : json.error === 'not_configured' ? 'WhatsApp (GreenAPI) is not configured'
+          : json.error ?? `Send failed (${res.status})`
+        showToast(msg, 'error')
+        return
+      }
+      showToast(json.test ? 'Sent in TEST MODE → Kaniel' : `WhatsApp sent to ${json.recipient ?? waPhone}`, 'success')
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Send failed', 'error')
+    } finally {
+      setWaSending(false)
     }
   }
 
@@ -614,6 +694,57 @@ export function BustanLeadEditor() {
                   )}
                 </div>
                 {/* ---- end Auto-enrich ---- */}
+
+                {/* ---- Contact actions: find contact + WhatsApp (SELF_SEND-safe) ---- */}
+                <div className="border-t border-white/10 pt-2 space-y-2">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => void handleFindContact()}
+                      disabled={findingContact || !canCrm}
+                      className="flex-1 flex items-center gap-1.5 justify-center text-[11px] font-medium px-2 py-1.5 rounded-lg bg-sky-600/20 hover:bg-sky-600/30 disabled:opacity-40 text-sky-300 border border-sky-500/20 transition-colors"
+                      title="Run the find-contact pipeline (Places → DBD → Firecrawl → Gemini) for this lead now"
+                    >
+                      {findingContact ? <Loader2 size={11} className="animate-spin" /> : <Search size={11} />}
+                      {findingContact ? 'Searching…' : 'Find contact'}
+                    </button>
+                    <button
+                      onClick={() => { if (!waText) setWaText(waTemplate()); setWaOpen((o) => !o) }}
+                      disabled={!canCrm || !waPhone}
+                      className="flex-1 flex items-center gap-1.5 justify-center text-[11px] font-medium px-2 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 disabled:opacity-40 text-emerald-300 border border-emerald-500/20 transition-colors"
+                      title={waPhone ? `WhatsApp ${waPhone}` : 'No phone on this lead yet — run Find contact'}
+                    >
+                      <MessageCircle size={11} />
+                      WhatsApp
+                    </button>
+                  </div>
+                  {waOpen && (
+                    <div className="space-y-1.5">
+                      <textarea
+                        value={waText}
+                        onChange={(e) => setWaText(e.target.value)}
+                        rows={4}
+                        disabled={waSending}
+                        className={`${inputCls} text-xs leading-relaxed`}
+                      />
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => void handleSendWhatsApp()}
+                          disabled={waSending || !waText.trim()}
+                          className="flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white transition-colors"
+                        >
+                          {waSending ? <Loader2 size={11} className="animate-spin" /> : <MessageCircle size={11} />}
+                          {waSending ? 'Sending…' : `Send to ${waPhone}`}
+                        </button>
+                        {waTest && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            TEST MODE → goes to Kaniel
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* ---- end contact actions ---- */}
               </div>
             )}
           </div>

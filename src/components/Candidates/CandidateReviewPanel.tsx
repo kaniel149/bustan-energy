@@ -17,6 +17,8 @@
  *   Clicking ✕ on a row opens the RejectReasonMenu inline (replaces action
  *   buttons) for that specific row. Picking a reason calls rejectScanCandidate
  *   (reason-aware RPC) then removes the row + shows a toast.
+ *   Approve = promoteScanCandidate (one atomic RPC with dedup); a duplicate
+ *   drops the row from the queue and shows the existing property id.
  *   Bulk-reject uses 'other' as reason for each item (no per-item picker).
  *
  * Re-scan list (Task 2):
@@ -39,8 +41,7 @@ import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import {
-  setScanCandidateStatus,
-  confirmDetectedRoof,
+  promoteScanCandidate,
   updateScanCandidateArea,
   rejectScanCandidate,
   applyLearnedFilters,
@@ -472,19 +473,21 @@ export function CandidateReviewPanel() {
   const handleApprove = useCallback(async (c: Property) => {
     setWorking((w) => ({ ...w, [c.id]: true }))
     try {
-      await setScanCandidateStatus(c.id, 'added')
-      const res = await confirmDetectedRoof(c)
-      if (!res.ok) { showToast(res.error ?? 'Failed to approve', 'error'); return }
-      const promoted = { ...c, id: res.id ?? c.id }
-      setProperties([...useAppStore.getState().properties, promoted])
+      const r = await promoteScanCandidate(c.id)
       removeRoofCandidate(c.id)
       setSelected((prev) => { const next = new Set(prev); next.delete(c.id); return next })
       if (useAppStore.getState().reviewCandidate?.id === c.id) setReviewCandidate(null)
+      if (!r.ok) {
+        showToast(`Already in CRM (property ${r.property_id.slice(0, 8)}…)`, 'info')
+        return
+      }
+      const promoted = { ...c, id: r.property_id }
+      setProperties([...useAppStore.getState().properties, promoted])
       incrementApprovedToday()
       triggerFindContact(promoted)   // auto-start owner / decision-maker discovery
       showToast('Lead added — searching for contact…', 'success')
-    } catch {
-      showToast('Failed to approve candidate', 'error')
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Failed to approve candidate', 'error')
     } finally {
       setWorking((w) => { const n = { ...w }; delete n[c.id]; return n })
     }
@@ -523,27 +526,27 @@ export function CandidateReviewPanel() {
     const ids = [...selected]
     if (ids.length === 0) return
     setBulkWorking(true)
-    let approved = 0
-    for (const id of ids) {
-      const c = roofCandidates.find((x) => x.id === id)
-      if (!c) continue
-      try {
-        await setScanCandidateStatus(c.id, 'added')
-        const res = await confirmDetectedRoof(c)
-        if (res.ok) {
-          const promoted = { ...c, id: res.id ?? c.id }
-          setProperties([...useAppStore.getState().properties, promoted])
-          removeRoofCandidate(c.id)
-          incrementApprovedToday()
-          triggerFindContact(promoted)   // auto-start contact discovery per approved lead
-          approved++
-        }
-      } catch { /* continue with next */ }
-    }
+    const items = ids.map((id) => roofCandidates.find((x) => x.id === id)).filter((c): c is Property => Boolean(c))
+    const results = await Promise.allSettled(items.map((c) => promoteScanCandidate(c.id)))
+    let approved = 0, duplicates = 0, failed = 0
+    results.forEach((res, i) => {
+      const c = items[i]
+      if (res.status === 'rejected') { failed++; return }
+      removeRoofCandidate(c.id)
+      if (!res.value.ok) { duplicates++; return }
+      const promoted = { ...c, id: res.value.property_id }
+      setProperties([...useAppStore.getState().properties, promoted])
+      incrementApprovedToday()
+      triggerFindContact(promoted)   // auto-start contact discovery per approved lead
+      approved++
+    })
     setBulkWorking(false)
     setSelected(new Set())
     setReviewCandidate(null)
-    showToast(`${approved} candidate${approved !== 1 ? 's' : ''} approved`, 'success')
+    const parts = [`${approved} added`]
+    if (duplicates) parts.push(`${duplicates} already in CRM`)
+    if (failed) parts.push(`${failed} failed`)
+    showToast(parts.join(' · '), failed && !approved ? 'error' : 'success')
   }, [selected, roofCandidates, setProperties, removeRoofCandidate, setReviewCandidate, incrementApprovedToday, showToast])
 
   // Bulk reject — uses 'other' as reason per item (no per-item picker for bulk)

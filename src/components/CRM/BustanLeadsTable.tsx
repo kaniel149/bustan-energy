@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react'
-import { Search, Phone, CheckSquare, Square } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
+import { Search, Phone, CheckSquare, Square, Zap, Loader2 } from 'lucide-react'
 import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { useToastStore } from '../../lib/toast-store'
 import { can } from '../../lib/bustan-permissions'
-import { updateLeadStage, mapLeadToProperty } from '../../lib/bustan-crm-service'
+import { updateLeadStage, mapLeadToProperty, fetchBustanLeads } from '../../lib/bustan-crm-service'
+import { getAdminToken } from '../../lib/admin-token'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
 import { useTranslation } from '../../i18n/useTranslation'
 
@@ -25,6 +26,7 @@ export default function BustanLeadsTable() {
   const leadsById = useBustanStore((s) => s.leadsById)
   const role = useBustanStore((s) => s.role)
   const patchCrm = useBustanStore((s) => s.patchCrm)
+  const setLeads = useBustanStore((s) => s.setLeads)
   const setSelectedProperty = useAppStore((s) => s.setSelectedProperty)
   const showToast = useToastStore((s) => s.showToast)
   const c = useTranslation().t.crm
@@ -37,7 +39,50 @@ export default function BustanLeadsTable() {
   const [bulkStage, setBulkStage] = useState('')
   const [busy, setBusy] = useState(false)
 
+  // "Enrich unenriched (N)" — loops /api/admin-enrich-batch until the backlog
+  // drains, the user stops it, or Gemini quota defers a batch.
+  const [enrichRunning, setEnrichRunning] = useState(false)
+  const [enrichProgress, setEnrichProgress] = useState<{ processed: number; remaining: number | null }>({ processed: 0, remaining: null })
+  const enrichStopRef = useRef(false)
+
   const canEdit = can(role, 'crm.edit')
+
+  // Same definition as the server queue: no owner_decision.data.lastResearchedAt stamp.
+  const unenrichedCount = useMemo(
+    () => Object.values(leadsById).filter((l) => (l.owner?.data as Record<string, unknown> | null)?.lastResearchedAt == null).length,
+    [leadsById],
+  )
+
+  const runEnrichAll = async () => {
+    if (enrichRunning) return
+    const token = await getAdminToken()
+    if (!token) { showToast('Sign in required for enrichment', 'error'); return }
+    enrichStopRef.current = false
+    setEnrichRunning(true)
+    let processed = 0
+    let remaining: number | null = null
+    setEnrichProgress({ processed, remaining })
+    try {
+      while (!enrichStopRef.current) {
+        const res = await fetch('/api/admin-enrich-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ limit: 4 }),
+        })
+        const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; processed?: number; deferred?: number; remaining?: number }
+        if (!res.ok || !json.ok) { showToast(json.error ?? `Enrich failed (${res.status})`, 'error'); break }
+        processed += json.processed ?? 0
+        remaining = json.remaining ?? null
+        setEnrichProgress({ processed, remaining })
+        if (json.deferred) { showToast('Gemini quota exhausted — paused, try again later', 'info'); break }
+        if (!json.remaining || !json.processed) break
+      }
+    } finally {
+      setEnrichRunning(false)
+      try { setLeads(await fetchBustanLeads()) } catch { /* table refresh is best-effort */ }
+      showToast(`Enriched ${processed} lead${processed !== 1 ? 's' : ''}${remaining != null ? ` · ${remaining} remaining` : ''}`, 'success')
+    }
+  }
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -109,6 +154,19 @@ export default function BustanLeadsTable() {
           {(['contactable', 'partial', 'cold'] as const).map((r) => <option key={r} value={r}>{c.reach[r]}</option>)}
         </select>
         <span className="text-xs text-white/40">{rows.length} {c.table.leads}</span>
+        {canEdit && (
+          <button
+            onClick={() => { if (enrichRunning) enrichStopRef.current = true; else void runEnrichAll() }}
+            disabled={!enrichRunning && unenrichedCount === 0}
+            className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-sky-600/20 hover:bg-sky-600/30 disabled:opacity-40 text-sky-300 border border-sky-500/20"
+            title="Run the find-contact pipeline over every lead without a research stamp (4 per batch)"
+          >
+            {enrichRunning ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
+            {enrichRunning
+              ? `Stop · processed ${enrichProgress.processed} · remaining ${enrichProgress.remaining ?? '…'}`
+              : `Enrich unenriched (${unenrichedCount})`}
+          </button>
+        )}
       </div>
 
       {/* Bulk bar */}

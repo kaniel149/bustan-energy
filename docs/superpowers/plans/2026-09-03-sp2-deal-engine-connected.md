@@ -1,6 +1,6 @@
 # SP2 — Deal Engine Connected Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Every roof the Aug-2026 island scan found lives in the DB with a stable id; PV detection in prod uses the proven z18/3×3/outlined-footprint method; a "Create proposal" click from any candidate opens a prefilled form; approving a candidate creates a deduped CRM lead in one atomic call; pricing has one source; a lead can be enriched and WhatsApp'd from its card.
 
@@ -28,8 +28,8 @@
 
 ### Task 0: Branch
 
-- [ ] `cd $E && git checkout main && git pull --ff-only origin main && git checkout -b sp2/deal-engine`
-- [ ] `npm ci` (only if `node_modules` is missing) then `npm test` → all existing suites pass. Record the count.
+- [x] `cd $E && git checkout main && git pull --ff-only origin main && git checkout -b sp2/deal-engine`
+- [x] `npm ci` (only if `node_modules` is missing) then `npm test` → all existing suites pass. Record the count.
 
 ---
 
@@ -38,7 +38,7 @@
 **Files:**
 - Create: `E/supabase/bustan-migrations/015_external_ids_promotion.sql`
 
-- [ ] **Step 1: Write the migration**
+- [x] **Step 1: Write the migration**
 
 ```sql
 -- 015_external_ids_promotion.sql — schema bustan on ygoiaabzkuvdsyyduvhv
@@ -165,12 +165,12 @@ update bustan.properties
    and existing_solar is not true;
 ```
 
-- [ ] **Step 2: Syntax check (no DB)**
+- [x] **Step 2: Syntax check (no DB)**
 
 Run: `cd $E && npx --yes pgsql-parser-cli supabase/bustan-migrations/015_external_ids_promotion.sql >/dev/null 2>&1 || node -e "require('fs').readFileSync('supabase/bustan-migrations/015_external_ids_promotion.sql','utf8').split('\$\$').length%2===1||process.exit(1)"`
 Expected: exit 0 (balanced `$$` at minimum). If `pgsql-parser-cli` isn't installable offline, the balanced-`$$` check is enough — the lead will apply on a branch first.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 `git add supabase/bustan-migrations/015_external_ids_promotion.sql && git commit -m "feat(db): 015 external ids, footprint cols, promote_scan_candidate RPC, requeue low-confidence PV checks"`
 
@@ -185,7 +185,7 @@ Expected: exit 0 (balanced `$$` at minimum). If `pgsql-parser-cli` isn't install
 
 Inputs (from `I/roof-scanner/`): `buildings_data.js` (`const B=[…]`, keys `i la lo a u kw p s pr c n ph w poly …`), `footprint_quality_merged.json` (obj by OSM id → `{k, roof_pct, c, src}`), `solar_detected.json` (obj by OSM id → `{s, c, p, err?}`), `unmapped_roofs.json` (array `{lat, lon, area_m2, roof_m2, kwp, tile}`).
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```js
 // E/scripts/lib/kp-ingest-core.test.mjs
@@ -256,9 +256,9 @@ describe('matchExisting', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails** — `npx vitest run scripts/lib/kp-ingest-core.test.mjs` → "Failed to resolve import".
+- [x] **Step 2: Run → fails** — `npx vitest run scripts/lib/kp-ingest-core.test.mjs` → "Failed to resolve import".
 
-- [ ] **Step 3: Implement the core**
+- [x] **Step 3: Implement the core**
 
 ```js
 // E/scripts/lib/kp-ingest-core.mjs
@@ -316,9 +316,9 @@ export function matchExisting(rec, existing) {
 }
 ```
 
-- [ ] **Step 4: Run → passes** — `npx vitest run scripts/lib/kp-ingest-core.test.mjs` → 6 passed. (If vitest's default include misses `scripts/**/*.test.mjs`, add `include: ['src/**/*.test.ts','tests/**/*.test.ts','scripts/**/*.test.mjs']` to `vitest.config.ts` `test`.)
+- [x] **Step 4: Run → passes** — `npx vitest run scripts/lib/kp-ingest-core.test.mjs` → 6 passed. (If vitest's default include misses `scripts/**/*.test.mjs`, add `include: ['src/**/*.test.ts','tests/**/*.test.ts','scripts/**/*.test.mjs']` to `vitest.config.ts` `test`.)
 
-- [ ] **Step 5: Write the CLI**
+- [x] **Step 5: Write the CLI**
 
 ```js
 // E/scripts/ingest-kp-scan.mjs
@@ -375,9 +375,9 @@ for (const u of updates) {
 console.log(`done: inserted=${inserted} updated=${updated}`)
 ```
 
-- [ ] **Step 6: Dry-run locally** — `node scripts/ingest-kp-scan.mjs --dry-run` → prints `records: osm=2467 unmapped=1441 total=3908` and `insert=3908` (no DB in dry mode). Fix any parse error.
+- [x] **Step 6: Dry-run locally** — `node scripts/ingest-kp-scan.mjs --dry-run` → prints `records: osm=2467 unmapped=1441 total=3908` and `insert=3908` (no DB in dry mode). Fix any parse error.
 
-- [ ] **Step 7: Commit** — `git add scripts/lib/kp-ingest-core.mjs scripts/lib/kp-ingest-core.test.mjs scripts/ingest-kp-scan.mjs vitest.config.ts && git commit -m "feat(scan): idempotent ingest of Aug-2026 KP island scan (OSM + unmapped roofs) with tests"`
+- [x] **Step 7: Commit** — `git add scripts/lib/kp-ingest-core.mjs scripts/lib/kp-ingest-core.test.mjs scripts/ingest-kp-scan.mjs vitest.config.ts && git commit -m "feat(scan): idempotent ingest of Aug-2026 KP island scan (OSM + unmapped roofs) with tests"`
 
 ---
 
@@ -389,7 +389,7 @@ console.log(`done: inserted=${inserted} updated=${updated}`)
 - Modify: `E/package.json` (add `sharp`)
 - Modify: `E/vercel.json` if `cron-detect-solar` has a function config block that needs `maxDuration: 60` (check `functions` key; follow the `cron-enrich-contacts` pattern)
 
-- [ ] **Step 1: Failing tests for the pure parts**
+- [x] **Step 1: Failing tests for the pure parts**
 
 ```ts
 // E/api/_lib/aerial-tiles.test.ts
@@ -430,9 +430,9 @@ describe('cropBoxForMetres', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails** (`npx vitest run api/_lib/aerial-tiles.test.ts`).
+- [x] **Step 2: Run → fails** (`npx vitest run api/_lib/aerial-tiles.test.ts`).
 
-- [ ] **Step 3: Implement the library** (`npm i sharp@^0.33` first)
+- [x] **Step 3: Implement the library** (`npm i sharp@^0.33` first)
 
 ```ts
 // E/api/_lib/aerial-tiles.ts
@@ -521,9 +521,9 @@ export async function buildOutlinedCrop(opts: { lon: number; lat: number; ring?:
 }
 ```
 
-- [ ] **Step 4: Run → passes** (`npx vitest run api/_lib/aerial-tiles.test.ts` → 4 passed). If the `lonLatToTile` expectation is off by one, verify against the Python (`I/scripts/detect_solar_kp.py` slippy function) — the test value comes from real data, the implementation must match it.
+- [x] **Step 4: Run → passes** (`npx vitest run api/_lib/aerial-tiles.test.ts` → 4 passed). If the `lonLatToTile` expectation is off by one, verify against the Python (`I/scripts/detect_solar_kp.py` slippy function) — the test value comes from real data, the implementation must match it.
 
-- [ ] **Step 5: Rewire `cron-detect-solar.ts`**
+- [x] **Step 5: Rewire `cron-detect-solar.ts`**
 
 Edits (line numbers from `/tmp/sp2-facts.md` §3; re-locate by content):
 1. `export const config = { runtime: 'edge' }` → `export const config = { maxDuration: 60 }` (Node). Remove `bufToB64`, `fetchTile`, `fetchAerialAtZoom`, `fetchAerialBase64`, `TILE_ZOOM`, `TILE_ZOOM_FALLBACK`, `MIN_TILE_BYTES`, `ESRI_TILE`.
@@ -538,9 +538,9 @@ const img = await buildOutlinedCrop({ lon: Number(row.lon), lat: Number(row.lat)
 5. Persist `panel_coverage_pct` on `scan_candidates` (column added in 015): extend the patch `{ existing_solar: r.has_existing_solar, panel_coverage_pct: r.panel_coverage_pct ?? null }` for `scan_candidates` only (properties has no such column).
 6. `CONCURRENCY = 5` → `3` (Python found 8 workers → 429 storms; 3 is the verified safe value with the shared key).
 
-- [ ] **Step 6: Typecheck + tests** — `npm run typecheck && npm test` → clean. Check `vercel.json` `functions` block: if other Node crons declare `maxDuration`, mirror for `api/cron-detect-solar.ts`.
+- [x] **Step 6: Typecheck + tests** — `npm run typecheck && npm test` → clean. Check `vercel.json` `functions` block: if other Node crons declare `maxDuration`, mirror for `api/cron-detect-solar.ts`.
 
-- [ ] **Step 7: Commit** — `git add -A && git commit -m "fix(pv): detect-solar uses z18 3x3 stitch with outlined footprint via shared aerial-tiles lib (Node+sharp)"`
+- [x] **Step 7: Commit** — `git add -A && git commit -m "fix(pv): detect-solar uses z18 3x3 stitch with outlined footprint via shared aerial-tiles lib (Node+sharp)"`
 
 ---
 
@@ -552,7 +552,7 @@ const img = await buildOutlinedCrop({ lon: Number(row.lon), lat: Number(row.lat)
 - Modify: `I/kp-solar-pro.html:929` CTA + `:934` `annual_savings` bug
 - Test: `E/src/lib/candidate-prefill.test.ts` + Create `E/src/lib/candidate-prefill.ts` (pure mapper)
 
-- [ ] **Step 1: Failing test for the pure mapper**
+- [x] **Step 1: Failing test for the pure mapper**
 
 ```ts
 // E/src/lib/candidate-prefill.test.ts
@@ -578,9 +578,9 @@ describe('candidateToFormPatch', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails.**
+- [x] **Step 2: Run → fails.**
 
-- [ ] **Step 3: Implement mapper + fetchers**
+- [x] **Step 3: Implement mapper + fetchers**
 
 ```ts
 // E/src/lib/candidate-prefill.ts
@@ -623,7 +623,7 @@ export async function fetchScanCandidateByExternalId(source: string, externalId:
 ```
 (Use whatever the file names its bustan Supabase client — check the top of the file.) Extend the `ScanCandidate` interface (`:394-422`) with the 015 columns: `external_source?, external_id?, footprint_class?, roof_pct?, panel_coverage_pct?, estimated_kwp_raw?, category?, phone?, website?`.
 
-- [ ] **Step 4: Wire into `NewProposalPage.tsx`**
+- [x] **Step 4: Wire into `NewProposalPage.tsx`**
 
 1. `:145` — extend `isHydratedFromSource` with `|| Boolean(searchParams.get('candidate_id')) || Boolean(searchParams.get('external_id'))`.
 2. Add an effect after the `property_id` effect (same `autoTriggeredRef` conventions):
@@ -648,7 +648,7 @@ useEffect(() => {
 ```
 3. Scalar fallbacks in the block at `:302-322` — add: `kwp` → `panel_count = round(kwp*1000/form.panel_watt)`, `area` → `roof_area_sqm`, `lat`/`lng` → `roof_lat`/`roof_lng`, `name` → `client_name`. These run only when no `candidate_id`/`external_id`/`property_id`/`lead_id` is present.
 
-- [ ] **Step 5: Fix the static tool CTA** (`I/kp-solar-pro.html`)
+- [x] **Step 5: Fix the static tool CTA** (`I/kp-solar-pro.html`)
 
 `:929`:
 ```js
@@ -656,9 +656,9 @@ const proposalUrl = `https://bustan-energy.com/admin/proposals/new?external_id=o
 ```
 `:934`: replace `b.annual_savings` with `b.sav`.
 
-- [ ] **Step 6: Typecheck + tests + manual check** — `npm run typecheck && npm test`; `npm run dev` and open `/admin/proposals/new?kwp=126.56&area=994&lat=9.708598&lng=99.990975&name=Test` → panel_count 218, roof coords set (scalar path works without DB).
+- [x] **Step 6: Typecheck + tests + manual check** — `npm run typecheck && npm test`; `npm run dev` and open `/admin/proposals/new?kwp=126.56&area=994&lat=9.708598&lng=99.990975&name=Test` → panel_count 218, roof coords set (scalar path works without DB).
 
-- [ ] **Step 7: Commit both repos** — E: `feat(proposal): prefill from scan candidate (candidate_id / external_id) + scalar fallbacks`; I: `fix(kp-solar-pro): proposal CTA passes external_id + readable params; fix NaN savings in WhatsApp text`.
+- [x] **Step 7: Commit both repos** — E: `feat(proposal): prefill from scan candidate (candidate_id / external_id) + scalar fallbacks`; I: `fix(kp-solar-pro): proposal CTA passes external_id + readable params; fix NaN savings in WhatsApp text`.
 
 ---
 
@@ -669,7 +669,7 @@ const proposalUrl = `https://bustan-energy.com/admin/proposals/new?external_id=o
 - Modify: `E/src/components/Candidates/CandidateReviewPanel.tsx:476` (single) & `:532` (bulk), `E/src/components/Sidebar/CandidateSidebarSection.tsx:80`, `E/src/components/Map/SolarMap.tsx:282`
 - Test: `E/src/lib/bustan-crm-service.test.ts` (extend with a mocked-RPC case, following the file's existing mocking pattern)
 
-- [ ] **Step 1: Test**
+- [x] **Step 1: Test**
 
 ```ts
 // append to E/src/lib/bustan-crm-service.test.ts (adapt to the file's existing client mock helper)
@@ -683,9 +683,9 @@ describe('promoteScanCandidate', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails.**
+- [x] **Step 2: Run → fails.**
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 export type PromoteResult = { ok: true; property_id: string; already?: boolean } | { ok: false; reason: 'duplicate'; property_id: string }
@@ -696,9 +696,9 @@ export async function promoteScanCandidate(id: string, client: { rpc: typeof bus
 }
 ```
 
-- [ ] **Step 4: Replace the call sites.** Each site currently does `setScanCandidateStatus(id,'added')` then `confirmDetectedRoof(...)`. Replace both with `const r = await promoteScanCandidate(id)`; on `r.ok === false` show the existing toast/notice mechanism with text `Already in CRM (property ${r.property_id.slice(0,8)}…)` and mark the candidate row as added in local state anyway (it is a dup, not a failure). Bulk: `Promise.allSettled`, summarise `added / duplicates / failed`.
+- [x] **Step 4: Replace the call sites.** Each site currently does `setScanCandidateStatus(id,'added')` then `confirmDetectedRoof(...)`. Replace both with `const r = await promoteScanCandidate(id)`; on `r.ok === false` show the existing toast/notice mechanism with text `Already in CRM (property ${r.property_id.slice(0,8)}…)` and mark the candidate row as added in local state anyway (it is a dup, not a failure). Bulk: `Promise.allSettled`, summarise `added / duplicates / failed`.
 
-- [ ] **Step 5: `npm run typecheck && npm test` → clean. Commit** — `feat(crm): atomic deduped candidate promotion via promote_scan_candidate RPC`.
+- [x] **Step 5: `npm run typecheck && npm test` → clean. Commit** — `feat(crm): atomic deduped candidate promotion via promote_scan_candidate RPC`.
 
 ---
 
@@ -708,7 +708,7 @@ export async function promoteScanCandidate(id: string, client: { rpc: typeof bus
 - Modify: `E/src/lib/solar-financials.ts:1-19`
 - Test: `E/tests/solar-financial.test.ts` (extend)
 
-- [ ] **Step 1: Test**
+- [x] **Step 1: Test**
 
 ```ts
 // append to E/tests/solar-financial.test.ts
@@ -731,7 +731,7 @@ describe('TM_SOLAR_ASSUMPTIONS is derived from bom-templates.json', () => {
 })
 ```
 
-- [ ] **Step 2: Implement** — in `solar-financials.ts`:
+- [x] **Step 2: Implement** — in `solar-financials.ts`:
 ```ts
 import bom from '../../tools/proposal-builder/bom-templates.json'
 const K = bom.locations.koh_phangan
@@ -747,7 +747,7 @@ export const TM_SOLAR_ASSUMPTIONS = {
 ```
 The `as const` numbers now come from JSON (type `number`) — if any consumer relied on literal types, widen it. `tsconfig.app.json` must have `resolveJsonModule: true` (api already imports this JSON in `api/admin-bom.ts`).
 
-- [ ] **Step 3: `npm run typecheck && npm test` → all green (existing financial expectations unchanged since values are identical). Commit** — `refactor(pricing): derive TM_SOLAR_ASSUMPTIONS from bom-templates.json (single source)`.
+- [x] **Step 3: `npm run typecheck && npm test` → all green (existing financial expectations unchanged since values are identical). Commit** — `refactor(pricing): derive TM_SOLAR_ASSUMPTIONS from bom-templates.json (single source)`.
 
 ---
 
@@ -758,7 +758,7 @@ The `as const` numbers now come from JSON (type `number`) — if any consumer re
 - Create: `E/api/_lib/whatsapp-safe.ts` + `E/api/_lib/whatsapp-safe.test.ts`
 - Modify: the lead detail component used by `/crm` (find via `grep -rl "owner_decision\|LeadDetail" src/components src/pages | grep -v test`) — add two buttons; and the CRM leads table toolbar (`BustanLeadsTable.tsx`) — add "Enrich unenriched (N)".
 
-- [ ] **Step 1: Test the safe-mode resolver**
+- [x] **Step 1: Test the safe-mode resolver**
 
 ```ts
 // E/api/_lib/whatsapp-safe.test.ts
@@ -778,7 +778,7 @@ describe('resolveWhatsAppTarget', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails. Implement:**
+- [x] **Step 2: Run → fails. Implement:**
 
 ```ts
 // E/api/_lib/whatsapp-safe.ts
@@ -791,20 +791,20 @@ export function resolveWhatsAppTarget(rawPhone: string, message: string, env: Re
 }
 ```
 
-- [ ] **Step 3: `admin-send-whatsapp.ts`** (Node runtime; auth exactly like `admin-create-proposal.ts` — Bearer user token → `isAllowedAdmin(email)`):
+- [x] **Step 3: `admin-send-whatsapp.ts`** (Node runtime; auth exactly like `admin-create-proposal.ts` — Bearer user token → `isAllowedAdmin(email)`):
 - Body `{ propertyId: string, message: string, language?: 'th'|'en' }`.
 - Look up phone: `owner_decision.data->>'phone'` for `propertyId` via `bGet`; 400 `no_phone` if absent.
 - `resolveWhatsAppTarget` → 400 `invalid_phone` if null.
 - `sendWhatsApp(target.phone, target.message)`; on `ok` insert into `bustan.outreach_messages` `{property_id, channel:'whatsapp', language: language ?? 'en', recipient: target.phone, body: message, status:'sent', sent_at: now, thread_ref: idMessage, facts: {test: target.test}}` via `bPost`; on failure insert with `status:'bounced', error`. The unique index `(property_id, channel)` may conflict on a second send — catch 409 and PATCH the existing row's `body/sent_at/thread_ref/status` instead.
 - Respond `{ ok, test, idMessage?, error? }`.
 
-- [ ] **Step 4: `admin-enrich-batch.ts`** (Node, `maxDuration: 60`, same admin auth): body `{ limit?: number }` (default 4, max 8). Reuse the exact queue selection from `cron-enrich-contacts.ts:84-142` — extract that block into an exported function `selectUnenrichedProperties(limit)` in `E/api/_lib/enrich-queue.ts` and import it from both the cron and this endpoint (no copy-paste). Run the same per-property core (`find-contact-core.ts`), return `{ processed, deferred, remaining }` where `remaining` = count of unenriched after this pass (compute cheaply: total properties minus stamped `owner_decision` rows).
+- [x] **Step 4: `admin-enrich-batch.ts`** (Node, `maxDuration: 60`, same admin auth): body `{ limit?: number }` (default 4, max 8). Reuse the exact queue selection from `cron-enrich-contacts.ts:84-142` — extract that block into an exported function `selectUnenrichedProperties(limit)` in `E/api/_lib/enrich-queue.ts` and import it from both the cron and this endpoint (no copy-paste). Run the same per-property core (`find-contact-core.ts`), return `{ processed, deferred, remaining }` where `remaining` = count of unenriched after this pass (compute cheaply: total properties minus stamped `owner_decision` rows).
 
-- [ ] **Step 5: UI**
+- [x] **Step 5: UI**
 - Lead card: buttons **"Find contact"** (POST `/api/admin-find-contact` with `{propertyId}` — endpoint exists) and **"WhatsApp"** (textarea prefilled with a 2-line Thai/English intro template using the lead's `estimated_kwp`; POST `/api/admin-send-whatsapp`). Show `TEST MODE → goes to Kaniel` badge when the response has `test:true`.
 - Leads table toolbar: **"Enrich unenriched (N)"** → loops POST `/api/admin-enrich-batch` until `remaining === 0` or user stops; progress text `processed X · remaining Y`.
 
-- [ ] **Step 6: `npm run typecheck && npm run lint && npm test` → clean. Commit** — `feat(crm): batch enrich endpoint + WhatsApp send from lead card (SELF_SEND-safe, logged to outreach_messages)`.
+- [x] **Step 6: `npm run typecheck && npm run lint && npm test` → clean. Commit** — `feat(crm): batch enrich endpoint + WhatsApp send from lead card (SELF_SEND-safe, logged to outreach_messages)`.
 
 ---
 

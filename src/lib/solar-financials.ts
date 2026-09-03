@@ -1,21 +1,29 @@
-export const SOLAR_FINANCIAL_VERSION = 'tm-financials-2026-04-v1.2'
+// Single pricing source: every location constant below is read from
+// tools/proposal-builder/bom-templates.json (locations.koh_phangan), which the
+// BOM/procurement API already consumes. Edit the JSON, not this file.
+// Only the lifecycle assumptions (degradation, LID, O&M, life) live here.
+import bom from '../../tools/proposal-builder/bom-templates.json'
+
+const K = bom.locations.koh_phangan
+
+export const SOLAR_FINANCIAL_VERSION = 'bustan-financials-2026-09-v1.3'
 
 export const TM_SOLAR_ASSUMPTIONS = {
   locationId: 'koh_phangan',
-  pshAnnual: 5.0,
-  performanceRatio: 0.77,
-  soilingFactor: 0.97,
-  retailRateThb: 4.4,
-  exportRateThb: 3.1,
-  selfConsumptionGridTied: 0.6,
-  selfConsumptionWithBattery: 0.85,
-  discountRate: 0.08,
-  tariffEscalation: 0.03,
+  pshAnnual: K.psh_annual,
+  performanceRatio: K.performance_ratio,
+  soilingFactor: K.soiling_factor,
+  retailRateThb: K.tariff_retail_thb,
+  exportRateThb: K.tariff_export_thb,
+  selfConsumptionGridTied: K.self_consumption_pct_grid_tied,
+  selfConsumptionWithBattery: K.self_consumption_pct_with_battery,
+  discountRate: K.discount_rate,
+  tariffEscalation: K.tariff_escalation,
   annualDegradation: 0.005,
   firstYearLid: 0.02,
   omCostPct: 0.01,
   systemLifeYears: 25,
-  co2KgPerKwh: 0.477,
+  co2KgPerKwh: K.co2_kg_per_kwh,
 } as const
 
 export interface SolarFinancialInput {

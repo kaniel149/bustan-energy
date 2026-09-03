@@ -2,9 +2,10 @@
 // /api/cron-detect-solar  — automated existing-PV detection
 //
 // Runs every 10 min (offset 5-55/10 from cron-process-scans's */10).
-// Fetches up to MAX_PER_RUN unchecked roof candidates + properties,
-// pulls an Esri World Imagery aerial tile, and asks a Gemini vision model
-// whether PV panels are already installed.
+// Fetches up to MAX_PER_RUN unchecked roof candidates + properties, builds a
+// z18 3×3 Esri World Imagery stitch with the target footprint outlined in
+// magenta (api/_lib/aerial-tiles.ts), and asks a Gemini vision model whether PV
+// panels are already installed INSIDE the outline.
 //
 // Queue logic (≤ MAX_PER_RUN = 15 Gemini calls per tick):
 //   Slot A: scan_candidates where kind='roof', status='pending',
@@ -18,7 +19,7 @@
 //           lives in crm_pipeline, not on the properties row itself).
 //
 // Write-back:
-//   • scan_candidates: existing_solar, solar_check_confidence, solar_checked_at
+//   • scan_candidates: existing_solar, panel_coverage_pct, solar_check_confidence, solar_checked_at
 //   • properties:      existing_solar when confidence ≥ MIN_CONFIDENCE_WRITE,
 //                      with an extra guard: stored TRUE is never overwritten to
 //                      false unless confidence ≥ MIN_CONFIDENCE_OVERTURN (0.7).
@@ -29,15 +30,20 @@
 // Auth: Bearer CRON_SECRET (Vercel cron or manual trigger).
 // Schema: bustan (Accept-Profile / Content-Profile headers).
 // ============================================================
-export const config = { runtime: 'edge' }
+// Node runtime (not edge): tile stitching + outline drawing needs sharp, and
+// nine z18 tiles per roof would not fit the edge 25-s ceiling at any useful
+// batch size. Node gives a 60-s budget.
+export const config = { runtime: 'nodejs', maxDuration: 60 }
+
+import { buildOutlinedCrop } from './_lib/aerial-tiles.js'
 
 const CRON_SECRET  = process.env.CRON_SECRET
 const BUSTAN_URL   = process.env.BUSTAN_SUPABASE_URL || 'https://ygoiaabzkuvdsyyduvhv.supabase.co'
 const BUSTAN_KEY   = process.env.BUSTAN_SUPABASE_SERVICE_ROLE_KEY!
 const GEMINI_KEY   = process.env.GEMINI_API_KEY || process.env.NANOBANANA_API_KEY!
 
-// Keep total Gemini calls ≤ 15 per run to stay comfortably inside the
-// Vercel edge 25-s wall-clock limit (Gemini vision ≈ 1-3 s each).
+// Keep total Gemini calls ≤ 10 per run: each item is 9 tile fetches + one
+// Gemini vision call (≈ 3-6 s), and CONCURRENCY workers share the 60-s budget.
 const MAX_PER_RUN  = 10
 // Minimum confidence to write existing_solar to a property row at all.
 const MIN_CONFIDENCE_WRITE = 0.5
@@ -78,101 +84,10 @@ async function bPatch(path: string, body: unknown): Promise<boolean> {
 }
 
 // ----------------------------------------------------------------
-// Esri World Imagery REST export (free, no key)
-// Docs: https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer
-// bbox order: minLon,minLat,maxLon,maxLat (WGS-84 / bboxSR=4326)
-// imageSR=3857 lets the server project internally — output is still a JPEG
-// that represents the requested geographic bbox.
+// Imagery: see api/_lib/aerial-tiles.ts (z18, 3×3 stitch, magenta outline,
+// 120 m crop). z19 is a placeholder over Ko Phangan; the outline is what stops
+// a neighbour's panels from being attributed to the target roof.
 // ----------------------------------------------------------------
-// NOTE: the World_Imagery `export` endpoint returns HTTP 500 (verified
-// 2026-06-11), so we use the reliable XYZ tile endpoint instead: a 2×2 grid
-// chosen so the target point sits nearest the shared corner. Falls back to the
-// single centre tile.
-// Esri's imagery ceiling is regional. It answers HTTP 200 at any zoom, but where
-// it has no imagery at that zoom it returns a small "no data available"
-// placeholder rather than a 404 — so a naive fetch silently feeds the model a
-// blank square and gets back "no solar" for every roof.
-//
-// Measured 2026-08-23: over Ko Phangan a z18 tile is ~13.6 KB of imagery while
-// z19 is a 2.5 KB placeholder; over Bangkok z19 is a real 15.6 KB tile. So we
-// ask for z19, detect the placeholder by size, and drop to z18 for that point.
-const TILE_ZOOM = 19
-const TILE_ZOOM_FALLBACK = 18
-const MIN_TILE_BYTES = 4000
-const ESRI_TILE = (z: number, y: number, x: number) =>
-  `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`
-
-function bufToB64(buf: ArrayBuffer): string {
-  const bytes = new Uint8Array(buf)
-  let binary = ''
-  const CHUNK = 0x8000
-  for (let i = 0; i < bytes.length; i += CHUNK) {
-    binary += String.fromCharCode(...(bytes.subarray(i, i + CHUNK) as unknown as number[]))
-  }
-  return btoa(binary)
-}
-
-async function fetchTile(z: number, y: number, x: number): Promise<string> {
-  const ctrl = new AbortController()
-  const t = setTimeout(() => ctrl.abort(), 10_000)
-  try {
-    const res = await fetch(ESRI_TILE(z, y, x), { signal: ctrl.signal })
-    if (!res.ok) throw new Error(`esri_tile_${res.status}`)
-    const mime = res.headers.get('content-type') ?? ''
-    if (!mime.startsWith('image/')) throw new Error('esri_tile_not_image')
-    const buf = await res.arrayBuffer()
-    // Placeholder tiles are valid JPEGs, just tiny and empty — size is the only
-    // signal Esri gives us that this zoom has no imagery here.
-    if (buf.byteLength < MIN_TILE_BYTES) throw new Error('esri_tile_placeholder')
-    return bufToB64(buf)
-  } finally {
-    clearTimeout(t)
-  }
-}
-
-async function fetchAerialAtZoom(
-  lat: number,
-  lon: number,
-  zoom: number,
-): Promise<{ images: string[]; mime: string; grid: boolean }> {
-  // Slippy-map fractional tile coords
-  const n = 2 ** zoom
-  const xf = ((lon + 180) / 360) * n
-  const latRad = (lat * Math.PI) / 180
-  const yf = ((1 - Math.asinh(Math.tan(latRad)) / Math.PI) / 2) * n
-
-  // 2×2 block whose shared corner is nearest the point
-  const x0 = Math.max(0, Math.min(n - 2, Math.round(xf) - 1))
-  const y0 = Math.max(0, Math.min(n - 2, Math.round(yf) - 1))
-  const coords: Array<[number, number]> = [
-    [y0, x0], [y0, x0 + 1],       // top-left, top-right
-    [y0 + 1, x0], [y0 + 1, x0 + 1], // bottom-left, bottom-right
-  ]
-
-  try {
-    const images = await Promise.all(coords.map(([y, x]) => fetchTile(zoom, y, x)))
-    return { images, mime: 'image/jpeg', grid: true }
-  } catch {
-    // Fall back to the single tile containing the point. This still throws on a
-    // placeholder, which is what lets the caller drop a zoom level.
-    const single = await fetchTile(zoom, Math.floor(yf), Math.floor(xf))
-    return { images: [single], mime: 'image/jpeg', grid: false }
-  }
-}
-
-async function fetchAerialBase64(
-  lat: number,
-  lon: number,
-): Promise<{ images: string[]; mime: string; grid: boolean }> {
-  try {
-    return await fetchAerialAtZoom(lat, lon, TILE_ZOOM)
-  } catch (e) {
-    // Only a missing-imagery result is worth retrying lower; a network or HTTP
-    // failure would fail the same way at z18 and should surface as-is.
-    if (!String(e).includes('placeholder')) throw e
-    return fetchAerialAtZoom(lat, lon, TILE_ZOOM_FALLBACK)
-  }
-}
 
 // ----------------------------------------------------------------
 // Gemini 2.0 Flash — focused existing-solar prompt
@@ -180,18 +95,30 @@ async function fetchAerialBase64(
 // analysis, so the model stays on-task and the output token budget
 // stays tiny (well within 200-token max).
 // ----------------------------------------------------------------
-const SOLAR_DETECT_PROMPT = `You are analysing aerial / satellite imagery of a building rooftop. When 4 tiles are provided they form a 2×2 grid (order: top-left, top-right, bottom-left, bottom-right) and the target building sits near the CENTRE of the combined area.
+// Copied verbatim from bustan-index/scripts/detect_solar_kp.py (verified on the
+// Aug-2026 island run). Same JSON contract as before.
+const SOLAR_DETECT_PROMPT = `This is aerial imagery of Ko Phangan, Thailand. ONE building has its roof outlined with a bright magenta line.
 
-TASK: Determine whether photovoltaic (PV) solar panels are ALREADY installed on the roof of the building nearest the centre of the imagery.
+TASK: Determine whether photovoltaic (PV) solar panels are installed on the roof INSIDE the magenta outline.
+
+CRITICAL: Panels on neighbouring roofs outside the outline do NOT count. If the panels are outside the magenta line, answer false.
 
 GUIDANCE:
-- Solar panels: rectangular grid of dark blue/black cells, often with a metallic frame visible from above.
-- Do NOT confuse with: skylights (glass domes), water-heater tanks, dark-coloured roofing membrane, AC units, or shadows.
-- If the image is too blurry, obstructed by clouds, or the roof is not visible → return has_existing_solar: false with confidence ≤ 0.25.
-- panel_coverage_pct: approximate percentage of the visible roof surface covered by panels (0 if none detected).
+- Solar panels: a regular grid of dark blue/black rectangular cells, usually in neat rows, often with a visible metal frame and a slight offset shadow.
+- Do NOT confuse with: blue- or dark-painted metal roofing (very common in Thailand), skylights, water tanks, AC units, tarpaulins, or shadow.
+- A blue roof with no visible cell grid is NOT solar.
+- If the outlined roof is obscured, blurry or not visible, answer false with confidence <= 0.25.
+- panel_coverage_pct: percent of the outlined roof covered by panels (0 if none).
 
-Return ONLY valid JSON, no markdown fences:
+Return ONLY JSON:
 {"has_existing_solar":true|false,"confidence":0.0-1.0,"panel_coverage_pct":0-100}`
+
+// Rows with no footprint polygon get no outline drawn — tell the model so.
+const NO_OUTLINE_NOTE = 'No outline is drawn; judge the building at the exact centre of the image only.'
+
+function promptFor(outlined: boolean): string {
+  return outlined ? SOLAR_DETECT_PROMPT : `${SOLAR_DETECT_PROMPT}\n\n${NO_OUTLINE_NOTE}`
+}
 
 interface SolarDetectResult {
   has_existing_solar: boolean | string
@@ -218,7 +145,7 @@ const GEMINI_MODELS = [
   'gemini-2.5-flash',
 ]
 
-async function callGemini(images: string[], mime: string): Promise<SolarDetectResult> {
+async function callGemini(image: string, mime: string, prompt: string): Promise<SolarDetectResult> {
   let res: Response | null = null
   let lastErr = ''
   for (const model of GEMINI_MODELS) {
@@ -234,8 +161,8 @@ async function callGemini(images: string[], mime: string): Promise<SolarDetectRe
           body: JSON.stringify({
             contents: [{
               parts: [
-                { text: SOLAR_DETECT_PROMPT },
-                ...images.map((data) => ({ inline_data: { mime_type: mime, data } })),
+                { text: prompt },
+                { inline_data: { mime_type: mime, data: image } },
               ],
             }],
             generationConfig: {
@@ -292,6 +219,7 @@ interface PropertyRow {
   id: string
   lat: number
   lon: number
+  roof_geom: { type: string; coordinates: number[][][] } | null
   existing_solar: boolean | null
   roof_area_sqm: number | null
   property_type: string | null
@@ -323,13 +251,19 @@ function buildPropertySolarPatch(
 // ----------------------------------------------------------------
 // Process a single item (shared logic for candidates + properties)
 // ----------------------------------------------------------------
-async function processItem(lat: number, lon: number): Promise<{
+type RoofGeom = { type: string; coordinates: number[][][] } | null
+
+function outerRing(geom: RoofGeom): number[][] | null {
+  return Array.isArray(geom?.coordinates?.[0]) ? geom.coordinates[0] : null
+}
+
+async function processItem(lat: number, lon: number, geom: RoofGeom): Promise<{
   has_existing_solar: boolean
   confidence: number
   panel_coverage_pct: number
 }> {
-  const { images, mime } = await fetchAerialBase64(lat, lon)
-  const result = await callGemini(images, mime)
+  const img = await buildOutlinedCrop({ lon, lat, ring: outerRing(geom) })
+  const result = await callGemini(img.base64, img.mime, promptFor(img.outlined))
   return {
     has_existing_solar: result.has_existing_solar as boolean,
     confidence: Number(result.confidence) || 0,
@@ -365,9 +299,10 @@ export default async function handler(req: Request): Promise<Response> {
       if (rows.length === 0) continue
       const row = rows[0]
       try {
-        const r = await processItem(Number(row.lat), Number(row.lon))
+        const r = await processItem(Number(row.lat), Number(row.lon), row.roof_geom)
         await bPatch(`scan_candidates?id=eq.${id}`, {
           existing_solar: r.has_existing_solar,
+          panel_coverage_pct: r.panel_coverage_pct,
           solar_check_confidence: r.confidence,
           solar_checked_at: now,
         })
@@ -381,12 +316,12 @@ export default async function handler(req: Request): Promise<Response> {
 
     for (const id of propertyIds) {
       const rows = await bGet<PropertyRow>(
-        `properties?id=eq.${id}&select=id,lat,lon,existing_solar,roof_area_sqm,property_type&limit=1`,
+        `properties?id=eq.${id}&select=id,lat,lon,roof_geom,existing_solar,roof_area_sqm,property_type&limit=1`,
       )
       if (rows.length === 0) continue
       const row = rows[0]
       try {
-        const r = await processItem(Number(row.lat), Number(row.lon))
+        const r = await processItem(Number(row.lat), Number(row.lon), row.roof_geom)
         await bPatch(`properties?id=eq.${id}`, {
           ...buildPropertySolarPatch(row.existing_solar, r.has_existing_solar, r.confidence),
           solar_check_confidence: r.confidence,
@@ -432,7 +367,7 @@ export default async function handler(req: Request): Promise<Response> {
         `properties?solar_checked_at=is.null&lat=not.is.null&lon=not.is.null` +
         `&or=(property_type.is.null,${landTypeFilter})` +
         `&order=roof_area_sqm.desc.nullslast` +
-        `&select=id,lat,lon,existing_solar,roof_area_sqm,property_type` +
+        `&select=id,lat,lon,roof_geom,existing_solar,roof_area_sqm,property_type` +
         `&limit=${remainingBudget}`,
       )
     : []
@@ -447,6 +382,8 @@ export default async function handler(req: Request): Promise<Response> {
   // Sequential processing of 15 items blew the 25-s edge wall clock
   // (FUNCTION_INVOCATION_TIMEOUT, verified 2026-06-11). Process with a small
   // concurrency pool instead: each worker pulls the next item off the queue.
+  // Kept at 3 on Node too: the Aug-2026 island run showed 8 parallel workers on
+  // the shared Gemini key turn into a 429 storm; 3 is the verified safe value.
   type WorkItem =
     | { table: 'scan_candidates'; row: CandidateRow }
     | { table: 'properties'; row: PropertyRow }
@@ -458,10 +395,11 @@ export default async function handler(req: Request): Promise<Response> {
   async function handleOne(item: WorkItem): Promise<void> {
     const { table, row } = item
     try {
-      const r = await processItem(Number(row.lat), Number(row.lon))
+      const r = await processItem(Number(row.lat), Number(row.lon), row.roof_geom)
+      // properties has no panel_coverage_pct column (015 added it to scan_candidates only)
       const patch = table === 'properties'
         ? buildPropertySolarPatch((row as PropertyRow).existing_solar, r.has_existing_solar, r.confidence)
-        : { existing_solar: r.has_existing_solar }
+        : { existing_solar: r.has_existing_solar, panel_coverage_pct: r.panel_coverage_pct }
       await bPatch(`${table}?id=eq.${row.id}`, {
         ...patch,
         solar_check_confidence: r.confidence,
@@ -490,7 +428,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
   }
 
-  const CONCURRENCY = 5
+  const CONCURRENCY = 3
   let cursor = 0
   await Promise.all(
     Array.from({ length: Math.min(CONCURRENCY, work.length) }, async () => {

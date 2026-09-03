@@ -419,6 +419,58 @@ export interface ScanCandidate {
   existing_solar: boolean | null
   solar_check_confidence: number | null
   solar_checked_at: string | null
+  // Added in 015_external_ids_promotion (Aug-2026 island scan ingest)
+  external_source?: string | null
+  external_id?: string | null
+  footprint_class?: 'roof' | 'parcel' | 'compound' | 'unclear' | null
+  roof_pct?: number | null
+  panel_coverage_pct?: number | null
+  estimated_kwp_raw?: number | null
+  category?: string | null
+  phone?: string | null
+  website?: string | null
+}
+
+/**
+ * Atomic promotion: candidate → properties + crm_pipeline + owner_decision in ONE
+ * SECURITY DEFINER call (bustan.promote_scan_candidate, migration 015), with
+ * dedup inside (same external id, or another property within ~28 m).
+ * A duplicate is a normal outcome, not an error — the candidate is marked
+ * 'added' server-side and the existing property id is returned.
+ * `client` is injectable for unit tests.
+ */
+export type PromoteResult =
+  | { ok: true; property_id: string; already?: boolean }
+  | { ok: false; reason: 'duplicate'; property_id: string }
+
+type RpcClient = Pick<NonNullable<typeof bustanSupabase>, 'rpc'>
+
+export async function promoteScanCandidate(id: string, client: RpcClient | null = bustanSupabase): Promise<PromoteResult> {
+  if (!client) throw new Error(NOT_CONNECTED.error)
+  const { data, error } = await client.rpc('promote_scan_candidate', { p_id: id })
+  if (error) throw error
+  return data as PromoteResult
+}
+
+/** Single-row lookup by uuid (proposal prefill via ?candidate_id=). */
+export async function fetchScanCandidateById(id: string): Promise<ScanCandidate | null> {
+  if (!bustanSupabase) return null
+  const { data, error } = await bustanSupabase.from('scan_candidates').select('*').eq('id', id).maybeSingle()
+  if (error) throw error
+  return (data as ScanCandidate | null) ?? null
+}
+
+/** Single-row lookup by (external_source, external_id), e.g. ('osm', '479104039'). */
+export async function fetchScanCandidateByExternalId(source: string, externalId: string): Promise<ScanCandidate | null> {
+  if (!bustanSupabase) return null
+  const { data, error } = await bustanSupabase
+    .from('scan_candidates')
+    .select('*')
+    .eq('external_source', source)
+    .eq('external_id', externalId)
+    .maybeSingle()
+  if (error) throw error
+  return (data as ScanCandidate | null) ?? null
 }
 
 /**
