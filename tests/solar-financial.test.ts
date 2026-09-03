@@ -108,3 +108,23 @@ describe('financial model', () => {
     expect(result.lcoe).toBeLessThan(3)
   })
 })
+
+// ── Single pricing source ────────────────────────────────────────────────────
+import bom from '../tools/proposal-builder/bom-templates.json'
+import { TM_SOLAR_ASSUMPTIONS } from '../src/lib/solar-financials'
+
+describe('TM_SOLAR_ASSUMPTIONS is derived from bom-templates.json', () => {
+  it('matches locations.koh_phangan', () => {
+    const k = bom.locations.koh_phangan
+    expect(TM_SOLAR_ASSUMPTIONS.pshAnnual).toBe(k.psh_annual)
+    expect(TM_SOLAR_ASSUMPTIONS.performanceRatio).toBe(k.performance_ratio)
+    expect(TM_SOLAR_ASSUMPTIONS.soilingFactor).toBe(k.soiling_factor)
+    expect(TM_SOLAR_ASSUMPTIONS.retailRateThb).toBe(k.tariff_retail_thb)
+    expect(TM_SOLAR_ASSUMPTIONS.exportRateThb).toBe(k.tariff_export_thb)
+    expect(TM_SOLAR_ASSUMPTIONS.selfConsumptionGridTied).toBe(k.self_consumption_pct_grid_tied)
+    expect(TM_SOLAR_ASSUMPTIONS.selfConsumptionWithBattery).toBe(k.self_consumption_pct_with_battery)
+    expect(TM_SOLAR_ASSUMPTIONS.co2KgPerKwh).toBe(k.co2_kg_per_kwh)
+    expect(TM_SOLAR_ASSUMPTIONS.discountRate).toBe(k.discount_rate)
+    expect(TM_SOLAR_ASSUMPTIONS.tariffEscalation).toBe(k.tariff_escalation)
+  })
+})
