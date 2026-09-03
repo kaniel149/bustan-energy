@@ -7,7 +7,7 @@
  * Gated behind can(role, 'crm.edit').
  *
  * On Approve:
- *   setScanCandidateStatus(id,'added') → confirmDetectedRoof → promote to
+ *   promoteScanCandidate(id) (one atomic, deduping RPC) → promote to
  *   properties, removeRoofCandidate, incrementApprovedToday, close sidebar, toast.
  *
  * On Reject (with reason):
@@ -19,8 +19,7 @@ import { useAppStore } from '../../lib/store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
 import {
-  setScanCandidateStatus,
-  confirmDetectedRoof,
+  promoteScanCandidate,
   rejectScanCandidate,
   updateScanCandidateArea,
 } from '../../lib/bustan-crm-service'
@@ -76,18 +75,20 @@ export function CandidateSidebarSection({ candidate: c }: Props) {
     if (!canEdit) return
     setApproving(true)
     try {
-      await setScanCandidateStatus(c.id, 'added')
-      const res = await confirmDetectedRoof(c)
-      if (!res.ok) { showToast(res.error ?? 'Failed to approve', 'error'); return }
-      const promoted = { ...c, id: res.id ?? c.id }
-      setProperties([...useAppStore.getState().properties, promoted])
+      const r = await promoteScanCandidate(c.id)
       removeRoofCandidate(c.id)
+      dismiss()
+      if (!r.ok) {
+        showToast(`Already in CRM (property ${r.property_id.slice(0, 8)}…)`, 'info')
+        return
+      }
+      const promoted = { ...c, id: r.property_id }
+      setProperties([...useAppStore.getState().properties, promoted])
       incrementApprovedToday()
       triggerFindContact(promoted)   // auto-start owner / decision-maker discovery
-      dismiss()
       showToast('Lead added — searching for contact…', 'success')
-    } catch {
-      showToast('Failed to approve candidate', 'error')
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Failed to approve candidate', 'error')
     } finally {
       setApproving(false)
     }

@@ -431,6 +431,27 @@ export interface ScanCandidate {
   website?: string | null
 }
 
+/**
+ * Atomic promotion: candidate → properties + crm_pipeline + owner_decision in ONE
+ * SECURITY DEFINER call (bustan.promote_scan_candidate, migration 015), with
+ * dedup inside (same external id, or another property within ~28 m).
+ * A duplicate is a normal outcome, not an error — the candidate is marked
+ * 'added' server-side and the existing property id is returned.
+ * `client` is injectable for unit tests.
+ */
+export type PromoteResult =
+  | { ok: true; property_id: string; already?: boolean }
+  | { ok: false; reason: 'duplicate'; property_id: string }
+
+type RpcClient = Pick<NonNullable<typeof bustanSupabase>, 'rpc'>
+
+export async function promoteScanCandidate(id: string, client: RpcClient | null = bustanSupabase): Promise<PromoteResult> {
+  if (!client) throw new Error(NOT_CONNECTED.error)
+  const { data, error } = await client.rpc('promote_scan_candidate', { p_id: id })
+  if (error) throw error
+  return data as PromoteResult
+}
+
 /** Single-row lookup by uuid (proposal prefill via ?candidate_id=). */
 export async function fetchScanCandidateById(id: string): Promise<ScanCandidate | null> {
   if (!bustanSupabase) return null

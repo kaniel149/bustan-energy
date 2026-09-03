@@ -6,7 +6,7 @@ import { useAppStore } from '../../lib/store'
 import { useFilteredProperties } from '../../hooks/useFilteredProperties'
 import type { Property } from '../../types'
 import { REGIONS } from '../../lib/regions'
-import { updateRoofGeom, confirmDetectedRoof, createScanRequest, fetchScanRequests, setScanCandidateStatus } from '../../lib/bustan-crm-service'
+import { updateRoofGeom, promoteScanCandidate, createScanRequest, fetchScanRequests, setScanCandidateStatus } from '../../lib/bustan-crm-service'
 import { useToastStore } from '../../lib/toast-store'
 import { useBustanStore } from '../../lib/bustan-store'
 import { can } from '../../lib/bustan-permissions'
@@ -277,12 +277,23 @@ export function SolarMap() {
   const handleConfirmCandidate = async () => {
     if (!reviewCandidate) return
     setConfirmingCand(true)
-    // Mark candidate as 'added' before promoting — best-effort, non-blocking
-    setScanCandidateStatus(reviewCandidate.id, 'added').catch((err) => { console.warn('[SolarMap] failed to mark candidate added:', err) })
-    const res = await confirmDetectedRoof(reviewCandidate)
+    // One atomic, deduping RPC: properties + crm_pipeline + owner_decision + status='added'.
+    let r: Awaited<ReturnType<typeof promoteScanCandidate>>
+    try {
+      r = await promoteScanCandidate(reviewCandidate.id)
+    } catch (err) {
+      setConfirmingCand(false)
+      showToast(err instanceof Error ? err.message : 'Failed to confirm roof', 'error')
+      return
+    }
     setConfirmingCand(false)
-    if (!res.ok) { showToast(res.error || 'Failed to confirm roof', 'error'); return }
-    const promoted = { ...reviewCandidate, id: res.id || reviewCandidate.id }
+    if (!r.ok) {
+      removeRoofCandidate(reviewCandidate.id)
+      setReviewCandidate(null)
+      showToast(`Already in CRM (property ${r.property_id.slice(0, 8)}…)`, 'info')
+      return
+    }
+    const promoted = { ...reviewCandidate, id: r.property_id }
     setProperties([...useAppStore.getState().properties, promoted])
     removeRoofCandidate(reviewCandidate.id)
     setReviewCandidate(null)

@@ -1,9 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import fixtureJson from './__fixtures__/bustan-leads.json'
 import {
   rowsToLeads,
   toPropertyInput,
   mapLeadToProperty,
+  promoteScanCandidate,
   type BustanPropertyRow,
   type BustanOwnerRow,
   type BustanPipelineRow,
@@ -65,5 +66,18 @@ describe('bustan-crm-service: real seeded data (85 leads)', () => {
     expect(samui.length).toBe(2)
     expect(phangan.length).toBe(83)
     expect(regions.every((r) => r === 'koh_phangan' || r === 'koh_samui')).toBe(true)
+  })
+})
+
+describe('promoteScanCandidate', () => {
+  it('returns the RPC result and surfaces duplicates without throwing', async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: { ok: false, reason: 'duplicate', property_id: 'p9' }, error: null })
+    const res = await promoteScanCandidate('u1', { rpc } as never)
+    expect(rpc).toHaveBeenCalledWith('promote_scan_candidate', { p_id: 'u1' })
+    expect(res).toEqual({ ok: false, reason: 'duplicate', property_id: 'p9' })
+  })
+  it('throws on an RPC error', async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: null, error: { message: 'insufficient_privilege' } })
+    await expect(promoteScanCandidate('u1', { rpc } as never)).rejects.toMatchObject({ message: 'insufficient_privilege' })
   })
 })

@@ -35,6 +35,8 @@ create unique index if not exists uq_properties_external
 
 -- (c) promotion: candidate -> properties + crm_pipeline + owner_decision, deduped.
 -- Returns {ok:true, property_id} or {ok:false, reason:'duplicate', property_id:<existing>}.
+-- A duplicate is still marked status='added' (the roof IS in the CRM) so it
+-- leaves the review queue instead of reappearing on the next fetch.
 create or replace function bustan.promote_scan_candidate(p_id uuid)
 returns jsonb
 language plpgsql
@@ -74,6 +76,7 @@ begin
      limit 1;
   end if;
   if dup is not null then
+    update bustan.scan_candidates set status = 'added' where id = p_id;
     return jsonb_build_object('ok', false, 'reason', 'duplicate', 'property_id', dup);
   end if;
 
