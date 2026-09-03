@@ -1,5 +1,7 @@
 // ── Supabase REST helpers (Edge-compatible, no SDK) ─────────
 
+import { parseContentRange } from './pg-count.js'
+
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
@@ -76,4 +78,12 @@ export async function supaUpsert<T = Row>(
     throw new Error(`supa ${table}: ${r.status} ${txt}`)
   }
   return r.json()
+}
+
+/** Exact row count for a filter path without fetching rows (HEAD-style, Range 0-0). */
+export async function supaCount(path: string): Promise<number> {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { ...baseHeaders(), Prefer: 'count=exact', Range: '0-0', 'Range-Unit': 'items' },
+  })
+  return r.ok || r.status === 206 ? (parseContentRange(r.headers.get('content-range')) ?? 0) : 0
 }

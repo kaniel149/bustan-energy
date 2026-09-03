@@ -9,6 +9,8 @@
 // Contract intentionally matches supa.ts (bGet≈supaGetAll, bPost≈supaPost,
 // bPatch≈supaPatch) so callers can swap import sources with minimal change.
 
+import { parseContentRange } from './pg-count.js'
+
 const BUSTAN_URL = process.env.BUSTAN_SUPABASE_URL || 'https://ygoiaabzkuvdsyyduvhv.supabase.co'
 const BUSTAN_KEY = process.env.BUSTAN_SUPABASE_SERVICE_ROLE_KEY!
 
@@ -69,4 +71,12 @@ export async function bPatchReturning<T = Record<string, unknown>>(
     body: JSON.stringify(body),
   })
   return r.ok ? r.json() : null
+}
+
+/** Exact row count for a filter path without fetching rows (HEAD-style, Range 0-0). */
+export async function bCount(path: string): Promise<number> {
+  const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, {
+    headers: { ...bustanHeaders(false), Prefer: 'count=exact', Range: '0-0', 'Range-Unit': 'items' },
+  })
+  return r.ok || r.status === 206 ? (parseContentRange(r.headers.get('content-range')) ?? 0) : 0
 }
