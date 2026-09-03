@@ -8,6 +8,8 @@
 
 **Tech Stack:** Vercel functions (Node 20 + edge), Supabase PostgREST via `api/_lib/bustan-db.ts` (`bGet/bPost/bPatch`), React 18 + TS, vitest (node env, explicit imports), `sharp`.
 
+**Live DB facts (2026-09-03):** scan_candidates 39,539 total, only **94 in KP bbox, 0 pending** → the ingest inserts ~3,900 new rows; properties 533 = crm_pipeline 533; low-confidence PV checks: 31,579 candidates nationwide (506 properties).
+
 **Facts file:** `/tmp/sp2-facts.md` (line-numbered code facts). **Spec:** `docs/superpowers/specs/2026-09-03-bustan-final-grade-overhaul-design.md`.
 
 **Repos:** `E` = `~/Desktop/projects/solar/bustan/bustan-energy` (branch `sp2/deal-engine` off `main`), `I` = `~/Desktop/projects/solar/bustan/bustan-index`.
@@ -147,11 +149,14 @@ revoke all on function bustan.promote_scan_candidate(uuid) from public;
 grant execute on function bustan.promote_scan_candidate(uuid) to authenticated;
 
 -- (d) requeue: checks that came back "unclear image" get another look with the z18 method
+-- Scoped to Ko Phangan: 31,579 rows nationwide match this predicate (most are error-stamped
+-- confidence=0 from the z19 era); at 10/tick that would never drain. KP first; widen later per region.
 update bustan.scan_candidates
    set solar_checked_at = null
  where solar_checked_at is not null
    and coalesce(solar_check_confidence, 0) < 0.3
-   and existing_solar is not true;
+   and existing_solar is not true
+   and lat between 9.65 and 9.82 and lon between 99.93 and 100.10;
 
 update bustan.properties
    set solar_checked_at = null
