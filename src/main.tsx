@@ -4,6 +4,9 @@ import './index.css'
 import App from './App.tsx'
 import { initAnalytics } from './lib/analytics'
 import { initAttribution } from './lib/attribution'
+import { initSentry } from './lib/sentry'
+
+initSentry()
 
 // Initialize PostHog + GA4 + Meta Pixel (no-ops if env vars are not set)
 initAnalytics()
