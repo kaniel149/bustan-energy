@@ -23,3 +23,21 @@ test('contact route exposes a real lead form shell', async ({ page }) => {
   await expect(page.getByRole('textbox', { name: /email|אימייל/i })).toBeVisible()
   await expect(page.getByRole('button', { name: /send|שלח|submit/i })).toBeVisible()
 })
+
+test('new admin routes exist and are auth-gated', async ({ page }) => {
+  for (const path of ['/admin', '/admin/scan', '/admin/knowledge']) {
+    await page.goto(path)
+    await expect(page).toHaveURL(/\/admin\/login$/)
+  }
+})
+
+test('admin-funnel rejects anonymous calls', async ({ request }) => {
+  const r = await request.get('/api/admin-funnel')
+  if (r.status() === 200) {
+    // Plain `vite` dev has no api/ runtime — it serves the source module (or the SPA
+    // index.html), never a JSON API response.
+    expect(r.headers()['content-type'] ?? '').not.toMatch(/application\/json/)
+  } else {
+    expect(r.status()).toBe(401)   // Vercel preview / prod
+  }
+})

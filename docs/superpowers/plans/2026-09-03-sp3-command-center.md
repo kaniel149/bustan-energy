@@ -29,8 +29,8 @@
 
 ### Task 0: Branch
 
-- [ ] `cd $E && git checkout main && git pull --ff-only origin main && git checkout -b sp3/command-center`
-- [ ] `npm test` → all suites pass; record the count. `npm run typecheck` → clean.
+- [x] `cd $E && git checkout main && git pull --ff-only origin main && git checkout -b sp3/command-center`
+- [x] `npm test` → all suites pass; record the count. `npm run typecheck` → clean.
 
 ---
 
@@ -41,7 +41,7 @@
 - Create: `E/api/_lib/pg-count.ts`, `E/api/_lib/pg-count.test.ts`
 - Create: `E/api/_lib/funnel.ts`, `E/api/_lib/funnel.test.ts`
 
-- [ ] **Step 1: Failing tests**
+- [x] **Step 1: Failing tests**
 
 ```ts
 // E/api/_lib/pg-count.test.ts
@@ -131,9 +131,9 @@ describe('buildFunnel', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails** — `npx vitest run api/_lib/pg-count.test.ts api/_lib/funnel.test.ts` → "Failed to resolve import".
+- [x] **Step 2: Run → fails** — `npx vitest run api/_lib/pg-count.test.ts api/_lib/funnel.test.ts` → "Failed to resolve import".
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // E/api/_lib/pg-count.ts
@@ -220,8 +220,8 @@ export function buildFunnel(i: FunnelInput) {
 }
 ```
 
-- [ ] **Step 4: Run → passes** (`npx vitest run api/_lib/pg-count.test.ts api/_lib/funnel.test.ts` → 6 passed). `npm run typecheck` clean.
-- [ ] **Step 5: Commit** — `git add api/_lib && git commit -m "feat(funnel): pure funnel aggregation + PostgREST exact-count helpers"`
+- [x] **Step 4: Run → passes** (`npx vitest run api/_lib/pg-count.test.ts api/_lib/funnel.test.ts` → 6 passed). `npm run typecheck` clean.
+- [x] **Step 5: Commit** — `git add api/_lib && git commit -m "feat(funnel): pure funnel aggregation + PostgREST exact-count helpers"`
 
 ---
 
@@ -231,7 +231,7 @@ export function buildFunnel(i: FunnelInput) {
 - Create: `E/api/_lib/admin-verify.ts` (extract of `verifyAdmin` from `admin-stats.ts:44-54`; `admin-stats.ts` itself is left untouched)
 - Create: `E/api/admin-funnel.ts`
 
-- [ ] **Step 1: Shared verifier**
+- [x] **Step 1: Shared verifier**
 
 ```ts
 // E/api/_lib/admin-verify.ts — Bearer <main-project user JWT> → admin email or null (edge-safe)
@@ -248,7 +248,7 @@ export async function verifyAdminRequest(req: Request): Promise<string | null> {
 }
 ```
 
-- [ ] **Step 2: Endpoint**
+- [x] **Step 2: Endpoint**
 
 ```ts
 // E/api/admin-funnel.ts — GET, admin JWT. Funnel across both DBs (bustan + main). Edge runtime.
@@ -287,8 +287,8 @@ export default async function handler(req: Request): Promise<Response> {
 }
 ```
 
-- [ ] **Step 3: Local check** — `npm run typecheck`. With `.env` loaded: `vercel dev` (or `npx vercel dev --listen 3000`) then `curl -s -H "Authorization: Bearer $(node -e "...")"` is impractical — instead verify in Task 3 via the UI on the preview. Expected shape documented above.
-- [ ] **Step 4: Commit** — `git add api/_lib/admin-verify.ts api/admin-funnel.ts && git commit -m "feat(api): admin-funnel — cross-DB funnel counts, KP split, 7d deltas, attention lists"`
+- [ ] **Step 3: Local check** — *(worker: typecheck clean; UI verification needs an admin login → lead)* `npm run typecheck`. With `.env` loaded: `vercel dev` (or `npx vercel dev --listen 3000`) then `curl -s -H "Authorization: Bearer $(node -e "...")"` is impractical — instead verify in Task 3 via the UI on the preview. Expected shape documented above.
+- [x] **Step 4: Commit** — `git add api/_lib/admin-verify.ts api/admin-funnel.ts && git commit -m "feat(api): admin-funnel — cross-DB funnel counts, KP split, 7d deltas, attention lists"`
 
 ---
 
@@ -299,7 +299,7 @@ export default async function handler(req: Request): Promise<Response> {
 - Create: `E/src/components/admin/FunnelSection.tsx`
 - Modify: `E/src/pages/admin/AdminDashboardPage.tsx` (insert `<FunnelSection />` between the header and the stat cards; subtitle `'סקירת הצעות מחיר'` → `'משפך עסקי — סריקות עד חתימה'`; nothing removed)
 
-- [ ] **Step 1: Test the pure width helper**
+- [x] **Step 1: Test the pure width helper**
 
 ```ts
 // E/src/lib/funnel-client.test.ts
@@ -314,7 +314,7 @@ describe('funnelWidths', () => {
 })
 ```
 
-- [ ] **Step 2: Implement client**
+- [x] **Step 2: Implement client**
 
 ```ts
 // E/src/lib/funnel-client.ts
@@ -336,14 +336,15 @@ export async function fetchAdminFunnel(): Promise<FunnelResponse | null> {
 }
 ```
 
-- [ ] **Step 3: `FunnelSection.tsx`** (uses the dashboard's existing card classes `bg-white/5 rounded-2xl border border-white/10`; `.bustan-admin-main` remaps `text-white*` to ink, so keep the same utility names):
+- [x] **Step 3: `FunnelSection.tsx`** (uses the dashboard's existing card classes `bg-white/5 rounded-2xl border border-white/10`; `.bustan-admin-main` remaps `text-white*` to ink, so keep the same utility names):
 - Loads `fetchAdminFunnel()` in `useEffect`; skeleton while loading; on `null` shows "לא ניתן לטעון משפך" with a retry button.
 - **Cards row** (`grid grid-cols-2 lg:grid-cols-4`): 8 stages, each `label`, big `all`, small line `KP {kp} · שאר {rest}` when `kp !== null`, and `+{d7} ב-7 ימים` chip (green when > 0).
 - **Funnel bar**: one `<div>` per stage, `style={{ width: `${w}%` }}` from `funnelWidths(stages)`, height 28px, background `#24463E` at opacity stepping `1 → 0.35`, label + count inside; `dir="rtl"` inherited. No chart lib.
 - **Needs attention** (`grid lg:grid-cols-3`): (a) `pending_a` → rows `name ?? 'Roof ' + id.slice(0,8)` · `{kwp} kWp` · badge from `footprint_class` (`parcel` → "קרקע", `compound` → "מספר מבנים", `unclear` → "לוודא") · button "פתח בסורק" → `navigate('/admin/scan?focus=' + id)`; (b) `no_contact` → name + "ללא איש קשר" · link to `/crm/leads/{id}`; (c) `viewed_unsigned` → `client_name` · `ref_number` · `first_viewed_at` (he-IL date) · link `/admin/proposals/{ref_number}`.
 
-- [ ] **Step 4: Wire into `AdminDashboardPage.tsx`**, `npm run typecheck && npm run lint && npm test` → clean. `npm run dev` → `/admin` (after login) renders the section; unauthenticated `/api/admin-funnel` returns 401 in the network tab.
-- [ ] **Step 5: Commit** — `feat(admin): funnel dashboard on /admin — 8 stages, KP split, 7d deltas, needs-attention lists`
+- [x] **Step 4a: Wire into `AdminDashboardPage.tsx`**, `npm run typecheck && npm run lint && npm test` → clean.
+- [ ] **Step 4b (lead):** `npm run dev` → `/admin` (after login) renders the section; unauthenticated `/api/admin-funnel` returns 401 in the network tab.
+- [x] **Step 5: Commit** — `feat(admin): funnel dashboard on /admin — 8 stages, KP split, 7d deltas, needs-attention lists`
 
 ---
 
@@ -355,7 +356,7 @@ export async function fetchAdminFunnel(): Promise<FunnelResponse | null> {
 
 Reference behaviour to port (`I/kp-solar-pro.html`): `CAT_ICONS` (`:405`), `hasExistingSolar` = confident positive only (`:494`), `footprintBadge` (`:466`), grade/category/size filters (`:1065-1096`), pipeline toggle (`:1108`), notes (`:1196`, `localStorage kpsp_notes`), compare (`:1202`), `flyTo` (`:1142`).
 
-- [ ] **Step 1: Failing tests**
+- [x] **Step 1: Failing tests**
 
 ```ts
 // E/src/lib/scan-review.test.ts
@@ -417,7 +418,7 @@ describe('helpers', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails.** Then implement:
+- [x] **Step 2: Run → fails.** Then implement:
 
 ```ts
 // E/src/lib/scan-review.ts — pure port of kp-solar-pro.html filters/badges (no DOM, no map)
@@ -487,7 +488,7 @@ export async function fetchScanCandidateRows(bounds: [[number, number], [number,
 }
 ```
 
-- [ ] **Step 3: Run → passes** (`npx vitest run src/lib/scan-review.test.ts` → 7 passed). Commit — `feat(scan): pure scan-review filters/badges (KP Solar Pro port) + raw candidate fetch`
+- [x] **Step 3: Run → passes** (`npx vitest run src/lib/scan-review.test.ts` → 7 passed). Commit — `feat(scan): pure scan-review filters/badges (KP Solar Pro port) + raw candidate fetch`
 
 ---
 
@@ -498,16 +499,17 @@ export async function fetchScanCandidateRows(bounds: [[number, number], [number,
 - Create: `E/src/pages/admin/ScanCommandPage.tsx`, `E/src/components/admin/scan/ScanFilterBar.tsx`, `E/src/components/admin/scan/CandidateCard.tsx`, `E/src/components/admin/scan/CompareDrawer.tsx`
 - Modify: `E/src/App.tsx` (both route blocks: add `<Route path="scan" element={<ScanCommandPage />} />` + lazy import), `E/src/pages/admin/AdminLayout.tsx` (`NAV_ITEMS`: `{ to: '/admin/scan', icon: ScanSearch, label: 'סורק גגות', end: true }` after דשבורד — `ScanSearch` from lucide-react)
 
-- [ ] **Step 1: Page skeleton + auth to bustan**
+- [x] **Step 1: Page skeleton + auth to bustan**
   - `AdminLayout` guarantees a main-project admin session, but the RPCs (`promote_scan_candidate`, `reject_scan_candidate`) need a **bustan** session with role admin/sales/engineer. On mount: `bustanSupabase?.auth.getSession()`; if no session render a compact inline form (email + password) calling `signInBustan(email, password)` from `src/lib/bustan-supabase.ts` (`Promise<boolean>`), then `fetchCurrentRole()` from `bustan-permissions.ts`; gate approve/reject with `can(role, 'crm.edit')` exactly as `CandidateReviewPanel.tsx:361`.
   - Layout: `h-full flex` — left `w-[380px]` panel (filter bar + scrollable list of `CandidateCard`), right `flex-1` map. Mobile: list under map (`flex-col`).
-- [ ] **Step 2: Map** — `new maplibregl.Map({ container, style: { version: 8, sources: { sat: { type: 'raster', tiles: TILE_SOURCES.esri, tileSize: 256, maxzoom: TILE_MAXZOOM.esri, attribution: TILE_ATTRIBUTION } }, layers: [{ id: 'sat', type: 'raster', source: 'sat' }] }, center: [100.0, 9.735], zoom: 12 })`. Source `cands` = `toFeatureCollection(filtered)`; layers: `cand-fill` (`fill-color: ['get','color']`, opacity 0.35, filter Polygon), `cand-line` (same colour, width 1.5), `cand-pt` (circle for Points, `circle-color: ['get','color']`, radius 6), `cand-pv` (circle stroke `#ff4444` where `['get','pv']`). Click → `setSelected(id)`; hover cursor pointer. `map.on('moveend')` → debounce 400 ms → `fetchScanCandidateRows(map.getBounds() as bounds)` only when zoom ≥ 11 (else show "התקרב כדי לטעון מועמדים"). Initial load: KP bounds `REGIONS['koh-phangan'].bounds`.
+- [x] **Step 2: Map** — `new maplibregl.Map({ container, style: { version: 8, sources: { sat: { type: 'raster', tiles: TILE_SOURCES.esri, tileSize: 256, maxzoom: TILE_MAXZOOM.esri, attribution: TILE_ATTRIBUTION } }, layers: [{ id: 'sat', type: 'raster', source: 'sat' }] }, center: [100.0, 9.735], zoom: 12 })`. Source `cands` = `toFeatureCollection(filtered)`; layers: `cand-fill` (`fill-color: ['get','color']`, opacity 0.35, filter Polygon), `cand-line` (same colour, width 1.5), `cand-pt` (circle for Points, `circle-color: ['get','color']`, radius 6), `cand-pv` (circle stroke `#ff4444` where `['get','pv']`). Click → `setSelected(id)`; hover cursor pointer. `map.on('moveend')` → debounce 400 ms → `fetchScanCandidateRows(map.getBounds() as bounds)` only when zoom ≥ 11 (else show "התקרב כדי לטעון מועמדים"). Initial load: KP bounds `REGIONS['koh-phangan'].bounds`.
   - `?focus=<id>` (from the dashboard): after first load `fetchScanCandidateById(id)` → `map.flyTo({ center: [lon, lat], zoom: 17 })` + select.
-- [ ] **Step 3: `ScanFilterBar`** — grade pills A–D (multi-toggle, coloured by `GRADE_COLORS`), category `<select>` from `Object.keys(CAT_ICONS)` + 'all', `minKwp` number input, `minScore` range 0–100, search box (Enter → `flyTo` first match), toggles "כולל PV קיים" (`includeSolar`) and "הצג גם ב-CRM" (`showInCrm`), counter `{filtered.length} / {rows.length}` and `PV excluded: {n}`.
-- [ ] **Step 4: `CandidateCard`** — icon + name (`'Roof ' + id.slice(0,8)` fallback) · grade chip · `kwp` kWp · `roof_area_sqm` m² · score · badges: `footprintBadge` (amber), `hasExistingSolar` → "☀️ PV {panel_coverage_pct}%" (red), `status==='added'` → "In CRM". Actions row: **Approve** → `promoteScanCandidate(id)`; on `ok:false` show toast `Already in CRM (property ${property_id.slice(0,8)}…)` via `useAdminStore().showToast`; on ok mark row `status='added'` locally. **Reject** → toggles `<RejectReasonMenu compact onPick onCancel />` → `rejectScanCandidate(id, reason)` → remove row locally. **Create proposal** → `navigate('/admin/proposals/new?candidate_id=' + id)`. **WhatsApp** (only when `whatsappLink` ≠ null) → `<a target=_blank>` with text `Hello, this is Bustan Energy. Your roof could host ~${kwp} kWp of solar — may we send a free proposal?`. **Compare** checkbox (max 3, disabled beyond). **Note** textarea (`loadNotes/saveNote`, debounce 300 ms). **Fly to** → `map.flyTo({center, zoom: 18})`.
-- [ ] **Step 5: `CompareDrawer`** — bottom sheet listing the ≤3 compared candidates side by side: name, grade, kWp, m², score, footprint, PV, phone; "Clear".
-- [ ] **Step 6: Routes + nav** as listed in Files. `npm run typecheck && npm run lint && npm test` → clean. `npm run dev` → `/admin/scan`: KP loads ~3.9k rows (filtered default ≈ pending, non-PV), pills filter instantly, click polygon selects card, approve on one test candidate in dev DB shows toast and the row turns "In CRM".
-- [ ] **Step 7: Commit** — `feat(admin): /admin/scan — KP Solar Pro on the React map stack (grade/score/category filters, footprint+PV badges, approve/reject, proposal CTA, compare, notes, fly-to)`
+- [x] **Step 3: `ScanFilterBar`** — grade pills A–D (multi-toggle, coloured by `GRADE_COLORS`), category `<select>` from `Object.keys(CAT_ICONS)` + 'all', `minKwp` number input, `minScore` range 0–100, search box (Enter → `flyTo` first match), toggles "כולל PV קיים" (`includeSolar`) and "הצג גם ב-CRM" (`showInCrm`), counter `{filtered.length} / {rows.length}` and `PV excluded: {n}`.
+- [x] **Step 4: `CandidateCard`** — icon + name (`'Roof ' + id.slice(0,8)` fallback) · grade chip · `kwp` kWp · `roof_area_sqm` m² · score · badges: `footprintBadge` (amber), `hasExistingSolar` → "☀️ PV {panel_coverage_pct}%" (red), `status==='added'` → "In CRM". Actions row: **Approve** → `promoteScanCandidate(id)`; on `ok:false` show toast `Already in CRM (property ${property_id.slice(0,8)}…)` via `useAdminStore().showToast`; on ok mark row `status='added'` locally. **Reject** → toggles `<RejectReasonMenu compact onPick onCancel />` → `rejectScanCandidate(id, reason)` → remove row locally. **Create proposal** → `navigate('/admin/proposals/new?candidate_id=' + id)`. **WhatsApp** (only when `whatsappLink` ≠ null) → `<a target=_blank>` with text `Hello, this is Bustan Energy. Your roof could host ~${kwp} kWp of solar — may we send a free proposal?`. **Compare** checkbox (max 3, disabled beyond). **Note** textarea (`loadNotes/saveNote`, debounce 300 ms). **Fly to** → `map.flyTo({center, zoom: 18})`.
+- [x] **Step 5: `CompareDrawer`** — bottom sheet listing the ≤3 compared candidates side by side: name, grade, kWp, m², score, footprint, PV, phone; "Clear".
+- [x] **Step 6a: Routes + nav** as listed in Files. `npm run typecheck && npm run lint && npm test` → clean.
+- [ ] **Step 6b (lead):** `npm run dev` → `/admin/scan`: KP loads ~3.9k rows (filtered default ≈ pending, non-PV), pills filter instantly, click polygon selects card, approve on one test candidate in dev DB shows toast and the row turns "In CRM".
+- [x] **Step 7: Commit** — `feat(admin): /admin/scan — KP Solar Pro on the React map stack (grade/score/category filters, footprint+PV badges, approve/reject, proposal CTA, compare, notes, fly-to)`
 
 ---
 
@@ -517,7 +519,7 @@ export async function fetchScanCandidateRows(bounds: [[number, number], [number,
 - Create: `E/src/data/knowledge-manifest.json`, `E/src/lib/knowledge.ts`, `E/src/lib/knowledge.test.ts`, `E/src/pages/admin/KnowledgePage.tsx`
 - Modify: `E/src/App.tsx` (both blocks: `<Route path="knowledge" element={<KnowledgePage />} />`), `E/src/pages/admin/AdminLayout.tsx` (`{ to: '/admin/knowledge', icon: BookOpen, label: 'מאגר ידע', end: true }` after סורק גגות)
 
-- [ ] **Step 1: Manifest** (`IDX` = `https://index.bustan-energy.com`, `GH` = `https://github.com/kaniel149/bustan-index/blob/main` for raw `.md`). Schema per row: `{ "title", "url", "layer": "internal"|"team"|"client", "group", "lang": "he"|"en" }`. Content (one row each):
+- [x] **Step 1: Manifest** (`IDX` = `https://index.bustan-energy.com`, `GH` = `https://github.com/kaniel149/bustan-index/blob/main` for raw `.md`). Schema per row: `{ "title", "url", "layer": "internal"|"team"|"client", "group", "lang": "he"|"en" }`. Content (one row each):
 
 | layer | group | title → url |
 |---|---|---|
@@ -536,7 +538,7 @@ export async function fetchScanCandidateRows(bounds: [[number, number], [number,
 
 ~85 rows total. Keep the JSON sorted by layer → group → title.
 
-- [ ] **Step 2: Test + pure helpers**
+- [x] **Step 2: Test + pure helpers**
 
 ```ts
 // E/src/lib/knowledge.test.ts
@@ -579,8 +581,8 @@ export function groupByLayer(rows: KnowledgeRow[]): Record<Layer, Record<string,
 }
 ```
 
-- [ ] **Step 3: `KnowledgePage.tsx`** — search input (autofocus), layer tabs (all/internal/team/client with counts), then for each layer a section header (`LAYER_LABELS`) and per group a card grid: title, `lang` chip, group chip, external-link icon; `<a target="_blank" rel="noopener">`. Empty state "אין תוצאות". Routes + nav item per Files.
-- [ ] **Step 4: `npm run typecheck && npm run lint && npm test` → clean.** Commit — `feat(admin): /admin/knowledge — searchable index of bustan-index docs by layer (manifest-driven)`
+- [x] **Step 3: `KnowledgePage.tsx`** — search input (autofocus), layer tabs (all/internal/team/client with counts), then for each layer a section header (`LAYER_LABELS`) and per group a card grid: title, `lang` chip, group chip, external-link icon; `<a target="_blank" rel="noopener">`. Empty state "אין תוצאות". Routes + nav item per Files.
+- [x] **Step 4: `npm run typecheck && npm run lint && npm test` → clean.** Commit — `feat(admin): /admin/knowledge — searchable index of bustan-index docs by layer (manifest-driven)`
 
 ---
 
@@ -591,7 +593,7 @@ export function groupByLayer(rows: KnowledgeRow[]): Record<Layer, Record<string,
 - Create: `E/api/_lib/alerts-core.ts`, `E/api/_lib/alerts-core.test.ts`, `E/api/_lib/resend.ts`
 - Create: `E/api/cron-alerts.ts`; Modify: `E/vercel.json` (`crons` += `{ "path": "/api/cron-alerts", "schedule": "*/30 * * * *" }`)
 
-- [ ] **Step 1: Migration**
+- [x] **Step 1: Migration**
 
 ```sql
 -- 017_alert_state.sql — schema bustan on ygoiaabzkuvdsyyduvhv
@@ -606,7 +608,7 @@ alter table bustan.alert_state enable row level security;
 ```
 Balanced-`$$` check is trivial here; `grep -c "create table" supabase/bustan-migrations/017_alert_state.sql` → 1.
 
-- [ ] **Step 2: Failing tests**
+- [x] **Step 2: Failing tests**
 
 ```ts
 // E/api/_lib/alerts-core.test.ts
@@ -642,7 +644,7 @@ describe('pickChannel / isFirstRun', () => {
 })
 ```
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // E/api/_lib/alerts-core.ts — pure: what to say, where to send
@@ -726,8 +728,8 @@ export default async function handler(req: Request): Promise<Response> {
 ```
 Check `escapeHtml` exists in `api/_lib/html.ts` (it is imported by `proposal-view.ts:11`).
 
-- [ ] **Step 4: Run → passes** (`npx vitest run api/_lib/alerts-core.test.ts` → 4 passed). `npm run typecheck` clean. Add the cron entry to `vercel.json`.
-- [ ] **Step 5: Commit** — `git add supabase/bustan-migrations/017_alert_state.sql api/_lib/alerts-core.ts api/_lib/alerts-core.test.ts api/_lib/resend.ts api/cron-alerts.ts vercel.json && git commit -m "feat(alerts): 30-min cron — approvals, new A-grade, first views, signatures → WhatsApp else email; watermark in bustan.alert_state (017)"`
+- [x] **Step 4: Run → passes** (`npx vitest run api/_lib/alerts-core.test.ts` → 4 passed). `npm run typecheck` clean. Add the cron entry to `vercel.json`.
+- [x] **Step 5: Commit** — `git add supabase/bustan-migrations/017_alert_state.sql api/_lib/alerts-core.ts api/_lib/alerts-core.test.ts api/_lib/resend.ts api/cron-alerts.ts vercel.json && git commit -m "feat(alerts): 30-min cron — approvals, new A-grade, first views, signatures → WhatsApp else email; watermark in bustan.alert_state (017)"`
 
 ---
 
@@ -736,7 +738,7 @@ Check `escapeHtml` exists in `api/_lib/html.ts` (it is imported by `proposal-vie
 **Files:**
 - Modify: `E/tests/e2e/smoke.spec.ts` (append)
 
-- [ ] **Step 1: Playwright smoke (unauthenticated routes only — the approve flow needs a magic-link login and is verified by hand in Step 3)**
+- [x] **Step 1: Playwright smoke (unauthenticated routes only — the approve flow needs a magic-link login and is verified by hand in Step 3)**
 
 ```ts
 test('new admin routes exist and are auth-gated', async ({ page }) => {
@@ -751,8 +753,8 @@ test('admin-funnel rejects anonymous calls', async ({ request }) => {
 })
 ```
 
-- [ ] **Step 2: Full gate** — `npm run typecheck && npm run lint && npm test && npm run build` → all green; `npx playwright test` → green. Record test count vs Task 0.
-- [ ] **Step 3: Push + preview** — `git push -u origin sp3/command-center`; open PR to `main` (merge is the lead's). On the Vercel preview, logged in as `k@kanielt.com`:
+- [x] **Step 2: Full gate** — *(typecheck ✓ · lint: 9 pre-existing errors on main, none in touched files · vitest 147/147 · build ✓ · playwright 5/5)* `npm run typecheck && npm run lint && npm test && npm run build` → all green; `npx playwright test` → green. Record test count vs Task 0.
+- [ ] **Step 3: Push + preview** — *(worker: pushed + PR opened; preview checks 1–3 = lead)* `git push -u origin sp3/command-center`; open PR to `main` (merge is the lead's). On the Vercel preview, logged in as `k@kanielt.com`:
   1. `/admin` → funnel cards show `scans 354`, `candidates ≈43.3k (KP 3.9k)`, `promoted 533`, `with_contact 271`, `outreach 1`; attention lists populated; Network: `admin-funnel` 200 < 3 s.
   2. `/admin/scan` → bustan sign-in prompt (if needed) → KP loads; grade pills, search "Treechart" + Enter flies to the hostel; footprint badge shows on an adjudicated parcel; approve one D-grade test candidate → toast + "In CRM"; reject one with `not_a_roof` → disappears; "Create proposal" opens `/admin/proposals/new?candidate_id=…` prefilled (SP2 path).
   3. `/admin/knowledge` → search "PEA" → 5 rows; every link opens (spot-check 5 across layers).
