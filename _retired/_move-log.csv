@@ -1,0 +1,14 @@
+from,to,reason,date
+business,_retired/business,mirror-of-bustan-index,2026-09-03
+marketing,_retired/marketing,mirror-of-bustan-index,2026-09-03
+sales,_retired/sales,mirror-of-bustan-index,2026-09-03
+legacy,_retired/legacy,mirror-of-bustan-index,2026-09-03
+tools/installation.html,_retired/tools/installation.html,static-tool-canonical-in-bustan-index,2026-09-03
+tools/monitoring-maintenance.html,_retired/tools/monitoring-maintenance.html,static-tool-canonical-in-bustan-index,2026-09-03
+tools/power-grid-map.html,_retired/tools/power-grid-map.html,static-tool-canonical-in-bustan-index,2026-09-03
+tools/procurement-engineering.html,_retired/tools/procurement-engineering.html,static-tool-canonical-in-bustan-index,2026-09-03
+tools/rfq-preview.html,_retired/tools/rfq-preview.html,static-tool-canonical-in-bustan-index,2026-09-03
+tools/bill-scanner,_retired/tools/bill-scanner,static-tool-canonical-in-bustan-index,2026-09-03
+tools/crm-steps,_retired/tools/crm-steps,static-tool-canonical-in-bustan-index,2026-09-03
+tools/drone,_retired/tools/drone,static-tool-canonical-in-bustan-index,2026-09-03
+tools/solar-atlas,_retired/tools/solar-atlas,static-tool-canonical-in-bustan-index,2026-09-03
