@@ -14,7 +14,8 @@ import { ProposalSuccessModal } from '../../components/admin/ProposalSuccessModa
 import { supabase } from '../../lib/supabase'
 import type { CrmProject } from '../../types/crm'
 import { fetchProposal } from '../../lib/admin-service'
-import { fetchBustanLeads, mapLeadToProperty } from '../../lib/bustan-crm-service'
+import { fetchBustanLeads, mapLeadToProperty, fetchScanCandidateById, fetchScanCandidateByExternalId } from '../../lib/bustan-crm-service'
+import { candidateToFormPatch } from '../../lib/candidate-prefill'
 import { getSatelliteImageUrl } from '../../lib/enrich-building'
 import { computePanelLayout, layoutToSvg } from '../../lib/panel-layout'
 import { STANDARD_PANEL_WATT } from '../../lib/constants'
@@ -140,9 +141,12 @@ export default function NewProposalPage() {
   const isEditMode = Boolean(editRef)
   const showToast = useAdminStore((s) => s.showToast)
   // Disable localStorage draft-restore whenever the form is hydrated from a
-  // source (edit ref / property_id / lead_id). Otherwise a stale cross-tab
-  // draft can race and clobber the hydrated panel_count → wrong system size.
-  const isHydratedFromSource = isEditMode || Boolean(searchParams.get('property_id')) || Boolean(searchParams.get('lead_id'))
+  // source (edit ref / property_id / lead_id / candidate_id / external_id).
+  // Otherwise a stale cross-tab draft can race and clobber the hydrated
+  // panel_count → wrong system size.
+  const isHydratedFromSource = isEditMode
+    || Boolean(searchParams.get('property_id')) || Boolean(searchParams.get('lead_id'))
+    || Boolean(searchParams.get('candidate_id')) || Boolean(searchParams.get('external_id'))
   const { form, update, replaceForm, validate, errors, reset, draftRestored } = useNewProposalForm({ draftEnabled: !isHydratedFromSource })
 
   const [submitting, setSubmitting] = useState(false)
@@ -320,6 +324,19 @@ export default function NewProposalPage() {
       else if (lc.includes('bangkok')) update('location_preset', 'bangkok')
       else { update('location_preset', 'custom'); update('location_custom', loc) }
     }
+    // Readable scalar fallbacks (KP Solar Pro CTA: kwp/area/lat/lng/name). Only
+    // when no DB-backed source is present — those hydrate the same fields
+    // authoritatively and must not be raced by URL scalars.
+    if (!isHydratedFromSource) {
+      const num = (k: string) => { const v = Number(searchParams.get(k)); return searchParams.get(k) && Number.isFinite(v) ? v : null }
+      const kwp = num('kwp'); const area = num('area'); const lat = num('lat'); const lng = num('lng')
+      const name = searchParams.get('name')
+      // system_size_kwp is derived from panel_count × panel_watt — drive panel_count.
+      if (kwp != null && kwp > 0) update('panel_count', Math.round((kwp * 1000) / form.panel_watt))
+      if (area != null && area > 0) update('roof_area_sqm', area)
+      if (lat != null && lng != null && lat !== 0 && lng !== 0) { update('roof_lat', lat); update('roof_lng', lng) }
+      if (name && !searchParams.get('client_name')) update('client_name', name)
+    }
   }, [isEditMode]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Hydrate from a full Property when property_id is in the URL.
@@ -404,6 +421,43 @@ export default function NewProposalPage() {
 
     return () => { cancelled = true }
   }, [isEditMode]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Hydrate from a scan candidate when candidate_id (uuid) or external_id
+  // ("osm:479104039" — source defaults to osm) is in the URL. Single-row select;
+  // the candidate carries name/phone, footprint, area and kWp. The roof-preview
+  // auto-trigger below fires once roof_lat lands, same as the property_id path.
+  useEffect(() => {
+    if (isEditMode) return
+    const cid = searchParams.get('candidate_id')
+    const ext = searchParams.get('external_id')
+    if (!cid && !ext) return
+
+    let cancelled = false
+    ;(async () => {
+      try {
+        let c = null
+        if (cid) {
+          c = await fetchScanCandidateById(cid)
+        } else if (ext) {
+          const sep = ext.indexOf(':')
+          const source = sep > 0 ? ext.slice(0, sep) : 'osm'
+          const id = sep > 0 ? ext.slice(sep + 1) : ext
+          c = await fetchScanCandidateByExternalId(source, id)
+        }
+        if (cancelled) return
+        if (!c) {
+          console.warn('[NewProposalPage] candidate not found — form left at defaults', cid ?? ext)
+          showToast('Candidate not found in scan results', 'error')
+          return
+        }
+        replaceForm(candidateToFormPatch(c, form.panel_watt))
+      } catch (err) {
+        console.warn('[NewProposalPage] candidate hydration failed', err)
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [isEditMode, searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Shared generator: satellite image → Gemini overlay → storage URL ────────
   // Exported as a stable reference so the manual "Generate" button and the
