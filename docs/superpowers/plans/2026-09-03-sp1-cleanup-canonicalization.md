@@ -22,7 +22,7 @@
 
 **Files:** none (git only)
 
-- [ ] **Step 1: Confirm fast-forward is possible**
+- [x] **Step 1: Confirm fast-forward is possible**
 
 Run in E and I:
 ```bash
@@ -31,7 +31,7 @@ cd ~/Desktop/projects/solar/bustan/bustan-index  && git rev-list --left-right --
 ```
 Expected: first number `0` in both (main not behind); second number is 3 for I and 5 for E (spec+plan commits). If the first number is not 0, STOP and report.
 
-- [ ] **Step 2: Commit real untracked work in E**
+- [x] **Step 2: Commit real untracked work in E**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy
@@ -45,7 +45,7 @@ git add .gitignore
 git commit -m "chore: track CLAUDE.md, hiring docs, .claude; ignore handoff/ out/"
 ```
 
-- [ ] **Step 3: Commit real untracked work in I**
+- [x] **Step 3: Commit real untracked work in I**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-index
@@ -54,7 +54,7 @@ git add .gitignore .mcp.json CLAUDE.md .claude
 git commit -m "chore: track CLAUDE.md/.claude; ignore iCloud dupes + scanner scratch"
 ```
 
-- [ ] **Step 4: Fast-forward main in both repos**
+- [x] **Step 4: Fast-forward main in both repos**
 
 ```bash
 for r in bustan-energy bustan-index; do
@@ -65,7 +65,7 @@ done
 ```
 Expected: two `main = <sha>` lines, no "fatal: Not possible to fast-forward".
 
-- [ ] **Step 5: Push**
+- [x] **Step 5: Push**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy && git push origin main
@@ -79,7 +79,7 @@ Expected: both succeed. (If the network times out, retry once with `GIT_HTTP_LOW
 
 **Files:** delete every path matching ` [23].` (e.g. `foo 2.ts`, `img 3.webp`) outside `node_modules` and `.git`.
 
-- [ ] **Step 1: Count and list**
+- [x] **Step 1: Count and list**
 
 ```bash
 for r in bustan-energy bustan-index; do
@@ -90,7 +90,7 @@ done
 ```
 Expected: E ≈ 1,700 (mostly `public/frames-smooth/**` webp), I ≈ 1–5.
 
-- [ ] **Step 2: Sanity check that each dupe has an original**
+- [x] **Step 2: Sanity check that each dupe has an original**
 
 ```bash
 for r in bustan-energy bustan-index; do
@@ -100,7 +100,7 @@ done | head -20
 ```
 Expected: empty, or a short list. Any `NO ORIGINAL` file is NOT deleted — instead `git mv` it to `_retired/orphans/` (create dir) and log it in Task 3's CSV with reason `icloud-dupe-without-original`.
 
-- [ ] **Step 3: Delete**
+- [x] **Step 3: Delete**
 
 ```bash
 for r in bustan-energy bustan-index; do
@@ -111,7 +111,7 @@ done
 ```
 Expected: `0` (or only the orphans moved in Step 2).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 Tracked dupes were removed from the index by `rm`; stage deletions:
 ```bash
@@ -128,7 +128,7 @@ cd ~/Desktop/projects/solar/bustan/bustan-index  && git add -A && git commit -m 
 - Move (git mv): `E/business/`, `E/marketing/`, `E/sales/`, `E/legacy/`, `E/tools/*.html`, `E/tools/{bill-scanner,crm-steps,drone,solar-atlas}/`
 - Keep: `E/tools/proposal-builder/`, `E/pea-docs/` (has `INSTRUCTIONS.md`; verified by Step 1), `E/public/**`, `E/drone-imagery/` (has `cameras.json` used by scripts)
 
-- [ ] **Step 1: Verify nothing in app code references the folders being retired**
+- [x] **Step 1: Verify nothing in app code references the folders being retired**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy
@@ -139,7 +139,7 @@ grep -rn 'pea-docs' src api scripts tools/proposal-builder 2>/dev/null | grep -v
 ```
 Expected: first grep empty (no code references). If anything appears, exclude that specific path from the move and note it in the README. Second grep tells us if `pea-docs/` is used — it stays regardless.
 
-- [ ] **Step 2: Create the retirement structure + log helper**
+- [x] **Step 2: Create the retirement structure + log helper**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy
@@ -164,7 +164,7 @@ mv_log() { # $1=from $2=to $3=reason
 }
 ```
 
-- [ ] **Step 3: Move business/marketing/sales/legacy**
+- [x] **Step 3: Move business/marketing/sales/legacy**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy
@@ -175,7 +175,7 @@ ls _retired
 ```
 Expected: `README.md _move-log.csv business legacy marketing sales`.
 
-- [ ] **Step 4: Move tools/*.html and tool sub-folders (not proposal-builder)**
+- [x] **Step 4: Move tools/*.html and tool sub-folders (not proposal-builder)**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy
@@ -186,14 +186,14 @@ ls tools
 ```
 Expected: `proposal-builder` only.
 
-- [ ] **Step 5: Build still passes**
+- [x] **Step 5: Build still passes**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy && npm run build 2>&1 | tail -5
 ```
 Expected: `✓ built in …` with no errors. If the build fails on a missing path, restore that one path with `git mv` back and remove its CSV line.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A && git commit -m "chore(SP1): retire business/marketing/sales/legacy/tools mirrors to _retired/ (logged)"
@@ -208,7 +208,7 @@ git add -A && git commit -m "chore(SP1): retire business/marketing/sales/legacy/
 - Move: `I/archive/` → `I/_retired/archive/`; `I/platform/pro/{index.html,generate-proposal.html,grade-a-flight-plan.csv,supabase}` → `I/_retired/platform-pro/`
 - Move docs to root: `I/platform/pro/PROCESS.md` → `I/SCAN_PROCESS.md`, `I/platform/pro/SCAN_REPORT.md` → `I/SCAN_REPORT.md`
 
-- [ ] **Step 1: Verify no live page links into archive/ or platform/pro/**
+- [x] **Step 1: Verify no live page links into archive/ or platform/pro/**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-index
@@ -216,7 +216,7 @@ grep -rln --include='*.html' --include='*.js' --include='*.md' -e 'archive/' -e 
 ```
 Expected: empty or only `.md` roadmap docs. For any `.html` hit, open it and change the link to `/kp-solar-pro.html` (the current tool) with `sed -i '' 's#platform/pro/index.html#kp-solar-pro.html#g; s#archive/roof-scanner.html#kp-solar-pro.html#g; s#archive/solar-atlas.html#kp-solar-pro.html#g' <file>`.
 
-- [ ] **Step 2: Move**
+- [x] **Step 2: Move**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-index
@@ -238,7 +238,7 @@ rmdir platform/pro 2>/dev/null; ls platform
 ```
 Expected: `platform` now contains `PLATFORM_PLAN.md sales` only.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add -A && git commit -m "chore(SP1): retire archive/ + platform/pro/ scanner copies; promote PROCESS/SCAN_REPORT docs to root"
@@ -254,7 +254,7 @@ git add -A && git commit -m "chore(SP1): retire archive/ + platform/pro/ scanner
 - Modify: content of those 3 files + any file linking to the old names
 - Untouched: `I/proposals/tm-factory-001.*`, `I/proposals/tm-logo.png` (historical)
 
-- [ ] **Step 1: Count TM references before**
+- [x] **Step 1: Count TM references before**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-index
@@ -262,7 +262,7 @@ grep -c -i 'tm energy\|tm-energy\|energy-tm' presentations/tm-energy-company-202
 ```
 Expected: three non-zero counts (record them).
 
-- [ ] **Step 2: Rename files and rewrite content**
+- [x] **Step 2: Rename files and rewrite content**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-index
@@ -276,7 +276,7 @@ grep -c -i 'tm energy\|tm-energy\|energy-tm' presentations/bustan-energy-company
 ```
 Expected: `0` for all three. If a count is non-zero, `grep -n -i 'tm energy\|tm-energy\|energy-tm' <file>` and fix by hand (it will be a variant spelling like "T.M. Energy").
 
-- [ ] **Step 3: Fix inbound links to the renamed files**
+- [x] **Step 3: Fix inbound links to the renamed files**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-index
@@ -286,7 +286,7 @@ grep -rn 'tm-energy-company-2026\|nda-tm-energy' --include='*.html' --include='*
 ```
 Expected: `0`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A && git commit -m "chore(SP1): rebrand remaining TM Energy deck + NDA files to Bustan Energy"
@@ -301,7 +301,7 @@ git add -A && git commit -m "chore(SP1): rebrand remaining TM Energy deck + NDA 
 
 Decision (spec): `/crm` stays live (routes exist in `src/App.tsx:113,153`); the permanent redirect to `/platform` is removed.
 
-- [ ] **Step 1: Remove the two redirects**
+- [x] **Step 1: Remove the two redirects**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-energy
@@ -315,14 +315,14 @@ grep -n '"/crm' vercel.json
 ```
 Expected: `redirects N -> N-2`; grep shows only the headers entry (line ~20), no `destination: "/platform"` lines.
 
-- [ ] **Step 2: Validate JSON + build**
+- [x] **Step 2: Validate JSON + build**
 
 ```bash
 node -e 'JSON.parse(require("fs").readFileSync("vercel.json","utf8"))' && npm run build 2>&1 | tail -2
 ```
 Expected: no parse error; `✓ built`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add vercel.json && git commit -m "fix(SP1): drop /crm→/platform redirects; /crm routes are live in App.tsx"
@@ -336,7 +336,7 @@ git add vercel.json && git commit -m "fix(SP1): drop /crm→/platform redirects;
 - `I/supabase/leads-migration.sql`, `I/supabase/proposal_events.sql`
 - Compare against: `E/supabase/migrations/*.sql` (main DB `trvgpgp`) and `E/supabase/bustan-migrations/*.sql`
 
-- [ ] **Step 1: Check whether each orphan's objects already exist in a tracked migration**
+- [x] **Step 1: Check whether each orphan's objects already exist in a tracked migration**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan
@@ -349,7 +349,7 @@ for f in bustan-index/supabase/leads-migration.sql bustan-index/supabase/proposa
 done
 ```
 
-- [ ] **Step 2: Act on the result**
+- [x] **Step 2: Act on the result**
 
 - Every object found in ≥1 tracked migration → the orphan is redundant: `git rm` it.
 - Any object found in 0 → move the file into `E/supabase/unapplied/` (create dir) and add one line to `E/supabase/unapplied/README.md`: `<file>: objects <list> — origin bustan-index/supabase, needs DB check before apply`.
@@ -364,7 +364,7 @@ rmdir supabase 2>/dev/null; true
 ```
 (Use whichever branch applies per file — report which one you took.)
 
-- [ ] **Step 3: Commit both repos**
+- [x] **Step 3: Commit both repos**
 
 ```bash
 cd ~/Desktop/projects/solar/bustan/bustan-index  && git add -A && git commit -m "chore(SP1): remove/relocate orphan SQL outside migration trees" || true
