@@ -45,3 +45,7 @@ sales/proposals/
 **/* 2
 # Added by code-review-graph
 .code-review-graph/
+
+# local-only asset dumps
+handoff/
+out/
