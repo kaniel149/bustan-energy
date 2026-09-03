@@ -16,7 +16,7 @@ import type { DCStatus, DCPrecision } from '../../data/datacenters'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
-const TILE_SOURCES: Record<string, string[]> = {
+export const TILE_SOURCES: Record<string, string[]> = {
   sentinel2024: [
     'https://a.tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg',
     'https://b.tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg',
@@ -48,7 +48,7 @@ const TILE_SOURCES: Record<string, string[]> = {
 // (verified 2026-08-23: Phangan z18 = 13.6 KB photo, z19 = 2.5 KB placeholder;
 // Bangkok z19 = 15.6 KB real). Capping at 18 keeps the map looking sharp-ish
 // instead of going blank grey when a user zooms into a roof.
-const TILE_MAXZOOM: Record<string, number> = {
+export const TILE_MAXZOOM: Record<string, number> = {
   esri: 18,
   sentinel2024: 15,
   street: 19,
@@ -56,7 +56,7 @@ const TILE_MAXZOOM: Record<string, number> = {
   satellite: 20,
 }
 
-const TILE_ATTRIBUTION =
+export const TILE_ATTRIBUTION =
   '© Esri/Vantor (WorldView Legion) · © Mapbox © Maxar · EOX Sentinel-2 cloudless · © OpenStreetMap'
 
 // Resolve the tile URLs for a style id, with safe fallbacks:
