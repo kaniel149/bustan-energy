@@ -6,7 +6,7 @@ export const config = { runtime: 'edge' }
 import { sha256hex } from './_lib/crypto.js'
 import { escapeHtml } from './_lib/html.js'
 import { fmt } from './_lib/fmt.js'
-import { getProposalSessionCookie, verifyProposalSession } from './_lib/proposal-session.js'
+import { createProposalSession, getProposalSessionCookie, verifyProposalSession } from './_lib/proposal-session.js'
 import { supaGet, supaPost, supaPatch } from './_lib/supa.js'
 
 const RESEND_KEY = process.env.RESEND_API_KEY!
@@ -90,7 +90,7 @@ function teamEmail(p: ProposalSignRow, s: SignatureRow) {
 </div>`
 }
 
-function clientEmail(p: ProposalSignRow, s: SignatureRow) {
+function clientEmail(p: ProposalSignRow, s: SignatureRow, reentry: string) {
   return `
 <div style="font-family:system-ui;max-width:620px;">
   <div style="background:linear-gradient(135deg,#0D2137,#132D4A);padding:32px;border-radius:16px 16px 0 0;color:white;text-align:center;">
@@ -108,10 +108,11 @@ function clientEmail(p: ProposalSignRow, s: SignatureRow) {
     </table>
     <p><b>Next steps:</b></p>
     <ol style="padding-left:20px;">
-      <li>We will contact you within 24h to schedule site visit</li>
+      <li>Site survey within the first days</li>
       <li>40% deposit invoice will be sent separately</li>
-      <li>Installation within 4-6 weeks</li>
+      <li>Installation and PEA go-live within 6–8 weeks</li>
     </ol>
+    <p><a href="${escapeHtml(reentry)}">View your next steps and proposal</a> (link valid 7 days)</p>
     <p style="margin-top:20px;font-size:13px;color:#888;">WhatsApp: +66 94 669 2011 · Bustan Energy Contracts</p>
   </div>
 </div>`
@@ -188,6 +189,8 @@ export default async function handler(req: Request): Promise<Response> {
     // response may be dropped, so the team/client emails could silently not
     // send. Await everything (allSettled = failures don't block signing ack).
     const teamSubject = `🎉 חתימה התקבלה · ${proposal.client_name || proposal.ref_number} · ${ref}`
+    // 7-day re-entry link: proposal-serve accepts ?s=<session token> and sets the cookie.
+    const reentry = `https://bustan-energy.com/p/${encodeURIComponent(ref)}?signed=1&s=${encodeURIComponent(await createProposalSession(ref))}`
     const postSignTasks: Promise<unknown>[] = [
       supaPatch(`proposals?ref_number=eq.${encodeURIComponent(ref)}`, {
         status: 'signed',
@@ -207,7 +210,7 @@ export default async function handler(req: Request): Promise<Response> {
     ]
     if (signer_email) {
       postSignTasks.push(
-        sendEmail([signer_email], `&#x2713; Agreement signed · Bustan Energy · ${ref}`, clientEmail(proposal, s)),
+        sendEmail([signer_email], `&#x2713; Agreement signed · Bustan Energy · ${ref}`, clientEmail(proposal, s, reentry)),
       )
     }
     await Promise.allSettled(postSignTasks)

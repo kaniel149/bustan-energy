@@ -7,6 +7,7 @@ export const config = { runtime: 'edge' }
 
 import { sha256hex } from './_lib/crypto.js'
 import { escapeHtml } from './_lib/html.js'
+import { signedPage } from './_lib/proposal-signed-page.js'
 import {
   createProposalSession,
   getProposalSessionCookie,
@@ -22,6 +23,9 @@ interface ProposalServeRow {
   client_name?: string | null
   expires_at?: string | null
   password_hash?: string | null
+  status?: string | null
+  signed_at?: string | null
+  system_size_kwp?: number | string | null
   metadata?: {
     rendered_html?: string
     /** Password-gate throttle state; see recordGateAttempt below. */
@@ -160,7 +164,7 @@ function stripLegacyClientGate(html: string): string {
 
 async function loadProposal(ref: string): Promise<ProposalServeRow | null> {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/proposals?ref_number=eq.${encodeURIComponent(ref)}&select=ref_number,client_name,expires_at,password_hash,metadata`,
+    `${SUPABASE_URL}/rest/v1/proposals?ref_number=eq.${encodeURIComponent(ref)}&select=ref_number,client_name,expires_at,password_hash,status,signed_at,system_size_kwp,metadata`,
     { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } },
   )
   if (!res.ok) throw new Error('db_error')
@@ -274,6 +278,27 @@ export default async function handler(req: Request): Promise<Response> {
     return new Response('Proposal not rendered', { status: 404 })
   }
 
+  // Post-signature thank-you (`?signed=1`) — only once the row is actually signed,
+  // otherwise the flag is ignored and the normal proposal is served.
+  const row = proposal
+  const wantsSigned = url.searchParams.get('signed') === '1' && row.status === 'signed'
+  const signedHtml = () =>
+    new Response(
+      signedPage({ ref: row.ref_number, clientName: row.client_name, kwp: row.system_size_kwp, signedAt: row.signed_at }),
+      { status: 200, headers: { ...securityHeaders, 'Content-Type': 'text/html; charset=utf-8' } },
+    )
+
+  // Magic re-entry link from the confirmation email: ?s=<session token> → set the
+  // cookie and drop the token from the URL (7-day TTL lives in the token itself).
+  const s = url.searchParams.get('s')
+  if (req.method === 'GET' && s && (await verifyProposalSession(s, ref))) {
+    const clean = `/p/${encodeURIComponent(ref)}${wantsSigned ? '?signed=1' : ''}`
+    return new Response(null, {
+      status: 302,
+      headers: { ...securityHeaders, Location: clean, 'Set-Cookie': proposalSessionCookie(s, url.protocol === 'https:') },
+    })
+  }
+
   if (req.method === 'GET') {
     const session = getProposalSessionCookie(req)
     const verified = await verifyProposalSession(session, ref)
@@ -283,6 +308,7 @@ export default async function handler(req: Request): Promise<Response> {
         headers: { ...securityHeaders, 'Content-Type': 'text/html; charset=utf-8' },
       })
     }
+    if (wantsSigned) return signedHtml()
   }
 
   if (req.method === 'POST') {
@@ -316,6 +342,12 @@ export default async function handler(req: Request): Promise<Response> {
     await logProposalView(req, ref, password)
 
     const session = await createProposalSession(ref)
+    if (wantsSigned) {
+      // The session is minted here, so the thank-you must carry the cookie too.
+      const r = signedHtml()
+      r.headers.set('Set-Cookie', proposalSessionCookie(session, url.protocol === 'https:'))
+      return r
+    }
     return new Response(stripLegacyClientGate(html), {
       status: 200,
       headers: {

@@ -308,6 +308,8 @@
         document.getElementById('contractBox').style.display = 'none';
         document.getElementById('signedBanner').style.display = 'block';
         document.getElementById('signedBanner').scrollIntoView({ behavior: 'smooth' });
+        // Hand over to the server-rendered thank-you (PEA timeline) once the banner is seen.
+        setTimeout(() => location.assign(location.pathname + '?signed=1'), 600);
       } else {
         status.className = 'sig-status show error';
         status.textContent = 'שגיאה: ' + (json.error || 'נסה שוב');
