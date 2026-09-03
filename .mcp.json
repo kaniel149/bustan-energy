@@ -3,6 +3,15 @@
     "supabase": {
       "type": "http",
       "url": "https://mcp.supabase.com/mcp?project_ref=trvgpgpsqvvdsudpgwpm"
+    },
+    "code-review-graph": {
+      "command": "uvx",
+      "args": [
+        "code-review-graph",
+        "serve"
+      ],
+      "cwd": "/Users/kanieltordjman/Desktop/projects/solar/bustan/bustan-energy",
+      "type": "stdio"
     }
   }
 }

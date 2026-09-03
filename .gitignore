@@ -43,3 +43,5 @@ sales/proposals/
 # iCloud duplicates (happen automatically on macOS when files sync)
 **/* 2.*
 **/* 2
+# Added by code-review-graph
+.code-review-graph/

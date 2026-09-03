@@ -29,7 +29,7 @@ Run in E and I:
 cd ~/Desktop/projects/solar/bustan/bustan-energy && git rev-list --left-right --count main...HEAD
 cd ~/Desktop/projects/solar/bustan/bustan-index  && git rev-list --left-right --count main...HEAD
 ```
-Expected: `0	3` in both (main 0 behind, branch 3 ahead). If the first number is not 0, STOP and report.
+Expected: first number `0` in both (main not behind); second number is 3 for I and 5 for E (spec+plan commits). If the first number is not 0, STOP and report.
 
 - [ ] **Step 2: Commit real untracked work in E**
 
