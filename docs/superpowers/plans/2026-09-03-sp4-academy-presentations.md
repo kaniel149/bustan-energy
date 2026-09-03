@@ -21,7 +21,7 @@
 **Files:**
 - Create: `academy/tests/_util.mjs`, `academy/tests/links.mjs`, `academy/tests/run-all.mjs`
 
-- [ ] **Step 1: Shared helpers**
+- [x] **Step 1: Shared helpers**
 
 ```js
 // academy/tests/_util.mjs
@@ -44,7 +44,7 @@ export function localRefs(html) {
 export function fail(msg) { console.error('FAIL: ' + msg); process.exitCode = 1; }
 ```
 
-- [ ] **Step 2: Link checker**
+- [x] **Step 2: Link checker**
 
 ```js
 // academy/tests/links.mjs — 0 dead local links across hub, lessons, presentations, root index, assets index
@@ -62,7 +62,7 @@ for (const f of files) {
 console.log(`links: ${checked} checked, ${dead} dead`);
 ```
 
-- [ ] **Step 3: Runner**
+- [x] **Step 3: Runner**
 
 ```js
 // academy/tests/run-all.mjs
@@ -76,7 +76,7 @@ for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.mjs') && !f.startsW
 console.log(bad ? `\n${bad} test file(s) failed` : '\nall checks passed'); process.exit(bad ? 1 : 0);
 ```
 
-- [ ] **Step 4: Run** `cd $IDX && node academy/tests/run-all.mjs`
+- [x] **Step 4: Run** `cd $IDX && node academy/tests/run-all.mjs`
   Expected: `links: N checked, 0 dead` and `all checks passed`.
 
 ### Task 2: Unblock the academy — drop the dead Supabase gate, localStorage progress, real language switching
@@ -85,7 +85,7 @@ console.log(bad ? `\n${bad} test file(s) failed` : '\nall checks passed'); proce
 - Modify: `academy/assets/academy.js`, `academy/assets/academy.css`, `academy/index.html` (footer), `assets.html` (admin card)
 - Create: `academy/migrations/README.md`
 
-- [ ] **Step 1: Replace the Supabase/auth block** (`academy.js` lines 5–200: config, `getSupabase`, session keys, `loginUser`, `showLoginGate`, `initUserUI`, `checkAuth`) with a no-op auth layer. Delete everything from `// ---- Supabase Config ----` through the end of `checkAuth()` and insert:
+- [x] **Step 1: Replace the Supabase/auth block** (`academy.js` lines 5–200: config, `getSupabase`, session keys, `loginUser`, `showLoginGate`, `initUserUI`, `checkAuth`) with a no-op auth layer. Delete everything from `// ---- Supabase Config ----` through the end of `checkAuth()` and insert:
 
 ```js
 // ---- Auth (disabled 2026-09-03) ----
@@ -101,9 +101,9 @@ function checkAuth() { // only job left: one-time migration of pre-rebrand progr
 }
 ```
 
-- [ ] **Step 2: Simplify the progress store.** Replace `getProgressKey()` body with `return STORAGE_KEY;`, delete `loadProgressFromSupabase` and `syncLessonToSupabase` entirely, and remove the two calls: `syncLessonToSupabase(courseId, lessonNum);` in `markLessonComplete` and `syncLessonToSupabase(courseId, lessonNum, pct);` (plus the `const pct = …` line) in `saveQuizScore`. Keep `updateProgressBars`, `markLessonComplete`, `isLessonComplete`, `getCompletedCount`, `saveQuizScore`.
+- [x] **Step 2: Simplify the progress store.** Replace `getProgressKey()` body with `return STORAGE_KEY;`, delete `loadProgressFromSupabase` and `syncLessonToSupabase` entirely, and remove the two calls: `syncLessonToSupabase(courseId, lessonNum);` in `markLessonComplete` and `syncLessonToSupabase(courseId, lessonNum, pct);` (plus the `const pct = …` line) in `saveQuizScore`. Keep `updateProgressBars`, `markLessonComplete`, `isLessonComplete`, `getCompletedCount`, `saveQuizScore`.
 
-- [ ] **Step 3: Make `setLanguage` switch `lang`/`dir`/`<title>`.** Replace the function:
+- [x] **Step 3: Make `setLanguage` switch `lang`/`dir`/`<title>`.** Replace the function:
 
 ```js
 function setLanguage(lang) {
@@ -119,16 +119,16 @@ function setLanguage(lang) {
 ```
   and in `initLanguage()` change the key: `localStorage.getItem('bustan_academy_lang') || localStorage.getItem('tm_academy_lang') || 'en'`.
 
-- [ ] **Step 4: Remove the supabase CDN script tag** from all 25 pages:
+- [x] **Step 4: Remove the supabase CDN script tag** from all 25 pages:
   `cd $IDX/academy && sed -i '' '/cdn.jsdelivr.net\/npm\/@supabase\/supabase-js@2/d' index.html courses/*.html`
   Expected: `grep -l supabase index.html courses/*.html` prints nothing.
 
-- [ ] **Step 5: CSS — list bullets survive the block rule.** In `academy.css` after the `body[data-lang="th"] [data-th] { display: block; }` line (≈453) add:
+- [x] **Step 5: CSS — list bullets survive the block rule.** In `academy.css` after the `body[data-lang="th"] [data-th] { display: block; }` line (≈453) add:
 ```css
 body[data-lang="en"] li[data-en], body[data-lang="he"] li[data-he], body[data-lang="th"] li[data-th] { display: list-item; }
 ```
 
-- [ ] **Step 6: Unlink the admin UI.** In `academy/index.html` delete line `  <a href="admin.html" class="footer-admin">Admin</a>`. In `assets.html` replace the 6-line card starting `<a class="card" href="academy/admin.html">` with:
+- [x] **Step 6: Unlink the admin UI.** In `academy/index.html` delete line `  <a href="admin.html" class="footer-admin">Admin</a>`. In `assets.html` replace the 6-line card starting `<a class="card" href="academy/admin.html">` with:
 ```html
   <a class="card" href="presentations/index.html">
     <div class="card-icon">🖥️</div>
@@ -139,7 +139,7 @@ body[data-lang="en"] li[data-en], body[data-lang="he"] li[data-he], body[data-la
 ```
   (`presentations/index.html` is created in Task 7; the link checker will be red until then — acceptable inside this SP.)
 
-- [ ] **Step 7: Document the LMS status**
+- [x] **Step 7: Document the LMS status**
 
 ```md
 # academy/migrations — status (2026-09-03)
@@ -149,7 +149,7 @@ To re-enable: create a Supabase project, apply this migration, restore the auth 
 `../assets/academy.js` in SP4 (git show fb188879^:academy/assets/academy.js), and re-add the footer link.
 ```
 
-- [ ] **Step 8: Verify** `open academy/index.html` (or `python3 -m http.server 8080` and browse `/academy/`): no login overlay, EN/עב/ไทย buttons switch text, `document.documentElement.dir` is `rtl` under עב, progress bars still 0/8. Then `node academy/tests/run-all.mjs`.
+- [x] **Step 8: Verify** `open academy/index.html` (or `python3 -m http.server 8080` and browse `/academy/`): no login overlay, EN/עב/ไทย buttons switch text, `document.documentElement.dir` is `rtl` under עב, progress bars still 0/8. Then `node academy/tests/run-all.mjs`.
   Expected: only failure is `assets.html -> presentations/index.html` (fixed in Task 7).
 
 ### Task 3: Lesson manifest (single source of truth) + chain test
@@ -158,7 +158,7 @@ To re-enable: create a Supabase project, apply this migration, restore the auth 
 - Create: `academy/tools/build-lessons-index.mjs`, `academy/tests/lessons-chain.mjs`
 - Generated: `academy/assets/lessons.js`
 
-- [ ] **Step 1: Builder** — extracts slug/track/num/titles from the 24 lessons (older lessons: `<h1 class="lesson-title" data-he>`; newer: `<h1><span data-he>`), writes a browser global.
+- [x] **Step 1: Builder** — extracts slug/track/num/titles from the 24 lessons (older lessons: `<h1 class="lesson-title" data-he>`; newer: `<h1><span data-he>`), writes a browser global.
 
 ```js
 // academy/tools/build-lessons-index.mjs — regenerate academy/assets/lessons.js from courses/*.html
@@ -192,10 +192,10 @@ fs.writeFileSync(path.join(ROOT, 'assets', 'lessons.js'), out);
 console.log(`wrote assets/lessons.js — ${lessons.length} lessons`);
 ```
 
-- [ ] **Step 2: Run** `node academy/tools/build-lessons-index.mjs`
+- [x] **Step 2: Run** `node academy/tools/build-lessons-index.mjs`
   Expected: `wrote assets/lessons.js — 24 lessons`. Open the file: 5 tracks, every lesson has 3 non-empty titles.
 
-- [ ] **Step 3: Chain test** — manifest ↔ files ↔ prev/next agree.
+- [x] **Step 3: Chain test** — manifest ↔ files ↔ prev/next agree.
 
 ```js
 // academy/tests/lessons-chain.mjs
@@ -220,7 +220,7 @@ for (const l of L) {
 console.log(`lessons-chain: ${L.length} lessons, prev/next consistent`);
 ```
 
-- [ ] **Step 4: Run** `node academy/tests/lessons-chain.mjs`
+- [x] **Step 4: Run** `node academy/tests/lessons-chain.mjs`
   Expected: `lessons-chain: 24 lessons, prev/next consistent`. If a prev/next is reported wrong, fix the lesson's anchor `href` (the manifest is derived from filenames and is the truth).
 
 ### Task 4: Hub lists all 24 lessons, grouped by track, with persisted progress
@@ -228,11 +228,11 @@ console.log(`lessons-chain: ${L.length} lessons, prev/next consistent`);
 **Files:**
 - Modify: `academy/index.html`
 
-- [ ] **Step 1: Load the manifest** — in `<head>` after `<link rel="stylesheet" href="assets/academy.css">` add `<script src="assets/lessons.js"></script>` (before the deferred `academy.js`).
+- [x] **Step 1: Load the manifest** — in `<head>` after `<link rel="stylesheet" href="assets/academy.css">` add `<script src="assets/lessons.js"></script>` (before the deferred `academy.js`).
 
-- [ ] **Step 2: Track cards point to their lesson list.** For each of the 5 `<a href="courses/<track>-01.html" class="glass-card track-card …" data-track="X" …>` change `href` to `#track-X` (e.g. `href="#track-solar-fundamentals"`). Delete the hard-coded `<ul class="lesson-preview">…</ul>` block inside each card (5 blocks, each 6 lines); it is rendered from the manifest in Step 4.
+- [x] **Step 2: Track cards point to their lesson list.** For each of the 5 `<a href="courses/<track>-01.html" class="glass-card track-card …" data-track="X" …>` change `href` to `#track-X` (e.g. `href="#track-solar-fundamentals"`). Delete the hard-coded `<ul class="lesson-preview">…</ul>` block inside each card (5 blocks, each 6 lines); it is rendered from the manifest in Step 4.
 
-- [ ] **Step 3: Add the lessons section** right after the `</section>` that closes `tracks-section` (before `<!-- Certificate Section -->`):
+- [x] **Step 3: Add the lessons section** right after the `</section>` that closes `tracks-section` (before `<!-- Certificate Section -->`):
 
 ```html
   <!-- All lessons, grouped by track (rendered from assets/lessons.js) -->
@@ -255,7 +255,7 @@ console.log(`lessons-chain: ${L.length} lessons, prev/next consistent`);
     body[data-lang="he"] .lesson-row .arrow { transform: scaleX(-1); }
 ```
 
-- [ ] **Step 4: Render from the manifest** — append inside the existing `document.addEventListener('DOMContentLoaded', () => {` block at the bottom of `index.html`, before the `// Update progress bars` comment:
+- [x] **Step 4: Render from the manifest** — append inside the existing `document.addEventListener('DOMContentLoaded', () => {` block at the bottom of `index.html`, before the `// Update progress bars` comment:
 
 ```js
   // Render all lessons grouped by track + preview lists in the track cards
@@ -285,9 +285,9 @@ console.log(`lessons-chain: ${L.length} lessons, prev/next consistent`);
   document.addEventListener('academy:lang', () => { renderLessons(); updateProgressBars(); });
 ```
 
-- [ ] **Step 5: Verify in browser** — hub shows 5 blocks / 24 rows; click a lesson → "Mark as Complete" → back to hub → row shows ✓ and card bar moves (1/8, 13%). Switch to עב: titles Hebrew, RTL. Reload: state persists (localStorage `bustan_academy_progress`).
+- [x] **Step 5: Verify in browser** — hub shows 5 blocks / 24 rows; click a lesson → "Mark as Complete" → back to hub → row shows ✓ and card bar moves (1/8, 13%). Switch to עב: titles Hebrew, RTL. Reload: state persists (localStorage `bustan_academy_progress`).
 
-- [ ] **Step 6: Hub-coverage test** — add to `academy/tests/lessons-chain.mjs` before the final `console.log`:
+- [x] **Step 6: Hub-coverage test** — add to `academy/tests/lessons-chain.mjs` before the final `console.log`:
 ```js
 const hub = read('academy/index.html');
 if (!hub.includes('assets/lessons.js')) fail('hub does not load assets/lessons.js');
@@ -301,7 +301,7 @@ for (const t of Object.keys(T)) if (!hub.includes(`href="#track-${t}"`)) fail(`h
 - Create: `academy/images/*.webp` (22), `academy/tests/image-budget.mjs`
 - Modify: `academy/courses/*.html` (image refs)
 
-- [ ] **Step 1: Convert** (PNG originals stay on disk — deletion needs Kaniel's OK, see Task 10):
+- [x] **Step 1: Convert** (PNG originals stay on disk — deletion needs Kaniel's OK, see Task 10):
 ```bash
 cd $IDX/academy/images
 for f in *.png; do case "$f" in *" 2."*) continue;; esac
@@ -311,7 +311,7 @@ ls -l *.webp | awk '{s+=$5} END {print NR " webp files, " s/1024/1024 " MB"}'
 ```
   Expected: `22 webp files, ~1–2 MB` (each ≈ 40–90 KB).
 
-- [ ] **Step 2: Rewrite references + lazy-load**
+- [x] **Step 2: Rewrite references + lazy-load**
 ```bash
 cd $IDX/academy/courses
 sed -i '' -E 's#(images/[a-z0-9-]+)\.png#\1.webp#g' *.html
@@ -319,7 +319,7 @@ sed -i '' 's#class="lesson-image">#class="lesson-image" loading="lazy" decoding=
 grep -c 'images/.*\.png' *.html | grep -v ':0' ; echo "(no output above = clean)"
 ```
 
-- [ ] **Step 3: Budget test**
+- [x] **Step 3: Budget test**
 ```js
 // academy/tests/image-budget.mjs — referenced lesson images: all .webp, all exist, total < 8 MB
 import fs from 'node:fs'; import path from 'node:path';
@@ -338,7 +338,7 @@ console.log(`image-budget: ${seen.size} images, ${(total / 1024 / 1024).toFixed(
 if (total > BUDGET) fail('image budget exceeded');
 ```
 
-- [ ] **Step 4: Run** `node academy/tests/image-budget.mjs`
+- [x] **Step 4: Run** `node academy/tests/image-budget.mjs`
   Expected: `image-budget: 20 images, ~1.5 MB (budget 8 MB)`. Open `courses/solar-fundamentals-02.html` in a browser — both diagrams render.
 
 ### Task 6: Trilingual gap-fill via Gemini (idempotent, resumable) + coverage test + HE review list
@@ -349,7 +349,7 @@ if (total > BUDGET) fail('image budget exceeded');
 - Create: `academy/tools/translate-gaps.mjs`, `academy/tests/i18n-coverage.mjs`, `academy/i18n/cache.json` (generated), `academy/i18n/REVIEW_HE.md` (generated)
 - Modify: `academy/courses/*.html` (in place, by the script)
 
-- [ ] **Step 1: Coverage test first** (this is the "what's left" detector; the tool reuses the same rule):
+- [x] **Step 1: Coverage test first** (this is the "what's left" detector; the tool reuses the same rule):
 
 ```js
 // academy/tests/i18n-coverage.mjs — every text block in a lesson must have he+th
@@ -377,10 +377,10 @@ if (process.argv[1].endsWith('i18n-coverage.mjs')) {
 }
 ```
 
-- [ ] **Step 2: Run it before translating** `node academy/tests/i18n-coverage.mjs | tail -1`
+- [x] **Step 2: Run it before translating** `node academy/tests/i18n-coverage.mjs | tail -1`
   Expected: `i18n-coverage: ~90 untranslated blocks` (≈70 body blocks + 24 titles) and a non-zero exit.
 
-- [ ] **Step 3: Translation tool**
+- [x] **Step 3: Translation tool**
 
 ```js
 // academy/tools/translate-gaps.mjs — fill missing he/th for lesson blocks via Gemini. Idempotent + resumable.
@@ -442,17 +442,17 @@ if (!DRY && review.length) {
 }
 ```
 
-- [ ] **Step 4: Dry run** `node academy/tools/translate-gaps.mjs --dry | tail -3`
+- [x] **Step 4: Dry run** `node academy/tools/translate-gaps.mjs --dry | tail -3`
   Expected: per-file `[dry] would translate N items` lines; no files changed (`git status --short academy/courses` empty).
 
-- [ ] **Step 5: Real run on one lesson, then all**
+- [x] **Step 5: Real run on one lesson, then all**
   `node academy/tools/translate-gaps.mjs solar-fundamentals-01` → Expected: `translated 5/5`, `solar-fundamentals-01.html: filled 5 blocks`. Inspect the diff (`git diff academy/courses/solar-fundamentals-01.html`): video `<h3>` and captions now wrapped in three spans; `<title data-en=… data-he=… data-th=…>`.
   Then `node academy/tools/translate-gaps.mjs` → Expected: every file `filled N blocks` or `complete`; `academy/i18n/cache.json` ≈ 90 entries; `academy/i18n/REVIEW_HE.md` lists every new HE string.
 
-- [ ] **Step 6: Idempotency** — run `node academy/tools/translate-gaps.mjs` again.
+- [x] **Step 6: Idempotency** — run `node academy/tools/translate-gaps.mjs` again.
   Expected: all 24 lines say `complete`, zero Gemini calls, no file changes.
 
-- [ ] **Step 7: Verify** `node academy/tests/i18n-coverage.mjs` → `i18n-coverage: 0 untranslated blocks`. In a browser open a lesson, switch עב: video headings/captions Hebrew, tab title Hebrew, page RTL. Any obviously wrong HE line → edit the `<span data-he>` in the lesson and tick it in `REVIEW_HE.md` (Kaniel's pass; the executor only fixes glaring errors).
+- [x] **Step 7: Verify** `node academy/tests/i18n-coverage.mjs` → `i18n-coverage: 0 untranslated blocks`. In a browser open a lesson, switch עב: video headings/captions Hebrew, tab title Hebrew, page RTL. Any obviously wrong HE line → edit the `<span data-he>` in the lesson and tick it in `REVIEW_HE.md` (Kaniel's pass; the executor only fixes glaring errors).
 
 ### Task 7: Presentations index + RTL fix + sitemap
 
@@ -460,9 +460,9 @@ if (!DRY && review.length) {
 - Create: `presentations/index.html`
 - Modify: `presentations/ev-charging-koh-phangan-he.html` (`dir`), `sitemap.xml`
 
-- [ ] **Step 1: Fix the HE deck direction** — in `presentations/ev-charging-koh-phangan-he.html` line 2: `<html lang="he" dir="ltr">` → `<html lang="he" dir="rtl">`. Open it; if slide layout breaks (absolute-positioned elements), revert and add instead `<body style="direction:rtl">` — note which in the commit.
+- [x] **Step 1: Fix the HE deck direction** — in `presentations/ev-charging-koh-phangan-he.html` line 2: `<html lang="he" dir="ltr">` → `<html lang="he" dir="rtl">`. Open it; if slide layout breaks (absolute-positioned elements), revert and add instead `<body style="direction:rtl">` — note which in the commit.
 
-- [ ] **Step 2: Index page** (reuses academy styles; tags = language + audience + validation state):
+- [x] **Step 2: Index page** (reuses academy styles; tags = language + audience + validation state):
 
 ```html
 <!DOCTYPE html>
@@ -514,9 +514,9 @@ if (!DRY && review.length) {
 </html>
 ```
 
-- [ ] **Step 3: Sitemap** — in `sitemap.xml` add, before `</urlset>`, one `<url><loc>https://index.bustan-energy.com/academy/courses/<slug>.html</loc></url>` per lesson (24 lines; generate with `for f in academy/courses/*.html; do case "$f" in *" 2."*) continue;; esac; echo "  <url><loc>https://index.bustan-energy.com/$f</loc></url>"; done`). Do **not** add `presentations/` (noindex).
+- [x] **Step 3: Sitemap** — in `sitemap.xml` add, before `</urlset>`, one `<url><loc>https://index.bustan-energy.com/academy/courses/<slug>.html</loc></url>` per lesson (24 lines; generate with `for f in academy/courses/*.html; do case "$f" in *" 2."*) continue;; esac; echo "  <url><loc>https://index.bustan-energy.com/$f</loc></url>"; done`). Do **not** add `presentations/` (noindex).
 
-- [ ] **Step 4: Verify** `node academy/tests/links.mjs` → `0 dead` (the `assets.html -> presentations/index.html` failure from Task 2 is gone). `grep -c '<loc>' sitemap.xml` → 40. Browser: index renders 6 cards, external cards open bustan-energy.com.
+- [x] **Step 4: Verify** `node academy/tests/links.mjs` → `0 dead` (the `assets.html -> presentations/index.html` failure from Task 2 is gone). `grep -c '<loc>' sitemap.xml` → 40. Browser: index renders 6 cards, external cards open bustan-energy.com.
 
 ### Task 8: Deck-vs-xlsx validation table + xlsx reconciliation
 
@@ -524,7 +524,7 @@ if (!DRY && review.length) {
 - Create: `presentations/tools/validate_numbers.py`, `presentations/VALIDATION.md` (generated)
 - Modify (overwrite): `Ko_Phangan_Solar_Business_Plan.xlsx` (with the newer `_retired` copy) — **after** the diff is recorded
 
-- [ ] **Step 1: Validator** — dumps (a) cell-level diff of the two workbook copies, (b) deck figures next to the workbook's figures for the same metric. It never edits the deck or the workbook.
+- [x] **Step 1: Validator** — dumps (a) cell-level diff of the two workbook copies, (b) deck figures next to the workbook's figures for the same metric. It never edits the deck or the workbook.
 
 ```python
 #!/usr/bin/env python3
@@ -593,10 +593,10 @@ def main():
 if __name__ == '__main__': main()
 ```
 
-- [ ] **Step 2: Run** `cd $IDX && python3 presentations/tools/validate_numbers.py`
+- [x] **Step 2: Run** `cd $IDX && python3 presentations/tools/validate_numbers.py`
   Expected: `wrote presentations/VALIDATION.md — ~157 workbook diffs, 11 metrics`. Open it: section 2 has no `*not found*` cells (if one appears, adjust that regex against `sed 's/<[^>]*>/ /g' $NRG/public/bustan-financing-deck.html | grep '฿'` and re-run). Expected mismatches visible: cost/kWp 12K vs 11,800; sale price 30K vs 32,500; PPA 4.5/4.20 vs 4.5.
 
-- [ ] **Step 3: Reconcile the workbook copies** (the diff is now recorded, so overwriting the older file loses nothing):
+- [x] **Step 3: Reconcile the workbook copies** (the diff is now recorded, so overwriting the older file loses nothing):
 ```bash
 cp "$NRG/_retired/business/finance/Ko_Phangan_Solar_Business_Plan.xlsx" "$IDX/Ko_Phangan_Solar_Business_Plan.xlsx"
 python3 -c "import openpyxl;print(openpyxl.load_workbook('$IDX/Ko_Phangan_Solar_Business_Plan.xlsx').sheetnames[-1])"
@@ -609,7 +609,7 @@ python3 -c "import openpyxl;print(openpyxl.load_workbook('$IDX/Ko_Phangan_Solar_
 - Modify: `assets.html`, `index.html` (root)
 - Create: `academy/tests/docs-index.mjs`
 
-- [ ] **Step 1: Test first**
+- [x] **Step 1: Test first**
 
 ```js
 // academy/tests/docs-index.mjs — assets.html is the business-docs index
@@ -630,10 +630,10 @@ for (const f of [...htmlIn('.'), ...htmlIn('academy'), ...htmlIn('presentations'
 console.log('docs-index: all root docs linked once, no _retired refs');
 ```
 
-- [ ] **Step 2: Run** `node academy/tests/docs-index.mjs`
+- [x] **Step 2: Run** `node academy/tests/docs-index.mjs`
   Expected failures (exactly): missing `drone-mission-plan.html`, `roof-scanner.html`, `solar-atlas.html`; `financial-dashboard.html` 2×; `kp-solar-pro.html` 3×; root index missing `/assets.html`.
 
-- [ ] **Step 3: Add the 3 missing cards** to `assets.html` — in the `🗺️ שדות סולאריים` section (starts line ≈492) append after its last `</a>`:
+- [x] **Step 3: Add the 3 missing cards** to `assets.html` — in the `🗺️ שדות סולאריים` section (starts line ≈492) append after its last `</a>`:
 ```html
   <a class="card" href="solar-atlas.html">
     <div class="card-icon">🗺️</div><h3>Solar Atlas</h3><p>אטלס קרינה ופוטנציאל סולארי</p><span class="tag tag-doc">כלי</span>
@@ -650,11 +650,11 @@ console.log('docs-index: all root docs linked once, no _retired refs');
 ```
   (Adjust `tag-*` class to one already used in that section — check with `grep -o 'tag tag-[a-z]*' assets.html | sort | uniq -c`.)
 
-- [ ] **Step 4: Dedupe** — `grep -n 'href="financial-dashboard.html"\|href="kp-solar-pro.html"' assets.html`. Keep the card in the most specific section (`📊 אסטרטגיה ופיננסים` for the dashboard; `🗺️ שדות סולאריים` or `💻 כלים דיגיטליים` for KP Solar Pro — keep the one with the richest description) and delete the other `<a class="card" …>…</a>` blocks (each 6 lines). If a duplicate is a hero/feature link rather than a card, change its `href` to the anchor of the kept card's section instead of deleting.
+- [x] **Step 4: Dedupe** — `grep -n 'href="financial-dashboard.html"\|href="kp-solar-pro.html"' assets.html`. Keep the card in the most specific section (`📊 אסטרטגיה ופיננסים` for the dashboard; `🗺️ שדות סולאריים` or `💻 כלים דיגיטליים` for KP Solar Pro — keep the one with the richest description) and delete the other `<a class="card" …>…</a>` blocks (each 6 lines). If a duplicate is a hero/feature link rather than a card, change its `href` to the anchor of the kept card's section instead of deleting.
 
-- [ ] **Step 5: Root footer link** — in `index.html` (root) footer nav after `<a href="/blog/">Blog</a>` add `<a href="/assets.html" rel="nofollow">Internal Index</a>`.
+- [x] **Step 5: Root footer link** — in `index.html` (root) footer nav after `<a href="/blog/">Blog</a>` add `<a href="/assets.html" rel="nofollow">Internal Index</a>`.
 
-- [ ] **Step 6: Run** `node academy/tests/run-all.mjs`
+- [x] **Step 6: Run** `node academy/tests/run-all.mjs`
   Expected: `docs-index: all root docs linked once, no _retired refs` and `all checks passed`.
 
 ### Task 10: Stale academy docs, full verification, commit on branch
@@ -663,19 +663,19 @@ console.log('docs-index: all root docs linked once, no _retired refs');
 - Modify: `academy/SYLLABUS.md` (header note), `academy/IMPROVEMENT_PLAN.md` (header note)
 - Branch: `sp4/academy-presentations`
 
-- [ ] **Step 1: Mark stale docs** (they describe a 17-lesson plan; 24 exist). Prepend to both `SYLLABUS.md` and `IMPROVEMENT_PLAN.md`:
+- [x] **Step 1: Mark stale docs** (they describe a 17-lesson plan; 24 exist). Prepend to both `SYLLABUS.md` and `IMPROVEMENT_PLAN.md`:
 ```md
 > **Status 2026-09-03:** superseded by the live curriculum — 24 lessons in 5 tracks, listed in `assets/lessons.js` (regenerate with `node tools/build-lessons-index.mjs`). Kept for history; lesson counts below are outdated.
 ```
 
-- [ ] **Step 2: Full check**
+- [x] **Step 2: Full check**
 ```bash
 cd $IDX && node academy/tools/build-lessons-index.mjs && node academy/tests/run-all.mjs && python3 presentations/tools/validate_numbers.py
 git status --short | grep -v ' 2\.' | head -60
 ```
   Expected: `all checks passed`; status shows modified `academy/assets/academy.{js,css}`, `academy/index.html`, 24 lessons, `assets.html`, `index.html`, `sitemap.xml`, `presentations/ev-charging-koh-phangan-he.html`, `Ko_Phangan_Solar_Business_Plan.xlsx`, and new: `academy/assets/lessons.js`, `academy/tools/`, `academy/tests/`, `academy/i18n/`, `academy/images/*.webp`, `academy/migrations/README.md`, `presentations/index.html`, `presentations/VALIDATION.md`, `presentations/tools/`. No deletions.
 
-- [ ] **Step 3: Branch + commit** (no push — lead handles):
+- [x] **Step 3: Branch + commit** (no push — lead handles):
 ```bash
 cd $IDX && git checkout -b sp4/academy-presentations
 git add academy assets.html index.html sitemap.xml presentations Ko_Phangan_Solar_Business_Plan.xlsx
@@ -695,6 +695,6 @@ git log -1 --stat | tail -3
 ```
   Expected: one commit on `sp4/academy-presentations`, ~80 files changed, 0 deletions.
 
-- [ ] **Step 4: Report to lead** with: branch name, `run-all` output, `presentations/VALIDATION.md` section 2 (the mismatches), and the two open items that need Kaniel's explicit OK:
+- [x] **Step 4: Report to lead** with: branch name, `run-all` output, `presentations/VALIDATION.md` section 2 (the mismatches), and the two open items that need Kaniel's explicit OK:
   1. `git rm academy/images/*.png` (21 MB of now-unreferenced originals) — CLAUDE.md forbids deleting without a request.
   2. HE review of `academy/i18n/REVIEW_HE.md` (~90 strings).
