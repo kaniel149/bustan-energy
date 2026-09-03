@@ -19,6 +19,7 @@ const en = {
     blog: 'Blog',
     contact: 'Contact',
     getQuote: 'Get Quote',
+    learn: 'Learn',
     switchLang: 'ภาษาไทย',
   },
 
@@ -47,6 +48,7 @@ const en = {
       subtitle: 'Solar design and installation for homes, villas, resorts, and businesses on Ko Phangan. We model your bill, survey the site, coordinate PEA paperwork, and support the system after handover.',
       ctaPrimary: 'Get Free Quote',
       ctaSecondary: 'WhatsApp Us',
+      ctaLearn: 'Free solar academy →',
       trustLine: 'PEA documentation support · Tier-1 equipment options · Monitoring · O&M',
     },
     gateway: {
@@ -854,6 +856,7 @@ const th = {
     blog: 'บทความ',
     contact: 'ติดต่อ',
     getQuote: 'ขอใบเสนอราคา',
+    learn: 'เรียนรู้',
     switchLang: 'English',
   },
 
@@ -883,6 +886,7 @@ const th = {
       subtitle: 'ออกแบบและติดตั้งโซลาร์เซลล์สำหรับบ้าน วิลล่า รีสอร์ท และธุรกิจบนเกาะพะงัน พร้อมวิเคราะห์บิล สำรวจหน้างาน และช่วยประสานเอกสาร กฟภ.',
       ctaPrimary: 'ขอใบเสนอราคาฟรี',
       ctaSecondary: 'แชท WhatsApp',
+      ctaLearn: 'อคาเดมีโซลาร์ฟรี →',
       trustLine: 'ช่วยเตรียมเอกสาร กฟภ. · อุปกรณ์ Tier-1 · Monitoring · O&M',
     },
     gateway: {
@@ -1687,7 +1691,13 @@ const he = {
     blog: 'בלוג',
     contact: 'צור קשר',
     getQuote: 'קבל הצעה',
+    learn: 'אקדמיה',
     switchLang: 'English',
+  },
+  home: {
+    hero: {
+      ctaLearn: 'אקדמיה סולארית חינם →',
+    },
   },
   crm: {
     switchLang: 'English',

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { MessageCircle, Mail, MapPin, Phone } from 'lucide-react'
 import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
+import { ACADEMY_URL } from '../../lib/constants'
 
 // Shared link treatment — quiet ink that warms to ocean on hover.
 const footerLink =
@@ -14,7 +15,7 @@ export function Footer() {
   const { langPath, lang } = useLanguage()
   const { t } = useTranslation()
 
-  const QUICK_LINKS = [
+  const QUICK_LINKS: { label: string; path: string; external?: boolean }[] = [
     { label: t.nav.services, path: '/services' },
     { label: t.nav.howItWorks, path: '/how-it-works' },
     { label: t.nav.pricing, path: '/pricing' },
@@ -23,6 +24,7 @@ export function Footer() {
     { label: t.nav.blog, path: '/blog' },
     { label: t.nav.contact, path: '/contact' },
     { label: lang === 'th' ? 'เครื่องมือโซลาร์' : 'Solar Tools', path: '/tools' },
+    { label: t.nav.learn, path: ACADEMY_URL, external: true },
   ]
 
   const SERVICES = [
@@ -110,9 +112,15 @@ export function Footer() {
             <ul className="flex flex-col gap-2.5">
               {QUICK_LINKS.map((link) => (
                 <li key={link.path}>
-                  <Link to={langPath(link.path)} className={footerLink}>
-                    {link.label}
-                  </Link>
+                  {link.external ? (
+                    <a href={link.path} target="_blank" rel="noopener" className={footerLink}>
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link to={langPath(link.path)} className={footerLink}>
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

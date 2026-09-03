@@ -25,6 +25,7 @@ import { SectionHeader } from '../components/ui/SectionHeader'
 import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, homeBreadcrumb, faqSchema } from '../components/seo/schemas'
+import { ACADEMY_URL } from '../lib/constants'
 
 const SolarInstallationScroll = lazy(
   () => import('../components/SolarInstallationScroll')
@@ -198,6 +199,16 @@ function HeroSection() {
             {t.home.hero.ctaSecondary}
           </Button>
         </motion.div>
+
+        <motion.a
+          variants={fadeUp}
+          href={ACADEMY_URL}
+          target="_blank"
+          rel="noopener"
+          className="mt-4 inline-block text-sm text-shell/78 hover:text-gold underline-offset-4 hover:underline"
+        >
+          {t.home.hero.ctaLearn}
+        </motion.a>
 
         {/* Trust line shown in StatsBar below (was duplicated here — lowest-contrast spot in hero) */}
       </motion.div>
