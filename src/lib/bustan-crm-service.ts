@@ -512,6 +512,25 @@ export async function fetchTopPendingCandidateLocation(): Promise<{ lat: number;
  * `bounds` ([[minLng,minLat],[maxLng,maxLat]]) to scope the query to that region
  * and raise the cap to 5000. Without bounds it loads up to 5000 (legacy behaviour).
  */
+/** Raw rows for /admin/scan (keeps 015 columns: footprint_class, category, phone, external_id …). */
+export async function fetchScanCandidateRows(
+  bounds: [[number, number], [number, number]],
+  statuses: Array<ScanCandidate['status']> = ['pending', 'added'],
+): Promise<ScanCandidate[]> {
+  if (!bustanSupabase) return []
+  const [[minLng, minLat], [maxLng, maxLat]] = bounds
+  const { data, error } = await bustanSupabase
+    .from('scan_candidates')
+    .select('*')
+    .in('status', statuses)
+    .eq('kind', 'roof')
+    .gte('lat', minLat).lte('lat', maxLat).gte('lon', minLng).lte('lon', maxLng)
+    .order('estimated_kwp', { ascending: false, nullsFirst: false })
+    .limit(5000)
+  if (error) throw error
+  return (data ?? []) as ScanCandidate[]
+}
+
 export async function fetchScanCandidates(
   bounds?: [[number, number], [number, number]],
 ): Promise<Property[]> {
