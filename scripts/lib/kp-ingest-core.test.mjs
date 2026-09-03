@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseBuildingsJs, buildOsmRecords, buildUnmappedRecords, matchExisting } from './kp-ingest-core.mjs'
+import { parseBuildingsJs, buildOsmRecords, buildUnmappedRecords, matchExisting, normaliseKeys } from './kp-ingest-core.mjs'
 
 const b = { i: 479104039, la: 9.708598, lo: 99.990975, a: 994.4, u: 696.1, kw: 126.56, p: 270,
   s: 100, pr: 'A', c: 'hospitality', n: 'Treechart Hostel', ph: '', w: '',
@@ -56,10 +56,20 @@ describe('matchExisting', () => {
   const existing = [
     { id: 'u1', lat: 9.708600, lon: 99.990980, external_id: null },
     { id: 'u2', lat: 9.800000, lon: 99.900000, external_id: '999', external_source: 'osm' },
+    // an already-ingested OSM neighbour 10 m away — must NOT absorb a different OSM id
+    { id: 'u3', lat: 9.750050, lon: 99.950050, external_id: '555', external_source: 'osm' },
   ]
-  it('matches by external id first, then by ~28 m proximity', () => {
+  it('matches by external id first, then by ~28 m proximity ONLY against rows without external_id', () => {
     expect(matchExisting({ external_source: 'osm', external_id: '999', lat: 0, lon: 0 }, existing)?.id).toBe('u2')
     expect(matchExisting({ external_source: 'osm', external_id: '1', lat: 9.708598, lon: 99.990975 }, existing)?.id).toBe('u1')
     expect(matchExisting({ external_source: 'osm', external_id: '1', lat: 9.75, lon: 99.95 }, existing)).toBeNull()
+    expect(matchExisting({ external_source: 'osm', external_id: '556', lat: 9.75, lon: 99.95 }, existing)).toBeNull()
+  })
+})
+
+describe('normaliseKeys', () => {
+  it('pads every record to the union of keys with null defaults (PostgREST bulk insert)', () => {
+    const rows = [{ a: 1, b: 2 }, { a: 3, c: undefined }]
+    expect(normaliseKeys(rows)).toEqual([{ a: 1, b: 2, c: null }, { a: 3, b: null, c: null }])
   })
 })

@@ -47,9 +47,19 @@ export function buildUnmappedRecords(unmapped) {
   }))
 }
 
+// Exact external id first. The ~28 m fallback is ONLY for legacy rows that have
+// no external_id (pre-015 scan output): OSM buildings are legitimately closer
+// than 28 m to each other, so a row that already carries an external id must
+// never absorb a neighbour with a different id.
 export function matchExisting(rec, existing) {
   const byId = existing.find(e => e.external_id && e.external_id === rec.external_id && e.external_source === rec.external_source)
   if (byId) return byId
-  return existing.find(e => e.lat != null && e.lon != null &&
+  return existing.find(e => e.external_id == null && e.lat != null && e.lon != null &&
     Math.abs(e.lat - rec.lat) < DEDUP_DEG && Math.abs(e.lon - rec.lon) < DEDUP_DEG) ?? null
+}
+
+/** PostgREST bulk insert needs identical key sets per row — pad every record to the union of keys. */
+export function normaliseKeys(records) {
+  const keys = [...new Set(records.flatMap(r => Object.keys(r)))]
+  return records.map(r => Object.fromEntries(keys.map(k => [k, r[k] ?? null])))
 }
