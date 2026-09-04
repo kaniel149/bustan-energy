@@ -7,8 +7,8 @@
 // Output:
 //   output/{REF}-CONTRACT-HE-EN.html + .pdf
 //   output/{REF}-CLIENT-PREP-HE-EN.html + .pdf
-//   output/TM-CONTRACT-TEMPLATE-HE-EN.html + .pdf
-//   output/TM-CLIENT-PREP-TEMPLATE-HE-EN.html + .pdf
+//   output/BE-CONTRACT-TEMPLATE-HE-EN.html + .pdf
+//   output/BE-CLIENT-PREP-TEMPLATE-HE-EN.html + .pdf
 // ============================================================
 
 import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from 'fs'
@@ -129,8 +129,8 @@ async function main() {
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
 
   // Copy logo to output dir if needed
-  const logoSrc = join(__dirname, 'assets', 'tm-energy-logo.png')
-  const logoDst = join(outDir, 'tm-energy-logo.png')
+  const logoSrc = join(__dirname, 'assets', 'bustan-energy-logo.png')
+  const logoDst = join(outDir, 'bustan-energy-logo.png')
   if (existsSync(logoSrc) && !existsSync(logoDst)) {
     copyFileSync(logoSrc, logoDst)
     console.log('Copied logo to output/')
@@ -146,20 +146,20 @@ async function main() {
   console.log('\n-- Generating blank templates --')
 
   const blankContract = render(contractTemplate, BLANK_DATA)
-  const blankContractHtml = join(outDir, 'TM-CONTRACT-TEMPLATE-HE-EN.html')
+  const blankContractHtml = join(outDir, 'BE-CONTRACT-TEMPLATE-HE-EN.html')
   writeFileSync(blankContractHtml, blankContract)
   console.log('HTML: ' + blankContractHtml)
 
   const blankPrep = render(prepTemplate, BLANK_DATA)
-  const blankPrepHtml = join(outDir, 'TM-CLIENT-PREP-TEMPLATE-HE-EN.html')
+  const blankPrepHtml = join(outDir, 'BE-CLIENT-PREP-TEMPLATE-HE-EN.html')
   writeFileSync(blankPrepHtml, blankPrep)
   console.log('HTML: ' + blankPrepHtml)
 
   if (!skipPDF) {
-    const ok1 = await generatePDF(blankContractHtml, join(outDir, 'TM-CONTRACT-TEMPLATE-HE-EN.pdf'))
-    if (ok1) console.log('PDF:  ' + join(outDir, 'TM-CONTRACT-TEMPLATE-HE-EN.pdf'))
-    const ok2 = await generatePDF(blankPrepHtml, join(outDir, 'TM-CLIENT-PREP-TEMPLATE-HE-EN.pdf'))
-    if (ok2) console.log('PDF:  ' + join(outDir, 'TM-CLIENT-PREP-TEMPLATE-HE-EN.pdf'))
+    const ok1 = await generatePDF(blankContractHtml, join(outDir, 'BE-CONTRACT-TEMPLATE-HE-EN.pdf'))
+    if (ok1) console.log('PDF:  ' + join(outDir, 'BE-CONTRACT-TEMPLATE-HE-EN.pdf'))
+    const ok2 = await generatePDF(blankPrepHtml, join(outDir, 'BE-CLIENT-PREP-TEMPLATE-HE-EN.pdf'))
+    if (ok2) console.log('PDF:  ' + join(outDir, 'BE-CLIENT-PREP-TEMPLATE-HE-EN.pdf'))
   }
 
   // ── CLIENT-SPECIFIC (if data provided) ────────────────────

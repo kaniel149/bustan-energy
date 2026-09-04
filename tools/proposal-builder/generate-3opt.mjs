@@ -533,7 +533,7 @@ footer strong { color:var(--gold); }
 
 <nav class="nav">
   <div>
-    <img class="nav-logo-img" src="tm-energy-logo.png" alt="Bustan Energy">
+    <img class="nav-logo-img" src="bustan-energy-logo.png" alt="Bustan Energy">
     <span class="nav-brand">${t.nav_brand}</span>
   </div>
   <div class="nav-ref">REF &middot; ${ref} &middot; 2026</div>
@@ -856,7 +856,7 @@ body { overflow: hidden !important; }
 </style>
 <div class="pg-overlay" id="pgOverlay">
   <div class="pg-box">
-    <img src="tm-energy-logo.png" alt="Bustan Energy" class="pg-logo">
+    <img src="bustan-energy-logo.png" alt="Bustan Energy" class="pg-logo">
     <div class="pg-brand">BUSTAN ENERGY</div>
     <h1 class="pg-title">${lang === 'he' ? 'הצעת מחיר אישית' : (lang === 'th' ? 'ใบเสนอราคาส่วนตัว' : 'Personal Quote')}</h1>
     <p class="pg-desc">${lang === 'he' ? 'הכנס את הסיסמה שנשלחה אליך ב-WhatsApp' : (lang === 'th' ? 'กรุณาใส่รหัสผ่านที่ส่งให้ทาง WhatsApp' : 'Enter the password sent to you via WhatsApp')}</p>
@@ -908,7 +908,7 @@ async function main() {
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
 
   // Copy assets
-  const assets = ['tm-energy-logo.png', ...(data.images || [])]
+  const assets = ['bustan-energy-logo.png', ...(data.images || [])]
   for (const asset of assets) {
     const src = join(__dirname, 'assets', asset)
     if (existsSync(src)) copyFileSync(src, join(outDir, asset))

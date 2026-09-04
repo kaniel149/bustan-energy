@@ -26,13 +26,14 @@ function getLocationConfig(locationId) {
     performance_ratio: 0.77,
     soiling_factor: 0.97,
     tariff_retail_thb: 4.4,
-    tariff_export_thb: 3.1,
+    tariff_export_thb: 2.2,
+    tariff_export_commercial_thb: 0,
     self_consumption_pct_grid_tied: 0.60,
     self_consumption_pct_with_battery: 0.85,
     co2_kg_per_kwh: 0.477,
     discount_rate: 0.08,
-    tariff_escalation: 0.03,
-    psh_annual: 5.0,
+    tariff_escalation: 0.015,
+    psh_annual: 4.9,
   }
 }
 
@@ -58,7 +59,9 @@ function calcProposalFinancials(data) {
   const effectivePR = (data.performance_ratio || loc.performance_ratio) *
                       (data.soiling_factor || loc.soiling_factor)
   const retailRate = data.tariff_thb_per_kwh || loc.tariff_retail_thb
-  const exportRate = data.tariff_export_thb || loc.tariff_export_thb
+  // Net billing (ERC Jun 2026): residential ≤10 kWp systems may export ≤5 kW at 2.20 THB/kWh; commercial / >10 kWp = 0 (zero-export)
+  const isCommercial = /commercial|business|resort|hotel|factory|office|shop/i.test(String(data.customer_type || data.segment || '')) || kwp > 10
+  const exportRate = data.tariff_export_thb ?? (isCommercial ? (loc.tariff_export_commercial_thb ?? 0) : loc.tariff_export_thb)
   const withBattery = !!(data.battery_kwh)
   const selfPct = data.self_consumption_pct ||
     (withBattery ? loc.self_consumption_pct_with_battery : loc.self_consumption_pct_grid_tied)
@@ -71,7 +74,7 @@ function calcProposalFinancials(data) {
   const systemLifeYears = 25
   const co2Factor = loc.co2_kg_per_kwh
 
-  const epcCost = data.price_thb || (kwp * 32000)
+  const epcCost = data.price_thb || (kwp * 30000)
   const annualOMCost = epcCost * omCostPct
 
   // Baseline kWh (pre-LID, full effective PR applied to raw irradiance)
@@ -201,7 +204,7 @@ function passwordGateHTML(ref, passwordHash) {
 </style>
 <div class="pg-overlay" id="pgOverlay">
   <div class="pg-box">
-    <img src="./tm-energy-logo.png" alt="Bustan Energy" class="pg-logo">
+    <img src="./bustan-energy-logo.png" alt="Bustan Energy" class="pg-logo">
     <div class="pg-brand">BUSTAN ENERGY</div>
     <h1 class="pg-title">הצעת מחיר אישית</h1>
     <p class="pg-desc">הכנס את הסיסמה שנשלחה אליך ב-WhatsApp כדי לצפות בהצעה.</p>
@@ -449,9 +452,9 @@ async function main() {
     location_en: data.location || '',
     location_short: data.location_short || data.location || '',
     location_psh: data.location_psh || data.location || '',
-    logo_url: data.logo_url || './tm-energy-logo.png',
-    roof_original_url: data.roof_original_url || data.images?.[0] || './tm-energy-logo.png',
-    roof_panels_url: data.roof_panels_url || data.images?.[1] || './tm-energy-logo.png',
+    logo_url: data.logo_url || './bustan-energy-logo.png',
+    roof_original_url: data.roof_original_url || data.images?.[0] || './bustan-energy-logo.png',
+    roof_panels_url: data.roof_panels_url || data.images?.[1] || './bustan-energy-logo.png',
     month_year_he: data.date_he || data.date || '',
     ppa_rate: String(data.ppa_rate_thb_per_kwh || 4.2),
     ppa_years: String(data.ppa_years || 15),
@@ -488,7 +491,7 @@ async function main() {
   const pdfPath = join(outDir, `${ref}-${data.language || 'he'}.pdf`)
 
   // Copy assets (logo + images) to output folder
-  const assetsToCopy = ['tm-energy-logo.png', ...(data.images || [])]
+  const assetsToCopy = ['bustan-energy-logo.png', ...(data.images || [])]
   for (const asset of assetsToCopy) {
     const src = join(__dirname, 'assets', asset)
     if (existsSync(src)) {
