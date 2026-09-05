@@ -746,7 +746,7 @@ const en = {
     hero: {
       tag: 'Partners & Investors',
       title: 'Own the sun on Ko Phangan',
-      subtitle: 'Island electricity costs ฿5–7/kWh and rises yearly. Bustan Energy builds and operates rooftop solar under EPC and PPA — and opens both to partners: lenders, PPA capital, and EPC/installer partners.',
+      subtitle: 'Island electricity costs ฿4.5–4.9/kWh at the margin (incl. VAT) and rises yearly. Bustan Energy builds and operates rooftop solar under EPC and PPA — and opens both to partners: lenders, PPA capital, and EPC/installer partners.',
     },
     why: [
       { title: 'A scanned pipeline, not a wish list', body: 'Every roof on the island has been mapped and graded; candidates flow through owner research, proposals and e-signature in one system.' },
@@ -756,16 +756,19 @@ const en = {
     facts: {
       title: 'Key figures',
       badge: 'Figures under review',
-      badgeHint: 'Three inputs differ between the financing deck and the business-plan workbook and await a final decision.',
-      validated: 'Workbook validated',
+      badgeHint: 'An input differs between the financing deck and the business-plan workbook and awaits a final decision.',
+      validated: 'Figures as of',
       labels: {
-        peaTariff: 'PEA retail tariff',
-        ppaTariff: 'PPA tariff',
-        installedCostPerKwp: 'Installed cost',
-        salePricePerKwp: 'EPC sale price',
+        peaTariff: 'PEA marginal rate (ex-VAT)',
+        ppaTariff: 'PPA tariff (15 yr)',
+        installedCostPerKwp: 'Installed cost (10 kW)',
+        salePricePerKwp: 'EPC sale price (10 kW)',
         sunHours: 'Peak sun hours',
-        loanRate: 'Krungsri solar loan rate',
-        loanTermYears: 'Loan term',
+        yieldKwhPerKwp: 'Specific yield',
+        netBillingExport: 'Net-billing export (residential)',
+        taxDeduction: 'Home tax deduction (≤10 kWp)',
+        loanRate: 'Solar loan rate, yrs 1–2 (GSB / TTB)',
+        loanTermYears: 'Loan term (GSB)',
       },
     },
     deck: { title: 'Financing deep-dive', open: 'Open the deck full screen' },
@@ -788,7 +791,7 @@ const en = {
     partners: {
       title: 'Partners & Investors — Solar EPC/PPA on Ko Phangan',
       description:
-        'Invest in or partner with Bustan Energy: island-scale solar pipeline, EPC and PPA models, Krungsri financing, PEA-ready delivery. Request the data room.',
+        'Invest in or partner with Bustan Energy: island-scale solar pipeline, EPC and PPA models, GSB/TTB solar financing, PEA-ready delivery. Request the data room.',
     },
     home: {
       title: "Bustan Energy — Solar EPC & PPA on Ko Phangan | Solar Panels Thailand",
@@ -1693,7 +1696,7 @@ const th = {
     partners: {
       title: 'พันธมิตรและนักลงทุน — โซลาร์ EPC/PPA เกาะพะงัน',
       description:
-        'ร่วมลงทุนหรือเป็นพันธมิตรกับ Bustan Energy: โครงการโซลาร์ทั่วเกาะ โมเดล EPC และ PPA สินเชื่อกรุงศรี ขอเข้าถึง data room',
+        'ร่วมลงทุนหรือเป็นพันธมิตรกับ Bustan Energy: โครงการโซลาร์ทั่วเกาะ โมเดล EPC และ PPA สินเชื่อโซลาร์ ธ.ออมสิน/ttb ขอเข้าถึง data room',
     },
     home: {
       title: 'Bustan Energy — ติดตั้งโซลาร์เซลล์เกาะพะงัน อันดับ 1 | แผงโซลาร์ สุราษฎร์ธานี',
@@ -1821,7 +1824,7 @@ const he = {
   seo: {
     partners: {
       title: 'שותפים ומשקיעים — סולארי EPC/PPA בקו פנגן',
-      description: 'השקעה או שותפות עם Bustan Energy: צבר גגות סרוק, מודלים EPC ו-PPA, מימון Krungsri. בקשו גישה ל-Data Room.',
+      description: 'השקעה או שותפות עם Bustan Energy: צבר גגות סרוק, מודלים EPC ו-PPA, מימון בנקאי (GSB/TTB). בקשו גישה ל-Data Room.',
     },
   },
   about: {

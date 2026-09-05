@@ -13,7 +13,7 @@ import { INVESTOR_FACTS, VALIDATED_AT, hasPendingFacts, type FactKey } from '../
 import { getAttribution } from '../lib/attribution'
 import { getMetaClickIds, newEventId, trackEvent } from '../lib/analytics'
 
-const FACT_ORDER: FactKey[] = ['peaTariff', 'ppaTariff', 'installedCostPerKwp', 'salePricePerKwp', 'sunHours', 'loanRate', 'loanTermYears']
+const FACT_ORDER: FactKey[] = ['peaTariff', 'ppaTariff', 'installedCostPerKwp', 'salePricePerKwp', 'yieldKwhPerKwp', 'sunHours', 'netBillingExport', 'taxDeduction', 'loanRate', 'loanTermYears']
 const fmt = (v: number) => v.toLocaleString('en-US')
 
 // Same field treatment as ContactPage (kept in sync by hand — not exported there).
@@ -42,7 +42,7 @@ function FactsGrid() {
           {FACT_ORDER.map((k) => {
             const x = INVESTOR_FACTS[k]
             return (
-              <div key={k} className="rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft">
+              <div key={k} title={x.note} className="rounded-card border border-grove/14 bg-shell/76 p-5 shadow-soft">
                 <div className="text-xs uppercase tracking-widest text-ink/45 mb-1">{f.labels[k]}</div>
                 <div className="font-serif text-3xl text-ink">
                   {fmt(x.value)} <span className="text-base text-ink/60">{x.unit}</span>

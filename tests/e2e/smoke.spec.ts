@@ -42,10 +42,11 @@ test('admin-funnel rejects anonymous calls', async ({ request }) => {
   }
 })
 
-test('partners page: facts under review, deck iframe, data-room form', async ({ page }) => {
+test('partners page: facts settled (no review badge), deck iframe, data-room form', async ({ page }) => {
   await page.goto('/partners')
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-  await expect(page.getByTestId('facts-review-badge')).toBeVisible()
+  // VALIDATION.md §4 closed 2026-09-04 → no pending facts → badge must not render
+  await expect(page.getByTestId('facts-review-badge')).toHaveCount(0)
   await expect(page.locator('iframe[src="/bustan-financing-deck.html"]')).toBeVisible()
   await expect(page.getByLabel(/full name|ชื่อ|שם/i)).toBeVisible()
   await expect(page.getByRole('button', { name: /request access|ขอเข้าถึง|בקש/i })).toBeVisible()
