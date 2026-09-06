@@ -1,6 +1,6 @@
 # SP5 — External Layer Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** The outside world gets four doors: (1) a public academy (Solar Fundamentals + EV & Storage) reachable from a "Learn" link on bustan-energy.com and the vanity host `academy.bustan-energy.com`, with the three team tracks behind a shared passcode; (2) `/partners` — investor/partner page with the financing deck, a facts grid fed by one constants file (with an "under review" badge until Kaniel resolves `VALIDATION.md §2`), and a "request the data room" form into the existing lead pipeline; (3) a signed-proposal thank-you page with the PEA timeline plus a 7-day re-entry link in the confirmation email; (4) an expanded `/about` trust page (team, licensing, PEA process, academy). Plus sitemap/JSON-LD/OG fixes and a Playwright smoke.
 
@@ -31,8 +31,8 @@
 
 ### Task 0: Branches + baseline
 
-- [ ] `cd $E && git checkout main && git pull --ff-only origin main && git checkout -b sp5/external && npm test && npm run typecheck` → record vitest count; typecheck clean.
-- [ ] `cd $I && git checkout main && git pull --ff-only origin main && git checkout -b sp5/external && node academy/tests/run-all.mjs` → "all checks passed".
+- [x] `cd $E && git checkout main && git pull --ff-only origin main && git checkout -b sp5/external && npm test && npm run typecheck` → record vitest count; typecheck clean.
+- [x] `cd $I && git checkout main && git pull --ff-only origin main && git checkout -b sp5/external && node academy/tests/run-all.mjs` → "all checks passed".
 
 ---
 
@@ -40,7 +40,7 @@
 
 **Files:**
 - Create: `E/src/data/investor-facts.ts`, `E/src/data/investor-facts.test.ts`
-- [ ] **Step 1: Failing test**
+- [x] **Step 1: Failing test**
 
 ```ts
 // E/src/data/investor-facts.test.ts
@@ -61,8 +61,8 @@ describe('investor facts', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails** — `npx vitest run src/data/investor-facts.test.ts` → "Failed to resolve import".
-- [ ] **Step 3: Implement**
+- [x] **Step 2: Run → fails** — `npx vitest run src/data/investor-facts.test.ts` → "Failed to resolve import".
+- [x] **Step 3: Implement**
 
 ```ts
 // E/src/data/investor-facts.ts
@@ -98,7 +98,7 @@ export function hasPendingFacts(): boolean {
 }
 ```
 
-- [ ] **Step 4: Run → passes**; `git add src/data/investor-facts.ts src/data/investor-facts.test.ts && git commit -m "feat(partners): investor-facts constants with VALIDATED_AT + pending flags for VALIDATION.md §2 mismatches"`
+- [x] **Step 4: Run → passes**; `git add src/data/investor-facts.ts src/data/investor-facts.test.ts && git commit -m "feat(partners): investor-facts constants with VALIDATED_AT + pending flags for VALIDATION.md §2 mismatches"`
 
 ---
 
@@ -107,7 +107,7 @@ export function hasPendingFacts(): boolean {
 **Files:**
 - Create: `I/academy/assets/gate.js`, `I/academy/tests/gate.mjs`, `I/academy/tests/public-tracks.mjs`
 - Modify: all 24 `I/academy/courses/*.html` (add gate script; team lessons add robots meta), `I/academy/index.html`, `I/academy/assets/academy.css`, `I/sitemap.xml`
-- [ ] **Step 1: Failing tests**
+- [x] **Step 1: Failing tests**
 
 ```js
 // I/academy/tests/gate.mjs — pure gate logic evaluated in a sandbox (no browser)
@@ -145,8 +145,8 @@ for (const t of TEAM) if (!hub.includes(`data-track="${t}" data-team="1"`)) fail
 console.log('public-tracks: ok');
 ```
 
-- [ ] **Step 2: Run → fails** — `node academy/tests/gate.mjs; node academy/tests/public-tracks.mjs` → FAIL lines.
-- [ ] **Step 3: gate.js**
+- [x] **Step 2: Run → fails** — `node academy/tests/gate.mjs; node academy/tests/public-tracks.mjs` → FAIL lines.
+- [x] **Step 3: gate.js**
 
 ```js
 // I/academy/assets/gate.js — shared-passcode gate for team tracks.
@@ -187,7 +187,7 @@ console.log('public-tracks: ok');
 })(typeof window !== 'undefined' ? window : root);
 ```
 
-- [ ] **Step 4: Wire lessons + hub + sitemap** (from `$I`):
+- [x] **Step 4: Wire lessons + hub + sitemap** (from `$I`):
 
 ```bash
 for f in academy/courses/*.html; do case "$f" in *" 2."*|*" 3."*) continue;; esac
@@ -214,8 +214,8 @@ And in `academy/assets/academy.css` append:
 .gate-box { max-width: 480px; margin: 4rem auto; padding: 2rem; text-align: center; } .gate-box input { display:block; width:100%; margin:.75rem 0 1rem; padding:.6rem; border-radius:8px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.05); color:inherit; } .gate-err { color:#ff6b6b; min-height:1.2em; }
 ```
 
-- [ ] **Step 5: Run → passes** — `node academy/tests/run-all.mjs` → all checks passed (links test also covers `gate.js`). Manual: open `academy/courses/sales-bd-01.html` via `python3 -m http.server` → gate shows; `?key=bustan-team-2026` → lesson shows; `solar-fundamentals-01.html` never gated.
-- [ ] **Step 6: Commit** — `git add academy sitemap.xml && git commit -m "feat(academy): public tracks (solar-fundamentals, ev-storage) + team passcode gate, noindex team lessons, Course JSON-LD, sitemap"`
+- [x] **Step 5: Run → passes** — `node academy/tests/run-all.mjs` → all checks passed (links test also covers `gate.js`). Manual: open `academy/courses/sales-bd-01.html` via `python3 -m http.server` → gate shows; `?key=bustan-team-2026` → lesson shows; `solar-fundamentals-01.html` never gated.
+- [x] **Step 6: Commit** — `git add academy sitemap.xml && git commit -m "feat(academy): public tracks (solar-fundamentals, ev-storage) + team passcode gate, noindex team lessons, Course JSON-LD, sitemap"`
 
 ---
 
@@ -224,7 +224,7 @@ And in `academy/assets/academy.css` append:
 **Files:**
 - Modify: `E/vercel.json` (`redirects`)
 - Create: `E/tests/vercel-config.test.ts`
-- [ ] **Step 1: Failing test**
+- [x] **Step 1: Failing test**
 
 ```ts
 // E/tests/vercel-config.test.ts
@@ -243,14 +243,14 @@ describe('vercel.json external layer', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails**; then set in `vercel.json`:
+- [x] **Step 2: Run → fails**; then set in `vercel.json`:
 ```json
 "redirects": [
   { "source": "/:path*", "has": [{ "type": "host", "value": "academy.bustan-energy.com" }],
     "destination": "https://index.bustan-energy.com/academy/:path*", "permanent": true }
 ],
 ```
-- [ ] **Step 3: Run → passes**; commit `chore(vercel): academy.bustan-energy.com → 308 to index.bustan-energy.com/academy`.
+- [x] **Step 3: Run → passes**; commit `chore(vercel): academy.bustan-energy.com → 308 to index.bustan-energy.com/academy`.
 - [ ] **Step 4: Records for Kaniel (manual, GoDaddy + Vercel):**
   1. Vercel → project `bustan-energy` → Settings → Domains → Add `academy.bustan-energy.com` (no redirect option in the dialog; the JSON rule does it).
   2. GoDaddy DNS for `bustan-energy.com`: `CNAME  academy  →  cname.vercel-dns.com  TTL 600`.
@@ -263,8 +263,8 @@ describe('vercel.json external layer', () => {
 
 **Files:**
 - Modify: `E/src/lib/constants.ts`, `E/src/i18n/translations.ts` (en/th/he `nav.learn`, `home.hero.ctaLearn`), `E/src/components/layout/Navbar.tsx`, `E/src/components/layout/Footer.tsx`, `E/src/pages/HomePage.tsx`
-- [ ] **Step 1:** `constants.ts` add `export const ACADEMY_URL = 'https://index.bustan-energy.com/academy/'`. Translations: `nav.learn: 'Learn'` / th `'เรียนรู้'` / he `'אקדמיה'`; `home.hero.ctaLearn: 'Free solar academy →'` / th `'อคาเดมีโซลาร์ฟรี →'` / he `'אקדמיה סולארית חינם →'`.
-- [ ] **Step 2: Navbar** — extend the link type and both render sites:
+- [x] **Step 1:** `constants.ts` add `export const ACADEMY_URL = 'https://index.bustan-energy.com/academy/'`. Translations: `nav.learn: 'Learn'` / th `'เรียนรู้'` / he `'אקדמיה'`; `home.hero.ctaLearn: 'Free solar academy →'` / th `'อคาเดมีโซลาร์ฟรี →'` / he `'אקדמיה סולארית חינם →'`.
+- [x] **Step 2: Navbar** — extend the link type and both render sites:
 ```tsx
 type NavLink = { label: string; path: string; external?: boolean }
 const NAV_LINKS: NavLink[] = [ /* existing seven */, { label: t.nav.learn, path: ACADEMY_URL, external: true } ]
@@ -272,13 +272,13 @@ const NAV_LINKS: NavLink[] = [ /* existing seven */, { label: t.nav.learn, path:
 if (link.external) return <a key={link.path} href={link.path} target="_blank" rel="noopener" className={desktopLink(false)} data-testid="nav-learn">{link.label}</a>
 ```
 (mobile: same `<a>` with the mobile classes and `onClick={() => setMobileOpen(false)}`.)
-- [ ] **Step 3: Footer** — `QUICK_LINKS` add `{ label: t.nav.learn, path: ACADEMY_URL, external: true }` and render `external ? <a href … target="_blank" rel="noopener" className={footerLink}>` else `<Link>`.
-- [ ] **Step 4: Hero** — after the two `Button`s' wrapper `motion.div` (HomePage ~line 200) add:
+- [x] **Step 3: Footer** — `QUICK_LINKS` add `{ label: t.nav.learn, path: ACADEMY_URL, external: true }` and render `external ? <a href … target="_blank" rel="noopener" className={footerLink}>` else `<Link>`.
+- [x] **Step 4: Hero** — after the two `Button`s' wrapper `motion.div` (HomePage ~line 200) add:
 ```tsx
 <motion.a variants={fadeUp} href={ACADEMY_URL} target="_blank" rel="noopener"
   className="mt-4 inline-block text-sm text-shell/78 hover:text-gold underline-offset-4 hover:underline">{t.home.hero.ctaLearn}</motion.a>
 ```
-- [ ] **Step 5:** `npm run typecheck && npm run lint` clean; `npm run dev` → nav shows "Learn" opening the academy in a new tab on `/`, `/th`, `/he`. Commit `feat(nav): Learn link (academy) in navbar, footer, hero`.
+- [x] **Step 5:** `npm run typecheck && npm run lint` clean; `npm run dev` → nav shows "Learn" opening the academy in a new tab on `/`, `/th`, `/he`. Commit `feat(nav): Learn link (academy) in navbar, footer, hero`.
 
 ---
 
@@ -287,7 +287,7 @@ if (link.external) return <a key={link.path} href={link.path} target="_blank" re
 **Files:**
 - Create: `E/src/pages/PartnersPage.tsx`
 - Modify: `E/src/i18n/translations.ts` (`partners`, `seo.partners` in en/th/he), `E/src/App.tsx` (route), `E/api/contact-lead.ts` (source label), `E/public/sitemap.xml`
-- [ ] **Step 1: Translations (EN complete; TH/HE fall back per key)**
+- [x] **Step 1: Translations (EN complete; TH/HE fall back per key)**
 
 ```ts
 // en
@@ -306,7 +306,7 @@ seo: { …, partners: { title: 'Partners & Investors — Solar EPC/PPA on Ko Pha
 TH: `partners: { hero: { tag: 'พันธมิตรและนักลงทุน', title: 'ร่วมเป็นเจ้าของพลังงานแสงอาทิตย์บนเกาะพะงัน' }, facts: { title: 'ตัวเลขสำคัญ', badge: 'ตัวเลขอยู่ระหว่างตรวจสอบ' }, deck: { title: 'เจาะลึกการเงิน', open: 'เปิดเต็มจอ' }, form: { title: 'ขอเข้าถึงข้อมูล', name: 'ชื่อ-นามสกุล', email: 'อีเมล', company: 'บริษัท / กองทุน', submit: 'ขอเข้าถึง', sent: 'ขอบคุณ — เราจะส่งลิงก์ทางอีเมล', error: 'ส่งไม่ได้ในขณะนี้ กรุณาติดต่อทาง WhatsApp' } }, seo.partners: { title: 'พันธมิตรและนักลงทุน — โซลาร์ EPC/PPA เกาะพะงัน', description: 'ร่วมลงทุนหรือเป็นพันธมิตรกับ Bustan Energy: โครงการโซลาร์ทั่วเกาะ โมเดล EPC และ PPA สินเชื่อกรุงศรี ขอเข้าถึง data room' }`.
 HE: `partners: { hero: { tag: 'שותפים ומשקיעים', title: 'להיות הבעלים של השמש בקו פנגן' }, facts: { title: 'מספרים מרכזיים', badge: 'הנתונים בבדיקה' }, deck: { title: 'מצגת מימון', open: 'פתח במסך מלא' }, form: { title: 'בקשת גישה ל-Data Room', name: 'שם מלא', email: 'אימייל', company: 'חברה / קרן', submit: 'בקש גישה', sent: 'תודה — נשלח קישור במייל', error: 'לא ניתן לשלוח כרגע. פנו אלינו בוואטסאפ' } }, seo.partners: { title: 'שותפים ומשקיעים — סולארי EPC/PPA בקו פנגן', description: 'השקעה או שותפות עם Bustan Energy: צבר גגות סרוק, מודלים EPC ו-PPA, מימון Krungsri. בקשו גישה ל-Data Room.' }`.
 
-- [ ] **Step 2: Page**
+- [x] **Step 2: Page**
 
 ```tsx
 // E/src/pages/PartnersPage.tsx
@@ -409,14 +409,14 @@ export default function PartnersPage() {
 ```
 Add `.field { @apply w-full rounded-xl border border-grove/20 bg-white px-4 py-3 text-ink; }` to `src/index.css` if no equivalent exists (check `ContactPage.tsx` input classes first and reuse the same class string instead if one exists).
 
-- [ ] **Step 3: Route + endpoint + sitemap** — `App.tsx`: `const PartnersPage = lazy(() => import('./pages/PartnersPage'))` and `<Route path="partners" element={<PartnersPage />} />` in `PageRoutes` (before the SEO pages). `contact-lead.ts`: replace the ternary in `sendLeadEmail` with
+- [x] **Step 3: Route + endpoint + sitemap** — `App.tsx`: `const PartnersPage = lazy(() => import('./pages/PartnersPage'))` and `<Route path="partners" element={<PartnersPage />} />` in `PageRoutes` (before the SEO pages). `contact-lead.ts`: replace the ternary in `sendLeadEmail` with
 ```ts
 const SOURCE_LABELS: Record<string, string> = { 'bill-scanner': 'Bill Scanner lead magnet', partners: 'Partners page — data-room request' }
 const sourceLabel = SOURCE_LABELS[lead.source] || 'Website contact form'
 … subject: `New Bustan Energy lead · ${lead.name}${lead.source !== 'website' ? ` (${sourceLabel})` : ''}`,
 ```
 `public/sitemap.xml`: copy the `/about` + `/th/about` blocks → `/partners` + `/th/partners`, `changefreq monthly`, `priority 0.7`.
-- [ ] **Step 4: Verify** — `npm run typecheck && npm run lint`; `npm run dev` → `/partners`, `/th/partners`, `/he/partners` render; badge visible; iframe loads the deck; submit form with a real email → 200 `{ok:true}` and lead email received with "(Partners page — data-room request)". Commit `feat(partners): /partners — value prop, facts grid (pending badges), financing deck, data-room form → contact-lead`.
+- [x] **Step 4: Verify** — `npm run typecheck && npm run lint`; `npm run dev` → `/partners`, `/th/partners`, `/he/partners` render; badge visible; iframe loads the deck; submit form with a real email → 200 `{ok:true}` and lead email received with "(Partners page — data-room request)". Commit `feat(partners): /partners — value prop, facts grid (pending badges), financing deck, data-room form → contact-lead`.
 
 ---
 
@@ -424,7 +424,7 @@ const sourceLabel = SOURCE_LABELS[lead.source] || 'Website contact form'
 
 **Files:**
 - Modify: `E/src/i18n/translations.ts` (`about.trust` en/th/he), `E/src/pages/AboutPage.tsx`
-- [ ] **Step 1: Translations (EN)**
+- [x] **Step 1: Translations (EN)**
 
 ```ts
 trust: {
@@ -442,7 +442,7 @@ trust: {
 ```
 TH/HE: translate `team.title`, `licensing.title`, `pea.title`, `academy.{title,body,cta}` (roles/step bodies fall back to EN). HE `pea.title: 'מחתימה לחיבור לרשת ב-6–8 שבועות'`, `academy.cta: 'לאקדמיה'`; TH `pea.title: 'จากเซ็นสัญญาถึงเชื่อมต่อกริดใน 6–8 สัปดาห์'`, `academy.cta: 'เปิดอคาเดมี'`.
 
-- [ ] **Step 2: AboutPage** — between the Values section and `<StatsSection>` insert (use `p.trust`; `ACADEMY_URL` from constants; `PEA_DOCS_URL = 'https://index.bustan-energy.com/pea-docs/'`):
+- [x] **Step 2: AboutPage** — between the Values section and `<StatsSection>` insert (use `p.trust`; `ACADEMY_URL` from constants; `PEA_DOCS_URL = 'https://index.bustan-energy.com/pea-docs/'`):
 ```tsx
 <Divider />
 <section id="trust" className="py-20"><div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12">
@@ -461,7 +461,7 @@ TH/HE: translate `team.title`, `licensing.title`, `pea.title`, `academy.{title,b
   <Button variant="primary" size="md" href={ACADEMY_URL} target="_blank" rel="noopener">{p.trust.academy.cta}</Button>
 </div></section>
 ```
-- [ ] **Step 3:** typecheck/lint clean; `/about`, `/th/about`, `/he/about` render the three sections. Commit `feat(about): team, licensing, PEA process timeline, academy link`.
+- [x] **Step 3:** typecheck/lint clean; `/about`, `/th/about`, `/he/about` render the three sections. Commit `feat(about): team, licensing, PEA process timeline, academy link`.
 
 ---
 
@@ -470,7 +470,7 @@ TH/HE: translate `team.title`, `licensing.title`, `pea.title`, `academy.{title,b
 **Files:**
 - Create: `E/api/_lib/proposal-signed-page.ts`, `E/api/_lib/proposal-signed-page.test.ts`
 - Modify: `E/api/proposal-serve.ts`, `E/api/proposal-sign.ts`, `E/public/proposal-templates/contract-snippet.html`
-- [ ] **Step 1: Failing test**
+- [x] **Step 1: Failing test**
 
 ```ts
 // E/api/_lib/proposal-signed-page.test.ts
@@ -493,7 +493,7 @@ describe('signedPage', () => {
 })
 ```
 
-- [ ] **Step 2: Run → fails**; implement:
+- [x] **Step 2: Run → fails**; implement:
 
 ```ts
 // E/api/_lib/proposal-signed-page.ts — post-signature page; pure, served by proposal-serve on ?signed=1
@@ -523,7 +523,7 @@ li{display:flex;gap:14px;background:#fff4e2;border:1px solid rgba(36,70,62,.14);
 }
 ```
 
-- [ ] **Step 3: proposal-serve.ts** — (a) extend `ProposalServeRow` and the `select=` in `loadProposal` with `status,signed_at,system_size_kwp`; (b) import `signedPage`; (c) at the top of `handler` after loading the proposal:
+- [x] **Step 3: proposal-serve.ts** — (a) extend `ProposalServeRow` and the `select=` in `loadProposal` with `status,signed_at,system_size_kwp`; (b) import `signedPage`; (c) at the top of `handler` after loading the proposal:
 ```ts
 const wantsSigned = url.searchParams.get('signed') === '1' && proposal.status === 'signed'
 const signedHtml = () => new Response(signedPage({ ref: proposal!.ref_number, clientName: proposal!.client_name, kwp: proposal!.system_size_kwp, signedAt: proposal!.signed_at }),
@@ -536,8 +536,8 @@ if (req.method === 'GET' && s && (await verifyProposalSession(s, ref))) {
 }
 ```
 (d) in the GET branch, after `verified` is true: `if (wantsSigned) return signedHtml()`; (e) in the POST success branch, before returning the html: `if (wantsSigned) { const r = signedHtml(); r.headers.set('Set-Cookie', proposalSessionCookie(session, url.protocol === 'https:')); return r }` — note the cookie must be set *with* the session created there. Keep `expiresPage`/410 precedence unchanged.
-- [ ] **Step 4: contract-snippet.html** — in the `if (json.ok)` branch, after the banner lines add `setTimeout(() => location.assign(location.pathname + '?signed=1'), 600);`. `proposal-sign.ts`: `import { createProposalSession } from './_lib/proposal-session.js'`; in the handler before building `postSignTasks`: `const reentry = \`https://bustan-energy.com/p/${encodeURIComponent(ref)}?signed=1&s=${encodeURIComponent(await createProposalSession(ref))}\``; pass it as a third arg to `clientEmail(p, s, reentry)`, which renders `<p><a href="${escapeHtml(reentry)}">View your next steps and proposal</a> (link valid 7 days)</p>` and change the steps list to `Site survey within the first days`, `40% deposit invoice will be sent separately`, `Installation and PEA go-live within 6–8 weeks`.
-- [ ] **Step 5: Run → passes** — `npx vitest run api/_lib/proposal-signed-page.test.ts`; `npm run typecheck`. Manual on the Vercel preview: open a test proposal, enter password, sign → lands on `/p/REF?signed=1` thank-you; email contains the re-entry link; opening it in a private window skips the password gate and shows the thank-you; `/p/REF?signed=1` for an unsigned proposal shows the normal proposal. Commit `feat(proposal): signed thank-you page (PEA timeline) on ?signed=1 + 7-day re-entry link in client email`.
+- [x] **Step 4: contract-snippet.html** — in the `if (json.ok)` branch, after the banner lines add `setTimeout(() => location.assign(location.pathname + '?signed=1'), 600);`. `proposal-sign.ts`: `import { createProposalSession } from './_lib/proposal-session.js'`; in the handler before building `postSignTasks`: `const reentry = \`https://bustan-energy.com/p/${encodeURIComponent(ref)}?signed=1&s=${encodeURIComponent(await createProposalSession(ref))}\``; pass it as a third arg to `clientEmail(p, s, reentry)`, which renders `<p><a href="${escapeHtml(reentry)}">View your next steps and proposal</a> (link valid 7 days)</p>` and change the steps list to `Site survey within the first days`, `40% deposit invoice will be sent separately`, `Installation and PEA go-live within 6–8 weeks`.
+- [x] **Step 5: Run → passes** — `npx vitest run api/_lib/proposal-signed-page.test.ts`; `npm run typecheck`. Manual on the Vercel preview: open a test proposal, enter password, sign → lands on `/p/REF?signed=1` thank-you; email contains the re-entry link; opening it in a private window skips the password gate and shows the thank-you; `/p/REF?signed=1` for an unsigned proposal shows the normal proposal. Commit `feat(proposal): signed thank-you page (PEA timeline) on ?signed=1 + 7-day re-entry link in client email`.
 
 ---
 
@@ -546,7 +546,7 @@ if (req.method === 'GET' && s && (await verifyProposalSession(s, ref))) {
 **Files:**
 - Modify: `E/src/components/seo/SEOHead.tsx` (`DEFAULT_OG_IMAGE`)
 - Create: `E/tests/sitemap.test.ts`
-- [ ] **Step 1: Failing test**
+- [x] **Step 1: Failing test**
 
 ```ts
 // E/tests/sitemap.test.ts
@@ -561,7 +561,7 @@ describe('public sitemap', () => {
   })
 })
 ```
-- [ ] **Step 2:** run → passes only if Task 5 added the entries (else fix). `SEOHead.tsx`: `const DEFAULT_OG_IMAGE = \`${BASE_URL}/assets/images/strategy-01-aerial.jpg\`` (the file that exists; matches `index.html`). Commit `fix(seo): default OG image points at an existing asset; sitemap test`.
+- [x] **Step 2:** run → passes only if Task 5 added the entries (else fix). `SEOHead.tsx`: `const DEFAULT_OG_IMAGE = \`${BASE_URL}/assets/images/strategy-01-aerial.jpg\`` (the file that exists; matches `index.html`). Commit `fix(seo): default OG image points at an existing asset; sitemap test`.
 
 ---
 
@@ -569,7 +569,7 @@ describe('public sitemap', () => {
 
 **Files:**
 - Modify: `E/tests/e2e/smoke.spec.ts` (append)
-- [ ] **Step 1: Playwright**
+- [x] **Step 1: Playwright**
 
 ```ts
 test('partners page: facts under review, deck iframe, data-room form', async ({ page }) => {
@@ -593,7 +593,7 @@ test('Learn link points at the academy from every locale', async ({ page }) => {
   }
 })
 ```
-- [ ] **Step 2: Full gate (E)** — `npm run typecheck && npm run lint && npm test && npm run build && npx playwright test` → all green; record vitest count vs Task 0 (+4 files). **(I)** — `node academy/tests/run-all.mjs` → all checks passed.
-- [ ] **Step 3: Push + PRs (no merge)** — `cd $E && git push -u origin sp5/external && gh pr create --base main --title "SP5 — External layer: partners, about trust, signed page, academy links" --body-file <(printf 'Academy served from index.bustan-energy.com/academy (option c) + vanity 308 from academy.bustan-energy.com.\n\nKaniel manual steps: Vercel domain + GoDaddy CNAME academy → cname.vercel-dns.com; resolve VALIDATION.md §4 then flip pending flags in src/data/investor-facts.ts; confirm Erez title on /about.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nhttps://claude.ai/code/session_017JbAbFU9Nekc5oHPiezgru')`; same for `$I` (`gh pr create --base main --title "SP5 — academy public tracks + team passcode gate"`). Note: GitHub Pages deploys only from `main`, so the academy changes go live at merge time.
+- [x] **Step 2: Full gate (E)** — `npm run typecheck && npm run lint && npm test && npm run build && npx playwright test` → all green; record vitest count vs Task 0 (+4 files). **(I)** — `node academy/tests/run-all.mjs` → all checks passed.
+- [x] **Step 3: Push + PRs (no merge)** — `cd $E && git push -u origin sp5/external && gh pr create --base main --title "SP5 — External layer: partners, about trust, signed page, academy links" --body-file <(printf 'Academy served from index.bustan-energy.com/academy (option c) + vanity 308 from academy.bustan-energy.com.\n\nKaniel manual steps: Vercel domain + GoDaddy CNAME academy → cname.vercel-dns.com; resolve VALIDATION.md §4 then flip pending flags in src/data/investor-facts.ts; confirm Erez title on /about.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nhttps://claude.ai/code/session_017JbAbFU9Nekc5oHPiezgru')`; same for `$I` (`gh pr create --base main --title "SP5 — academy public tracks + team passcode gate"`). Note: GitHub Pages deploys only from `main`, so the academy changes go live at merge time.
 - [ ] **Step 4: Preview checks (lead, Vercel preview URL)** — `/partners` badge + iframe + form submission produces a lead email; `/about#pea-process`; `/he/partners` is RTL; `/p/<test ref>` sign flow → thank-you; re-entry link works in a private window.
-- [ ] **Step 5: Report (≤25 lines):** commits (both repos), test counts before/after, the Kaniel checklist: (1) Vercel domain + CNAME record (Task 3 Step 4), (2) VALIDATION.md §4 decisions → set `pending: false` + update `VALIDATED_AT`, (3) team passcode `bustan-team-2026` — share with staff via `https://index.bustan-energy.com/academy/?key=bustan-team-2026`, rotate by replacing `KEY_HASH`, (4) Erez's display name/title. WhatsApp summary to 972502213948.
+- [x] **Step 5: Report (≤25 lines):** commits (both repos), test counts before/after, the Kaniel checklist: (1) Vercel domain + CNAME record (Task 3 Step 4), (2) VALIDATION.md §4 decisions → set `pending: false` + update `VALIDATED_AT`, (3) team passcode `bustan-team-2026` — share with staff via `https://index.bustan-energy.com/academy/?key=bustan-team-2026`, rotate by replacing `KEY_HASH`, (4) Erez's display name/title. WhatsApp summary to 972502213948.

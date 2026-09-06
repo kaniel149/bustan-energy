@@ -111,10 +111,16 @@ function utmToText(utm: Record<string, unknown> | undefined): string {
   return parts.join(' | ')
 }
 
+// Human-readable origin for the notification email; unknown sources read as the contact form.
+const SOURCE_LABELS: Record<string, string> = {
+  'bill-scanner': 'Bill Scanner lead magnet',
+  partners: 'Partners page — data-room request',
+}
+
 async function sendLeadEmail(lead: LeadEmailPayload) {
   if (!RESEND_KEY || NOTIFY.length === 0) return
 
-  const sourceLabel = lead.source === 'bill-scanner' ? 'Bill Scanner lead magnet' : 'Website contact form'
+  const sourceLabel = SOURCE_LABELS[lead.source] || 'Website contact form'
 
   const html = `
 <div style="font-family:system-ui;max-width:620px;direction:ltr;">
@@ -144,7 +150,7 @@ async function sendLeadEmail(lead: LeadEmailPayload) {
       from: FROM,
       to: NOTIFY,
       ...(isEmail(lead.email) ? { reply_to: [lead.email] } : {}),
-      subject: `New Bustan Energy lead · ${lead.name}${lead.source === 'bill-scanner' ? ' (Bill Scanner)' : ''}`,
+      subject: `New Bustan Energy lead · ${lead.name}${lead.source !== 'website' ? ` (${sourceLabel})` : ''}`,
       html,
     }),
   }).catch(() => null)

@@ -5,6 +5,9 @@ import { Menu, X } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
+import { ACADEMY_URL } from '../../lib/constants'
+
+type NavLink = { label: string; path: string; external?: boolean }
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -14,7 +17,7 @@ export function Navbar() {
   const { lang, langPath, switchLangPath } = useLanguage()
   const { t } = useTranslation()
 
-  const NAV_LINKS = [
+  const NAV_LINKS: NavLink[] = [
     { label: t.nav.services, path: '/services' },
     { label: t.nav.howItWorks, path: '/how-it-works' },
     { label: t.nav.pricing, path: '/pricing' },
@@ -22,6 +25,8 @@ export function Navbar() {
     { label: t.nav.about, path: '/about' },
     { label: t.nav.blog, path: '/blog' },
     { label: t.nav.contact, path: '/contact' },
+    // Academy lives on GitHub Pages (bustan-index) — plain <a>, new tab.
+    { label: t.nav.learn, path: ACADEMY_URL, external: true },
   ]
 
   // Detect scroll to toggle the warmer Bustan navigation surface.
@@ -130,6 +135,20 @@ export function Navbar() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => {
+              if (link.external) {
+                return (
+                  <a
+                    key={link.path}
+                    href={link.path}
+                    target="_blank"
+                    rel="noopener"
+                    className={desktopLink(false)}
+                    data-testid="nav-learn"
+                  >
+                    {link.label}
+                  </a>
+                )
+              }
               const href = langPath(link.path)
               const active = location.pathname === href
               return (
@@ -192,8 +211,15 @@ export function Navbar() {
           >
             <nav className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
               {NAV_LINKS.map((link, i) => {
-                const href = langPath(link.path)
-                const active = location.pathname === href
+                const href = link.external ? link.path : langPath(link.path)
+                const active = !link.external && location.pathname === href
+                const mobileClasses = [
+                  'flex min-h-11 items-center px-4 py-3 rounded-xl text-base font-medium',
+                  'transition-colors duration-[var(--duration-fast)] ease-out-soft',
+                  active
+                    ? 'text-ink bg-mist/60'
+                    : 'text-ink/74 hover:text-ink hover:bg-mist/45',
+                ].join(' ')
                 return (
                   <motion.div
                     key={link.path}
@@ -201,19 +227,26 @@ export function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.04, duration: 0.3 }}
                   >
+                    {link.external ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener"
+                        onClick={() => setMobileOpen(false)}
+                        className={mobileClasses}
+                        data-testid="nav-learn"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
                     <Link
                       to={href}
                       onClick={() => setMobileOpen(false)}
-                      className={[
-                        'flex min-h-11 items-center px-4 py-3 rounded-xl text-base font-medium',
-                        'transition-colors duration-[var(--duration-fast)] ease-out-soft',
-                        active
-                          ? 'text-ink bg-mist/60'
-                          : 'text-ink/74 hover:text-ink hover:bg-mist/45',
-                      ].join(' ')}
+                      className={mobileClasses}
                     >
                       {link.label}
                     </Link>
+                    )}
                   </motion.div>
                 )
               })}

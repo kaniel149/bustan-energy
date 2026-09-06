@@ -41,3 +41,27 @@ test('admin-funnel rejects anonymous calls', async ({ request }) => {
     expect(r.status()).toBe(401)   // Vercel preview / prod
   }
 })
+
+test('partners page: facts settled (no review badge), deck iframe, data-room form', async ({ page }) => {
+  await page.goto('/partners')
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  // VALIDATION.md §4 closed 2026-09-04 → no pending facts → badge must not render
+  await expect(page.getByTestId('facts-review-badge')).toHaveCount(0)
+  await expect(page.locator('iframe[src="/bustan-financing-deck.html"]')).toBeVisible()
+  await expect(page.getByLabel(/full name|ชื่อ|שם/i)).toBeVisible()
+  await expect(page.getByRole('button', { name: /request access|ขอเข้าถึง|בקש/i })).toBeVisible()
+})
+
+test('about page carries the trust sections and the academy link', async ({ page }) => {
+  await page.goto('/about')
+  await expect(page.locator('#trust')).toBeVisible()
+  await expect(page.locator('#pea-process li')).toHaveCount(4)
+  await expect(page.getByRole('link', { name: /open the academy/i })).toHaveAttribute('href', /index\.bustan-energy\.com\/academy/)
+})
+
+test('Learn link points at the academy from every locale', async ({ page }) => {
+  for (const p of ['/', '/th', '/he']) {
+    await page.goto(p)
+    await expect(page.getByTestId('nav-learn').first()).toHaveAttribute('href', 'https://index.bustan-energy.com/academy/')
+  }
+})

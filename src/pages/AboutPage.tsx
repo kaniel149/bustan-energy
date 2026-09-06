@@ -6,6 +6,8 @@ import { useLanguage } from '../i18n/useLanguage'
 import { SEOHead } from '../components/seo/SEOHead'
 import { organizationSchema, breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
 import { SectionHeader } from '../components/ui/SectionHeader'
+import { Button } from '../components/ui/Button'
+import { ACADEMY_URL } from '../lib/constants'
 import {
   fadeUp,
   stagger,
@@ -18,6 +20,9 @@ import {
 } from './services/shared'
 
 const valueIcons = [Shield, Users, Eye, Lightbulb]
+
+// Real PEA application package (bustan-index, GitHub Pages) — the licensing proof link.
+const PEA_DOCS_URL = 'https://index.bustan-energy.com/pea-docs/'
 
 // ─── Animated counter (HomePage StatsBar pattern) ────────────────────────────
 // Eased rAF count-up, gated on a `started` flag so the trigger logic lives in
@@ -260,6 +265,59 @@ export default function AboutPage() {
               )
             })}
           </motion.div>
+        </div>
+      </section>
+
+      <Divider />
+
+      {/* Trust — team + licensing */}
+      <section id="trust" className="py-20">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12">
+          <div>
+            <SectionHeader title={p.trust.team.title} align="left" className="mb-6" />
+            <ul className="space-y-3">
+              {p.trust.team.members.map((m) => (
+                <li key={m.name} className="rounded-card border border-grove/14 bg-shell/76 p-4">
+                  <b>{m.name}</b>
+                  <span className="block text-sm text-ink/60">{m.role}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <SectionHeader title={p.trust.licensing.title} align="left" className="mb-6" />
+            <p className="text-ink/74 leading-relaxed">{p.trust.licensing.body}</p>
+            <a href={PEA_DOCS_URL} target="_blank" rel="noopener" className="mt-3 inline-block text-ocean hover:underline">
+              {p.trust.licensing.link} ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* PEA process timeline */}
+      <section id="pea-process" className="py-20 bg-mist/30">
+        <div className="max-w-7xl mx-auto px-6">
+          <SectionHeader title={p.trust.pea.title} className="mb-10" />
+          <ol className="grid md:grid-cols-4 gap-6">
+            {p.trust.pea.steps.map((s, i) => (
+              <li key={s.title} className="rounded-card border border-grove/14 bg-shell/76 p-6">
+                <div className="font-serif text-3xl text-gold mb-2">{i + 1}</div>
+                <h3 className="font-semibold mb-1">{s.title}</h3>
+                <p className="text-sm text-ink/60">{s.body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Academy */}
+      <section className="py-12">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <h2 className="font-serif text-display-sm mb-3">{p.trust.academy.title}</h2>
+          <p className="text-ink/70 mb-5">{p.trust.academy.body}</p>
+          <Button variant="primary" size="md" href={ACADEMY_URL} target="_blank" rel="noopener">
+            {p.trust.academy.cta}
+          </Button>
         </div>
       </section>
 

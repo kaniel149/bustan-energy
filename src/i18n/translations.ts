@@ -19,6 +19,7 @@ const en = {
     blog: 'Blog',
     contact: 'Contact',
     getQuote: 'Get Quote',
+    learn: 'Learn',
     switchLang: 'ภาษาไทย',
   },
 
@@ -47,6 +48,7 @@ const en = {
       subtitle: 'Solar design and installation for homes, villas, resorts, and businesses on Ko Phangan. We model your bill, survey the site, coordinate PEA paperwork, and support the system after handover.',
       ctaPrimary: 'Get Free Quote',
       ctaSecondary: 'WhatsApp Us',
+      ctaLearn: 'Free solar academy →',
       trustLine: 'PEA documentation support · Tier-1 equipment options · Monitoring · O&M',
     },
     gateway: {
@@ -519,6 +521,34 @@ const en = {
         "Schedule a visit to our office in Thong Sala — we'd love to meet you and talk solar over coffee.",
       button: 'Schedule a Visit',
     },
+    trust: {
+      team: {
+        title: 'Who you work with',
+        members: [
+          { name: 'Kaniel Tordjman', role: 'Founder · engineering, software, proposals' },
+          { name: 'Erez', role: 'Operations & contracts, Ko Phangan' },
+        ],
+      },
+      licensing: {
+        title: 'Licensing & grid connection',
+        body: 'Grid-tied systems in Thailand are licensed through the Provincial Electricity Authority (PEA). We prepare the full application — single-line diagram, panel layout, PEA summary — and manage the inspection and meter change.',
+        link: 'See a real PEA application package',
+      },
+      pea: {
+        title: 'From signature to grid in 6–8 weeks',
+        steps: [
+          { title: 'Survey & design', body: 'Site measurement, electrical assessment, system design (week 1)' },
+          { title: 'PEA application & procurement', body: 'SLD, layout and summary filed; equipment ordered on the 40% deposit (weeks 1–3)' },
+          { title: 'Installation', body: 'Mounting, panels, inverters, wiring (weeks 4–6)' },
+          { title: 'Inspection & go-live', body: 'PEA inspection, grid connection, monitoring handover; 20% on commissioning (weeks 6–8)' },
+        ],
+      },
+      academy: {
+        title: 'Learn how it works',
+        body: 'Our free academy explains solar, batteries and EV charging for Thailand — in English, Thai and Hebrew.',
+        cta: 'Open the academy',
+      },
+    },
   },
 
   blog: {
@@ -712,7 +742,57 @@ const en = {
     },
   },
 
+  partners: {
+    hero: {
+      tag: 'Partners & Investors',
+      title: 'Own the sun on Ko Phangan',
+      subtitle: 'Island electricity costs ฿4.5–4.9/kWh at the margin (incl. VAT) and rises yearly. Bustan Energy builds and operates rooftop solar under EPC and PPA — and opens both to partners: lenders, PPA capital, and EPC/installer partners.',
+    },
+    why: [
+      { title: 'A scanned pipeline, not a wish list', body: 'Every roof on the island has been mapped and graded; candidates flow through owner research, proposals and e-signature in one system.' },
+      { title: 'Two revenue models', body: 'EPC (client owns the system) for cash flow; PPA (we own it, the client buys power) for long-dated yield.' },
+      { title: 'PEA-ready delivery', body: 'Single-line diagrams, layouts and application packages are produced in-house; grid connection is part of the scope.' },
+    ],
+    facts: {
+      title: 'Key figures',
+      badge: 'Figures under review',
+      badgeHint: 'An input differs between the financing deck and the business-plan workbook and awaits a final decision.',
+      validated: 'Figures as of',
+      labels: {
+        peaTariff: 'PEA marginal rate (ex-VAT)',
+        ppaTariff: 'PPA tariff (15 yr)',
+        installedCostPerKwp: 'Installed cost (10 kW)',
+        salePricePerKwp: 'EPC sale price (10 kW)',
+        sunHours: 'Peak sun hours',
+        yieldKwhPerKwp: 'Specific yield',
+        netBillingExport: 'Net-billing export (residential)',
+        taxDeduction: 'Home tax deduction (≤10 kWp)',
+        loanRate: 'Solar loan rate, yrs 1–2 (GSB / TTB)',
+        loanTermYears: 'Loan term (GSB)',
+      },
+    },
+    deck: { title: 'Financing deep-dive', open: 'Open the deck full screen' },
+    form: {
+      title: 'Request the data room',
+      subtitle: 'Business plan workbook, scan inventory, proposal pipeline and PPA model. We reply within 2 business days.',
+      name: 'Full name',
+      email: 'Work email',
+      company: 'Company / fund',
+      role: 'I am a…',
+      roles: { investor: 'Investor / PPA capital', lender: 'Bank / lender', epc: 'EPC or installer partner', other: 'Other' },
+      message: 'What are you evaluating?',
+      submit: 'Request access',
+      sent: 'Thanks — we will send the data-room link by email.',
+      error: 'Could not send right now. Please reach us on WhatsApp.',
+    },
+  },
+
   seo: {
+    partners: {
+      title: 'Partners & Investors — Solar EPC/PPA on Ko Phangan',
+      description:
+        'Invest in or partner with Bustan Energy: island-scale solar pipeline, EPC and PPA models, GSB/TTB solar financing, PEA-ready delivery. Request the data room.',
+    },
     home: {
       title: "Bustan Energy — Solar EPC & PPA on Ko Phangan | Solar Panels Thailand",
       description:
@@ -854,6 +934,7 @@ const th = {
     blog: 'บทความ',
     contact: 'ติดต่อ',
     getQuote: 'ขอใบเสนอราคา',
+    learn: 'เรียนรู้',
     switchLang: 'English',
   },
 
@@ -883,6 +964,7 @@ const th = {
       subtitle: 'ออกแบบและติดตั้งโซลาร์เซลล์สำหรับบ้าน วิลล่า รีสอร์ท และธุรกิจบนเกาะพะงัน พร้อมวิเคราะห์บิล สำรวจหน้างาน และช่วยประสานเอกสาร กฟภ.',
       ctaPrimary: 'ขอใบเสนอราคาฟรี',
       ctaSecondary: 'แชท WhatsApp',
+      ctaLearn: 'อคาเดมีโซลาร์ฟรี →',
       trustLine: 'ช่วยเตรียมเอกสาร กฟภ. · อุปกรณ์ Tier-1 · Monitoring · O&M',
     },
     gateway: {
@@ -1392,6 +1474,16 @@ const th = {
         'นัดหมายเยี่ยมชมสำนักงานของเราที่ทองสาลา เราอยากพบคุณและพูดคุยเรื่องโซลาร์เซลล์สบายๆ',
       button: 'นัดหมายเยี่ยมชม',
     },
+    trust: {
+      team: { title: 'ทีมที่คุณจะได้ร่วมงานด้วย' },
+      licensing: { title: 'ใบอนุญาตและการเชื่อมต่อกริด' },
+      pea: { title: 'จากเซ็นสัญญาถึงเชื่อมต่อกริดใน 6–8 สัปดาห์' },
+      academy: {
+        title: 'เรียนรู้ว่าระบบทำงานอย่างไร',
+        body: 'อคาเดมีฟรีของเราอธิบายเรื่องโซลาร์ แบตเตอรี่ และการชาร์จ EV สำหรับประเทศไทย — ภาษาอังกฤษ ไทย และฮีบรู',
+        cta: 'เปิดอคาเดมี',
+      },
+    },
   },
 
   blog: {
@@ -1585,7 +1677,27 @@ const th = {
     },
   },
 
+  partners: {
+    hero: { tag: 'พันธมิตรและนักลงทุน', title: 'ร่วมเป็นเจ้าของพลังงานแสงอาทิตย์บนเกาะพะงัน' },
+    facts: { title: 'ตัวเลขสำคัญ', badge: 'ตัวเลขอยู่ระหว่างตรวจสอบ' },
+    deck: { title: 'เจาะลึกการเงิน', open: 'เปิดเต็มจอ' },
+    form: {
+      title: 'ขอเข้าถึงข้อมูล',
+      name: 'ชื่อ-นามสกุล',
+      email: 'อีเมล',
+      company: 'บริษัท / กองทุน',
+      submit: 'ขอเข้าถึง',
+      sent: 'ขอบคุณ — เราจะส่งลิงก์ทางอีเมล',
+      error: 'ส่งไม่ได้ในขณะนี้ กรุณาติดต่อทาง WhatsApp',
+    },
+  },
+
   seo: {
+    partners: {
+      title: 'พันธมิตรและนักลงทุน — โซลาร์ EPC/PPA เกาะพะงัน',
+      description:
+        'ร่วมลงทุนหรือเป็นพันธมิตรกับ Bustan Energy: โครงการโซลาร์ทั่วเกาะ โมเดล EPC และ PPA สินเชื่อโซลาร์ ธ.ออมสิน/ttb ขอเข้าถึง data room',
+    },
     home: {
       title: 'Bustan Energy — ติดตั้งโซลาร์เซลล์เกาะพะงัน อันดับ 1 | แผงโซลาร์ สุราษฎร์ธานี',
       description:
@@ -1687,7 +1799,45 @@ const he = {
     blog: 'בלוג',
     contact: 'צור קשר',
     getQuote: 'קבל הצעה',
+    learn: 'אקדמיה',
     switchLang: 'English',
+  },
+  home: {
+    hero: {
+      ctaLearn: 'אקדמיה סולארית חינם →',
+    },
+  },
+  partners: {
+    hero: { tag: 'שותפים ומשקיעים', title: 'להיות הבעלים של השמש בקו פנגן' },
+    facts: { title: 'מספרים מרכזיים', badge: 'הנתונים בבדיקה' },
+    deck: { title: 'מצגת מימון', open: 'פתח במסך מלא' },
+    form: {
+      title: 'בקשת גישה ל-Data Room',
+      name: 'שם מלא',
+      email: 'אימייל',
+      company: 'חברה / קרן',
+      submit: 'בקש גישה',
+      sent: 'תודה — נשלח קישור במייל',
+      error: 'לא ניתן לשלוח כרגע. פנו אלינו בוואטסאפ',
+    },
+  },
+  seo: {
+    partners: {
+      title: 'שותפים ומשקיעים — סולארי EPC/PPA בקו פנגן',
+      description: 'השקעה או שותפות עם Bustan Energy: צבר גגות סרוק, מודלים EPC ו-PPA, מימון בנקאי (GSB/TTB). בקשו גישה ל-Data Room.',
+    },
+  },
+  about: {
+    trust: {
+      team: { title: 'עם מי עובדים' },
+      licensing: { title: 'רישוי וחיבור לרשת' },
+      pea: { title: 'מחתימה לחיבור לרשת ב-6–8 שבועות' },
+      academy: {
+        title: 'איך זה עובד',
+        body: 'האקדמיה החינמית שלנו מסבירה סולארי, סוללות וטעינת רכב חשמלי בתאילנד — באנגלית, תאית ועברית.',
+        cta: 'לאקדמיה',
+      },
+    },
   },
   crm: {
     switchLang: 'English',

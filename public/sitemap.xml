@@ -183,6 +183,23 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <!-- Partners & Investors -->
+  <url>
+    <loc>https://bustan-energy.com/partners</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/partners" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/partners" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/partners" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/th/partners</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/partners" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/partners" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/partners" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
   <!-- Blog -->
   <url>
