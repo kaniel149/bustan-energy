@@ -117,16 +117,18 @@ function loadOrder(count: number): number[] {
   return [...coarse, ...fine];
 }
 
-function useFrameSequence(type: HouseType, manifest: Manifest) {
+function useFrameSequence(type: HouseType, manifest: Manifest, manifestReady: boolean) {
   const cache = useRef<Partial<Record<string, (HTMLImageElement | undefined)[]>>>({});
   const [, bump] = useState(0); // re-render signal as frames decode
   const count = manifest[type];
   const key = `${type}-${manifest.ext}`;
 
   useEffect(() => {
+    if (!manifestReady) return;
     let cancelled = false;
     const store = (cache.current[key] ??= new Array(count));
     const queue = loadOrder(count).filter((i) => !store[i - 1]);
+    const pendingImages = new Set<HTMLImageElement>();
     let inFlight = 0;
     const CONCURRENCY = 8;
 
@@ -136,12 +138,14 @@ function useFrameSequence(type: HouseType, manifest: Manifest) {
         const i = queue.shift()!;
         inFlight++;
         const img = new Image();
+        pendingImages.add(img);
         img.src = framePath(type, i, manifest.ext);
         img
           .decode()
           .catch(() => undefined) // decode errors: keep going
           .finally(() => {
             inFlight--;
+            pendingImages.delete(img);
             if (!cancelled) {
               store[i - 1] = img;
               bump((n) => n + 1);
@@ -153,8 +157,11 @@ function useFrameSequence(type: HouseType, manifest: Manifest) {
     next();
     return () => {
       cancelled = true;
+      queue.length = 0;
+      pendingImages.forEach((img) => img.removeAttribute('src'));
+      pendingImages.clear();
     };
-  }, [key, type, count, manifest.ext]);
+  }, [key, type, count, manifest.ext, manifestReady]);
 
   const frames = cache.current[key] ?? [];
   const loadedCount = frames.filter(Boolean).length;
@@ -176,20 +183,28 @@ export default function SolarInstallationScroll() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeType, setActiveType] = useState<HouseType>('concrete');
   const [manifest, setManifest] = useState<Manifest>(LEGACY);
+  const [manifestReady, setManifestReady] = useState(false);
   const [beat, setBeat] = useState(0);
   const drawnRef = useRef(-1);
   const everDrawnRef = useRef(false);
   const reducedMotion = useReducedMotion();
 
-  // Smooth frame manifest (falls back to legacy 63-frame JPEGs)
+  // Resolve the frame format before loading a sequence, so a successful smooth
+  // manifest never starts an unnecessary legacy JPEG download first.
   useEffect(() => {
-    fetch('/frames-smooth/manifest.json')
+    const controller = new AbortController();
+    fetch('/frames-smooth/manifest.json', { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : LEGACY))
-      .then((m: Manifest) => setManifest(m && m.ext ? m : LEGACY))
-      .catch(() => setManifest(LEGACY));
+      .catch(() => LEGACY)
+      .then((m: Manifest) => {
+        if (controller.signal.aborted) return;
+        setManifest(m && m.ext ? m : LEGACY);
+        setManifestReady(true);
+      });
+    return () => controller.abort();
   }, []);
 
-  const { frames, count, loadedCount } = useFrameSequence(activeType, manifest);
+  const { frames, count, loadedCount } = useFrameSequence(activeType, manifest, manifestReady);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -257,18 +272,6 @@ export default function SolarInstallationScroll() {
     const idx = Math.max(0, Math.min(Math.round(frameIndex.get()), count - 1));
     drawFrame(idx);
   }, [loadedCount, drawFrame, frameIndex, count]);
-
-  // Preload inactive types after the active one is fully decoded
-  useEffect(() => {
-    if (loadedCount < count) return;
-    HOUSE_TYPES.forEach((t) => {
-      if (t.id === activeType) return;
-      for (let i = 1; i <= manifest[t.id]; i++) {
-        const img = new Image();
-        img.src = framePath(t.id, i, manifest.ext);
-      }
-    });
-  }, [loadedCount, count, activeType, manifest]);
 
   const switching = loadedCount === 0;
   const active = useMemo(() => {

@@ -49,3 +49,4 @@ sales/proposals/
 # local-only asset dumps
 handoff/
 out/
+.env*

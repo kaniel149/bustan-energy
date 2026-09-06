@@ -14,6 +14,10 @@ initAnalytics()
 // Capture UTM params / click IDs / referrer (first-touch, localStorage)
 initAttribution()
 
+// Keep the HTML defaults for non-JS link scrapers. React 19 hoists route
+// metadata but does not replace static tags, so hand ownership to SEOHead.
+document.querySelectorAll('head [data-static-meta]').forEach((tag) => tag.remove())
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

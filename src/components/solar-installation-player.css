@@ -1,0 +1,148 @@
+.installation-player {
+  --player-grove: #24463e;
+  --player-ink: #27342f;
+  --player-muted: #64716a;
+  --player-line: #d8dcd2;
+  color: var(--player-ink);
+  background: #f8f7f0;
+  border: 1px solid var(--player-line);
+  margin: 0 auto;
+  max-width: 1380px;
+  padding: 32px;
+  text-align: start;
+  scroll-margin-top: 100px;
+}
+.installation-player button, .installation-player input { font: inherit; }
+.installation-player button { cursor: pointer; }
+.installation-player button:disabled { opacity: .38; cursor: default; }
+.installation-player :is(button, a, input):focus-visible { outline: 3px solid #a47125; outline-offset: 4px; }
+.installation-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.installation-player .installation-eyebrow { margin: 0 0 12px; font-size: 10px; font-weight: 700; letter-spacing: .16em; color: var(--player-grove); }
+.installation-player .installation-header h2 { font-family: var(--font-display, Georgia, serif); font-size: clamp(28px, 3vw, 43px); font-weight: 400; line-height: 1.12; letter-spacing: -.035em; margin: 0; }
+.installation-player .installation-intro { font-size: 13px; line-height: 1.7; color: var(--player-muted); margin: 12px 0 0; }
+.installation-header-actions { display: flex; gap: 10px; align-items: center; }
+.installation-duration-tag { display: inline-flex; align-items: center; gap: 8px; padding: 11px 12px; border: 1px solid var(--player-line); white-space: nowrap; font-size: 9px; letter-spacing: .09em; font-weight: 600; }
+.installation-fullscreen { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--player-line); background: transparent; color: var(--player-grove); }
+.installation-sequence, .installation-main { min-width: 0; }
+.installation-screen { position: relative; aspect-ratio: 16 / 9; overflow: hidden; isolation: isolate; background: #f0f1ef; }
+.installation-camera { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform; }
+.installation-film { display: block; width: 100%; height: 100%; object-fit: cover; }
+.installation-screen-label, .installation-view-number { position: absolute; top: 24px; z-index: 1; font-size: 10px; font-weight: 600; }
+.installation-screen-label { inset-inline-start: 24px; display: flex; gap: 7px; align-items: center; background: #f8f7f0de; padding: 7px 10px; }
+.installation-live-dot { width: 5px; height: 5px; background: var(--player-grove); border-radius: 50%; }
+.installation-view-number { inset-inline-end: 28px; top: 32px; font-family: monospace; }
+.installation-view-number span { color: var(--player-muted); }
+.installation-corner { position: absolute; width: 19px; height: 19px; pointer-events: none; opacity: .3; }
+.installation-corner-tl { left: 12px; top: 12px; border-top: 1px solid var(--player-grove); border-left: 1px solid var(--player-grove); }
+.installation-corner-br { right: 12px; bottom: 12px; border-bottom: 1px solid var(--player-grove); border-right: 1px solid var(--player-grove); }
+.installation-shot-label { position: absolute; bottom: 24px; inset-inline-start: 25px; display: flex; align-items: center; gap: 10px; padding: 7px 10px; background: #f8f7f0e6; color: var(--player-grove); font-size: 10px; pointer-events: none; }
+.installation-shot-label > span:first-child { font: 10px monospace; border-inline-end: 1px solid #aab6a9; padding-inline-end: 9px; }
+.installation-start { position: absolute; bottom: 24px; inset-inline-end: 24px; display: flex; align-items: center; gap: 12px; background: #24463e; color: #f8f7f0; border: 0; padding: 16px 20px; font-size: 12px !important; box-shadow: 0 6px 30px #24463e24; }
+.installation-start svg { color: #e5be69; }
+.installation-start > span:last-child { font: 10px monospace; color: #c6d2c4; padding-inline-start: 10px; border-inline-start: 1px solid #667e6f; }
+.installation-start:hover { background: #34594a; }
+.installation-loading { position: absolute; bottom: 20px; inset-inline: 24px; background: #f8f7f0f2; padding: 12px 16px; font-size: 11px; display: flex; align-items: center; gap: 12px; }
+.installation-loading-line { width: 32px; height: 2px; background: #b0bdac; overflow: hidden; position: relative; }
+.installation-loading-line::after { content: ''; position: absolute; inset: 0; background: var(--player-grove); animation: installation-loading 1.2s ease-in-out infinite; }
+@keyframes installation-loading { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.installation-controls { display: flex; align-items: center; gap: 16px; background: var(--player-grove); color: #f8f7f0; padding: 12px 18px; }
+.installation-controls button { display: grid; place-items: center; flex: 0 0 auto; border: 0; }
+.installation-play { width: 40px; height: 40px; border-radius: 50%; background: #e5be69; color: #24463e; }
+.installation-play:hover:enabled { background: #f4d58f; }
+.installation-time { font-family: monospace; font-size: 11px; font-variant-numeric: tabular-nums; }
+.installation-replay { background: transparent; color: inherit; width: 36px; height: 40px; }
+.installation-scrubber { min-width: 0; flex: 1; position: relative; height: 28px; }
+.installation-range { --progress: 0%; display: block; width: 100%; min-width: 0; margin: 0; height: 28px; appearance: none; -webkit-appearance: none; background: transparent; cursor: pointer; }
+.installation-range::-webkit-slider-runnable-track { height: 3px; background: linear-gradient(to right, #e5be69 var(--progress), #ffffff38 var(--progress)); border-radius: 2px; }
+.installation-range::-moz-range-track { height: 3px; background: #ffffff38; border-radius: 2px; }
+.installation-range::-moz-range-progress { height: 3px; background: #e5be69; }
+.installation-range::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; background: #e5be69; height: 12px; width: 12px; margin-top: -4.5px; border: 2px solid #24463e; border-radius: 50%; box-shadow: 0 0 0 1px #e5be69; }
+.installation-range::-moz-range-thumb { background: #e5be69; height: 10px; width: 10px; border: 2px solid #24463e; border-radius: 50%; }
+.installation-timeline-ticks { position: absolute; inset: 0 6px; pointer-events: none; }
+.installation-timeline-ticks i { position: absolute; top: 20px; width: 1px; height: 4px; background: #a9b5a060; }
+.installation-player .installation-image-note { font-size: 9px; color: var(--player-muted); margin: 10px 0 0; line-height: 1.6; }
+.installation-player .installation-motion-note, .installation-player .installation-error { font-size: 12px; line-height: 1.6; margin: 10px 0; }
+.installation-error button { background: transparent; border: 1px solid var(--player-line); color: var(--player-grove); padding: 8px 14px; margin-top: 8px; }
+.installation-story { margin-top: 22px; display: grid; grid-template-columns: 1fr auto; column-gap: 24px; }
+.installation-chapters { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--player-line); }
+.installation-chapter { min-width: 0; border: 0; border-bottom: 1px solid var(--player-line); background: transparent; display: flex; align-items: center; padding: 16px 10px; gap: 10px; text-align: start; color: var(--player-muted); min-height: 54px; position: relative; }
+.installation-chapter::after { content: ''; position: absolute; bottom: -1px; inset-inline: 0; height: 2px; background: transparent; }
+.installation-chapter span:nth-child(2) { font-size: 12px; }
+.installation-chapter-number { display: grid; place-items: center; width: 23px; height: 23px; font: 10px monospace; flex-shrink: 0; }
+.installation-chapter-time { font: 9px monospace; margin-inline-start: auto; opacity: .55; }
+.installation-chapter:hover:enabled { color: var(--player-grove); background: #24463e06; }
+.installation-chapter.is-current { background: #e9ecdf; color: var(--player-grove); font-weight: 600; }
+.installation-chapter.is-current::after { background: #a3823e; }
+.installation-caption { margin-top: 24px; min-height: 95px; }
+.installation-caption > div { display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; }
+.installation-player .installation-caption h3 { font-family: var(--font-display, Georgia, serif); font-size: clamp(23px, 2.7vw, 34px); font-weight: 400; line-height: 1.2; margin: 0; letter-spacing: -.025em; }
+.installation-player .installation-caption p { font-size: 13px; color: var(--player-muted); line-height: 1.8; margin: 0; max-width: 440px; }
+.installation-step-controls { display: flex; align-items: flex-start; margin-top: 24px; gap: 8px; }
+.installation-step-controls button { display: grid; place-items: center; width: 36px; height: 36px; background: transparent; border: 1px solid var(--player-line); color: var(--player-grove); }
+.installation-cta { display: inline-flex; grid-column: 1 / -1; justify-self: end; align-items: center; gap: 24px; font-size: 12px; color: var(--player-grove); text-decoration: none; padding-top: 8px; }
+.installation-cta:hover { text-decoration: underline; }
+.installation-properties { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--player-line); }
+.installation-player .installation-properties > p { font-size: 10px; color: var(--player-muted); margin: 0 0 12px; font-weight: 600; }
+.installation-property-list { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.installation-property { min-width: 0; position: relative; text-align: start; border: 1px solid transparent; background: transparent; padding: 4px 4px 8px; color: var(--player-muted); }
+.installation-property img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; opacity: .7; }
+.installation-property > span { display: block; padding-inline: 4px; margin-top: 7px; font-size: 10px; line-height: 1.5; }
+.installation-property > svg { position: absolute; top: 9px; inset-inline-end: 9px; background: var(--player-grove); color: #fff; width: 19px; height: 19px; padding: 3px; }
+.installation-property.is-selected { border-color: var(--player-grove); color: var(--player-grove); background: #eef0e5; }
+.installation-property.is-selected img, .installation-property:hover img { opacity: 1; }
+[dir="rtl"] .installation-step-controls svg, [dir="rtl"] .installation-cta svg { transform: rotate(180deg); }
+[dir="rtl"] .installation-player :is(.installation-header h2, .installation-caption h3) { font-family: inherit; font-weight: 500; letter-spacing: -.03em; }
+#installation-walkthrough { scroll-margin-top: 96px; padding-inline: 24px; }
+.installation-player:fullscreen { overflow-y: auto; max-width: none; width: 100vw; height: 100dvh; border: 0; padding: 24px max(24px, calc((100vw - 1420px) / 2)); }
+.installation-player:fullscreen .installation-header { margin-bottom: 20px; }
+.installation-player:fullscreen .installation-intro, .installation-player:fullscreen .installation-properties { display: none; }
+.installation-player:fullscreen .installation-main { max-width: min(100%, calc((100dvh - 270px) * 16 / 9)); margin-inline: auto; }
+.installation-player:fullscreen .installation-story { max-width: 1200px; margin-inline: auto; }
+@media (max-width: 1000px) {
+  .installation-player { padding: 24px; }
+  .installation-duration-tag { display: none; }
+  .installation-chapter-time { display: none; }
+  .installation-property-list { gap: 6px; }
+  .installation-caption > div { grid-template-columns: .9fr 1.1fr; gap: 20px; }
+}
+@media (max-width: 760px) {
+  #installation-walkthrough { padding-inline: 10px; }
+  .installation-player { padding: 20px 14px; }
+  .installation-header { margin-bottom: 20px; gap: 12px; }
+  .installation-player .installation-header h2 { font-size: 27px; }
+  .installation-player .installation-intro { font-size: 12px; }
+  .installation-player .installation-eyebrow { font-size: 9px; letter-spacing: .1em; }
+  .installation-fullscreen { width: 30px; height: 30px; }
+  .installation-main { margin-inline: -14px; }
+  .installation-screen-label { font-size: 8px; top: 12px; inset-inline-start: 12px; padding: 5px 7px; }
+  .installation-view-number { top: 19px; inset-inline-end: 15px; font-size: 8px; }
+  .installation-shot-label { bottom: 12px; inset-inline-start: 12px; padding: 5px 7px; font-size: 8px; gap: 7px; }
+  .installation-shot-label > span:first-child { font-size: 8px; padding-inline-end: 7px; }
+  .installation-start { padding: 10px 12px; inset-inline-end: 12px; bottom: 12px; gap: 8px; font-size: 10px !important; }
+  .installation-start > span:last-child { display: none; }
+  .installation-start svg { width: 14px; height: 14px; }
+  .installation-corner { display: none; }
+  .installation-controls { gap: 10px; padding: 10px 14px; }
+  .installation-play { width: 36px; height: 36px; }
+  .installation-replay { width: 25px; }
+  .installation-story { margin-top: 18px; column-gap: 14px; }
+  .installation-chapter { flex-direction: column; justify-content: center; gap: 5px; padding: 9px 2px; }
+  .installation-chapter span:nth-child(2) { font-size: 9px; text-align: center; line-height: 1.4; }
+  .installation-caption { margin-top: 18px; min-height: 133px; }
+  .installation-caption > div { display: block; }
+  .installation-player .installation-caption h3 { font-size: 25px; margin-bottom: 10px; }
+  .installation-player .installation-caption p { font-size: 12px; line-height: 1.7; }
+  .installation-step-controls { margin-top: 18px; flex-direction: column; gap: 8px; }
+  .installation-step-controls button { width: 32px; height: 32px; }
+  .installation-cta { font-size: 11px; }
+  .installation-properties { margin-top: 20px; padding-top: 16px; }
+  .installation-property-list { display: flex; overflow-x: auto; padding: 1px 1px 8px; gap: 8px; scroll-snap-type: x proximity; }
+  .installation-property { flex: 0 0 112px; scroll-snap-align: start; }
+  .installation-player .installation-image-note { font-size: 8px; padding-inline: 14px; }
+  .installation-loading { inset-inline: 12px; bottom: 12px; padding: 9px 12px; font-size: 10px; }
+  .installation-player:fullscreen { padding: 16px; }
+  .installation-player:fullscreen .installation-main { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .installation-player *, .installation-player *::before, .installation-player *::after { transition: none !important; animation: none !important; }
+}

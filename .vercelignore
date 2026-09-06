@@ -1,0 +1,25 @@
+# Deployment inputs only. Preserve every existing public URL and API dependency.
+/.git
+/.vercel/
+/node_modules/
+/dist/
+/dist-ssr/
+/.env*
+/.mcp.json
+/.claude/
+/.github/
+/.code-review-graph/
+/assets/exploded-views/
+/_retired/
+/docs/
+/drone-imagery/
+/scripts/
+/tests/
+/test-results/
+/playwright-report/
+/out/
+/handoff/
+/data/
+/content/
+/workers/
+/supabase/

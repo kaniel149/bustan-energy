@@ -5,10 +5,10 @@ import { useTranslation } from '../../i18n/useTranslation'
 
 // Shared link treatment — quiet ink that warms to ocean on hover.
 const footerLink =
-  'text-sm text-ink/64 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft'
+  'inline-block py-1 text-sm text-grove/75 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean focus-visible:ring-offset-2'
 
 const iconBox =
-  'flex h-11 w-11 items-center justify-center rounded-xl bg-mist/40 border border-grove/14 text-ink/55 hover:text-ocean hover:border-ocean/30 hover:bg-mist/60 transition-colors duration-[var(--duration-fast)] ease-out-soft'
+  'flex h-11 w-11 items-center justify-center rounded-sm bg-transparent border border-grove/20 text-grove/75 hover:text-ocean hover:border-ocean/30 hover:bg-mist/60 transition-colors duration-[var(--duration-fast)] ease-out-soft'
 
 export function Footer() {
   const { langPath, lang } = useLanguage()
@@ -22,7 +22,7 @@ export function Footer() {
     { label: t.nav.about, path: '/about' },
     { label: t.nav.blog, path: '/blog' },
     { label: t.nav.contact, path: '/contact' },
-    { label: lang === 'th' ? 'เครื่องมือโซลาร์' : 'Solar Tools', path: '/tools' },
+    { label: lang === 'th' ? 'เครื่องมือโซลาร์' : lang === 'he' ? 'כלים סולאריים' : 'Solar Tools', path: '/tools' },
   ]
 
   const SERVICES = [
@@ -34,37 +34,21 @@ export function Footer() {
   ]
 
   return (
-    <footer className="bg-shell border-t border-grove/14">
+    <footer className="bg-[var(--bustan-paper)] border-t border-grove/20">
       {/* Main columns */}
-      <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+      <div className="max-w-7xl mx-auto px-5 py-16 sm:px-8 md:py-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1.1fr] gap-10 lg:gap-8">
 
           {/* Col 1: Brand */}
           <div className="flex flex-col gap-5">
             {/* Logo */}
-            <Link to={langPath('/')} className="inline-flex items-center gap-2 group w-fit">
+            <Link to={langPath('/')} className="inline-flex w-fit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean focus-visible:ring-offset-4">
               <img
-                src="/assets/logo/bustan-energy.svg"
+                src="/bustan/bustan-energy-logo.png"
                 alt="Bustan Energy"
-                className="h-8 w-auto"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement
-                  target.style.display = 'none'
-                  const sibling = target.nextElementSibling as HTMLElement | null
-                  if (sibling) sibling.style.display = 'flex'
-                }}
+                className="h-14 w-[172px] object-contain object-left rtl:object-right"
+                loading="lazy"
               />
-              <span
-                className="hidden items-center gap-1"
-                style={{ display: 'none' }}
-              >
-                <span className="font-serif text-xl text-[var(--bustan-grove)]">
-                  Bustan
-                </span>
-                <span className="font-sans text-sm font-medium text-ink/70 tracking-wide">
-                  Energy
-                </span>
-              </span>
             </Link>
 
             {/* Serif brand line */}
@@ -104,10 +88,10 @@ export function Footer() {
 
           {/* Col 2: Quick Links */}
           <div className="flex flex-col gap-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ink/45">
+            <p className="text-xs font-semibold uppercase tracking-widest text-grove/75">
               {t.footer.quickLinks}
             </p>
-            <ul className="flex flex-col gap-2.5">
+            <ul className="flex flex-col gap-1.5">
               {QUICK_LINKS.map((link) => (
                 <li key={link.path}>
                   <Link to={langPath(link.path)} className={footerLink}>
@@ -120,10 +104,10 @@ export function Footer() {
 
           {/* Col 3: Services */}
           <div className="flex flex-col gap-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ink/45">
+            <p className="text-xs font-semibold uppercase tracking-widest text-grove/75">
               {t.footer.servicesTitle}
             </p>
-            <ul className="flex flex-col gap-2.5">
+            <ul className="flex flex-col gap-1.5">
               {SERVICES.map((svc) => (
                 <li key={svc.path}>
                   <Link to={langPath(svc.path)} className={footerLink}>
@@ -136,7 +120,7 @@ export function Footer() {
 
           {/* Col 4: Contact */}
           <div className="flex flex-col gap-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ink/45">
+            <p className="text-xs font-semibold uppercase tracking-widest text-grove/75">
               {t.footer.contactTitle}
             </p>
             <ul className="flex flex-col gap-4">
@@ -168,11 +152,11 @@ export function Footer() {
                   className={`group flex items-start gap-3 ${footerLink}`}
                 >
                   <Mail size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
-                  <span>Contact Bustan Energy</span>
+                  <span>{t.nav.contact}</span>
                 </Link>
               </li>
               <li>
-                <div className="flex items-start gap-3 text-sm text-ink/64">
+                <div className="flex items-start gap-3 text-sm text-grove/75">
                   <MapPin size={15} className="mt-0.5 shrink-0 text-ocean/60" />
                   <span>
                     Ko Phangan<br />
@@ -187,22 +171,22 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-grove/14">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-ink/45 text-xs">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-grove/75 text-xs">
             {t.footer.copyright}
           </p>
           <div className="flex items-center gap-5">
             <Link
               to={langPath('/privacy')}
-              className="text-xs text-ink/45 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
+              className="text-xs text-grove/75 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
             >
-              Privacy Policy
+              {lang === 'he' ? 'מדיניות פרטיות' : lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 'Privacy Policy'}
             </Link>
             <Link
               to={langPath('/terms')}
-              className="text-xs text-ink/45 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
+              className="text-xs text-grove/75 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
             >
-              Terms of Service
+              {lang === 'he' ? 'תנאי שימוש' : lang === 'th' ? 'ข้อกำหนดการใช้งาน' : 'Terms of Service'}
             </Link>
           </div>
         </div>

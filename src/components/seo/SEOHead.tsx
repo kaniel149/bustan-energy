@@ -14,6 +14,8 @@ interface SEOHeadProps {
   path: string
   /** Active language of this page (he → English meta; not a public SEO locale) */
   lang: Lang
+  /** Enable a self-canonical Hebrew URL for pages with complete Hebrew content. */
+  localizedHebrew?: boolean
   /**
    * Additional JSON-LD schema objects to inject alongside the always-present
    * LocalBusiness schema.  Pass a single object or an array.
@@ -48,19 +50,20 @@ export function SEOHead({
   description,
   path,
   lang,
+  localizedHebrew = false,
   schema,
   ogImage,
   isArticle = false,
   robots = 'index, follow',
 }: SEOHeadProps) {
   // Canonical is the language-specific URL for this render
-  const canonicalUrl = lang === 'th' ? `${BASE_URL}/th${path}` : `${BASE_URL}${path}`
+  const canonicalUrl = lang === 'th' ? `${BASE_URL}/th${path}` : lang === 'he' && localizedHebrew ? `${BASE_URL}/he${path}` : `${BASE_URL}${path}`
   const enUrl = `${BASE_URL}${path}`
   const thUrl = `${BASE_URL}/th${path}`
 
   const pageTitle = `${title} | Bustan Energy`
   const ogImageUrl = ogImage ?? DEFAULT_OG_IMAGE
-  const ogLocale = lang === 'th' ? 'th_TH' : 'en_US'
+  const ogLocale = lang === 'th' ? 'th_TH' : lang === 'he' && localizedHebrew ? 'he_IL' : 'en_US'
   const ogType = isArticle ? 'article' : 'website'
 
   // Always inject LocalBusiness; merge with any page-specific schemas
@@ -79,7 +82,7 @@ export function SEOHead({
   return (
     <Helmet>
       {/* Document language */}
-      <html lang={lang === 'th' ? 'th' : 'en'} />
+      <html lang={lang} dir={lang === 'he' ? 'rtl' : 'ltr'} />
 
       {/* Core meta */}
       <title>{pageTitle}</title>
@@ -90,6 +93,7 @@ export function SEOHead({
       <link rel="canonical" href={canonicalUrl} />
       <link rel="alternate" hrefLang="en" href={enUrl} />
       <link rel="alternate" hrefLang="th" href={thUrl} />
+      {localizedHebrew && <link rel="alternate" hrefLang="he" href={`${BASE_URL}/he${path}`} />}
       <link rel="alternate" hrefLang="x-default" href={enUrl} />
 
       {/* Open Graph */}

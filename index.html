@@ -4,24 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bustan Energy — Solar Fieldcraft for Island Properties</title>
-    <meta name="description" content="Bustan Energy designs, installs, and maintains solar systems for island homes, resorts, and commercial properties in Thailand." />
-    <link rel="canonical" href="https://bustan-energy.com/" />
+    <title data-static-meta>Solar &amp; Battery Systems for Koh Phangan Properties | Bustan Energy</title>
+    <meta data-static-meta name="description" content="Solar and battery planning, installation and ongoing care for Koh Phangan homes, villas, resorts and businesses. Start with your electricity bill and a property review." />
+    <link data-static-meta rel="canonical" href="https://bustan-energy.com/" />
     <meta name="theme-color" content="#1a3c34" />
     <!-- Static social tags — what link scrapers (LINE/Facebook/WhatsApp) see without JS.
-         react-helmet refines these per-route on client render. -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Bustan Energy" />
-    <meta property="og:title" content="Bustan Energy — Solar EPC, PPA & Rooftop Solar in Thailand" />
-    <meta property="og:description" content="Solar for factories, resorts, villas and island properties in Thailand. EPC, PPA, PEA coordination, battery backup and O&M. Send your bill for a free savings estimate." />
-    <meta property="og:url" content="https://bustan-energy.com/" />
-    <meta property="og:image" content="https://bustan-energy.com/assets/images/strategy-01-aerial.jpg" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:locale:alternate" content="th_TH" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Bustan Energy — Solar EPC, PPA & Rooftop Solar in Thailand" />
-    <meta name="twitter:description" content="Solar for factories, resorts, villas and island properties in Thailand. Free bill review and savings estimate." />
-    <meta name="twitter:image" content="https://bustan-energy.com/assets/images/strategy-01-aerial.jpg" />
+         main.tsx hands these defaults to SEOHead when the app starts. -->
+    <meta data-static-meta property="og:type" content="website" />
+    <meta data-static-meta property="og:site_name" content="Bustan Energy" />
+    <meta data-static-meta property="og:title" content="Bustan Energy — Your island. Your energy." />
+    <meta data-static-meta property="og:description" content="Thoughtful solar and battery systems for Koh Phangan villas, resorts and businesses — from the first bill review to ongoing care." />
+    <meta data-static-meta property="og:url" content="https://bustan-energy.com/" />
+    <meta data-static-meta property="og:image" content="https://bustan-energy.com/assets/images/strategy-01-aerial.jpg" />
+    <meta data-static-meta property="og:locale" content="en_US" />
+    <meta data-static-meta property="og:locale:alternate" content="th_TH" />
+    <meta data-static-meta name="twitter:card" content="summary_large_image" />
+    <meta data-static-meta name="twitter:title" content="Bustan Energy — Your island. Your energy." />
+    <meta data-static-meta name="twitter:description" content="Solar and battery systems designed around your property. Start with your electricity bill and a property review." />
+    <meta data-static-meta name="twitter:image" content="https://bustan-energy.com/assets/images/strategy-01-aerial.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Fonts trimmed to weights actually used (400-700); italic kept only for Instrument Serif (brand highlight).
@@ -35,8 +35,8 @@
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Hebrew:wght@400..700&display=swap" rel="stylesheet" />
     </noscript>
-    <!-- Home hero LCP image (optimized JPEG) — preloaded only on home routes so
-         other pages don't pay the 243KB bandwidth tax. Runs at parse time,
+    <!-- Home hero LCP image (optimized WebP) — preloaded only on home routes so
+         other pages don't pay for an unused image. Runs at parse time,
          long before the JS bundle, so the preload benefit is preserved. -->
     <script>
       ;(function () {
@@ -45,7 +45,7 @@
           var l = document.createElement('link')
           l.rel = 'preload'
           l.as = 'image'
-          l.href = '/assets/images/strategy-01-aerial.jpg'
+          l.href = '/assets/images/home-island.webp'
           l.fetchPriority = 'high'
           document.head.appendChild(l)
         }

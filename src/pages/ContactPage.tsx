@@ -7,6 +7,7 @@ import { SEOHead } from '../components/seo/SEOHead'
 import { breadcrumbSchema, pageBreadcrumb } from '../components/seo/schemas'
 import { trackEvent, trackLeadConversion, getMetaClickIds, newEventId } from '../lib/analytics'
 import { getAttribution } from '../lib/attribution'
+import { validateContactDetails } from '../lib/contact-validation'
 import { Button } from '../components/ui/Button'
 import {
   fadeUp,
@@ -39,37 +40,86 @@ const emptyForm: FormState = {
 const fieldClasses =
   'w-full rounded-xl border border-grove/20 bg-shell/70 px-4 py-3 text-sm text-ink placeholder:text-ink/40 outline-none transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-[var(--bustan-lagoon)]'
 
+const contactCopy = {
+  en: {
+    contactHint: 'Add your email or phone / WhatsApp number so we can get back to you. Only one is needed.',
+    phoneHint: 'For numbers outside Thailand, include your country code.',
+    nameRequired: 'Please enter your name.',
+    contactRequired: 'Please add an email address or a phone / WhatsApp number.',
+    emailInvalid: 'Enter a valid email address, or leave it blank and use your phone number.',
+    phoneInvalid: 'Enter a phone number with at least 7 digits, or use your email address.',
+    reviewFields: 'Please check the highlighted details below.',
+    sendFailed: 'Could not send right now. Please contact us on WhatsApp.',
+  },
+  th: {
+    contactHint: 'กรอกอีเมลหรือหมายเลขโทรศัพท์ / WhatsApp เพื่อให้เราติดต่อกลับ เลือกกรอกเพียงอย่างใดอย่างหนึ่งได้',
+    phoneHint: 'หากใช้หมายเลขต่างประเทศ กรุณาระบุรหัสประเทศด้วย',
+    nameRequired: 'กรุณากรอกชื่อของคุณ',
+    contactRequired: 'กรุณากรอกอีเมลหรือหมายเลขโทรศัพท์ / WhatsApp',
+    emailInvalid: 'กรุณากรอกอีเมลให้ถูกต้อง หรือเว้นว่างไว้แล้วใช้หมายเลขโทรศัพท์',
+    phoneInvalid: 'กรุณากรอกหมายเลขโทรศัพท์อย่างน้อย 7 หลัก หรือใช้อีเมลแทน',
+    reviewFields: 'กรุณาตรวจสอบข้อมูลที่ระบุไว้ด้านล่าง',
+    sendFailed: 'ส่งไม่ได้ในขณะนี้ กรุณาติดต่อทาง WhatsApp',
+  },
+  he: {
+    contactHint: 'כדי שנוכל לחזור אליכם, השאירו כתובת אימייל או מספר טלפון / WhatsApp. מספיק אחד מהם.',
+    phoneHint: 'למספר מחוץ לתאילנד, יש לציין גם קידומת מדינה.',
+    nameRequired: 'יש להזין את השם שלכם.',
+    contactRequired: 'יש להזין כתובת אימייל או מספר טלפון / WhatsApp.',
+    emailInvalid: 'יש להזין כתובת אימייל תקינה, או להשאיר את השדה ריק ולהשתמש במספר טלפון.',
+    phoneInvalid: 'יש להזין מספר טלפון עם לפחות 7 ספרות, או להשתמש בכתובת אימייל.',
+    reviewFields: 'יש לבדוק את הפרטים המסומנים למטה.',
+    sendFailed: 'לא הצלחנו לשלוח כרגע. אפשר ליצור איתנו קשר ב־WhatsApp.',
+  },
+} as const
+
 function InputField({
   id,
+  name,
   label,
   type = 'text',
   value,
   onChange,
   placeholder,
   required,
+  autoComplete,
+  describedBy,
+  error,
+  invalid,
 }: {
   id: string
+  name: string
   label: string
   type?: string
   value: string
   onChange: (v: string) => void
   placeholder?: string
   required?: boolean
+  autoComplete?: string
+  describedBy?: string
+  error?: string
+  invalid?: boolean
 }) {
   return (
     <div>
       <label htmlFor={id} className="block text-ink/74 text-sm mb-1.5">
-        {label}{required && <span className="text-ocean ml-1">*</span>}
+        {label}{required && <span className="text-ocean ms-1" aria-hidden>*</span>}
       </label>
       <input
         id={id}
+        name={name}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className={fieldClasses}
+        autoComplete={autoComplete}
+        dir={type === 'email' || type === 'tel' ? 'ltr' : undefined}
+        aria-describedby={[describedBy, error ? `${id}-error` : ''].filter(Boolean).join(' ') || undefined}
+        aria-invalid={Boolean(error || invalid) || undefined}
+        className={`${fieldClasses} ${error || invalid ? 'border-red-500' : ''}`}
       />
+      {error && <p id={`${id}-error`} className="mt-1.5 text-sm text-red-700">{error}</p>}
     </div>
   )
 }
@@ -126,6 +176,10 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [validationAttempted, setValidationAttempted] = useState(false)
+  const copy = contactCopy[lang]
+  const errors = validationAttempted ? validateContactDetails(form) : {}
+  const hasErrors = Object.keys(errors).length > 0
 
   // Stable Meta dedup event id — generated once per page, reused across
   // retries so browser pixel + server CAPI always dedup correctly.
@@ -137,7 +191,15 @@ export default function ContactPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (sending) return
     setSubmitError('')
+    setValidationAttempted(true)
+    const validation = validateContactDetails(form)
+    if (Object.keys(validation).length > 0) {
+      const firstInvalidField = validation.name ? 'name' : validation.email || validation.contact ? 'email' : 'phone'
+      e.currentTarget.querySelector<HTMLInputElement>(`[name="${firstInvalidField}"]`)?.focus()
+      return
+    }
     setSending(true)
 
     try {
@@ -176,9 +238,7 @@ export default function ContactPage() {
       setSubmitted(true)
     } catch {
       setSending(false)
-      setSubmitError(lang === 'th'
-        ? 'ส่งไม่ได้ในขณะนี้ กรุณาติดต่อทาง WhatsApp'
-        : 'Could not send right now. Please contact us on WhatsApp.')
+      setSubmitError(copy.sendFailed)
     }
   }
 
@@ -268,6 +328,9 @@ export default function ContactPage() {
                 <h2 className="font-serif text-2xl text-ink mb-6">
                   {form_.submit}
                 </h2>
+                <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+                  {sending ? form_.sending : submitted ? `${form_.success.title} ${form_.success.subtitle}` : ''}
+                </p>
 
                 {submitted ? (
                   <motion.div
@@ -283,48 +346,64 @@ export default function ContactPage() {
                       {form_.success.subtitle}
                     </p>
                     <button
-                      onClick={() => { setForm(emptyForm); setSubmitted(false) }}
+                      onClick={() => { setForm(emptyForm); setSubmitted(false); setValidationAttempted(false) }}
                       className="text-ocean text-sm hover:underline cursor-pointer"
                     >
                       {form_.success.again}
                     </button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <form onSubmit={handleSubmit} noValidate aria-busy={sending} className="space-y-5">
                     {submitError && (
-                      <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+                      <div role="alert" className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
                         {submitError}
                       </div>
                     )}
+                    {hasErrors && <p role="alert" className="text-sm text-red-700">{copy.reviewFields}</p>}
+                    <p id="contact-channel-hint" className="text-sm leading-relaxed text-ink/70">{copy.contactHint}</p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <InputField
                         id="contact-name"
+                        name="name"
                         label={form_.name}
                         value={form.name}
                         onChange={update('name')}
                         placeholder={form_.namePlaceholder}
+                        autoComplete="name"
+                        error={errors.name ? copy[errors.name] : undefined}
                         required
                       />
                       <InputField
                         id="contact-email"
+                        name="email"
                         label={form_.email}
                         type="email"
                         value={form.email}
                         onChange={update('email')}
                         placeholder={form_.emailPlaceholder}
-                        required
+                        autoComplete="email"
+                        describedBy={`contact-channel-hint${errors.contact ? ' contact-channel-error' : ''}`}
+                        invalid={Boolean(errors.contact)}
+                        error={errors.email ? copy[errors.email] : undefined}
                       />
                     </div>
 
                     <InputField
                       id="contact-phone"
+                      name="phone"
                       label={form_.phone}
                       type="tel"
                       value={form.phone}
                       onChange={update('phone')}
                       placeholder={form_.phonePlaceholder}
+                      autoComplete="tel"
+                      describedBy={`contact-channel-hint contact-phone-hint${errors.contact ? ' contact-channel-error' : ''}`}
+                      invalid={Boolean(errors.contact)}
+                      error={errors.phone ? copy[errors.phone] : undefined}
                     />
+                    <p id="contact-phone-hint" className="text-xs text-ink/60">{copy.phoneHint}</p>
+                    {errors.contact && <p id="contact-channel-error" className="text-sm text-red-700">{copy[errors.contact]}</p>}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <SelectField
@@ -349,6 +428,7 @@ export default function ContactPage() {
                       <label htmlFor="contact-message" className="block text-ink/74 text-sm mb-1.5">{form_.message}</label>
                       <textarea
                         id="contact-message"
+                        name="message"
                         value={form.message}
                         onChange={(e) => update('message')(e.target.value)}
                         placeholder={form_.messagePlaceholder}
@@ -361,13 +441,13 @@ export default function ContactPage() {
                       type="submit"
                       variant="primary"
                       size="md"
-                      disabled={sending || !form.name || !form.email}
+                      disabled={sending}
                       icon={sending ? null : <Send size={16} aria-hidden />}
                       className="w-full"
                     >
                       {sending ? (
                         <span className="flex items-center gap-2">
-                          <span className="w-4 h-4 border-2 border-[var(--bustan-shell)]/40 border-t-[var(--bustan-shell)] rounded-full animate-spin" />
+                          <span aria-hidden className="w-4 h-4 border-2 border-[var(--bustan-shell)]/40 border-t-[var(--bustan-shell)] rounded-full animate-spin" />
                           {form_.sending}
                         </span>
                       ) : (
