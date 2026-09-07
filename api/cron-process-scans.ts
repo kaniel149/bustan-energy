@@ -34,10 +34,9 @@ const OVERPASS_TIMEOUT_MS = 12000  // per-mirror abort — keeps us inside edge 
 // Tuning — mirrors scripts/download_osm_buildings.py
 const USABLE_RATIO = 0.65
 const EFFICIENCY_KWP = 0.18
-// Default roof floor when the operator sets no explicit minRoofM2 filter.
-// Prod audit (2026-06-11): 69% of pending candidates were <30 kWp residential
-// noise. 150 m² ≈ 17 kWp keeps small-commercial while killing the junk tail.
-const DEFAULT_MIN_ROOF_M2 = 150
+// Include small villa/bungalow roofs by default. Commercial qualification is
+// an explicit operator filter, not a hidden acquisition cutoff.
+const DEFAULT_MIN_ROOF_M2 = 5
 const MAX_BBOX_DEG = 0.2          // ~22km per side cap — guards Overpass + cost
 const MAX_BUILDINGS = 1500        // hard cap per scan; rest logged as skipped
 const DEDUP_DEG = 0.00025         // ~28m: skip buildings near an existing lead
@@ -46,6 +45,57 @@ const MAX_ATTEMPTS = 3            // cross-tick auto-retry cap for failed/stuck 
 const STALE_RUNNING_MS = 3 * 60 * 1000  // a 'running' scan older than this = crashed/timed-out → retry
 
 type LngLat = { lat: number; lon: number }
+type RoofGeometry = { type: 'Polygon'; coordinates: number[][][] }
+interface BuildingElement {
+  type: string
+  id: number
+  geometry?: LngLat[]
+  tags?: Record<string, string>
+  members?: Array<{ type: string; ref?: number; role: string; geometry?: LngLat[] }>
+}
+interface RoofIdentity {
+  lat: number
+  lon: number
+  external_source?: string | null
+  external_id?: string | null
+  roof_geom?: { type: string; coordinates: number[][][] } | null
+}
+
+function closedRing(points: LngLat[] | undefined): number[][] | null {
+  if (!points || points.length < 4 || points.some(p => !Number.isFinite(p.lat) || !Number.isFinite(p.lon))) return null
+  const first = points[0], last = points[points.length - 1]
+  if (first.lat !== last.lat || first.lon !== last.lon) return null
+  return points.map(p => [p.lon, p.lat])
+}
+
+// Safely support closed single-outer relations, including courtyards. Complex
+// multipart/open-member relations are counted as unsupported, never flattened
+// into an invented roof that joins separate buildings across empty space.
+function buildingGeometry(el: BuildingElement): RoofGeometry | null {
+  if (el.type === 'way') {
+    const ring = closedRing(el.geometry)
+    return ring ? { type: 'Polygon', coordinates: [ring] } : null
+  }
+  if (el.type !== 'relation' || !el.members) return null
+  const outers = el.members.filter(m => m.role === 'outer' || m.role === '')
+  if (outers.length !== 1) return null
+  const outer = closedRing(outers[0].geometry)
+  const inners = el.members.filter(m => m.role === 'inner').map(m => closedRing(m.geometry))
+  if (!outer || inners.some(ring => !ring)) return null
+  return { type: 'Polygon', coordinates: [outer, ...inners as number[][][]] }
+}
+
+function sameRoof(a: RoofIdentity, b: RoofIdentity): boolean {
+  if (a.external_id && b.external_id && a.external_source === b.external_source && a.external_id === b.external_id) return true
+  if (Math.abs(a.lat - b.lat) >= DEDUP_DEG || Math.abs(a.lon - b.lon) >= DEDUP_DEG) return false
+  // Proximity alone merges neighbouring bungalow roofs. For legacy/cross-source
+  // matches, require the same footprint (independent of winding/start vertex).
+  const signature = (geom: RoofIdentity['roof_geom']) => geom?.type === 'Polygon'
+    ? geom.coordinates.map(ring => [...new Set(ring.map(p => `${p[0].toFixed(6)},${p[1].toFixed(6)}`))].sort().join(';')).sort().join('|')
+    : null
+  const aShape = signature(a.roof_geom), bShape = signature(b.roof_geom)
+  return !!aShape && aShape === bShape
+}
 
 function bustanHeaders(write = false): Record<string, string> {
   const h: Record<string, string> = { apikey: BUSTAN_KEY, Authorization: `Bearer ${BUSTAN_KEY}` }
@@ -57,6 +107,33 @@ async function bGet<T>(path: string): Promise<T[]> {
   const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, { headers: bustanHeaders(false) })
   return r.ok ? r.json() : []
 }
+async function bGetPages<T>(path: string, cap = 10000): Promise<{ rows: T[]; truncated: boolean }> {
+  const rows: T[] = []
+  for (let from = 0; from < cap;) {
+    const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, {
+      headers: { ...bustanHeaders(false), Range: `${from}-${Math.min(from + 999, cap - 1)}`, Prefer: 'count=exact' },
+    })
+    if (!r.ok) throw new Error(`scan data read failed (${r.status})`)
+    const page = await r.json() as T[]
+    if (!Array.isArray(page)) throw new Error('invalid scan data response')
+    const totalText = r.headers.get('content-range')?.split('/')[1]
+    const parsedTotal = totalText && /^\d+$/.test(totalText) ? Number(totalText) : null
+    const total = parsedTotal != null && Number.isSafeInteger(parsedTotal) ? parsedTotal : null
+    // An empty page ends unknown-count reads. A known but unfinished total is
+    // incomplete coverage, not proof that there are no remaining records.
+    if (page.length === 0) return { rows, truncated: total != null && from < total }
+    const remaining = cap - rows.length
+    rows.push(...page.slice(0, remaining))
+    if (page.length > remaining) return { rows, truncated: true }
+    // max-rows is server-configurable: a short response may be only the next
+    // page, so move by actual rows and rely on the total or an empty response.
+    from += page.length
+    if (total != null && from >= total) return { rows, truncated: false }
+  }
+  // Without a total, reaching our cap cannot establish complete coverage.
+  return { rows, truncated: true }
+}
+
 async function bPatch(path: string, body: unknown): Promise<boolean> {
   const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, {
     method: 'PATCH', headers: { ...bustanHeaders(true), Prefer: 'return=minimal' }, body: JSON.stringify(body),
@@ -78,7 +155,7 @@ async function bInsert(table: string, rows: unknown[]): Promise<boolean> {
 // is then re-queued by the cross-tick retry, MAX_ATTEMPTS).
 async function fetchOverpassBuildings(
   query: string,
-): Promise<{ elements?: Array<{ type: string; id: number; geometry?: LngLat[]; tags?: Record<string, string> }> }> {
+): Promise<{ elements?: BuildingElement[] }> {
   let lastErr = 'no mirrors configured'
   for (const url of OVERPASS_URLS) {
     const host = url.replace(/^https?:\/\//, '').split('/')[0]
@@ -400,47 +477,58 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   const bbox = scan.bbox
   if (!bbox || bbox.length !== 4) throw new Error('missing bbox')
   const [minLng, minLat, maxLng, maxLat] = bbox
+  if (!bbox.every(Number.isFinite) || minLng >= maxLng || minLat >= maxLat || minLat < -90 || maxLat > 90 || minLng < -180 || maxLng > 180) {
+    throw new Error('invalid bbox')
+  }
   if (maxLng - minLng > MAX_BBOX_DEG || maxLat - minLat > MAX_BBOX_DEG) {
     throw new Error(`area too large (max ${MAX_BBOX_DEG}° per side)`)
   }
   const filters = scan.filters || {}
+  const minRoofM2 = filters.minRoofM2 ?? DEFAULT_MIN_ROOF_M2
+  if (!Number.isFinite(minRoofM2) || minRoofM2 < 0) throw new Error('invalid minRoofM2')
   const polygon = scan.area_geojson  // GeoJSON Polygon — may be null if old row
 
   // 1. ACQUIRE — OSM Overpass buildings in bbox (south,west,north,east), with mirror failover
   const q = `[out:json][timeout:60];(way["building"](${minLat},${minLng},${maxLat},${maxLng});relation["building"](${minLat},${minLng},${maxLat},${maxLng}););out geom;`
   const data = await fetchOverpassBuildings(q)
-  const elements = (data.elements || []).filter((e) => (e.geometry?.length ?? 0) >= 3)
+  const elements = data.elements || []
   const found = elements.length
   // `skipped` is the OSM overage beyond MAX_BUILDINGS; Overture overage is
   // captured separately once we know the combined total.
   const osmSkipped = Math.max(0, found - MAX_BUILDINGS)
+  let unsupportedGeometry = 0
+  let filteredOut = 0
 
   // 2. SCORE + filter (+ polygon containment check)
   const scored = []
   for (const el of elements.slice(0, MAX_BUILDINGS)) {
-    const geom = el.geometry as LngLat[]
-    const area = shoelaceAreaM2(geom)
-    if (area < 5) continue
-    if (area < (filters.minRoofM2 ?? DEFAULT_MIN_ROOF_M2)) continue
+    const roofGeom = buildingGeometry(el)
+    if (!roofGeom) { unsupportedGeometry++; continue }
+    const rings = roofGeom.coordinates.map(ring => ring.map(([lon, lat]) => ({ lat, lon })))
+    const geom = rings[0]
+    const area = shoelaceAreaM2(geom) - rings.slice(1).reduce((sum, ring) => sum + shoelaceAreaM2(ring), 0)
+    if (area < Math.max(5, minRoofM2)) { filteredOut++; continue }
     const usable = area * USABLE_RATIO
     const kwp = Math.round(usable * EFFICIENCY_KWP * 100) / 100
     const tag = (el.tags?.building || 'yes').toLowerCase()
     const category = COMMERCIAL.has(tag) ? tag : 'other'
-    if (filters.commercialOnly && !COMMERCIAL.has(tag)) continue
-    const [lat, lon] = centroid(geom)
+    if (filters.commercialOnly && !COMMERCIAL.has(tag)) { filteredOut++; continue }
+    const [lat, lon] = centroid(geom.slice(0, -1))
     // Polygon containment: centroid must lie inside the drawn area (when present).
     // Graceful: if polygon is missing/invalid, pointInPolygon returns true.
-    if (!pointInPolygon(lon, lat, polygon)) continue
-    const ring = geom.map((g) => [Number(g.lon.toFixed(7)), Number(g.lat.toFixed(7))])
-    if (ring.length >= 3 && (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1])) ring.push(ring[0])
+    if (!pointInPolygon(lon, lat, polygon)) { filteredOut++; continue }
     scored.push({
       id: crypto.randomUUID(),
+      external_source: 'osm',
+      // Keep numeric way IDs compatible with the island ingest; relations have
+      // their own OSM namespace and must not collide with a way of the same ID.
+      external_id: el.type === 'way' ? String(el.id) : `relation/${el.id}`,
       name: el.tags?.['name:en'] || el.tags?.name || `Building (${Math.round(area)}m²)`,
       area_name: 'Scan', property_type: category,
       roof_area_sqm: Math.round(area * 10) / 10,
       solar_potential_score: solarScore(kwp),
       lat: Number(lat.toFixed(7)), lon: Number(lon.toFixed(7)),
-      roof_geom: ring.length >= 4 ? { type: 'Polygon', coordinates: [ring] } : null,
+      roof_geom: roofGeom,
       _kwp: kwp, _priority: priority(kwp),
     })
   }
@@ -450,8 +538,11 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   // is swallowed so OSM-only behaviour is fully preserved when the table is
   // empty OR when the query fails.
   let overture = 0
+  let externalSkipped = 0
+  let externalIncomplete = false
+  let externalUnavailable = false
   try {
-    const extRows = await bGet<{
+    const externalResult = await bGetPages<{
       id: string
       lat: number
       lon: number
@@ -463,12 +554,15 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
       // order=source.desc → 'overture' rows come before 'msbuildings', so when
       // both cover the same roof the curated Overture footprint wins the dedup
       // tie; Microsoft only fills gaps where Overture is absent.
-      `buildings_external?lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&order=source.desc&limit=5000&select=id,lat,lon,roof_geom,area_sqm,name,source`,
+      `buildings_external?lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&order=source.desc,id.asc&select=id,lat,lon,roof_geom,area_sqm,name,source`,
+      5000,
     )
+    const extRows = externalResult.rows
+    externalIncomplete = externalResult.truncated
     overture = extRows.length
-    for (const ext of extRows) {
+    for (const [index, ext] of extRows.entries()) {
       // Respect the global MAX_BUILDINGS cap across OSM + Overture combined.
-      if (scored.length >= MAX_BUILDINGS) break
+      if (scored.length >= MAX_BUILDINGS) { externalSkipped = extRows.length - index; break }
 
       // Determine area: prefer the stored area_sqm, fall back to shoelace on
       // the roof_geom polygon, skip the row if we can't compute one.
@@ -483,10 +577,10 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
       } else {
         continue  // no usable geometry — skip
       }
-      if (area < (filters.minRoofM2 ?? DEFAULT_MIN_ROOF_M2)) continue
+      if (area < Math.max(5, minRoofM2)) { filteredOut++; continue }
       // Overture buildings carry no OSM building tag / category, so they cannot
       // be classified as commercial — skip them when commercialOnly is set.
-      if (filters.commercialOnly) continue
+      if (filters.commercialOnly) { filteredOut++; continue }
 
       const usable = area * USABLE_RATIO
       const kwp = Math.round(usable * EFFICIENCY_KWP * 100) / 100
@@ -510,6 +604,8 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
 
       scored.push({
         id: crypto.randomUUID(),
+        external_source: ext.source,
+        external_id: ext.id,
         name: ext.name || `Building (${Math.round(area)}m²)`,
         area_name: 'Scan',
         property_type: ext.source || 'other',
@@ -524,7 +620,8 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
     }
   } catch (err) {
     console.error('Overture buildings_external fetch failed:', err)
-    // Fall through — OSM-only behaviour is unchanged.
+    externalUnavailable = true
+    // Retain OSM results but disclose this partial source failure in counts.
   }
 
   const kept = scored.length   // OSM + Overture combined (pre-dedup)
@@ -533,31 +630,35 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   //    globally-excluded location (a spot a reviewer rejected as not-a-roof /
   //    too-small / other). Exclusions are global → the worker never re-surfaces
   //    a rejected spot for any scanner (migration 014).
-  const [existing, existingCandidates, exclusions] = await Promise.all([
-    bGet<{ lat: number; lon: number }>(
-      `properties?select=lat,lon&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
+  const [existingResult, candidatesResult, exclusionsResult] = await Promise.all([
+    bGetPages<RoofIdentity>(
+      `properties?select=lat,lon,external_source,external_id,roof_geom&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&order=id.asc`,
     ),
-    bGet<{ lat: number; lon: number }>(
-      `scan_candidates?select=lat,lon&status=eq.pending&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
+    bGetPages<RoofIdentity>(
+      `scan_candidates?select=lat,lon,external_source,external_id,roof_geom&kind=eq.roof&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&order=id.asc`,
     ),
-    bGet<{ lat: number; lon: number }>(
-      `scan_exclusions?select=lat,lon&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&limit=10000`,
+    bGetPages<{ lat: number; lon: number }>(
+      `scan_exclusions?select=lat,lon&lat=gte.${minLat}&lat=lte.${maxLat}&lon=gte.${minLng}&lon=lte.${maxLng}&order=id.asc`,
     ),
   ])
+  if (existingResult.truncated || candidatesResult.truncated || exclusionsResult.truncated) {
+    throw new Error('deduplication data exceeds 10000 records; scan a smaller area')
+  }
+  const existing = existingResult.rows, existingCandidates = candidatesResult.rows, exclusions = exclusionsResult.rows
   const near = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
     Math.abs(a.lat - b.lat) < DEDUP_DEG && Math.abs(a.lon - b.lon) < DEDUP_DEG
   const accepted: typeof scored = []
   for (const c of scored) {
-    const dupExisting = existing.some((e) => near(e, c))
-    const dupCandidate = existingCandidates.some((e) => near(e, c))
+    const dupExisting = existing.some((e) => sameRoof(e, c))
+    const dupCandidate = existingCandidates.some((e) => sameRoof(e, c))
     const dupExcluded = exclusions.some((e) => near(e, c))
-    const dupSelf = accepted.some((a) => near(a, c))
+    const dupSelf = accepted.some((a) => sameRoof(a, c))
     if (dupExisting || dupCandidate || dupExcluded || dupSelf) continue
     accepted.push(c)
   }
   // kept = osmKept + overture candidates that passed polygon filter.
   // skipped counts OSM overage (rows beyond MAX_BUILDINGS that were never scored).
-  const skipped = osmSkipped
+  const skipped = osmSkipped + externalSkipped
   const deduped = kept - accepted.length
 
   // 4. INSERT candidates (status='pending') — NO auto-lead insert.
@@ -565,6 +666,9 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   // confirmDetectedRoof to promote to a lead or reject.
   const candidateRows = accepted.map((c) => ({
     id: c.id,
+    kind: 'roof',
+    external_source: c.external_source,
+    external_id: c.external_id,
     scan_request_id: scan.id,
     name: c.name,
     area_name: c.area_name,
@@ -581,7 +685,14 @@ async function processScan(scan: ScanRow): Promise<Record<string, number | strin
   const inserted = await bInsert('scan_candidates', candidateRows)
   if (!inserted && candidateRows.length > 0) throw new Error('failed to insert candidates into scan_candidates')
 
-  return { found, overture, kept, deduped, candidates: accepted.length, skipped }
+  return {
+    found, overture, kept, deduped, candidates: accepted.length, skipped,
+    filtered_out: filteredOut, unsupported_geometry: unsupportedGeometry,
+    min_roof_m2: minRoofM2, candidate_limit: MAX_BUILDINGS,
+    coverage: skipped > 0 || unsupportedGeometry > 0 || externalIncomplete || externalUnavailable ? 'partial' : 'available_sources_processed',
+    external_source_status: externalUnavailable ? 'unavailable' : externalIncomplete ? 'truncated' : 'processed',
+    coverage_note: 'Mapped building footprints only; unrecorded roofs require imagery review. Split the area when limits are reached.',
+  }
 }
 
 export default async function handler(req: Request): Promise<Response> {

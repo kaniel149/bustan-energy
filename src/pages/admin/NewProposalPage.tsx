@@ -431,6 +431,11 @@ export default function NewProposalPage() {
     const cid = searchParams.get('candidate_id')
     const ext = searchParams.get('external_id')
     if (!cid && !ext) return
+    const screeningQuery = searchParams.get('screening_kwp')
+    const screeningKwp = screeningQuery == null ? undefined : Number(screeningQuery)
+    // Do not retain the default system (or a previous candidate's roof) while
+    // an unverified/failed candidate lookup is being hydrated.
+    replaceForm({ panel_count: 0, roof_area_sqm: null, roof_polygon: null, roof_lat: null, roof_lng: null })
 
     let cancelled = false
     ;(async () => {
@@ -446,13 +451,18 @@ export default function NewProposalPage() {
         }
         if (cancelled) return
         if (!c) {
-          console.warn('[NewProposalPage] candidate not found — form left at defaults', cid ?? ext)
+          console.warn('[NewProposalPage] candidate not found — roof sizing cleared', cid ?? ext)
           showToast('Candidate not found in scan results', 'error')
           return
         }
-        replaceForm(candidateToFormPatch(c, form.panel_watt))
+        const patch = candidateToFormPatch(c, form.panel_watt, screeningKwp)
+        replaceForm(patch)
+        if (screeningQuery != null && patch.panel_count === 0) {
+          showToast('לא ניתן למלא את גודל המערכת: יש לאמת את הגג ולבחור הספק תקין בגבולות קיבולת הגג.', 'error')
+        }
       } catch (err) {
         console.warn('[NewProposalPage] candidate hydration failed', err)
+        showToast('טעינת נתוני הגג נכשלה. גודל המערכת נשאר ריק עד לאימות.', 'error')
       }
     })()
 
