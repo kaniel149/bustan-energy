@@ -14,10 +14,10 @@
  *   5. firecrawl_search — Firecrawl /v1/search
  *   6. firecrawl_scrape — Firecrawl /v1/scrape
  *   7. gemini           — LLM extraction → structured JSON
- *   8. persist          — UPSERT bustan.owner_decision + stamp attempt sentinel
+ *   8. persist          — merge research findings + stamp attempt sentinel
  *
- * The persist stage always writes `lastResearchedAt` + `researchStatus` to the
- * owner_decision.data jsonb, even when nothing was found, so the row exits the
+ * The persist stage stamps `lastResearchedAt` in owner_decision.data after a
+ * successful save, even when nothing was found, so the row exits the
  * cron queue (sentinel pattern identical to solar_checked_at in cron-detect-solar).
  *
  * LEGAL / PDPA: Only public, role-based business contact information is returned.
@@ -28,7 +28,7 @@
 // Env (read once at module load — safe for edge functions)
 // ---------------------------------------------------------------------------
 
-// Main project (public schema) — flat contact columns on public.properties
+// Main project (public schema) — read legacy property context only
 const SUPABASE_URL = process.env.SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
@@ -708,14 +708,9 @@ export async function geminiExtract(
 // ---------------------------------------------------------------------------
 
 /**
- * Persist contact discovery results.
- *
- * Always stamps lastResearchedAt + researchStatus in owner_decision.data so
- * the cron queue sentinel is satisfied even when nothing was found.
- *
- * owner_decision lives in the BUSTAN project (schema `bustan`).
- * The flat PATCH to main public.properties (owner_name/phone/website/email)
- * is attempted separately when SUPABASE_URL + SUPABASE_KEY are set.
+ * Store automated findings separately from the manually reviewed ownership layer.
+ * A nearby business, company registration, or professional contact does not prove
+ * ownership of this property. No authoritative owner/contact columns are changed.
  */
 export async function persistToProperty(
   propertyId: string,
@@ -725,127 +720,49 @@ export async function persistToProperty(
   sources: string[],
   callerName = 'find-contact-core',
 ): Promise<{ saved: boolean; detail: string }> {
-  const now = new Date().toISOString()
+  if (!propertyId.trim()) return { saved: false, detail: 'no propertyId — discovery only' }
+  if (!BUSTAN_KEY) return { saved: false, detail: 'Bustan persistence is not configured' }
 
-  const researchStatus = company.name || dm.name ? 'identified' : 'not_found'
-  const sourceUrl = sources.find((s) => /^https?:\/\//.test(s)) ?? ''
-  const ownerData: Record<string, unknown> = {
-    legalOwnerName: company.name ?? '',
-    decisionMakerName: dm.name ?? '',
-    decisionMakerRole: dm.role ?? '',
-    decisionMakerPhone: dm.phone ?? '',
-    decisionMakerEmail: dm.email ?? '',
-    decisionMakerLinkedIn: dm.linkedin ?? '',
-    companyWebsite: company.website ?? '',
-    ownerConfidence: confidence >= 0.7 ? 'high' : confidence >= 0.4 ? 'medium' : 'low',
-    decisionMakerConfidence: dm.name ? (confidence >= 0.6 ? 'high' : 'medium') : '',
-    sourceName: sources[0] ?? callerName,
-    sourceUrl,
-    lastResearchedAt: now,
-    researchStatus,
-    operationalContactName: '',
-    operationalContactRole: '',
-    operationalContactPhone: company.phone ?? '', // business phone (e.g. Google Places) for future phone/LINE channel
-    operationalContactEmail: '',
-    existingSolarInstallerName: '',
-    existingSolarDeveloperName: '',
-    existingSolarSourceName: '',
-    existingSolarSourceUrl: '',
-  }
-
-  // ── Step A: verify property exists in bustan.properties ───────────────────
-  let existsInBustan = false
-  try {
-    const checkUrl = `${BUSTAN_URL}/rest/v1/properties?id=eq.${encodeURIComponent(propertyId)}&select=id&limit=1`
-    const checkRes = await timedFetch(checkUrl, {
-      headers: {
-        apikey: BUSTAN_KEY,
-        Authorization: `Bearer ${BUSTAN_KEY}`,
-        Accept: 'application/json',
-        'Accept-Profile': 'bustan',
-      },
-    }, TIMEOUT_SHORT)
-    if (checkRes.ok) {
-      const rows = await checkRes.json() as Array<{ id: string }>
-      existsInBustan = rows.length > 0
-    }
-  } catch {
-    existsInBustan = false
-  }
-
-  // ── Step B: UPSERT bustan.owner_decision (only when FK is satisfied) ───────
-  let ownerDecisionSaved = false
-  if (existsInBustan) {
-    const upsertRes = await fetch(
-      `${BUSTAN_URL}/rest/v1/owner_decision?on_conflict=property_id`,
-      {
-        method: 'POST',
-        headers: {
-          apikey: BUSTAN_KEY,
-          Authorization: `Bearer ${BUSTAN_KEY}`,
-          'Content-Type': 'application/json',
-          'Content-Profile': 'bustan',
-          Prefer: 'return=minimal,resolution=merge-duplicates',
-        },
-        body: JSON.stringify({
-          property_id: propertyId,
-          legal_owner_name: company.name ?? null,
-          decision_maker_name: dm.name ?? null,
-          research_status: researchStatus,
-          source_url: sourceUrl,
-          data: ownerData,
-        }),
-      },
-    )
-    ownerDecisionSaved = upsertRes.ok
-  }
-
-  // ── Step C: PATCH flat contact columns on main public.properties ───────────
-  let flatPatchSaved = false
-  const contactPatch: Record<string, string | null> = {}
-  if (company.name) contactPatch.owner_name = company.name
-  if (dm.phone ?? company.phone) contactPatch.phone = (dm.phone ?? company.phone) ?? null
-  if (company.website) contactPatch.website = company.website
-  if (dm.email) contactPatch.email = dm.email
-
-  if (Object.keys(contactPatch).length > 0 && SUPABASE_URL && SUPABASE_KEY) {
+  const sourceUrls = [...new Set(sources.flatMap((source) => {
     try {
-      const patchRes = await fetch(
-        `${SUPABASE_URL}/rest/v1/properties?id=eq.${encodeURIComponent(propertyId)}`,
-        {
-          method: 'PATCH',
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            Prefer: 'return=minimal',
-          },
-          body: JSON.stringify(contactPatch),
-        },
-      )
-      flatPatchSaved = patchRes.ok
+      const url = new URL(source)
+      return (url.protocol === 'https:' || url.protocol === 'http:') && !url.username && !url.password
+        ? [url.href]
+        : []
     } catch {
-      flatPatchSaved = false
+      return []
     }
-  } else {
-    flatPatchSaved = true // nothing to patch — not a failure
+  }))]
+  const hasFinding = Object.values(company).some(isNonEmptyString) || Object.values(dm).some(isNonEmptyString)
+  const hasSources = sourceUrls.length > 0
+  const now = new Date().toISOString()
+  const contactResearch = {
+    status: !hasFinding ? 'not_found' : hasSources ? 'needs_review' : 'needs_source',
+    // Source URLs describe the research context, not verified field-level proof.
+    // Unsourced suggestions are not persisted as identities or contact details.
+    company: hasSources ? company : {},
+    decisionMaker: hasSources ? dm : {},
+    confidence: hasSources && Number.isFinite(confidence) ? Math.max(0, Math.min(1, confidence)) : 0,
+    sources: sourceUrls,
+    ownershipStatus: 'unverified',
+    researchedAt: now,
+    caller: callerName,
   }
-
-  if (!existsInBustan) {
-    return {
-      saved: flatPatchSaved,
-      detail: 'property not in bustan CRM — flat columns only',
-    }
-  }
-
-  return {
-    saved: ownerDecisionSaved || flatPatchSaved,
-    detail: [
-      ownerDecisionSaved ? 'owner_decision upserted' : 'owner_decision upsert failed',
-      Object.keys(contactPatch).length > 0
-        ? (flatPatchSaved ? 'flat columns patched' : 'flat patch failed')
-        : '',
-    ].filter(Boolean).join(', '),
+  try {
+    // The service-role-only RPC merges against the locked current row. It never
+    // changes canonical names/status/source or sends manual JSON in a filter URL.
+    const response = await timedFetch(`${BUSTAN_URL}/rest/v1/rpc/merge_contact_research`, {
+      method: 'POST',
+      headers: { ...bustanHeaders(true), 'Accept-Profile': 'bustan' },
+      body: JSON.stringify({ p_property_id: propertyId, p_research: contactResearch }),
+    }, TIMEOUT_SHORT)
+    if (!response.ok) return { saved: false, detail: 'owner_decision research save failed' }
+    const saved: unknown = await response.json()
+    return saved === true
+      ? { saved: true, detail: 'research findings saved for review; ownership fields preserved' }
+      : { saved: false, detail: 'property not in bustan CRM — research not saved' }
+  } catch {
+    return { saved: false, detail: 'owner_decision research persistence unavailable' }
   }
 }
 
@@ -854,7 +771,7 @@ export async function persistToProperty(
 // ---------------------------------------------------------------------------
 
 export interface PipelineInput {
-  /** Bustan property id — required; drives the property_load + persist stages. */
+  /** Bustan property id; an empty string runs discovery without loading or saving. */
   propertyId: string
   /** Pre-seeded from the queue row — saves one network call in the cron path. */
   lat?: number
@@ -863,7 +780,7 @@ export interface PipelineInput {
   name?: string
   juristicId?: string
   website?: string
-  /** Label shown in persist.sourceName — defaults to 'find-contact-core'. */
+  /** Label saved in contactResearch.caller — defaults to 'find-contact-core'. */
   callerName?: string
 }
 
@@ -1102,9 +1019,8 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
       company = result.company
       decisionMaker = result.decision_maker
       confidence = result.confidence
-      for (const s of result.sources) {
-        if (!sources.includes(s)) sources.push(s)
-      }
+      // Only retrieval stages can supply provenance. Model-generated URLs may
+      // describe pages that were never fetched, so they are not added to sources.
       if (!company.name && companyName) company.name = companyName
       if (!company.website && website) company.website = website
       if (!company.phone && companyPhone) company.phone = companyPhone
@@ -1145,7 +1061,7 @@ export async function runFindContactPipeline(input: PipelineInput): Promise<Find
   try {
     const persistResult = await persistToProperty(propertyId, company, decisionMaker, confidence, sources, callerName)
     saved = persistResult.saved
-    stages.push({ stage: 'persist', status: persistResult.saved ? 'ok' : 'failed', detail: persistResult.detail })
+    stages.push({ stage: 'persist', status: !propertyId ? 'skipped' : persistResult.saved ? 'ok' : 'failed', detail: persistResult.detail })
   } catch (e) {
     stages.push({ stage: 'persist', status: 'failed', detail: e instanceof Error ? e.message : 'error' })
   }

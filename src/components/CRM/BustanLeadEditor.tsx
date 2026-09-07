@@ -22,6 +22,7 @@ import { getAdminToken } from '../../lib/admin-token'
 import { buildOwnerResearchLinks } from '../../lib/owner-resolution'
 import { autoBuildSystem } from '../../lib/bom'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
+import { SavedOwnerResearch } from './SavedOwnerResearch'
 import { useTranslation } from '../../i18n/useTranslation'
 
 // ---------------------------------------------------------------------------
@@ -437,6 +438,7 @@ export function BustanLeadEditor() {
 
       {tab === 'crm' && (
         <div className="space-y-2">
+          <SavedOwnerResearch value={data.scanOwnerResearch} />
           <label className="block text-[10px] uppercase tracking-wide text-white/40">{c.stage}</label>
           <select
             value={crm.crm_stage}
