@@ -33,6 +33,18 @@ export function safeWebsite(value: string | null | undefined): string | null {
   } catch { return null }
 }
 
+/** Keep current worker counters and legacy job records honest in the history. */
+export function scanJobSummary(value: unknown) {
+  const counts = value && typeof value === 'object' ? value as Record<string, unknown> : {}
+  const count = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v) && v >= 0 ? v : null
+  const found = count(counts.found) ?? count(counts.fetched)
+  return {
+    added: count(counts.candidates) ?? count(counts.inserted),
+    examined: found == null ? null : found + (count(counts.overture) ?? 0),
+    coverage: counts.coverage === 'partial' ? 'partial' : counts.coverage === 'available_sources_processed' ? 'processed' : 'unknown',
+  }
+}
+
 export function viewportScanArea(bounds: [[number, number], [number, number]]) {
   const [[west, south], [east, north]] = bounds
   if (![west, south, east, north].every(Number.isFinite) || west < -180 || east > 180 || south < -90 || north > 90 ||

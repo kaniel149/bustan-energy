@@ -1,8 +1,21 @@
 import { describe, expect, it } from 'vitest'
-import { assessDemand, safeWebsite, viewportScanArea } from './scan-assessment'
+import { assessDemand, safeWebsite, viewportScanArea, scanJobSummary } from './scan-assessment'
 import type { ScanCandidate } from './bustan-crm-service'
 
 const roof = { kind: 'roof', footprint_class: 'roof', roof_area_sqm: 200, estimated_kwp: 24 } as ScanCandidate
+describe('scan worker history contract', () => {
+  it('reads the candidates counter produced by the worker and all source counts', () => {
+    expect(scanJobSummary({ candidates: 4, found: 7, overture: 3, coverage: 'partial' })).toEqual({ added: 4, examined: 10, coverage: 'partial' })
+  })
+  it('does not infer source completeness for legacy jobs', () => {
+    expect(scanJobSummary({ candidates: 2, found: 3 })).toEqual({ added: 2, examined: 3, coverage: 'unknown' })
+    expect(scanJobSummary({ inserted: 0, found: 0, coverage: 'available_sources_processed' })).toEqual({ added: 0, examined: 0, coverage: 'processed' })
+  })
+  it('preserves unknown and invalid counters instead of inventing zero results', () => {
+    expect(scanJobSummary(null)).toEqual({ added: null, examined: null, coverage: 'unknown' })
+    expect(scanJobSummary({ candidates: -1, found: NaN }).added).toBeNull()
+  })
+})
 describe('consumption screening', () => {
   it('matches daytime energy without treating total roof potential as the recommendation', () => {
     expect(assessDemand(roof, { monthlyKwh: 1200, daytimePercent: 60, dailyYield: 4 })).toEqual({
