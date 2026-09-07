@@ -131,6 +131,15 @@ describe('source-grounded professional role validation', () => {
     const accepted = validateOwnerFindings([finding({ excerpt }), finding({ excerpt }), finding({ kind: 'manager', name: 'Alice Roe', role: 'manager', excerpt: second })], [page(`${excerpt} ${second}`)], business)
     expect(accepted).toHaveLength(1)
   })
+  it('keeps a complete source-backed prefix when a model appends an unsupported sentence', () => {
+    const grounded = 'Jane Doe. Founder of Palm Garden Resort.'
+    const proposed = finding({ kind: 'founder', role: 'Founder', excerpt: grounded + ' Invented unrelated project details.' })
+    expect(validateOwnerFindings([proposed], [page(grounded)], business)).toEqual([{ ...proposed, excerpt: grounded }])
+  })
+  it('does not trim away a contradictory negation from a proposed passage', () => {
+    const grounded = 'Palm Garden Resort owner Jane Doe welcomes guests.'
+    expect(validateOwnerFindings([finding({ excerpt: grounded + ' She is not the owner.' })], [page(grounded)], business)).toEqual([])
+  })
   it('omits a source date that is not published on the retrieved page', () => {
     expect(validateOwnerFindings([finding({ sourceDate: '2026-09-07' })], [page(finding().excerpt)], business)[0].sourceDate).toBeUndefined()
   })

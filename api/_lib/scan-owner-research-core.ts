@@ -103,12 +103,22 @@ export function validateOwnerFindings(raw: unknown, pages: SourcePage[], busines
   for (const item of entries.slice(0, 12)) {
     if (!item || typeof item !== 'object') continue
     const row = item as Record<string, unknown>
-    const name = clip(row.name, 160), role = clip(row.role, 120), excerpt = clip(row.excerpt, 450)
+    const name = clip(row.name, 160), role = clip(row.role, 120)
+    const proposedExcerpt = clip(row.excerpt, 450)
+    let excerpt = proposedExcerpt
     const sourceUrl = publicWebsite(row.sourceUrl)
     const page = pages.find((p) => p.url === sourceUrl)
     const kind = clip(row.kind)
     if (!kinds.has(kind) || !name || !role || !excerpt || !page || !pageMatchesBusiness(page, business)) continue
-    if (!normalized(page.text).includes(normalized(excerpt)) || !containsPhrase(excerpt, name)) continue
+    if (/\b(not|never|isn t|wasn t|no longer|former|formerly|previous|previously|alleged|rumou?red)\b|ไม่ใช่|อดีต/.test(normalized(proposedExcerpt))) continue
+    if (!normalized(page.text).includes(normalized(excerpt))) {
+      // Models sometimes append a paraphrased sentence to an otherwise exact
+      // passage. Keep only a complete, contiguous source-backed prefix. Never
+      // trim inside a sentence or construct a quote from disjoint source spans.
+      const prefixes = [...proposedExcerpt.matchAll(/[.!?](?=\s|$)/g)].map(match => proposedExcerpt.slice(0, match.index! + 1))
+      excerpt = prefixes.reverse().find(prefix => normalized(page.text).includes(normalized(prefix))) ?? ''
+    }
+    if (!excerpt || !containsPhrase(excerpt, name)) continue
     // Role words must be in the cited passage; reject "owner" labels derived from a contact/name alone.
     const roleText = normalized(excerpt)
     const rolePatterns: Record<string, RegExp> = {
@@ -155,7 +165,7 @@ export async function researchBusinessOwner(candidate: ResearchCandidate, busine
   if (!key) { result.status = 'failed'; result.issues.push('חיפוש במקורות ציבוריים אינו זמין כרגע.'); return result }
   const headers = { Authorization: `Bearer ${key}` }
   const pages: SourcePage[] = []
-  const domain = business.website ? new URL(business.website).hostname : undefined
+  const domain = business.website ? new URL(business.website).hostname.replace(/^www\./, '') : undefined
   const searchSite = business.website && domain && /(?:facebook|instagram|linkedin)\.com$/.test(domain) ? `${domain}${new URL(business.website).pathname}` : domain
   const query = `${searchSite ? `site:${searchSite}` : `"${business.name.replace(/["\\]/g, '')}" "${(candidate.area_name || 'Koh Phangan').replace(/["\\]/g, '')}"`} (owner OR founder OR "general manager" OR "our story" OR contact)`
   const tasks = [jsonFetch('https://api.firecrawl.dev/v2/search', { query, limit: 4, sources: ['web'], timeout: 30000, scrapeOptions: { formats: ['markdown'], onlyMainContent: true } }, headers, 35000, fetcher)]

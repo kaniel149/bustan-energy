@@ -1,6 +1,6 @@
 /** A roof review record: scan evidence, preliminary sizing, contact and next actions. */
 import { useId, useRef, useState } from 'react'
-import { Check, ChevronDown, Crosshair, ExternalLink, FilePlus, Loader2, MessageCircle, NotebookPen, UserRound, X } from 'lucide-react'
+import { Check, ChevronDown, Crosshair, ExternalLink, FilePlus, Loader2, MessageCircle, NotebookPen, UserRound, UserSearch, X } from 'lucide-react'
 import type { ScanCandidate, RejectionReason } from '../../../lib/bustan-crm-service'
 import {
   GRADE_COLORS, GRADES, categoryLabel, displayName, footprintLabel, gradeOf,
@@ -133,7 +133,7 @@ export function CandidateCard({
       <div className="border-t border-[#24463E]/10 px-3.5 py-3">
         <div className="mb-3 flex items-start gap-2 text-[11px] leading-relaxed text-[#27342F]/75">
           <UserRound size={14} className="mt-0.5 shrink-0 text-[#24463E]" aria-hidden="true" />
-          <p><span className="font-semibold text-[#27342F]">{hasContact ? 'נמצאו פרטי קשר' : 'טרם אותר איש קשר'}</span><span className="block">בעלות לא אומתה{hasContact ? ' · איש קשר אינו בהכרח הבעלים' : ''}</span></p>
+          <p><span className="font-semibold text-[#27342F]">{hasContact ? 'פרטי עסק זמינים מהסריקה' : 'אין פרטי קשר בנתוני הסריקה'}</span><span className="block">מחקר הבעלים והאימות מופיעים בכרטיס הגג</span></p>
         </div>
         {rejecting ? (
           <div
@@ -158,6 +158,7 @@ export function CandidateCard({
           </div>
         ) : (
           <div className="flex flex-wrap items-center gap-1.5">
+            <button type="button" onClick={onSelect} className={`${actionClass} bg-[#D8ECE8] text-[#24463E] hover:bg-[#C8E3DD]`} aria-expanded={selected}><UserSearch size={13} aria-hidden="true" /> איתור בעלים</button>
             {!inCrm && <button type="button" onClick={onApprove} disabled={!canEdit || working} className={`${actionClass} bg-[#24463E] text-white hover:bg-[#355C50]`} title={canEdit ? 'שמירת הנכס להמשך טיפול ב־CRM' : 'נדרשת הרשאת מנהל או מכירות'}>
               {working ? <Loader2 size={13} className="animate-spin" aria-hidden="true" /> : <Check size={13} aria-hidden="true" />} {working ? 'מעדכן…' : 'העברה ל־CRM'}
             </button>}
