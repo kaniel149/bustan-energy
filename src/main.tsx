@@ -8,6 +8,17 @@ import { initSentry } from './lib/sentry'
 
 initSentry()
 
+// After a deploy, a tab that still holds the previous index.html asks for
+// hashed chunks that no longer exist ("Unable to preload CSS for /assets/…").
+// Reload once so the browser picks up the new manifest instead of erroring.
+window.addEventListener('vite:preloadError', (event) => {
+  const key = 'bustan:preload-reloaded'
+  if (sessionStorage.getItem(key)) return
+  sessionStorage.setItem(key, '1')
+  event.preventDefault()
+  window.location.reload()
+})
+
 // Initialize PostHog + GA4 + Meta Pixel (no-ops if env vars are not set)
 initAnalytics()
 

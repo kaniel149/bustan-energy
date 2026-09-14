@@ -22,6 +22,7 @@ import { getAdminToken } from '../../lib/admin-token'
 import { buildOwnerResearchLinks } from '../../lib/owner-resolution'
 import { autoBuildSystem } from '../../lib/bom'
 import { CRM_PIPELINE_STAGES } from '../../lib/owner-decision-layer'
+import { SavedOwnerResearch } from './SavedOwnerResearch'
 import { useTranslation } from '../../i18n/useTranslation'
 
 // ---------------------------------------------------------------------------
@@ -325,9 +326,9 @@ export function BustanLeadEditor() {
   /**
    * Apply the enriched company data into the owner_decision row via the
    * existing updateOwnerDecision write path. Maps:
-   *   companyLegalName → legal_owner_name
+   *   companyLegalName → data.companyLegalName (a research lead, not ownership)
    *   website          → data.companyWebsite
-   *   businessPhone    → data.decisionMakerPhone
+   *   businessPhone    → data.businessPhone (not a verified decision maker)
    *   (all other fields go into data jsonb for reference)
    */
   const handleApplyEnrich = async () => {
@@ -336,11 +337,12 @@ export function BustanLeadEditor() {
     const existingData = (lead.owner?.data ?? {}) as Record<string, unknown>
     const mergedData: Record<string, unknown> = {
       ...existingData,
+      ...(d.companyLegalName ? { companyLegalName: d.companyLegalName } : {}),
       ...(d.registeredAddress ? { registeredAddress: d.registeredAddress } : {}),
       ...(d.registrationNo ? { registrationNo: d.registrationNo } : {}),
       ...(d.businessType ? { businessType: d.businessType } : {}),
       ...(d.website ? { companyWebsite: d.website } : {}),
-      ...(d.businessPhone ? { decisionMakerPhone: d.businessPhone } : {}),
+      ...(d.businessPhone ? { businessPhone: d.businessPhone } : {}),
       enrichSource: enrichResult.source,
       enrichTarget: enrichResult.target,
       enrichedAt: new Date().toISOString(),
@@ -348,12 +350,11 @@ export function BustanLeadEditor() {
     await runWrite(
       () =>
         updateOwnerDecision(selected.id, {
-          ...(d.companyLegalName ? { legal_owner_name: d.companyLegalName } : {}),
           data: mergedData,
         }),
       canCrm,
       () => setEnrichApplied(true),
-      'Owner enriched from company registry',
+      'Company research saved; ownership still requires verification',
     )
   }
 
@@ -437,6 +438,7 @@ export function BustanLeadEditor() {
 
       {tab === 'crm' && (
         <div className="space-y-2">
+          <SavedOwnerResearch value={data.scanOwnerResearch} />
           <label className="block text-[10px] uppercase tracking-wide text-white/40">{c.stage}</label>
           <select
             value={crm.crm_stage}

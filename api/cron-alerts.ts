@@ -9,11 +9,11 @@
 // ============================================================
 export const config = { runtime: 'edge' }
 
-import { bGet, bPost, bPatch } from './_lib/bustan-db.js'
+import { bGet, bGetOrThrow, bPost, bPatch } from './_lib/bustan-db.js'
 import { supaGetAll } from './_lib/supa.js'
 import { sendWhatsApp } from './_lib/whatsapp.js'
 import { sendResendEmail } from './_lib/resend.js'
-import { buildAlertText, pickChannel, isFirstRun, ALERT_WHATSAPP, ALERT_EMAIL } from './_lib/alerts-core.js'
+import { buildAlertText, pickChannel, isFirstRun, alertQueryPaths, ALERT_WHATSAPP, ALERT_EMAIL } from './_lib/alerts-core.js'
 import { escapeHtml } from './_lib/html.js'
 
 const CRON_SECRET = process.env.CRON_SECRET
@@ -35,26 +35,21 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     const now = new Date().toISOString()
-    const [state] = await bGet<AlertState>(`alert_state?key=eq.${KEY}&select=key,last_run_at`)
+    // Strict read: a gateway timeout here must NOT look like "no watermark yet",
+    // otherwise we insert a duplicate alert_state row (pkey violation) every tick.
+    const [state] = await bGetOrThrow<AlertState>(`alert_state?key=eq.${KEY}&select=key,last_run_at`)
     if (isFirstRun(state ?? null) || !state) {
       await bPost('alert_state', { key: KEY, last_run_at: now })
       return Response.json({ ok: true, first_run: true, sent: false })
     }
 
     const since = state.last_run_at
+    const paths = alertQueryPaths(since)
     const [approved, newA, firstViews, signatures] = await Promise.all([
-      bGet<{ id: string; name: string | null; created_at: string | null }>(
-        `properties?select=id,name,created_at&created_at=gt.${since}&order=created_at.desc&limit=20`,
-      ),
-      bGet<{ id: string; name: string | null; estimated_kwp: number | null; lat: number; lon: number }>(
-        `scan_candidates?select=id,name,estimated_kwp,lat,lon&status=eq.pending&priority=eq.A&existing_solar=not.is.true&created_at=gt.${since}&order=estimated_kwp.desc.nullslast&limit=200`,
-      ),
-      supaGetAll<{ ref_number: string; client_name: string | null; first_viewed_at: string | null }>(
-        `proposals?select=ref_number,client_name,first_viewed_at&first_viewed_at=gt.${since}&order=first_viewed_at.desc&limit=20`,
-      ),
-      supaGetAll<{ proposal_ref: string; signer_name: string | null; signed_at: string | null }>(
-        `proposal_signatures?select=proposal_ref,signer_name,signed_at&signed_at=gt.${since}&order=signed_at.desc&limit=20`,
-      ),
+      bGet<{ id: string; name: string | null; created_at: string | null }>(paths.approved),
+      bGet<{ id: string; name: string | null; estimated_kwp: number | null; lat: number; lon: number }>(paths.newA),
+      supaGetAll<{ ref_number: string; client_name: string | null; first_viewed_at: string | null }>(paths.firstViews),
+      supaGetAll<{ proposal_ref: string; signer_name: string | null; signed_at: string | null }>(paths.signatures),
     ])
 
     const text = buildAlertText({ since, approved, newA: newA.slice(0, 3), newACount: newA.length, firstViews, signatures })

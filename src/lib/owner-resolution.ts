@@ -4,13 +4,9 @@
  * Builds region-aware deep-links that let a sales rep resolve a Thai rooftop
  * owner in seconds using free, legal, public registries.
  *
- * IMPORTANT — LEGAL DESIGN NOTE:
- * Owner NAME resolution is intentionally left as a MANUAL / REGISTRY step.
- * Thailand's Personal Data Protection Act (PDPA, B.E. 2562) restricts
- * automated collection of personal data without consent. The links below
- * open public government registries in the rep's browser; no data is
- * scraped or stored by this module. The rep copies relevant information
- * manually into the CRM fields.
+ * Company identity and publicly stated professional roles are research leads.
+ * Legal title verification is a separate, documented Land Office step. This
+ * helper only builds links; it does not infer ownership from a company name.
  *
  * Israeli stubs (nadlan/Tabu) are included for future multi-region use but
  * Thailand / Ko Phangan is the default and primary target.
@@ -80,20 +76,20 @@ function buildThailandLinks(input: BuildOwnerResearchLinksInput): OwnerResearchR
     : 'DBD — search juristic persons / companies'
   links.push({
     label: dbdLabel,
-    url: 'https://datawarehouse.dbd.go.th/',
+    url: 'https://datawarehouse2.dbd.go.th/',
   })
 
   // 3. DBD main portal — alternative entry point with name-search UI.
   links.push({
     label: 'DBD portal (dbd.go.th) — company name search',
-    url: 'https://www.dbd.go.th/main.php?filename=index',
+    url: 'https://www.dbd.go.th/',
   })
 
   // 4. Thai Land Department (กรมที่ดิน) — land title / parcel ownership.
   //    Manual lookup at district land office; no online parcel-owner API.
   links.push({
-    label: 'Land Dept (dol.go.th) — parcel/title lookup (manual)',
-    url: 'https://www.dol.go.th',
+    label: 'LandsMaps — locate parcel before Land Office title verification',
+    url: 'https://landsmaps.dol.go.th/',
   })
 
   // 5. OSM Nominatim reverse-geocode — get the building's address as a
@@ -117,8 +113,7 @@ function buildThailandLinks(input: BuildOwnerResearchLinksInput): OwnerResearchR
   return {
     registryName: 'กรมพัฒนาธุรกิจการค้า (DBD) + กรมที่ดิน (Land Dept)',
     links,
-    // PDPA reminder: displayed to the rep on every use.
-    note: 'PDPA: ชื่อเจ้าของที่แท้จริงต้องค้นหาด้วยตนเองจากทะเบียนราชการ — ห้ามเก็บข้อมูลส่วนบุคคลโดยไม่ได้รับความยินยอม (Owner names must be resolved manually from public registries; do not collect personal data without consent — PDPA B.E. 2562).',
+    note: 'חברה רשומה או מנהל עסק אינם הוכחת בעלות בנכס. לאימות זכויות יש לזהות חלקה או מסמך זכויות ולתעד בירור ממוקד בלשכת הקרקעות.',
   }
 }
 

@@ -506,24 +506,20 @@ export async function fetchTopPendingCandidateLocation(): Promise<{ lat: number;
   return { lat: Number(row.lat), lon: Number(row.lon) }
 }
 
-/**
- * Fetch pending scan candidates. With 14k+ pending across regions, PostgREST's
- * 1000-row default would silently truncate — so pass the active region's
- * `bounds` ([[minLng,minLat],[maxLng,maxLat]]) to scope the query to that region
- * and raise the cap to 5000. Without bounds it loads up to 5000 (legacy behaviour).
- */
-/** Raw rows for /admin/scan (keeps 015 columns: footprint_class, category, phone, external_id …). */
+/** Raw rows for /admin/scan. Read every page, including regions with more than 10,000 roofs. */
 export async function fetchScanCandidateRows(
   bounds: [[number, number], [number, number]],
   statuses: Array<ScanCandidate['status']> = ['pending', 'added'],
+  signal?: AbortSignal,
+  client: Pick<NonNullable<typeof bustanSupabase>, 'from'> | null = bustanSupabase,
 ): Promise<ScanCandidate[]> {
-  if (!bustanSupabase) return []
+  if (!client) throw new Error(NOT_CONNECTED.error)
   const [[minLng, minLat], [maxLng, maxLat]] = bounds
-  // PostgREST caps a single response at max-rows (1000) regardless of .limit(); page with .range().
   const PAGE = 1000
   const rows: ScanCandidate[] = []
-  for (let from = 0; ; from += PAGE) {
-    const { data, error } = await bustanSupabase
+  for (let from = 0; ; ) {
+    signal?.throwIfAborted()
+    let query = client
       .from('scan_candidates')
       .select('*')
       .in('status', statuses)
@@ -532,10 +528,15 @@ export async function fetchScanCandidateRows(
       .order('estimated_kwp', { ascending: false, nullsFirst: false })
       .order('id', { ascending: true })
       .range(from, from + PAGE - 1)
+    if (signal) query = query.abortSignal(signal)
+    const { data, error } = await query
+    signal?.throwIfAborted()
     if (error) throw error
     const page = (data ?? []) as ScanCandidate[]
+    if (page.length === 0) break
     rows.push(...page)
-    if (page.length < PAGE || rows.length >= 10000) break
+    // Advance by actual rows: the database may cap responses below our requested page size.
+    from += page.length
   }
   return rows
 }

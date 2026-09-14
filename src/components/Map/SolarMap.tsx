@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
+import { isWebGLAvailable } from '../../lib/webgl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { area as turfArea } from '@turf/area'
 import { useAppStore } from '../../lib/store'
@@ -217,6 +218,7 @@ export function SolarMap() {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<maplibregl.Map | null>(null)
   const popupRef = useRef<maplibregl.Popup | null>(null)
+  const [mapUnavailable, setMapUnavailable] = useState(false)
 
   const filters = useAppStore((s) => s.filters)
   const mapStyle = useAppStore((s) => s.mapStyle)
@@ -318,8 +320,11 @@ export function SolarMap() {
   // Initialize map once
   useEffect(() => {
     if (!mapContainer.current || map.current) return
+    if (!isWebGLAvailable()) { setMapUnavailable(true); return }
 
-    const m = new maplibregl.Map({
+    let m: maplibregl.Map
+    try {
+      m = new maplibregl.Map({
       container: mapContainer.current,
       style: {
         version: 8,
@@ -340,7 +345,14 @@ export function SolarMap() {
       zoom: regionConfig.zoom,
       maxZoom: 20,
       minZoom: 7,
-    })
+      })
+    } catch (err) {
+      // MapLibre throws synchronously when the WebGL context cannot be created
+      // ("Failed to initialize WebGL"). Degrade to the fallback panel.
+      console.warn('SolarMap: WebGL unavailable, map disabled', err)
+      setMapUnavailable(true)
+      return
+    }
 
     m.addControl(new maplibregl.NavigationControl(), 'bottom-right')
     map.current = m
@@ -1504,6 +1516,26 @@ export function SolarMap() {
     // `filteredProperties` already derives from `properties`, so it's the single
     // source of truth — depending on `properties` too would double-run this effect.
   }, [filteredProperties, setSelectedProperty])
+
+  if (mapUnavailable) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-[#0D2137] p-6 text-center">
+        <div className="max-w-sm rounded-2xl border border-white/10 bg-white/5 p-6 text-white/80">
+          <p className="text-base font-semibold text-white">The map can't start on this device</p>
+          <p className="mt-2 text-sm leading-relaxed">
+            Your browser couldn't create a WebGL context (common on iPhone with Low Power Mode, Lockdown Mode, or many open tabs).
+            Close other tabs and reload, or open the CRM on a desktop browser.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 rounded-xl bg-[#F59E0B]/20 px-4 py-2 text-sm font-semibold text-[#FCD34D]"
+          >
+            Reload
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
