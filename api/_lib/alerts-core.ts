@@ -18,6 +18,22 @@ export function pickChannel(env: Record<string, string | undefined> = process.en
   return env.RESEND_API_KEY ? 'email' : 'none'
 }
 
+/**
+ * PostgREST filter paths for one alert window. `since` comes straight from
+ * Postgres (`2026-09-14T04:30:31.342+00:00`) — the `+` MUST be URL-encoded or
+ * the gateway decodes it as a space and PostgREST answers 400
+ * ("invalid input syntax for type timestamp with time zone").
+ */
+export function alertQueryPaths(since: string) {
+  const s = encodeURIComponent(since)
+  return {
+    approved: `properties?select=id,name,created_at&created_at=gt.${s}&order=created_at.desc&limit=20`,
+    newA: `scan_candidates?select=id,name,estimated_kwp,lat,lon&status=eq.pending&priority=eq.A&existing_solar=not.is.true&created_at=gt.${s}&order=estimated_kwp.desc.nullslast&limit=200`,
+    firstViews: `proposals?select=ref_number,client_name,first_viewed_at&first_viewed_at=gt.${s}&order=first_viewed_at.desc&limit=20`,
+    signatures: `proposal_signatures?select=proposal_ref,signer_name,signed_at&signed_at=gt.${s}&order=signed_at.desc&limit=20`,
+  }
+}
+
 export function isFirstRun(state: { last_run_at: string } | null): boolean {
   return !state
 }
