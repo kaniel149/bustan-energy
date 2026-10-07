@@ -25,6 +25,7 @@ Disallow: /preview-scroll
 Disallow: /colliers
 
 User-agent: *
+Disallow: /prerendered/
 Allow: /
 Disallow: /admin
 Disallow: /platform
