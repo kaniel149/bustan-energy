@@ -4,6 +4,7 @@ import { render } from '../.prerender/entry-server.js'
 
 const origin = 'https://bustan-energy.com'
 const template = await readFile('dist/index.html', 'utf8')
+if (!template.includes('<div id="root"></div>')) throw new Error('Prerender requires a fresh Vite build')
 const sitemap = await readFile('public/sitemap.xml', 'utf8')
 const paths = [...new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => {
   const parsed = new URL(url)
@@ -22,7 +23,7 @@ for (const path of paths) {
   if (/<!--\$!-->|<template[^>]*data-msg/.test(body)) throw new Error(`Unresolved rendering error: ${path}`)
   const head = []
   body = body.replace(/<title\b[^>]*>[\s\S]*?<\/title>|<meta\b[^>]*>|<link\b[^>]*>|<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/g, (tag) => {
-    head.push(tag); return ''
+    head.push(tag.replace(/^<(title|meta|link|script)\b/, '<$1 data-static-meta')); return ''
   })
   const routeHead = head.join('\n')
   if (!/<title\b/.test(routeHead) || !/rel="canonical"/.test(routeHead)) throw new Error(`Missing route metadata: ${path}`)
