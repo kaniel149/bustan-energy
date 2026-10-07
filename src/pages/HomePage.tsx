@@ -23,7 +23,7 @@ export default function HomePage() {
   const copy = homepageCopy[lang]
   const navigate = useNavigate()
   const [propertyIndex, setPropertyIndex] = useState(0)
-  const [walkthroughOpen, setWalkthroughOpen] = useState(() => window.location.hash === '#installation-walkthrough')
+  const [walkthroughOpen, setWalkthroughOpen] = useState(() => typeof window !== 'undefined' && window.location.hash === '#installation-walkthrough')
   const [showAdminBanner, setShowAdminBanner] = useState(false)
   const walkthroughToggle = useRef<HTMLButtonElement>(null)
   const property = copy.properties[propertyIndex]

@@ -50,3 +50,5 @@ sales/proposals/
 handoff/
 out/
 .env*
+
+.prerender/
