@@ -111,8 +111,28 @@
       "destination": "/tools/:path*"
     },
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "crm.bustan-energy.com"
+        }
+      ],
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "crm.energy-tm.com"
+        }
+      ],
+      "destination": "/spa.html"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/spa.html"
     }
   ],
   "crons": [

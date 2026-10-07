@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, StaticRouter, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import Layout from './components/layout/Layout'
 import { LanguageProvider } from './i18n/LanguageContext'
@@ -87,14 +87,15 @@ function PageRoutes() {
 }
 
 /** Detect if we're on the CRM subdomain (old TM hostname kept until Stage 4 of rebrand) */
-const isCrmDomain = ['crm.energy-tm.com', 'crm.bustan-energy.com'].includes(window.location.hostname)
+const isCrmDomain = typeof window !== 'undefined' && ['crm.energy-tm.com', 'crm.bustan-energy.com'].includes(window.location.hostname)
 
-export default function App() {
+export default function App({ serverPath }: { serverPath?: string } = {}) {
+  const Router = serverPath === undefined ? BrowserRouter : StaticRouter
   // crm.bustan-energy.com → show platform with integrated views + CRM routes for deep links
   if (isCrmDomain) {
     return (
       <HelmetProvider>
-        <BrowserRouter>
+        <Router location={serverPath ?? '/'}>
           <LanguageProvider>
             <Suspense fallback={<LoadingScreen />}>
               <Routes>
@@ -125,7 +126,7 @@ export default function App() {
               </Routes>
             </Suspense>
           </LanguageProvider>
-        </BrowserRouter>
+        </Router>
       </HelmetProvider>
     )
   }
@@ -133,7 +134,7 @@ export default function App() {
   // bustan-energy.com → marketing website
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <Router location={serverPath ?? '/'}>
         <LanguageProvider>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
@@ -199,7 +200,7 @@ export default function App() {
             </Routes>
           </Suspense>
         </LanguageProvider>
-      </BrowserRouter>
+      </Router>
     </HelmetProvider>
   )
 }
