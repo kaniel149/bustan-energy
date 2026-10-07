@@ -95,6 +95,44 @@
           "value": "noindex, nofollow, noarchive"
         }
       ]
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "crm.bustan-energy.com"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "crm.energy-tm.com"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store, max-age=0"
+        }
+      ]
     }
   ],
   "redirects": [],
@@ -150,6 +188,198 @@
         }
       ],
       "destination": "/spa.html"
+    },
+    {
+      "source": "/",
+      "destination": "/prerendered/index.html"
+    },
+    {
+      "source": "/th",
+      "destination": "/prerendered/th/index.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/prerendered/services/index.html"
+    },
+    {
+      "source": "/th/services",
+      "destination": "/prerendered/th/services/index.html"
+    },
+    {
+      "source": "/services/residential",
+      "destination": "/prerendered/services/residential/index.html"
+    },
+    {
+      "source": "/th/services/residential",
+      "destination": "/prerendered/th/services/residential/index.html"
+    },
+    {
+      "source": "/services/commercial",
+      "destination": "/prerendered/services/commercial/index.html"
+    },
+    {
+      "source": "/th/services/commercial",
+      "destination": "/prerendered/th/services/commercial/index.html"
+    },
+    {
+      "source": "/services/off-grid",
+      "destination": "/prerendered/services/off-grid/index.html"
+    },
+    {
+      "source": "/th/services/off-grid",
+      "destination": "/prerendered/th/services/off-grid/index.html"
+    },
+    {
+      "source": "/services/maintenance",
+      "destination": "/prerendered/services/maintenance/index.html"
+    },
+    {
+      "source": "/th/services/maintenance",
+      "destination": "/prerendered/th/services/maintenance/index.html"
+    },
+    {
+      "source": "/how-it-works",
+      "destination": "/prerendered/how-it-works/index.html"
+    },
+    {
+      "source": "/th/how-it-works",
+      "destination": "/prerendered/th/how-it-works/index.html"
+    },
+    {
+      "source": "/pricing",
+      "destination": "/prerendered/pricing/index.html"
+    },
+    {
+      "source": "/th/pricing",
+      "destination": "/prerendered/th/pricing/index.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/prerendered/projects/index.html"
+    },
+    {
+      "source": "/th/projects",
+      "destination": "/prerendered/th/projects/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/prerendered/about/index.html"
+    },
+    {
+      "source": "/th/about",
+      "destination": "/prerendered/th/about/index.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/prerendered/blog/index.html"
+    },
+    {
+      "source": "/th/blog",
+      "destination": "/prerendered/th/blog/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/prerendered/contact/index.html"
+    },
+    {
+      "source": "/th/contact",
+      "destination": "/prerendered/th/contact/index.html"
+    },
+    {
+      "source": "/factory-electricity-bill-solar-assessment",
+      "destination": "/prerendered/factory-electricity-bill-solar-assessment/index.html"
+    },
+    {
+      "source": "/th/factory-electricity-bill-solar-assessment",
+      "destination": "/prerendered/th/factory-electricity-bill-solar-assessment/index.html"
+    },
+    {
+      "source": "/resort-solar-assessment",
+      "destination": "/prerendered/resort-solar-assessment/index.html"
+    },
+    {
+      "source": "/th/resort-solar-assessment",
+      "destination": "/prerendered/th/resort-solar-assessment/index.html"
+    },
+    {
+      "source": "/solar-ppa-thailand",
+      "destination": "/prerendered/solar-ppa-thailand/index.html"
+    },
+    {
+      "source": "/th/solar-ppa-thailand",
+      "destination": "/prerendered/th/solar-ppa-thailand/index.html"
+    },
+    {
+      "source": "/solar-epc-thailand",
+      "destination": "/prerendered/solar-epc-thailand/index.html"
+    },
+    {
+      "source": "/th/solar-epc-thailand",
+      "destination": "/prerendered/th/solar-epc-thailand/index.html"
+    },
+    {
+      "source": "/ppa-vs-epc-thailand",
+      "destination": "/prerendered/ppa-vs-epc-thailand/index.html"
+    },
+    {
+      "source": "/th/ppa-vs-epc-thailand",
+      "destination": "/prerendered/th/ppa-vs-epc-thailand/index.html"
+    },
+    {
+      "source": "/factories-commercial-solar-thailand",
+      "destination": "/prerendered/factories-commercial-solar-thailand/index.html"
+    },
+    {
+      "source": "/th/factories-commercial-solar-thailand",
+      "destination": "/prerendered/th/factories-commercial-solar-thailand/index.html"
+    },
+    {
+      "source": "/solar-battery-storage-thailand",
+      "destination": "/prerendered/solar-battery-storage-thailand/index.html"
+    },
+    {
+      "source": "/th/solar-battery-storage-thailand",
+      "destination": "/prerendered/th/solar-battery-storage-thailand/index.html"
+    },
+    {
+      "source": "/villa-home-solar-thailand",
+      "destination": "/prerendered/villa-home-solar-thailand/index.html"
+    },
+    {
+      "source": "/th/villa-home-solar-thailand",
+      "destination": "/prerendered/th/villa-home-solar-thailand/index.html"
+    },
+    {
+      "source": "/solar-rooftop-ko-phangan",
+      "destination": "/prerendered/solar-rooftop-ko-phangan/index.html"
+    },
+    {
+      "source": "/th/solar-rooftop-ko-phangan",
+      "destination": "/prerendered/th/solar-rooftop-ko-phangan/index.html"
+    },
+    {
+      "source": "/solar-installation-ko-samui",
+      "destination": "/prerendered/solar-installation-ko-samui/index.html"
+    },
+    {
+      "source": "/th/solar-installation-ko-samui",
+      "destination": "/prerendered/th/solar-installation-ko-samui/index.html"
+    },
+    {
+      "source": "/solar-rooftop-rayong",
+      "destination": "/prerendered/solar-rooftop-rayong/index.html"
+    },
+    {
+      "source": "/th/solar-rooftop-rayong",
+      "destination": "/prerendered/th/solar-rooftop-rayong/index.html"
+    },
+    {
+      "source": "/solar-rooftop-chonburi",
+      "destination": "/prerendered/solar-rooftop-chonburi/index.html"
+    },
+    {
+      "source": "/th/solar-rooftop-chonburi",
+      "destination": "/prerendered/th/solar-rooftop-chonburi/index.html"
     },
     {
       "source": "/(.*)",
