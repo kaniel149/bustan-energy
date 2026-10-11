@@ -19,8 +19,15 @@ window.addEventListener('vite:preloadError', (event) => {
   window.location.reload()
 })
 
-// Initialize PostHog + GA4 + Meta Pixel (no-ops if env vars are not set)
-initAnalytics()
+// Initialize GA4 + Meta Pixel (no-ops if env vars are not set) once the page
+// has loaded so the ~180 KB gtag bundle does not compete with the hero for
+// bandwidth and main-thread time. PostHog is initialized via snippet in index.html.
+function startAnalytics() {
+  if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(() => initAnalytics(), { timeout: 3000 })
+  else setTimeout(() => initAnalytics(), 1)
+}
+if (document.readyState === 'complete') startAnalytics()
+else window.addEventListener('load', startAnalytics, { once: true })
 
 // Capture UTM params / click IDs / referrer (first-touch, localStorage)
 initAttribution()

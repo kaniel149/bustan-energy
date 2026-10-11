@@ -123,10 +123,12 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex h-full items-center justify-between gap-5 px-5 sm:px-8">
         <Link to={langPath('/')} className={`shrink-0 rounded-sm ${focusRing}`}>
           <img
-            src="/bustan/bustan-energy-logo.png"
+            src="/bustan/bustan-energy-logo.webp"
+            width={520}
+            height={232}
             alt="Bustan Energy"
             className="h-12 w-[146px] object-contain object-left rtl:object-right"
-            fetchPriority="high"
+            decoding="async"
           />
         </Link>
 
