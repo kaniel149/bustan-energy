@@ -10,6 +10,12 @@ import './home.css'
 
 const SolarInstallationPlayer = lazy(() => import('../components/SolarInstallationPlayer'))
 const WHATSAPP = 'https://wa.me/66946692011'
+// Hero LCP image: AVIF first, WebP fallback, sized to the hero column so phones
+// download the 480/768 px rendition instead of the full 1024 px file.
+// Keep in sync with the preload in index.html.
+const HERO_SIZES = '(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) 50vw, 640px'
+const HERO_AVIF_SRCSET = '/assets/images/home-island-480.avif 480w, /assets/images/home-island-768.avif 768w, /assets/images/home-island-1024.avif 1024w'
+const HERO_WEBP_SRCSET = '/assets/images/home-island-480.webp 480w, /assets/images/home-island-768.webp 768w, /assets/images/home-island-1024.webp 1024w'
 const propertyImages = [
   { src: '/assets/images/home-villa.webp', width: 1024, height: 510 },
   { src: '/assets/images/home-resort.webp', width: 1024, height: 681 },
@@ -85,7 +91,19 @@ export default function HomePage() {
           </div>
           <figure className="home-hero-figure">
             <div className="home-hero-photo">
-              <img src="/assets/images/home-island.webp" width={1024} height={574} fetchPriority="high" decoding="async" alt={copy.imageAlt} />
+              <picture>
+                <source type="image/avif" srcSet={HERO_AVIF_SRCSET} sizes={HERO_SIZES} />
+                <img
+                  src="/assets/images/home-island-1024.webp"
+                  srcSet={HERO_WEBP_SRCSET}
+                  sizes={HERO_SIZES}
+                  width={1024}
+                  height={574}
+                  fetchPriority="high"
+                  decoding="async"
+                  alt={copy.imageAlt}
+                />
+              </picture>
               <span className="home-photo-location"><MapPin size={13} aria-hidden />Koh Phangan, Thailand</span>
               <span className="home-survey-corner home-survey-corner-start" aria-hidden />
               <span className="home-survey-corner home-survey-corner-end" aria-hidden />
