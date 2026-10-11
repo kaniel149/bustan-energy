@@ -8,6 +8,11 @@ interface MetaPixelFn {
   version?: string
 }
 
+interface ClarityFn {
+  (...args: unknown[]): void
+  q?: unknown[][]
+}
+
 interface Window {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   posthog: any
@@ -17,4 +22,5 @@ interface Window {
   gtag: (...args: any[]) => void
   fbq?: MetaPixelFn
   _fbq?: MetaPixelFn
+  clarity?: ClarityFn
 }

@@ -1,11 +1,34 @@
+import { PRODUCTION_TRACKING_IDS, resolveTrackingId } from './tracking-ids'
+
+const hostname = typeof window !== 'undefined' ? window.location.hostname : undefined
+
+// Env vars win; on bustan-energy.com the public production ids apply by
+// default (see tracking-ids.ts). Elsewhere (local dev, Vercel previews) every
+// tag stays off unless its env var is set.
+
 // ── GA4 / Google Ads ───────────────────────────────────────
-const GA4_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined
+const GA4_ID = resolveTrackingId(
+  import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined,
+  PRODUCTION_TRACKING_IDS.ga4MeasurementId,
+  hostname,
+)
 const GOOGLE_ADS_ID = import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined
 const GOOGLE_ADS_LEAD_LABEL = import.meta.env
   .VITE_GOOGLE_ADS_LEAD_CONVERSION_LABEL as string | undefined
 
 // ── Meta Pixel ─────────────────────────────────────────────
-const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID as string | undefined
+const META_PIXEL_ID = resolveTrackingId(
+  import.meta.env.VITE_META_PIXEL_ID as string | undefined,
+  PRODUCTION_TRACKING_IDS.metaPixelId,
+  hostname,
+)
+
+// ── Microsoft Clarity ──────────────────────────────────────
+const CLARITY_ID = resolveTrackingId(
+  import.meta.env.VITE_CLARITY_PROJECT_ID as string | undefined,
+  PRODUCTION_TRACKING_IDS.clarityProjectId,
+  hostname,
+)
 
 /** Inject the GA4 gtag.js script dynamically */
 function initGA4() {
@@ -26,8 +49,7 @@ function initGA4() {
   if (GOOGLE_ADS_ID) window.gtag('config', GOOGLE_ADS_ID)
 }
 
-/** Inject the Meta Pixel — no-op until VITE_META_PIXEL_ID is set
- *  (TM Meta business verification pending). */
+/** Inject the Meta Pixel — no-op without a pixel id. */
 function initMetaPixel() {
   if (!META_PIXEL_ID || window.fbq) return
 
@@ -56,14 +78,31 @@ function initMetaPixel() {
   fbq('track', 'PageView')
 }
 
+/** Inject the Microsoft Clarity tag (official snippet, queued until the
+ *  script loads) — no-op without a project id. */
+function initClarity() {
+  if (!CLARITY_ID || window.clarity) return
+
+  const clarity = ((...args: unknown[]) => {
+    ;(clarity.q = clarity.q || []).push(args)
+  }) as NonNullable<Window['clarity']>
+  window.clarity = clarity
+
+  const script = document.createElement('script')
+  script.async = true
+  script.src = `https://www.clarity.ms/tag/${CLARITY_ID}`
+  document.head.appendChild(script)
+}
+
 // ── Public API ─────────────────────────────────────────────
 
 /** Call once at app startup (e.g. in main.tsx) */
 export function initAnalytics() {
   // PostHog is initialized via snippet in index.html
-  // GA4 + Meta Pixel are initialized dynamically here
+  // GA4 + Meta Pixel + Clarity are initialized dynamically here
   initGA4()
   initMetaPixel()
+  initClarity()
 }
 
 /** Identify a logged-in user (call after auth) */
