@@ -1,12 +1,15 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, StaticRouter, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import Layout from './components/layout/Layout'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { SEO_PAGES } from './content/seoPages'
 
-const HomePage = lazy(() => import('./pages/HomePage'))
+// Eager: the home route is prerendered, so its CSS must be in the main stylesheet
+// and the client render must not replace the hero with the loading screen.
+import HomePage from './pages/HomePage'
+
 const ServicesPage = lazy(() => import('./pages/ServicesPage'))
 const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
@@ -87,14 +90,15 @@ function PageRoutes() {
 }
 
 /** Detect if we're on the CRM subdomain (old TM hostname kept until Stage 4 of rebrand) */
-const isCrmDomain = ['crm.energy-tm.com', 'crm.bustan-energy.com'].includes(window.location.hostname)
+const isCrmDomain = typeof window !== 'undefined' && ['crm.energy-tm.com', 'crm.bustan-energy.com'].includes(window.location.hostname)
 
-export default function App() {
+export default function App({ serverPath }: { serverPath?: string } = {}) {
+  const Router = serverPath === undefined ? BrowserRouter : StaticRouter
   // crm.bustan-energy.com → show platform with integrated views + CRM routes for deep links
   if (isCrmDomain) {
     return (
       <HelmetProvider>
-        <BrowserRouter>
+        <Router location={serverPath ?? '/'}>
           <LanguageProvider>
             <Suspense fallback={<LoadingScreen />}>
               <Routes>
@@ -125,7 +129,7 @@ export default function App() {
               </Routes>
             </Suspense>
           </LanguageProvider>
-        </BrowserRouter>
+        </Router>
       </HelmetProvider>
     )
   }
@@ -133,7 +137,7 @@ export default function App() {
   // bustan-energy.com → marketing website
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <Router location={serverPath ?? '/'}>
         <LanguageProvider>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
@@ -199,7 +203,7 @@ export default function App() {
             </Routes>
           </Suspense>
         </LanguageProvider>
-      </BrowserRouter>
+      </Router>
     </HelmetProvider>
   )
 }

@@ -44,10 +44,13 @@ export function Footer() {
             {/* Logo */}
             <Link to={langPath('/')} className="inline-flex w-fit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean focus-visible:ring-offset-4">
               <img
-                src="/bustan/bustan-energy-logo.png"
+                src="/bustan/bustan-energy-logo.webp"
+                width={520}
+                height={232}
                 alt="Bustan Energy"
                 className="h-14 w-[172px] object-contain object-left rtl:object-right"
                 loading="lazy"
+                decoding="async"
               />
             </Link>
 

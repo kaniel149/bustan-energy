@@ -4,6 +4,7 @@
 /node_modules/
 /dist/
 /dist-ssr/
+/.prerender/
 /.env*
 /.mcp.json
 /.claude/
@@ -13,7 +14,8 @@
 /_retired/
 /docs/
 /drone-imagery/
-/scripts/
+/scripts/*
+!/scripts/prerender.mjs
 /tests/
 /test-results/
 /playwright-report/
