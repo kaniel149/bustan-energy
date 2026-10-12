@@ -128,6 +128,7 @@ export default function ResidentialSolarPage() {
         description="Install solar panels on your Ko Phangan home. 3kW to 10kW rooftop systems with optional battery backup, PEA coordination, and equipment selected for your site. Free site assessment."
         path="/services/residential"
         lang={lang}
+        englishOnly
         schema={[
           serviceSchema(lang),
           breadcrumbSchema(breadcrumbs),

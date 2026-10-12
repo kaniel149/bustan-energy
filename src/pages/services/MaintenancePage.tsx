@@ -111,6 +111,7 @@ export default function MaintenancePage() {
         description="Professional solar system maintenance on Ko Phangan. 24/7 monitoring, panel cleaning, repairs, annual inspections, and warranty support. Protect your solar investment with Bustan Energy."
         path="/services/maintenance"
         lang={lang}
+        englishOnly
         schema={[
           serviceSchema(lang),
           breadcrumbSchema(breadcrumbs),

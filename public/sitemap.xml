@@ -9,6 +9,7 @@
     <loc>https://bustan-energy.com/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/" />
     <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://bustan-energy.com/he" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -17,9 +18,19 @@
     <loc>https://bustan-energy.com/th</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/" />
     <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://bustan-energy.com/he" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/he</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://bustan-energy.com/he" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <!-- Services -->
@@ -44,15 +55,6 @@
   <url>
     <loc>https://bustan-energy.com/services/residential</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/residential" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/residential" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/residential" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://bustan-energy.com/th/services/residential</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/residential" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/residential" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/residential" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -62,15 +64,6 @@
   <url>
     <loc>https://bustan-energy.com/services/commercial</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/commercial" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/commercial" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/commercial" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://bustan-energy.com/th/services/commercial</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/commercial" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/commercial" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/commercial" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -80,15 +73,6 @@
   <url>
     <loc>https://bustan-energy.com/services/off-grid</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/off-grid" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/off-grid" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/off-grid" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://bustan-energy.com/th/services/off-grid</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/off-grid" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/off-grid" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/off-grid" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -98,15 +82,6 @@
   <url>
     <loc>https://bustan-energy.com/services/maintenance</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/maintenance" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/maintenance" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/maintenance" />
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://bustan-energy.com/th/services/maintenance</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/services/maintenance" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/services/maintenance" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/services/maintenance" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -224,15 +199,6 @@
   <url>
     <loc>https://bustan-energy.com/factory-electricity-bill-solar-assessment</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/factory-electricity-bill-solar-assessment" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/factory-electricity-bill-solar-assessment" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/factory-electricity-bill-solar-assessment" />
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://bustan-energy.com/th/factory-electricity-bill-solar-assessment</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/factory-electricity-bill-solar-assessment" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/factory-electricity-bill-solar-assessment" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/factory-electricity-bill-solar-assessment" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -240,15 +206,6 @@
   <url>
     <loc>https://bustan-energy.com/resort-solar-assessment</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/resort-solar-assessment" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/resort-solar-assessment" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/resort-solar-assessment" />
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://bustan-energy.com/th/resort-solar-assessment</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/resort-solar-assessment" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://bustan-energy.com/th/resort-solar-assessment" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/resort-solar-assessment" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -414,5 +371,63 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/solar-rooftop-chonburi" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- Blog posts (English only; /th/blog/* renders the same English body) -->
+  <url>
+    <loc>https://bustan-energy.com/blog/solar-energy-koh-phangan-guide</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/blog/solar-energy-koh-phangan-guide" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/blog/solar-energy-koh-phangan-guide" />
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/blog/solar-panel-cost-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/blog/solar-panel-cost-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/blog/solar-panel-cost-thailand" />
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/blog/off-grid-solar-koh-phangan</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/blog/off-grid-solar-koh-phangan" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/blog/off-grid-solar-koh-phangan" />
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/blog/koh-phangan-power-outages-solar-solution</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/blog/koh-phangan-power-outages-solar-solution" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/blog/koh-phangan-power-outages-solar-solution" />
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/blog/pea-permit-solar-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/blog/pea-permit-solar-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/blog/pea-permit-solar-thailand" />
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/blog/solar-panel-maintenance-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/blog/solar-panel-maintenance-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/blog/solar-panel-maintenance-thailand" />
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bustan-energy.com/blog/commercial-solar-roi-thailand</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bustan-energy.com/blog/commercial-solar-roi-thailand" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bustan-energy.com/blog/commercial-solar-roi-thailand" />
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
