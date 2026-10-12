@@ -228,6 +228,7 @@ export default function FactoryBillAssessmentPage() {
         description="Send your factory, resort or commercial electricity bill and get an initial solar savings estimate within 48 hours. Compare EPC vs PPA before a full site survey. Bustan Energy, Thailand."
         path="/factory-electricity-bill-solar-assessment"
         lang={lang}
+        englishOnly
         ogImage="https://bustan-energy.com/assets/images/strategy-01-aerial.png"
         schema={{
           '@context': 'https://schema.org',

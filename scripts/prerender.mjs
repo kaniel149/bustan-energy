@@ -11,6 +11,13 @@ const paths = [...new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, 
   if (parsed.origin !== origin) throw new Error(`Unexpected sitemap origin: ${url}`)
   return parsed.pathname.replace(/\/$/, '') || '/'
 }))]
+// Thai routes whose body is still English: prerendered (they canonicalise to the English URL)
+// but kept out of the sitemap so it lists canonical URLs only.
+const englishOnlyThaiPaths = [
+  '/th/services/residential', '/th/services/commercial', '/th/services/off-grid', '/th/services/maintenance',
+  '/th/resort-solar-assessment', '/th/factory-electricity-bill-solar-assessment',
+]
+for (const path of englishOnlyThaiPaths) if (!paths.includes(path)) paths.push(path)
 const privatePath = /^\/(?:th\/|he\/)?(?:admin|api|crm|platform|p|proposals|proposal-templates)(?:\/|$)/
 const report = []
 

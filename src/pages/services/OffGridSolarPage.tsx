@@ -142,6 +142,7 @@ export default function OffGridSolarPage() {
         description="Off-grid solar systems and battery storage for Ko Phangan homes and businesses. Huawei LUNA2000 batteries, hybrid systems, and full off-grid solutions. No more blackouts."
         path="/services/off-grid"
         lang={lang}
+        englishOnly
         schema={[
           serviceSchema(lang),
           breadcrumbSchema(breadcrumbs),

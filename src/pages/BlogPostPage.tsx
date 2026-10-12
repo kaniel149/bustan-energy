@@ -43,6 +43,7 @@ export default function BlogPostPage() {
         description={post.excerpt}
         path={`/blog/${post.slug}`}
         lang={lang}
+        englishOnly
         schema={[
           breadcrumbSchema([
             ...pageBreadcrumb(lang, t.nav.blog, '/blog'),

@@ -27,6 +27,12 @@ interface SEOHeadProps {
   isArticle?: boolean
   /** Robots directive. Defaults to "index, follow". */
   robots?: string
+  /**
+   * The page body is English in every language route (no Thai translation yet).
+   * Canonicalises /th renders to the English URL and omits the th/he alternates,
+   * so Google does not see a Thai URL that serves English duplicate content.
+   */
+  englishOnly?: boolean
 }
 
 /**
@@ -55,15 +61,20 @@ export function SEOHead({
   ogImage,
   isArticle = false,
   robots = 'index, follow',
+  englishOnly = false,
 }: SEOHeadProps) {
-  // Canonical is the language-specific URL for this render
-  const canonicalUrl = lang === 'th' ? `${BASE_URL}/th${path}` : lang === 'he' && localizedHebrew ? `${BASE_URL}/he${path}` : `${BASE_URL}${path}`
+  // Language-prefixed URLs drop the root slash: /th, not /th/ (only /th is a prerendered route)
+  const prefixedPath = path === '/' ? '' : path
   const enUrl = `${BASE_URL}${path}`
-  const thUrl = `${BASE_URL}/th${path}`
+  const thUrl = `${BASE_URL}/th${prefixedPath}`
+  const heUrl = `${BASE_URL}/he${prefixedPath}`
+  // Canonical is the language-specific URL for this render
+  const canonicalUrl = englishOnly ? enUrl : lang === 'th' ? thUrl : lang === 'he' && localizedHebrew ? heUrl : enUrl
 
-  const pageTitle = `${title} | Bustan Energy`
+  // Some titles already carry the brand; never print it twice
+  const pageTitle = title.includes('Bustan Energy') ? title : `${title} | Bustan Energy`
   const ogImageUrl = ogImage ?? DEFAULT_OG_IMAGE
-  const ogLocale = lang === 'th' ? 'th_TH' : lang === 'he' && localizedHebrew ? 'he_IL' : 'en_US'
+  const ogLocale = englishOnly ? 'en_US' : lang === 'th' ? 'th_TH' : lang === 'he' && localizedHebrew ? 'he_IL' : 'en_US'
   const ogType = isArticle ? 'article' : 'website'
 
   // Always inject LocalBusiness; merge with any page-specific schemas
@@ -92,8 +103,8 @@ export function SEOHead({
       {/* Canonical + hreflang */}
       <link rel="canonical" href={canonicalUrl} />
       <link rel="alternate" hrefLang="en" href={enUrl} />
-      <link rel="alternate" hrefLang="th" href={thUrl} />
-      {localizedHebrew && <link rel="alternate" hrefLang="he" href={`${BASE_URL}/he${path}`} />}
+      {!englishOnly && <link rel="alternate" hrefLang="th" href={thUrl} />}
+      {localizedHebrew && !englishOnly && <link rel="alternate" hrefLang="he" href={heUrl} />}
       <link rel="alternate" hrefLang="x-default" href={enUrl} />
 
       {/* Open Graph */}
