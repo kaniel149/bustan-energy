@@ -153,7 +153,18 @@
       ]
     }
   ],
-  "redirects": [],
+  "redirects": [
+    {
+      "source": "/th/",
+      "destination": "/th",
+      "statusCode": 308
+    },
+    {
+      "source": "/he/",
+      "destination": "/he",
+      "statusCode": 308
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",
