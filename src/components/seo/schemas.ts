@@ -8,6 +8,7 @@
  *       โซลาร์เซลล์ ราคา, โซลาร์ฟาร์ม ไทย
  */
 import type { Lang } from '../../i18n/translations'
+import { FACEBOOK_URL, INSTAGRAM_URL } from '../../lib/social'
 
 export const BASE_URL = 'https://bustan-energy.com'
 const BUSINESS_ID = `${BASE_URL}/#business`
@@ -67,10 +68,7 @@ export function localBusinessSchema(lang: Lang) {
       lang === 'th'
         ? 'โซลาร์เซลล์ เกาะพะงัน, ติดตั้งโซลาร์เซลล์, สุราษฎร์ธานี, โซลาร์ฟาร์ม'
         : 'solar koh phangan, solar surat thani, solar panel installation thailand, solar farm thailand',
-    sameAs: [
-      'https://www.facebook.com/bustanenergy.th',
-      'https://www.instagram.com/bustanenergy.th',
-    ],
+    sameAs: [FACEBOOK_URL, INSTAGRAM_URL],
   }
 }
 
@@ -416,10 +414,7 @@ export function organizationSchema() {
         availableLanguage: ['English', 'Thai'],
       },
     ],
-    sameAs: [
-      'https://www.facebook.com/bustanenergy.th',
-      'https://www.instagram.com/bustanenergy.th',
-    ],
+    sameAs: [FACEBOOK_URL, INSTAGRAM_URL],
   }
 }
 
