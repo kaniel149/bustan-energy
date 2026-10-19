@@ -106,6 +106,7 @@ export default function CommercialSolarPage() {
         description="Solar energy for Ko Phangan businesses, hotels, and resorts. 30kW to 500kW systems with PPA financing. Lower operating costs and attract eco-conscious guests. Free commercial proposal."
         path="/services/commercial"
         lang={lang}
+        englishOnly
         schema={[
           serviceSchema(lang),
           breadcrumbSchema(breadcrumbs),

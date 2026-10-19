@@ -153,7 +153,18 @@
       ]
     }
   ],
-  "redirects": [],
+  "redirects": [
+    {
+      "source": "/th/",
+      "destination": "/th",
+      "statusCode": 308
+    },
+    {
+      "source": "/he/",
+      "destination": "/he",
+      "statusCode": 308
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",
@@ -214,6 +225,10 @@
     {
       "source": "/th",
       "destination": "/prerendered/th/index.html"
+    },
+    {
+      "source": "/he",
+      "destination": "/prerendered/he/index.html"
     },
     {
       "source": "/services",
@@ -398,6 +413,34 @@
     {
       "source": "/th/solar-rooftop-chonburi",
       "destination": "/prerendered/th/solar-rooftop-chonburi/index.html"
+    },
+    {
+      "source": "/blog/solar-energy-koh-phangan-guide",
+      "destination": "/prerendered/blog/solar-energy-koh-phangan-guide/index.html"
+    },
+    {
+      "source": "/blog/solar-panel-cost-thailand",
+      "destination": "/prerendered/blog/solar-panel-cost-thailand/index.html"
+    },
+    {
+      "source": "/blog/off-grid-solar-koh-phangan",
+      "destination": "/prerendered/blog/off-grid-solar-koh-phangan/index.html"
+    },
+    {
+      "source": "/blog/koh-phangan-power-outages-solar-solution",
+      "destination": "/prerendered/blog/koh-phangan-power-outages-solar-solution/index.html"
+    },
+    {
+      "source": "/blog/pea-permit-solar-thailand",
+      "destination": "/prerendered/blog/pea-permit-solar-thailand/index.html"
+    },
+    {
+      "source": "/blog/solar-panel-maintenance-thailand",
+      "destination": "/prerendered/blog/solar-panel-maintenance-thailand/index.html"
+    },
+    {
+      "source": "/blog/commercial-solar-roi-thailand",
+      "destination": "/prerendered/blog/commercial-solar-roi-thailand/index.html"
     },
     {
       "source": "/(.*)",
