@@ -214,7 +214,7 @@ export const PRICING_FAQS_EN = [
   {
     question: 'What is the payback period for solar in Ko Phangan?',
     answer:
-      "With Ko Phangan's high electricity tariffs (often 8–10+ THB/kWh for resorts on island rates), payback periods range from 4–7 years for commercial systems and 6–9 years for residential. After payback, energy is essentially free for 20+ years.",
+      'Payback periods range from 4–7 years for commercial systems and 6–9 years for residential. The PEA tariff is uniform nationally, about 3.95 THB/kWh before VAT for September–December 2026. After payback, energy is essentially free for 20+ years.',
   },
   {
     question: 'Do you offer PPA (Power Purchase Agreement) financing?',
@@ -247,7 +247,7 @@ export const PRICING_FAQS_TH = [
   {
     question: 'ระยะเวลาคืนทุนโซลาร์เซลล์ในเกาะพะงันกี่ปี?',
     answer:
-      'ด้วยค่าไฟฟ้าสูงของเกาะพะงัน (มักถึง 8–10+ บาท/kWh สำหรับรีสอร์ท) ระยะเวลาคืนทุนอยู่ที่ 4–7 ปีสำหรับระบบเชิงพาณิชย์ และ 6–9 ปีสำหรับที่อยู่อาศัย หลังจากนั้นพลังงานแทบฟรีเป็นเวลากว่า 20 ปี',
+      'ระยะเวลาคืนทุนอยู่ที่ 4–7 ปีสำหรับระบบเชิงพาณิชย์ และ 6–9 ปีสำหรับที่อยู่อาศัย อัตราค่าไฟ กฟภ. เท่ากันทั่วประเทศ ประมาณ 3.95 บาท/kWh ก่อน VAT สำหรับเดือนกันยายน–ธันวาคม 2569 หลังจากนั้นพลังงานแทบฟรีเป็นเวลากว่า 20 ปี',
   },
   {
     question: 'มีตัวเลือก PPA (สัญญาซื้อขายไฟฟ้า) ไหม?',

@@ -49,7 +49,7 @@ const whyOffGrid = [
   {
     icon: Zap,
     title: 'Rising Electricity Costs',
-    text: 'Island electricity tariffs are among the highest in Thailand. Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.',
+    text: 'The PEA electricity tariff is uniform nationally, about 3.95 THB/kWh before VAT for September–December 2026. Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.',
   },
 ]
 
