@@ -750,7 +750,8 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Marketing value</strong> — Sustainability credentials increasingly influence booking decisions. Properties with solar can legitimately market themselves as "solar-powered" — which matters to the eco-conscious tourists who choose Ko Phangan.</li>
 </ul>
 
-<p><em>The following are illustrative examples based on typical system sizes and load profiles on Ko Phangan, not specific Bustan Energy clients. Your results will depend on your bill, roof and usage.</em></p>
+<p><em>The following are illustrative examples based on typical system sizes and load profiles on Ko Phangan, not specific Bustan Energy clients. Your results will depend on your bill, roof and usage. Savings assume an all-in PEA tariff of about 4.4 THB/kWh (<a href="https://www.pea.co.th/sites/default/files/users/user34/attachments/Electricity_Tariff_SEP_2026_3.pdf">Type 2 rate</a> + <a href="https://www.pea.co.th/sites/default/files/ft/2026/Ft%20surcharge%20SEP-DEC%202026_Final.pdf">Ft 0.1623 THB/kWh</a> + 7% VAT, September 2026).</em></p>
+<p>Monthly savings = self-consumed solar kWh × 4.4 THB/kWh; payback = installation cost ÷ annual savings.</p>
 
 <h2>Example 1: Boutique Beach Resort</h2>
 
@@ -774,10 +775,10 @@ export const blogPosts: BlogPost[] = [
 
 <h3>Illustrative Performance</h3>
 <ul>
-  <li><strong>Daily solar production:</strong> 285 kWh (5.1 peak sun hours × 56 kW effective)</li>
-  <li><strong>Monthly solar production:</strong> 8,550 kWh</li>
+  <li><strong>Daily solar production:</strong> 285.6 kWh (5.1 peak sun hours × 56 kW effective)</li>
+  <li><strong>Monthly solar production:</strong> 8,568 kWh (285.6 × 30 days)</li>
   <li><strong>Self-consumption rate:</strong> 88% (high daytime loads absorb most production)</li>
-  <li><strong>Monthly electricity offset:</strong> 7,524 kWh</li>
+  <li><strong>Monthly electricity offset:</strong> 7,539.84 kWh (8,568 × 88%)</li>
 </ul>
 
 <h3>Illustrative Comparison</h3>
@@ -786,12 +787,11 @@ export const blogPosts: BlogPost[] = [
     <tr><th>Metric</th><th>Without Solar</th><th>With Solar</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly electricity bill</td><td>฿97,500 (avg)</td><td>฿35,800</td></tr>
-    <tr><td>Annual electricity cost</td><td>฿1,170,000</td><td>฿429,600</td></tr>
-    <tr><td>Annual savings</td><td>—</td><td><strong>฿740,400</strong></td></tr>
+    <tr><td>Monthly electricity bill</td><td>฿97,500 (avg)</td><td>฿64,325</td></tr>
+    <tr><td>Annual electricity cost</td><td>฿1,170,000</td><td>฿771,900</td></tr>
+    <tr><td>Annual savings</td><td>—</td><td><strong>฿398,100</strong></td></tr>
     <tr><td>System investment</td><td>—</td><td>฿2,450,000</td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>3.3 years</strong></td></tr>
-    <tr><td>25-year NPV (5% discount rate)</td><td>—</td><td><strong>฿7,800,000+</strong></td></tr>
+    <tr><td>Simple payback period</td><td>—</td><td><strong>6.2 years</strong></td></tr>
   </tbody>
 </table>
 
@@ -817,8 +817,9 @@ export const blogPosts: BlogPost[] = [
 
 <h3>Illustrative Performance</h3>
 <ul>
-  <li><strong>Monthly solar production:</strong> 4,370 kWh</li>
+  <li><strong>Monthly solar production:</strong> 4,590 kWh (30 kWp × 5.1 peak sun hours × 30 days)</li>
   <li><strong>Self-consumption rate:</strong> 91%</li>
+  <li><strong>Monthly electricity offset:</strong> 4,176.9 kWh (4,590 × 91%)</li>
 </ul>
 
 <h3>Illustrative Comparison</h3>
@@ -827,9 +828,9 @@ export const blogPosts: BlogPost[] = [
     <tr><th>Metric</th><th>Without Solar</th><th>With Solar</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly electricity bill</td><td>฿55,000 (avg)</td><td>฿26,800</td></tr>
-    <tr><td>Annual savings</td><td>—</td><td><strong>฿338,400</strong></td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>2.9 years</strong></td></tr>
+    <tr><td>Monthly electricity bill</td><td>฿55,000 (avg)</td><td>฿36,622</td></tr>
+    <tr><td>Annual savings</td><td>—</td><td><strong>฿220,536</strong></td></tr>
+    <tr><td>Simple payback period</td><td>—</td><td><strong>4.4 years</strong></td></tr>
   </tbody>
 </table>
 
@@ -856,26 +857,24 @@ export const blogPosts: BlogPost[] = [
 <h3>Illustrative Comparison</h3>
 <table>
   <thead>
-    <tr><th>Metric</th><th>Diesel Only</th><th>With Solar</th></tr>
+    <tr><th>Metric</th><th>Assumption</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly energy cost</td><td>฿45,000 (avg)</td><td>฿4,200 (gen fuel, ~15h/month)</td></tr>
-    <tr><td>Annual energy cost</td><td>฿540,000</td><td>฿50,400</td></tr>
-    <tr><td>Annual savings vs. diesel</td><td>—</td><td><strong>฿489,600</strong></td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>4.3 years</strong></td></tr>
+    <tr><td>Monthly diesel cost</td><td>฿45,000</td></tr>
+    <tr><td>Annual diesel cost</td><td>฿540,000</td></tr>
   </tbody>
 </table>
+<p>Assuming diesel costs of about ฿45,000/month. A backup generator stays for extended monsoon periods, so some fuel cost remains. Payback depends on local diesel cost.</p>
 
 <p>Beyond the financial case, a resort like this could legitimately market itself as solar-powered, and replacing constant generator noise with a quieter site would support guest comfort.</p>
 
 <h2>PPA Option: Zero-Upfront Commercial Solar</h2>
 
-<p>Not all businesses have ฿1–2.5 million in capital to invest in solar, even when the ROI is excellent. That is why Bustan Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
+<p>Not all businesses have significant upfront capital to invest in solar, even when the ROI is excellent. That is why Bustan Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
 
 <p>How it works:</p>
 <ul>
   <li><strong>Zero upfront investment</strong> — Bustan Energy owns and installs the solar system at no cost to you.</li>
-  <li><strong>Fixed electricity rate</strong> — You buy the solar electricity at a rate 15–25% below your current PEA tariff, locked in for 10–15 years.</li>
   <li><strong>Immediate savings</strong> — Your electricity bill drops from day one, with no capital outlay.</li>
   <li><strong>Bustan Energy handles everything</strong> — Maintenance, monitoring, repairs, and insurance are all included.</li>
   <li><strong>Purchase option</strong> — You can buy the system at fair market value at the end of the agreement if you choose.</li>
