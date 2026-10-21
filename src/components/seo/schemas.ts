@@ -9,7 +9,7 @@
  */
 import type { Lang } from '../../i18n/translations'
 import { FACEBOOK_URL, INSTAGRAM_URL } from '../../lib/social'
-import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_TARIFF_NEWS_URL } from '../../lib/pea-tariff'
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_RESIDENTIAL_TARIFF_TH, PEA_TARIFF_NEWS_URL } from '../../lib/pea-tariff'
 
 export const BASE_URL = 'https://bustan-energy.com'
 const BUSINESS_ID = `${BASE_URL}/#business`
@@ -246,7 +246,7 @@ export const PRICING_FAQS_TH = [
   {
     question: 'ระยะเวลาคืนทุนโซลาร์เซลล์ในเกาะพะงันกี่ปี?',
     answer:
-      `ระยะเวลาคืนทุนอยู่ที่ 4–7 ปีสำหรับระบบเชิงพาณิชย์ และ 6–9 ปีสำหรับที่อยู่อาศัย ${PEA_RESIDENTIAL_TARIFF} Sources: ${PEA_TARIFF_NEWS_URL} and ${PEA_FT_PDF_URL}. หลังจากนั้นพลังงานแทบฟรีเป็นเวลากว่า 20 ปี`,
+      `ระยะเวลาคืนทุนอยู่ที่ 4–7 ปีสำหรับระบบเชิงพาณิชย์ และ 6–9 ปีสำหรับที่อยู่อาศัย ${PEA_RESIDENTIAL_TARIFF_TH} Sources: ${PEA_TARIFF_NEWS_URL} and ${PEA_FT_PDF_URL}. หลังจากนั้นพลังงานแทบฟรีเป็นเวลากว่า 20 ปี`,
   },
   {
     question: 'มีตัวเลือก PPA (สัญญาซื้อขายไฟฟ้า) ไหม?',

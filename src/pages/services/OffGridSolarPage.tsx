@@ -14,7 +14,7 @@ import {
 import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
-import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_TARIFF_NEWS_URL } from '../../lib/pea-tariff'
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_RESIDENTIAL_TARIFF_TH, PEA_TARIFF_NEWS_URL } from '../../lib/pea-tariff'
 import { Button } from '../../components/ui/Button'
 import { SectionHeader } from '../../components/ui/SectionHeader'
 import {
@@ -55,7 +55,7 @@ const whyOffGrid: {
   {
     icon: Zap,
     title: 'Rising Electricity Costs',
-    text: `${PEA_RESIDENTIAL_TARIFF} Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.`,
+    text: 'Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.',
     sources: [
       { href: PEA_TARIFF_NEWS_URL, label: 'PEA corporate news' },
       { href: PEA_FT_PDF_URL, label: 'Ft surcharge Sep–Dec 2026 (PDF)' },
@@ -136,8 +136,9 @@ const systemTypeIcons = [Cable, Unplug, Sun]
 
 export default function OffGridSolarPage() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
-  const { langPath } = useLanguage()
+  const { langPath, lang: routeLang } = useLanguage()
   const lang = 'en'
+  const residentialTariff = routeLang === 'th' ? PEA_RESIDENTIAL_TARIFF_TH : PEA_RESIDENTIAL_TARIFF
 
   const breadcrumbs = [
     { name: 'Home', url: BASE_URL },
@@ -200,6 +201,7 @@ export default function OffGridSolarPage() {
                     </IconTile>
                     <h3 className="text-xl font-semibold text-ink mb-3">{item.title}</h3>
                     <p className="text-ink/72 text-sm leading-relaxed">
+                      {item.sources ? `${residentialTariff} ` : null}
                       {item.text}
                       {item.sources && (
                         <>
