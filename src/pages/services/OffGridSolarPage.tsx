@@ -14,6 +14,7 @@ import {
 import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_TARIFF_NEWS_URL } from '../../lib/pea-tariff'
 import { Button } from '../../components/ui/Button'
 import { SectionHeader } from '../../components/ui/SectionHeader'
 import {
@@ -30,7 +31,12 @@ import {
 
 const BASE_URL = 'https://bustan-energy.com'
 
-const whyOffGrid = [
+const whyOffGrid: {
+  icon: typeof Zap
+  title: string
+  text: string
+  sources?: { href: string; label: string }[]
+}[] = [
   {
     icon: CloudOff,
     title: 'Frequent Power Outages',
@@ -49,7 +55,11 @@ const whyOffGrid = [
   {
     icon: Zap,
     title: 'Rising Electricity Costs',
-    text: 'The PEA electricity tariff is uniform nationally, about 3.95 THB/kWh before VAT for September–December 2026. Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.',
+    text: `${PEA_RESIDENTIAL_TARIFF} Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.`,
+    sources: [
+      { href: PEA_TARIFF_NEWS_URL, label: 'PEA corporate news' },
+      { href: PEA_FT_PDF_URL, label: 'Ft surcharge Sep–Dec 2026 (PDF)' },
+    ],
   },
 ]
 
@@ -189,7 +199,29 @@ export default function OffGridSolarPage() {
                       <item.icon size={24} strokeWidth={1.5} aria-hidden />
                     </IconTile>
                     <h3 className="text-xl font-semibold text-ink mb-3">{item.title}</h3>
-                    <p className="text-ink/72 text-sm leading-relaxed">{item.text}</p>
+                    <p className="text-ink/72 text-sm leading-relaxed">
+                      {item.text}
+                      {item.sources && (
+                        <>
+                          {' '}
+                          Sources:{' '}
+                          {item.sources.map((source, index) => (
+                            <span key={source.href}>
+                              {index > 0 && ' and '}
+                              <a
+                                href={source.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-ocean underline underline-offset-2"
+                              >
+                                {source.label}
+                              </a>
+                            </span>
+                          ))}
+                          .
+                        </>
+                      )}
+                    </p>
                   </div>
                 </motion.div>
               ))}

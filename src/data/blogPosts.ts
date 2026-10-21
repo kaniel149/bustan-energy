@@ -2,6 +2,10 @@
 // Full blog post content for Bustan Energy (Ko Phangan, Thailand)
 // Each post uses Markdown-style HTML content rendered in BlogPostPage.tsx
 
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_TARIFF_NEWS_URL } from '../lib/pea-tariff'
+
+const peaTariffSources = `<a href="${PEA_TARIFF_NEWS_URL}" rel="noopener noreferrer">PEA corporate news</a> and <a href="${PEA_FT_PDF_URL}" rel="noopener noreferrer">Ft surcharge Sep–Dec 2026 (PDF)</a>`
+
 export interface BlogPost {
   slug: string
   title: string
@@ -30,7 +34,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>Why Go Solar on Ko Phangan?</h2>
 
-<p>Ko Phangan is an island in the Gulf of Thailand, connected to the mainland grid via undersea cables. The PEA electricity tariff is uniform nationally, about 3.95 THB/kWh before VAT for September–December 2026. Island properties pay that same unit rate.</p>
+<p>Ko Phangan is an island in the Gulf of Thailand, connected to the mainland grid via undersea cables. ${PEA_RESIDENTIAL_TARIFF} Island properties pay that same residential schedule. Sources: ${peaTariffSources}.</p>
 
 <p>At the same time, Ko Phangan sits near the equator with excellent solar irradiance. The island averages around <strong>5.1 peak sun hours per day</strong>, which means a well-designed solar system produces substantial energy year-round. Add in frequent power outages — especially during storms and peak tourist season — and solar with battery storage becomes not just a savings tool, but an <strong>energy security solution</strong>.</p>
 
@@ -248,7 +252,7 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Frequent power outages</strong> — The island experiences power cuts ranging from a few minutes to several hours, sometimes multiple times per week. Storms, overloaded transformers, and maintenance on the undersea cable all cause disruptions.</li>
   <li><strong>Unreliable grid in remote areas</strong> — Many properties in the northern, eastern, and hillside areas of Ko Phangan have weak grid connections with frequent voltage fluctuations that can damage appliances.</li>
   <li><strong>No grid access</strong> — Some new developments and remote properties simply cannot get a PEA connection, or the cost of running a power line to the property is prohibitively expensive (sometimes ฿500,000+ for a remote hillside connection).</li>
-  <li><strong>The national PEA tariff</strong> — The PEA tariff is uniform nationally, about 3.95 THB/kWh before VAT for September–December 2026. Self-generation is still attractive when you factor in the value of uninterrupted power.</li>
+  <li><strong>The national PEA tariff</strong> — ${PEA_RESIDENTIAL_TARIFF} Self-generation is still attractive when you factor in the value of uninterrupted power. Sources: ${peaTariffSources}.</li>
   <li><strong>Environmental values</strong> — Many Ko Phangan residents and businesses are deeply committed to sustainability. Off-grid solar eliminates dependence on fossil-fuel-generated grid electricity.</li>
 </ul>
 
@@ -356,7 +360,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>Ready to Go Off-Grid?</h2>
 
-<p>Whether you want a hybrid system for outage protection or a full off-grid setup for true energy independence, Ko Phangan is one of the best places in Thailand to do it. The combination of an unreliable grid and excellent solar irradiance makes the business case compelling. The PEA tariff is uniform nationally, about 3.95 THB/kWh before VAT for September–December 2026.</p>
+<p>Whether you want a hybrid system for outage protection or a full off-grid setup for true energy independence, Ko Phangan is one of the best places in Thailand to do it. The combination of an unreliable grid and excellent solar irradiance makes the business case compelling. ${PEA_RESIDENTIAL_TARIFF} Sources: ${peaTariffSources}.</p>
 
 <p><strong><a href="/contact">Contact Bustan Energy for a free off-grid consultation.</a></strong> We will visit your property, assess your energy needs, and design a system that keeps your lights on — rain or shine, grid or no grid.</p>
 `,
