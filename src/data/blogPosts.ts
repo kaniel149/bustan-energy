@@ -257,7 +257,7 @@ export const blogPosts: BlogPost[] = [
 <p>Batteries are the heart of any off-grid or hybrid solar system. They store the energy your panels generate during the day so you can use it at night or during cloudy weather. Here are the main battery technologies available in 2026:</p>
 
 <h3>Lithium Iron Phosphate (LiFePO4)</h3>
-<p>LiFePO4 (lithium iron phosphate) is the battery chemistry we install — like the <strong>Huawei LUNA2000</strong> series we install — offer:</p>
+<p>LiFePO4 (lithium iron phosphate) is the battery chemistry we install, such as the <strong>Huawei LUNA2000</strong> series. It offers:</p>
 <ul>
   <li>Rated for more than 5,000 cycles (<a href="https://solar.huawei.com/download?p=%2F-%2Fmedia%2FSolarV4%2Fsolar-version2%2Feurope%2Fro%2Fprofessionals%2Fall-products%2Fproduct%2FLUNA2000-5-10-15-S0%2Fsupport%2FLUNA2000-5-10-15-S0-datasheet.pdf">Huawei datasheet</a>, at 35% depth of discharge), with a <a href="https://shop.krannich-solar.com/fr-ch/product-downloads/6359834/LUNA2000-5-S0-5-kWh/WarrantyTerms-EN.pdf">10-year manufacturer warranty</a></li>
   <li>Low maintenance: the battery management system handles charging automatically. Keep the system connected to FusionSolar for firmware updates and alerts.</li>
@@ -274,8 +274,6 @@ export const blogPosts: BlogPost[] = [
   <li>Heavy and bulky — requires dedicated battery room</li>
   <li>Should not be discharged below 50% (effective capacity is half the rated capacity)</li>
 </ul>
-<p><strong>Cost:</strong> ฿60,000–฿80,000 per 5 kWh — cheaper upfront, but 3–4x more expensive over 15 years when you factor in replacements.</p>
-
 <p><strong>Our recommendation:</strong> LiFePO4 every time. It lasts longer and needs less maintenance than lead-acid, which matters in Ko Phangan's humid, salty climate.</p>
 
 <h2>Hybrid vs. Full Off-Grid</h2>
@@ -736,7 +734,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Business',
     excerpt: 'Real ROI analysis for hotels, resorts, and businesses in Thailand — with anonymized case studies, payback calculations, and before/after electricity bills.',
     content: `
-<p>When businesses on Ko Phangan ask us about solar, the first question is always the same: "What is my return on investment?" It is the right question. Unlike homeowners, who weigh solar partly on environmental values or grid independence, businesses need the numbers to work. And on Ko Phangan — with its high island electricity tariffs, year-round solar irradiance, and growing tourist demand for sustainability — <strong>commercial solar ROI in Thailand</strong> is often compelling beyond what owners expect.</p>
+<p>When businesses on Ko Phangan ask us about solar, the first question is always the same: "What is my return on investment?" It is the right question. Unlike homeowners, who weigh solar partly on environmental values or grid independence, businesses need the numbers to work. And Ko Phangan is on the national PEA tariff — with year-round solar irradiance and growing tourist demand for sustainability — <strong>commercial solar ROI in Thailand</strong> is often compelling beyond what owners expect.</p>
 
 <p>This article presents three anonymized case studies from real Bustan Energy commercial installations, with full before/after bill analysis, system specifications, and ROI calculations.</p>
 
@@ -747,7 +745,7 @@ export const blogPosts: BlogPost[] = [
 <ul>
   <li><strong>Higher electricity consumption = bigger savings</strong> — A hotel using ฿150,000/month in electricity has far more to gain from solar than a home using ฿5,000/month. The economics scale up.</li>
   <li><strong>Daytime-heavy load profiles</strong> — Hotels, restaurants, dive shops, and spas use the most electricity during daylight hours (air conditioning, kitchens, pools, laundry). This aligns perfectly with solar production, maximizing self-consumption and minimizing storage requirements.</li>
-  <li><strong>Higher island tariffs</strong> — Ko Phangan is on the national PEA tariff; there is no separate island rate. Small businesses (PEA Type 2, under 30 kW demand) pay <a href="https://www.pea.co.th/sites/default/files/users/user34/attachments/Electricity_Tariff_SEP_2026_3.pdf">3.2484–4.4217 THB/kWh</a> plus Ft (<a href="https://www.pea.co.th/sites/default/files/ft/2026/Ft%20surcharge%20SEP-DEC%202026_Final.pdf">0.1623 THB/kWh</a> for Sep–Dec 2026) and 7% VAT. Larger sites move to Type 3–5, which include demand charges.</li>
+  <li><strong>Same national PEA tariff as the mainland</strong> — Ko Phangan is on the national PEA tariff; there is no separate island rate. Small businesses (PEA Type 2, under 30 kW demand) pay <a href="https://www.pea.co.th/sites/default/files/users/user34/attachments/Electricity_Tariff_SEP_2026_3.pdf">3.2484–4.4217 THB/kWh</a> plus Ft (<a href="https://www.pea.co.th/sites/default/files/ft/2026/Ft%20surcharge%20SEP-DEC%202026_Final.pdf">0.1623 THB/kWh</a> for Sep–Dec 2026) and 7% VAT. Larger sites move to Type 3–5, which include demand charges.</li>
   <li><strong>PPA option available</strong> — Commercial properties can access our Power Purchase Agreement model, which requires zero upfront investment. The savings start from day one with no capital required.</li>
   <li><strong>Marketing value</strong> — Sustainability credentials increasingly influence booking decisions. Properties with solar can legitimately market themselves as "solar-powered" — which matters to the eco-conscious tourists who choose Ko Phangan.</li>
 </ul>
@@ -795,7 +793,7 @@ export const blogPosts: BlogPost[] = [
   </tbody>
 </table>
 
-<p>After installation, the resort now generates electricity from solar. The grid covers nighttime loads beyond battery capacity and peak demand spikes.</p>
+<p>After installation, solar covers most of the resort's daytime load; the grid covers nighttime loads beyond battery capacity and peak demand spikes.</p>
 
 <h2>Case Study 2: Mid-Size Hotel with Restaurant</h2>
 
