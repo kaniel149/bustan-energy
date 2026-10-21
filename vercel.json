@@ -28,6 +28,28 @@
       ]
     },
     {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/spa.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
       "source": "/admin/:path*",
       "headers": [
         {
@@ -443,8 +465,44 @@
       "destination": "/prerendered/blog/commercial-solar-roi-thailand/index.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/admin",
       "destination": "/spa.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/crm",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/crm/:path*",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/platform",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/th/platform",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/he/platform",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/preview-scroll",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/colliers",
+      "destination": "/spa.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/api/not-found"
     }
   ],
   "crons": [
