@@ -257,11 +257,10 @@ export const blogPosts: BlogPost[] = [
 <p>Batteries are the heart of any off-grid or hybrid solar system. They store the energy your panels generate during the day so you can use it at night or during cloudy weather. Here are the main battery technologies available in 2026:</p>
 
 <h3>Lithium Iron Phosphate (LiFePO4)</h3>
-<p>This is the gold standard for solar batteries in 2026. LiFePO4 batteries — like the <strong>Huawei LUNA2000</strong> series we install — offer:</p>
+<p>LiFePO4 (lithium iron phosphate) is the battery chemistry we install — like the <strong>Huawei LUNA2000</strong> series we install — offer:</p>
 <ul>
-  <li>6,000+ charge cycles (15–20 year lifespan)</li>
-  <li>95% round-trip efficiency</li>
-  <li>No maintenance required</li>
+  <li>Rated for more than 5,000 cycles (<a href="https://solar.huawei.com/download?p=%2F-%2Fmedia%2FSolarV4%2Fsolar-version2%2Feurope%2Fro%2Fprofessionals%2Fall-products%2Fproduct%2FLUNA2000-5-10-15-S0%2Fsupport%2FLUNA2000-5-10-15-S0-datasheet.pdf">Huawei datasheet</a>, at 35% depth of discharge), with a <a href="https://shop.krannich-solar.com/fr-ch/product-downloads/6359834/LUNA2000-5-S0-5-kWh/WarrantyTerms-EN.pdf">10-year manufacturer warranty</a></li>
+  <li>Low maintenance: the battery management system handles charging automatically. Keep the system connected to FusionSolar for firmware updates and alerts.</li>
   <li>Safe chemistry (no thermal runaway risk)</li>
   <li>Compact, wall-mountable design</li>
   <li>Modular: start with 5 kWh, expand up to 30 kWh</li>
@@ -271,15 +270,13 @@ export const blogPosts: BlogPost[] = [
 <h3>Lead-Acid (Gel / AGM)</h3>
 <p>The traditional battery technology. Still used in some budget installations but increasingly obsolete for solar:</p>
 <ul>
-  <li>500–1,500 charge cycles (3–5 year lifespan)</li>
-  <li>80% round-trip efficiency</li>
   <li>Requires ventilation (produces hydrogen gas during charging)</li>
   <li>Heavy and bulky — requires dedicated battery room</li>
   <li>Should not be discharged below 50% (effective capacity is half the rated capacity)</li>
 </ul>
 <p><strong>Cost:</strong> ฿60,000–฿80,000 per 5 kWh — cheaper upfront, but 3–4x more expensive over 15 years when you factor in replacements.</p>
 
-<p><strong>Our recommendation:</strong> LiFePO4 every time. The upfront cost difference is paid back within 3–4 years through longer lifespan, higher efficiency, and zero maintenance. On Ko Phangan's humid, salty climate, lead-acid batteries degrade even faster than their rated specifications.</p>
+<p><strong>Our recommendation:</strong> LiFePO4 every time. It lasts longer and needs less maintenance than lead-acid, which matters in Ko Phangan's humid, salty climate.</p>
 
 <h2>Hybrid vs. Full Off-Grid</h2>
 
@@ -352,8 +349,8 @@ export const blogPosts: BlogPost[] = [
 
 <ul>
   <li><strong>Solar panels</strong> — Clean 2–4 times per year (more often on Ko Phangan due to tropical dust, pollen, and occasional sea salt spray). Annual inspection of mounting hardware and wiring. Lifespan: 25–30 years.</li>
-  <li><strong>LiFePO4 batteries</strong> — Zero user maintenance. The battery management system (BMS) handles charge/discharge optimization automatically. Lifespan: 15–20 years.</li>
-  <li><strong>Inverter</strong> — No user maintenance. Monitor via the Huawei FusionSolar app for any alerts. Lifespan: 10–15 years (one replacement expected during the system's life).</li>
+  <li><strong>LiFePO4 batteries</strong> — Low user maintenance. The battery management system (BMS) handles charge/discharge optimization automatically. <a href="https://shop.krannich-solar.com/fr-ch/product-downloads/6359834/LUNA2000-5-S0-5-kWh/WarrantyTerms-EN.pdf">10-year manufacturer warranty</a>.</li>
+  <li><strong>Inverter</strong> — Low user maintenance. Monitor via the Huawei FusionSolar app for any alerts.</li>
   <li><strong>Wiring and mounting</strong> — Annual visual inspection for corrosion (important on Ko Phangan due to salt air). Use marine-grade hardware and stainless steel fasteners.</li>
 </ul>
 
@@ -750,7 +747,7 @@ export const blogPosts: BlogPost[] = [
 <ul>
   <li><strong>Higher electricity consumption = bigger savings</strong> — A hotel using ฿150,000/month in electricity has far more to gain from solar than a home using ฿5,000/month. The economics scale up.</li>
   <li><strong>Daytime-heavy load profiles</strong> — Hotels, restaurants, dive shops, and spas use the most electricity during daylight hours (air conditioning, kitchens, pools, laundry). This aligns perfectly with solar production, maximizing self-consumption and minimizing storage requirements.</li>
-  <li><strong>Higher island tariffs</strong> — Commercial properties on Ko Phangan often pay 7–10+ THB/kWh, compared to mainland commercial rates of 4–5 THB/kWh. Every unit of solar-generated electricity is worth more.</li>
+  <li><strong>Higher island tariffs</strong> — Ko Phangan is on the national PEA tariff; there is no separate island rate. Small businesses (PEA Type 2, under 30 kW demand) pay <a href="https://www.pea.co.th/sites/default/files/users/user34/attachments/Electricity_Tariff_SEP_2026_3.pdf">3.2484–4.4217 THB/kWh</a> plus Ft (<a href="https://www.pea.co.th/sites/default/files/ft/2026/Ft%20surcharge%20SEP-DEC%202026_Final.pdf">0.1623 THB/kWh</a> for Sep–Dec 2026) and 7% VAT. Larger sites move to Type 3–5, which include demand charges.</li>
   <li><strong>PPA option available</strong> — Commercial properties can access our Power Purchase Agreement model, which requires zero upfront investment. The savings start from day one with no capital required.</li>
   <li><strong>Marketing value</strong> — Sustainability credentials increasingly influence booking decisions. Properties with solar can legitimately market themselves as "solar-powered" — which matters to the eco-conscious tourists who choose Ko Phangan.</li>
 </ul>
@@ -763,7 +760,6 @@ export const blogPosts: BlogPost[] = [
   <li>Restaurant, two pools, spa, and dive center</li>
   <li>Average occupancy: 65–70%</li>
   <li>Pre-solar electricity bill: ฿85,000–110,000/month</li>
-  <li>Electricity rate: approximately 8.2 THB/kWh (island commercial rate)</li>
 </ul>
 
 <h3>Solar System Installed</h3>
@@ -782,7 +778,6 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Monthly solar production:</strong> 8,550 kWh</li>
   <li><strong>Self-consumption rate:</strong> 88% (high daytime loads absorb most production)</li>
   <li><strong>Monthly electricity offset:</strong> 7,524 kWh</li>
-  <li><strong>Monthly bill reduction:</strong> ฿61,700 (at 8.2 THB/kWh)</li>
 </ul>
 
 <h3>Financial Results</h3>
@@ -800,7 +795,7 @@ export const blogPosts: BlogPost[] = [
   </tbody>
 </table>
 
-<p>After installation, the resort now generates approximately 72% of its electricity from solar. The remaining 28% from the grid covers nighttime loads beyond battery capacity and peak demand spikes. The owner expects full payback within 3.5 years, accounting for system degradation (0.5% per year) and expected electricity rate increases of 3% per year.</p>
+<p>After installation, the resort now generates electricity from solar. The grid covers nighttime loads beyond battery capacity and peak demand spikes.</p>
 
 <h2>Case Study 2: Mid-Size Hotel with Restaurant</h2>
 
@@ -809,7 +804,6 @@ export const blogPosts: BlogPost[] = [
   <li>32-room hotel with a 60-seat restaurant and rooftop bar</li>
   <li>Located in Thong Sala — grid electricity, no major outage issues</li>
   <li>Pre-solar electricity bill: ฿45,000–65,000/month</li>
-  <li>Electricity rate: approximately 7.1 THB/kWh</li>
 </ul>
 
 <h3>Solar System Installed</h3>
@@ -825,7 +819,6 @@ export const blogPosts: BlogPost[] = [
 <ul>
   <li><strong>Monthly solar production:</strong> 4,370 kWh</li>
   <li><strong>Self-consumption rate:</strong> 91%</li>
-  <li><strong>Monthly bill reduction:</strong> ฿28,200 (at 7.1 THB/kWh)</li>
 </ul>
 
 <h3>Financial Results</h3>
@@ -848,7 +841,6 @@ export const blogPosts: BlogPost[] = [
 <ul>
   <li>8-bungalow eco-resort on Ko Phangan's north coast</li>
   <li>No PEA grid connection available — had been running on diesel generators</li>
-  <li>Prior monthly diesel cost: ฿35,000–55,000 (generator fuel + maintenance)</li>
   <li>Generator maintenance frequency: Every 250 operating hours</li>
 </ul>
 
