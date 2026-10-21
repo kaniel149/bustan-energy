@@ -833,7 +833,7 @@ export const blogPosts: BlogPost[] = [
   </tbody>
 </table>
 
-<p>A hotel like this could skip batteries where the local grid is relatively reliable. Without the battery cost, payback would typically fall below 3 years. Batteries could be added in year 3, funded by the savings from years 1–3.</p>
+<p>A hotel like this could skip batteries where the local grid is relatively reliable, which lowers the upfront cost. Batteries could be added later, funded by the savings.</p>
 
 <h2>Example 3: Eco-Resort (Off-Grid)</h2>
 
@@ -866,7 +866,7 @@ export const blogPosts: BlogPost[] = [
   </tbody>
 </table>
 
-<p>Beyond the financial case, a resort like this could gain a competitive advantage and legitimately market itself as solar-powered. Guest reviews could mention the solar system as a positive, and bookings from eco-conscious travelers could improve. A quieter environment, without constant generator noise, would also tend to support guest satisfaction.</p>
+<p>Beyond the financial case, a resort like this could legitimately market itself as solar-powered, and replacing constant generator noise with a quieter site would support guest comfort.</p>
 
 <h2>PPA Option: Zero-Upfront Commercial Solar</h2>
 
