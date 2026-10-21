@@ -526,7 +526,7 @@ const en = {
       tag: 'Solar Insights',
       title: 'Solar Insights & Resources',
       subtitle:
-        'Expert guides on solar energy in Thailand — regulations, finance, technology, and real-world results.',
+        'Expert guides on solar energy in Thailand — regulations, finance, technology, and illustrative examples.',
     },
     posts: [
       {
@@ -631,9 +631,9 @@ const en = {
       {
         slug: 'commercial-solar-roi-thailand',
         tag: 'Business',
-        title: 'Commercial Solar ROI in Thailand: Case Study Analysis',
+        title: 'Commercial Solar ROI in Thailand: Illustrative Examples',
         excerpt:
-          'Real ROI analysis for hotels, resorts, and businesses in Thailand — with anonymized case studies, payback calculations, and before/after electricity bills.',
+          'Illustrative ROI analysis for hotels, resorts, and businesses in Thailand — with example system sizes, payback calculations, and modeled electricity bills.',
         date: 'April 2026',
         readTime: '11 min read',
       },
@@ -746,7 +746,7 @@ const en = {
     blog: {
       title: 'Solar Energy Guides & Insights | Bustan Energy Blog',
       description:
-        'Expert articles on solar energy in Thailand — VSPP regulations, EPC vs PPA comparison, battery storage, and real ROI data from Ko Phangan installations.',
+        'Expert articles on solar energy in Thailand — VSPP regulations, EPC vs PPA comparison, battery storage, and illustrative commercial ROI examples for Ko Phangan.',
     },
     contact: {
       title: 'Contact Bustan Energy — Free Solar Consultation Ko Phangan',
@@ -1399,7 +1399,7 @@ const th = {
       tag: 'ความรู้โซลาร์เซลล์',
       title: 'บทความและแหล่งข้อมูลโซลาร์',
       subtitle:
-        'คู่มือจากผู้เชี่ยวชาญเกี่ยวกับพลังงานแสงอาทิตย์ในประเทศไทย — กฎระเบียบ การเงิน เทคโนโลยี และผลลัพธ์จริง',
+        'คู่มือจากผู้เชี่ยวชาญเกี่ยวกับพลังงานแสงอาทิตย์ในประเทศไทย — กฎระเบียบ การเงิน เทคโนโลยี และตัวอย่างประกอบ',
     },
     posts: [
       {
@@ -1504,9 +1504,9 @@ const th = {
       {
         slug: 'commercial-solar-roi-thailand',
         tag: 'ธุรกิจ',
-        title: 'ROI โซลาร์เชิงพาณิชย์ในไทย: วิเคราะห์กรณีศึกษา',
+        title: 'ROI โซลาร์เชิงพาณิชย์ในไทย: ตัวอย่างประกอบ',
         excerpt:
-          'วิเคราะห์ ROI จริงสำหรับโรงแรม รีสอร์ท และธุรกิจในไทย พร้อมกรณีศึกษา การคำนวณระยะคืนทุน และบิลก่อน-หลังติดโซลาร์',
+          'วิเคราะห์ ROI เชิงตัวอย่างสำหรับโรงแรม รีสอร์ท และธุรกิจในไทย พร้อมขนาดระบบตัวอย่าง การคำนวณระยะคืนทุน และบิลค่าไฟจำลอง',
         date: 'เมษายน 2026',
         readTime: 'อ่าน 11 นาที',
       },
@@ -1621,7 +1621,7 @@ const th = {
     blog: {
       title: 'บทความโซลาร์เซลล์ คู่มือพลังงานแสงอาทิตย์ในไทย | Bustan Energy',
       description:
-        'บทความจากผู้เชี่ยวชาญเรื่องโซลาร์เซลล์ในประเทศไทย กฎระเบียบ VSPP เปรียบเทียบ EPC vs PPA แบตเตอรี่กักเก็บพลังงาน และข้อมูล ROI จริงจากเกาะพะงัน',
+        'บทความจากผู้เชี่ยวชาญเรื่องโซลาร์เซลล์ในประเทศไทย กฎระเบียบ VSPP เปรียบเทียบ EPC vs PPA แบตเตอรี่กักเก็บพลังงาน และตัวอย่าง ROI เชิงพาณิชย์บนเกาะพะงัน',
     },
     contact: {
       title: 'ติดต่อ Bustan Energy — ปรึกษาโซลาร์ฟรี เกาะพะงัน สุราษฎร์ธานี',

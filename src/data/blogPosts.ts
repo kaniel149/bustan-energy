@@ -727,20 +727,20 @@ export const blogPosts: BlogPost[] = [
   // ─── Post 7: Commercial Solar ROI in Thailand ─────────────────────────────
   {
     slug: 'commercial-solar-roi-thailand',
-    title: 'Commercial Solar ROI in Thailand: Case Study Analysis',
+    title: 'Commercial Solar ROI in Thailand: Illustrative Examples',
     date: '2026-04-10',
     dateDisplay: 'April 2026',
     readTime: '11 min read',
     category: 'Business',
-    excerpt: 'Real ROI analysis for hotels, resorts, and businesses in Thailand — with anonymized case studies, payback calculations, and before/after electricity bills.',
+    excerpt: 'Illustrative ROI analysis for hotels, resorts, and businesses in Thailand — with example system sizes, payback calculations, and modeled electricity bills.',
     content: `
 <p>When businesses on Ko Phangan ask us about solar, the first question is always the same: "What is my return on investment?" It is the right question. Unlike homeowners, who weigh solar partly on environmental values or grid independence, businesses need the numbers to work. And Ko Phangan is on the national PEA tariff — with year-round solar irradiance and growing tourist demand for sustainability — <strong>commercial solar ROI in Thailand</strong> is often compelling beyond what owners expect.</p>
 
-<p>This article presents three anonymized case studies from real Bustan Energy commercial installations, with full before/after bill analysis, system specifications, and ROI calculations.</p>
+<p>This article presents three illustrative examples based on typical system sizes and load profiles on Ko Phangan, with modeled bill comparisons, system specifications, and ROI calculations.</p>
 
 <h2>The Commercial Solar Advantage in Thailand</h2>
 
-<p>Before the case studies, it is worth understanding why commercial solar often outperforms residential solar on ROI:</p>
+<p>Before the examples, it is worth understanding why commercial solar often outperforms residential solar on ROI:</p>
 
 <ul>
   <li><strong>Higher electricity consumption = bigger savings</strong> — A hotel using ฿150,000/month in electricity has far more to gain from solar than a home using ฿5,000/month. The economics scale up.</li>
@@ -750,130 +750,131 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Marketing value</strong> — Sustainability credentials increasingly influence booking decisions. Properties with solar can legitimately market themselves as "solar-powered" — which matters to the eco-conscious tourists who choose Ko Phangan.</li>
 </ul>
 
-<h2>Case Study 1: Boutique Beach Resort</h2>
+<p><em>The following are illustrative examples based on typical system sizes and load profiles on Ko Phangan, not specific Bustan Energy clients. Your results will depend on your bill, roof and usage. Savings assume an all-in PEA tariff of about 4.4 THB/kWh (<a href="https://www.pea.co.th/sites/default/files/users/user34/attachments/Electricity_Tariff_SEP_2026_3.pdf">Type 2 rate</a> + <a href="https://www.pea.co.th/sites/default/files/ft/2026/Ft%20surcharge%20SEP-DEC%202026_Final.pdf">Ft 0.1623 THB/kWh</a> + 7% VAT, September 2026).</em></p>
+<p>Monthly savings = self-consumed solar kWh × 4.4 THB/kWh; payback = installation cost ÷ annual savings.</p>
+
+<h2>Example 1: Boutique Beach Resort</h2>
 
 <h3>Property Profile</h3>
 <ul>
-  <li>18-room boutique resort on Ko Phangan's southern coast</li>
+  <li>18-room boutique resort on Ko Phangan</li>
   <li>Restaurant, two pools, spa, and dive center</li>
   <li>Average occupancy: 65–70%</li>
-  <li>Pre-solar electricity bill: ฿85,000–110,000/month</li>
+  <li>Typical electricity bill before solar: ฿85,000–110,000/month</li>
 </ul>
 
-<h3>Solar System Installed</h3>
+<h3>Example System</h3>
 <ul>
   <li><strong>System size:</strong> 60 kWp (kilowatt-peak)</li>
   <li><strong>Panels:</strong> 120 × LonGi Hi-MO 6 500W</li>
   <li><strong>Inverter:</strong> Huawei SUN2000-60KTL-M0</li>
   <li><strong>Battery:</strong> Huawei LUNA2000 — 30 kWh (for overnight essential loads and outage backup)</li>
   <li><strong>Installation cost:</strong> ฿2,450,000 (EPC, turnkey)</li>
-  <li><strong>Roof area used:</strong> 380 m² across three building roofs</li>
+  <li><strong>Roof area:</strong> 380 m² across three building roofs</li>
 </ul>
 
-<h3>Performance Data (12-Month Average)</h3>
+<h3>Illustrative Performance</h3>
 <ul>
-  <li><strong>Daily solar production:</strong> 285 kWh (5.1 peak sun hours × 56 kW effective)</li>
-  <li><strong>Monthly solar production:</strong> 8,550 kWh</li>
+  <li><strong>Daily solar production:</strong> 285.6 kWh (5.1 peak sun hours × 56 kW effective)</li>
+  <li><strong>Monthly solar production:</strong> 8,568 kWh (285.6 × 30 days)</li>
   <li><strong>Self-consumption rate:</strong> 88% (high daytime loads absorb most production)</li>
-  <li><strong>Monthly electricity offset:</strong> 7,524 kWh</li>
+  <li><strong>Monthly electricity offset:</strong> 7,539.84 kWh (8,568 × 88%)</li>
 </ul>
 
-<h3>Financial Results</h3>
+<h3>Illustrative Comparison</h3>
 <table>
   <thead>
-    <tr><th>Metric</th><th>Before Solar</th><th>After Solar</th></tr>
+    <tr><th>Metric</th><th>Without Solar</th><th>With Solar</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly electricity bill</td><td>฿97,500 (avg)</td><td>฿35,800</td></tr>
-    <tr><td>Annual electricity cost</td><td>฿1,170,000</td><td>฿429,600</td></tr>
-    <tr><td>Annual savings</td><td>—</td><td><strong>฿740,400</strong></td></tr>
+    <tr><td>Monthly electricity bill</td><td>฿97,500 (avg)</td><td>฿64,325</td></tr>
+    <tr><td>Annual electricity cost</td><td>฿1,170,000</td><td>฿771,900</td></tr>
+    <tr><td>Annual savings</td><td>—</td><td><strong>฿398,100</strong></td></tr>
     <tr><td>System investment</td><td>—</td><td>฿2,450,000</td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>3.3 years</strong></td></tr>
-    <tr><td>25-year NPV (5% discount rate)</td><td>—</td><td><strong>฿7,800,000+</strong></td></tr>
+    <tr><td>Simple payback period</td><td>—</td><td><strong>6.2 years</strong></td></tr>
   </tbody>
 </table>
 
-<p>After installation, solar covers most of the resort's daytime load; the grid covers nighttime loads beyond battery capacity and peak demand spikes.</p>
+<p>A resort like this could see solar cover most of the daytime load; the grid would cover nighttime loads beyond battery capacity and peak demand spikes.</p>
 
-<h2>Case Study 2: Mid-Size Hotel with Restaurant</h2>
+<h2>Example 2: Mid-Size Hotel with Restaurant</h2>
 
 <h3>Property Profile</h3>
 <ul>
   <li>32-room hotel with a 60-seat restaurant and rooftop bar</li>
-  <li>Located in Thong Sala — grid electricity, no major outage issues</li>
-  <li>Pre-solar electricity bill: ฿45,000–65,000/month</li>
+  <li>Grid-connected site on Ko Phangan — reliable supply, no major outage issues</li>
+  <li>Typical electricity bill before solar: ฿45,000–65,000/month</li>
 </ul>
 
-<h3>Solar System Installed</h3>
+<h3>Example System</h3>
 <ul>
   <li><strong>System size:</strong> 30 kWp</li>
   <li><strong>Panels:</strong> 60 × LonGi Hi-MO 6 500W</li>
   <li><strong>Inverter:</strong> 2 × Huawei SUN2000-15KTL-M2</li>
-  <li><strong>Battery:</strong> None (grid-tied only — reliable grid in Thong Sala)</li>
+  <li><strong>Battery:</strong> None (grid-tied only — reliable grid on this part of the island)</li>
   <li><strong>Installation cost:</strong> ฿980,000 (EPC, turnkey)</li>
 </ul>
 
-<h3>Performance Data</h3>
+<h3>Illustrative Performance</h3>
 <ul>
-  <li><strong>Monthly solar production:</strong> 4,370 kWh</li>
+  <li><strong>Monthly solar production:</strong> 4,590 kWh (30 kWp × 5.1 peak sun hours × 30 days)</li>
   <li><strong>Self-consumption rate:</strong> 91%</li>
+  <li><strong>Monthly electricity offset:</strong> 4,176.9 kWh (4,590 × 91%)</li>
 </ul>
 
-<h3>Financial Results</h3>
+<h3>Illustrative Comparison</h3>
 <table>
   <thead>
-    <tr><th>Metric</th><th>Before Solar</th><th>After Solar</th></tr>
+    <tr><th>Metric</th><th>Without Solar</th><th>With Solar</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly electricity bill</td><td>฿55,000 (avg)</td><td>฿26,800</td></tr>
-    <tr><td>Annual savings</td><td>—</td><td><strong>฿338,400</strong></td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>2.9 years</strong></td></tr>
+    <tr><td>Monthly electricity bill</td><td>฿55,000 (avg)</td><td>฿36,622</td></tr>
+    <tr><td>Annual savings</td><td>—</td><td><strong>฿220,536</strong></td></tr>
+    <tr><td>Simple payback period</td><td>—</td><td><strong>4.4 years</strong></td></tr>
   </tbody>
 </table>
 
-<p>This hotel chose not to add batteries because Thong Sala's grid is relatively reliable. By eliminating the battery cost, the payback period dropped below 3 years — one of the fastest ROIs in our portfolio. The owner is now considering adding batteries in year 3, funded by the savings generated in years 1–3.</p>
+<p>A hotel like this could skip batteries where the local grid is relatively reliable, which lowers the upfront cost. Batteries could be added later, funded by the savings.</p>
 
-<h2>Case Study 3: Eco-Resort (Off-Grid)</h2>
+<h2>Example 3: Eco-Resort (Off-Grid)</h2>
 
 <h3>Property Profile</h3>
 <ul>
-  <li>8-bungalow eco-resort on Ko Phangan's north coast</li>
-  <li>No PEA grid connection available — had been running on diesel generators</li>
+  <li>8-bungalow eco-resort on Ko Phangan</li>
+  <li>No PEA grid connection available — a site like this would run on diesel generators</li>
   <li>Generator maintenance frequency: Every 250 operating hours</li>
 </ul>
 
-<h3>Solar System Installed</h3>
+<h3>Example System</h3>
 <ul>
   <li><strong>System size:</strong> 20 kWp solar + 60 kWh battery bank (LiFePO4)</li>
   <li><strong>Panels:</strong> 40 × LonGi Hi-MO 6 500W</li>
   <li><strong>Inverter/Charger:</strong> Huawei SUN2000 off-grid configuration</li>
-  <li><strong>Backup:</strong> 10 kVA diesel generator retained for extended monsoon periods</li>
+  <li><strong>Backup:</strong> 10 kVA diesel generator kept for extended monsoon periods</li>
   <li><strong>Installation cost:</strong> ฿2,100,000 (off-grid complete system)</li>
 </ul>
 
-<h3>Financial Results</h3>
+<h3>Illustrative Comparison</h3>
 <table>
   <thead>
-    <tr><th>Metric</th><th>Diesel Only</th><th>After Solar</th></tr>
+    <tr><th>Metric</th><th>Assumption</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly energy cost</td><td>฿45,000 (avg)</td><td>฿4,200 (gen fuel, ~15h/month)</td></tr>
-    <tr><td>Annual energy cost</td><td>฿540,000</td><td>฿50,400</td></tr>
-    <tr><td>Annual savings vs. diesel</td><td>—</td><td><strong>฿489,600</strong></td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>4.3 years</strong></td></tr>
+    <tr><td>Monthly diesel cost</td><td>฿45,000</td></tr>
+    <tr><td>Annual diesel cost</td><td>฿540,000</td></tr>
   </tbody>
 </table>
+<p>Assuming diesel costs of about ฿45,000/month. A backup generator stays for extended monsoon periods, so some fuel cost remains. Payback depends on local diesel cost.</p>
 
-<p>Beyond the financial case, the resort gained a major competitive advantage: it can now legitimately market itself as solar-powered. Guest reviews consistently mention the solar system as a positive, and the owner reports a measurable improvement in bookings from eco-conscious travelers. The quieter environment (no constant generator noise) has also improved guest satisfaction scores.</p>
+<p>Beyond the financial case, a resort like this could legitimately market itself as solar-powered, and replacing constant generator noise with a quieter site would support guest comfort.</p>
 
 <h2>PPA Option: Zero-Upfront Commercial Solar</h2>
 
-<p>Not all businesses have ฿1–2.5 million in capital to invest in solar, even when the ROI is excellent. That is why Bustan Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
+<p>Not all businesses have significant upfront capital to invest in solar, even when the ROI is excellent. That is why Bustan Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
 
 <p>How it works:</p>
 <ul>
   <li><strong>Zero upfront investment</strong> — Bustan Energy owns and installs the solar system at no cost to you.</li>
-  <li><strong>Fixed electricity rate</strong> — You buy the solar electricity at a rate 15–25% below your current PEA tariff, locked in for 10–15 years.</li>
   <li><strong>Immediate savings</strong> — Your electricity bill drops from day one, with no capital outlay.</li>
   <li><strong>Bustan Energy handles everything</strong> — Maintenance, monitoring, repairs, and insurance are all included.</li>
   <li><strong>Purchase option</strong> — You can buy the system at fair market value at the end of the agreement if you choose.</li>
