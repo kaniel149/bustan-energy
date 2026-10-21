@@ -1,7 +1,9 @@
 // ─── i18n/LanguageContext.tsx ─────────────────────────────────────────────────
 // URL-based language detection: /th/* = Thai, /he/* = Hebrew, else English.
-// Provides langPath() (prefix a path for the current lang) and switchLangPath()
-// (cycle en → th → he → en). Sets <html lang/dir> for RTL (Hebrew).
+// langPath() only prefixes a URL when that language actually has the page.
+// Hebrew marketing content is the /he homepage; other links stay on the English route.
+// switchLangPath() cycles en → th → he → en for the platform language control.
+// Sets <html lang/dir> for RTL when the active language is Hebrew.
 
 import { useEffect, useMemo } from 'react'
 import type { ReactNode } from 'react'
@@ -9,6 +11,7 @@ import { useLocation } from 'react-router-dom'
 import { isRTL, type Lang } from './translations'
 import { LanguageContext } from './language-context'
 import type { LanguageContextType } from './language-context'
+import { localizedPublicPath } from './localized-path'
 
 const LANG_ORDER: Lang[] = ['en', 'th', 'he']
 
@@ -35,8 +38,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           : 'en'
 
     function langPath(path: string): string {
-      const normalized = path.startsWith('/') ? path : `/${path}`
-      return withPrefix(lang, normalized)
+      return localizedPublicPath(lang, path)
     }
 
     function switchLangPath(): string {

@@ -5,6 +5,7 @@ import { Button } from '../ui/Button'
 import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
 import type { Lang } from '../../i18n/translations'
+import { languageSwitchPath } from '../../i18n/localized-path'
 
 const labels = {
   en: { navigation: 'Main navigation', open: 'Open menu', close: 'Close menu', language: 'Choose language' },
@@ -83,8 +84,7 @@ export function Navbar() {
   }, [mobileOpen])
 
   function switchLanguage(next: Lang) {
-    const path = location.pathname.replace(/^\/(th|he)(?=\/|$)/, '') || '/'
-    const translated = next === 'en' ? path : `/${next}${path === '/' ? '' : path}`
+    const translated = languageSwitchPath(next, location.pathname)
     const focusWasInMenu = menuRef.current?.contains(document.activeElement)
     setOpenAtLocation(null)
     navigate(`${translated}${location.search}${location.hash}`)

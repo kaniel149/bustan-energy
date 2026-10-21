@@ -12,7 +12,7 @@ const iconBox =
   'flex h-11 w-11 items-center justify-center rounded-sm bg-transparent border border-grove/20 text-grove/75 hover:text-ocean hover:border-ocean/30 hover:bg-mist/60 transition-colors duration-[var(--duration-fast)] ease-out-soft'
 
 export function Footer() {
-  const { langPath, lang } = useLanguage()
+  const { langPath } = useLanguage()
   const { t } = useTranslation()
 
   const QUICK_LINKS = [
@@ -23,7 +23,6 @@ export function Footer() {
     { label: t.nav.about, path: '/about' },
     { label: t.nav.blog, path: '/blog' },
     { label: t.nav.contact, path: '/contact' },
-    { label: lang === 'th' ? 'เครื่องมือโซลาร์' : lang === 'he' ? 'כלים סולאריים' : 'Solar Tools', path: '/tools' },
   ]
 
   const SERVICES = [
@@ -199,20 +198,6 @@ export function Footer() {
           <p className="text-grove/75 text-xs">
             {t.footer.copyright}
           </p>
-          <div className="flex items-center gap-5">
-            <Link
-              to={langPath('/privacy')}
-              className="text-xs text-grove/75 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
-            >
-              {lang === 'he' ? 'מדיניות פרטיות' : lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 'Privacy Policy'}
-            </Link>
-            <Link
-              to={langPath('/terms')}
-              className="text-xs text-grove/75 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
-            >
-              {lang === 'he' ? 'תנאי שימוש' : lang === 'th' ? 'ข้อกำหนดการใช้งาน' : 'Terms of Service'}
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

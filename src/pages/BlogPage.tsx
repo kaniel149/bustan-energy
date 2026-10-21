@@ -45,7 +45,7 @@ type PostItem = {
 
 // Each card carries its own whileInView trigger so the grid can never be
 // hidden by a single failed container intersection (matches ProjectsPage).
-function PostCard({ post, readMore, langPath }: { post: PostItem; readMore: string; langPath: (p: string) => string }) {
+function PostCard({ post, readMore }: { post: PostItem; readMore: string }) {
   const tone = tagTones[post.tag] ?? 'grove'
 
   return (
@@ -84,7 +84,7 @@ function PostCard({ post, readMore, langPath }: { post: PostItem; readMore: stri
         <div className="flex items-center justify-between border-t border-grove/14 pt-4">
           <span className="text-ink/45 text-xs">{post.readTime}</span>
           <Link
-            to={langPath(`/blog/${post.slug}`)}
+            to={`/blog/${post.slug}`}
             className="inline-flex items-center gap-1.5 text-ocean text-sm font-medium"
           >
             {readMore}
@@ -133,7 +133,7 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Only list posts that have a full article; the rest bounced back to /blog */}
             {t.blog.posts.filter((post) => blogPostsBySlug.has(post.slug)).map((post) => (
-              <PostCard key={post.slug} post={post} readMore={t.blog.readMore} langPath={langPath} />
+              <PostCard key={post.slug} post={post} readMore={t.blog.readMore} />
             ))}
           </div>
 
