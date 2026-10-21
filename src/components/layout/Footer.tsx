@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { MessageCircle, Mail, MapPin, Phone } from 'lucide-react'
+import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react'
 import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
+import { FACEBOOK_URL, INSTAGRAM_URL } from '../../lib/social'
 
 // Shared link treatment — quiet ink that warms to ocean on hover.
 const footerLink =
@@ -71,13 +72,22 @@ export function Footer() {
                 <Phone size={15} />
               </a>
               <a
-                href="https://line.me/R/ti/p/@bustanenergy"
+                href={FACEBOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={iconBox}
-                aria-label="LINE"
+                aria-label="Facebook"
               >
-                <MessageCircle size={15} />
+                <Facebook size={15} />
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={iconBox}
+                aria-label="Instagram"
+              >
+                <Instagram size={15} />
               </a>
               <Link
                 to={langPath('/contact')}
@@ -140,13 +150,24 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://line.me/R/ti/p/@bustanenergy"
+                  href={FACEBOOK_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`group flex items-start gap-3 ${footerLink}`}
                 >
-                  <MessageCircle size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
-                  <span>LINE: @bustanenergy</span>
+                  <Facebook size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
+                  <span>Facebook</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group flex items-start gap-3 ${footerLink}`}
+                >
+                  <Instagram size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
+                  <span>Instagram</span>
                 </a>
               </li>
               <li>

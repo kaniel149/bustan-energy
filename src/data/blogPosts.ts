@@ -2,6 +2,10 @@
 // Full blog post content for Bustan Energy (Ko Phangan, Thailand)
 // Each post uses Markdown-style HTML content rendered in BlogPostPage.tsx
 
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_TARIFF_NEWS_URL } from '../lib/pea-tariff'
+
+const peaTariffSources = `<a href="${PEA_TARIFF_NEWS_URL}" rel="noopener noreferrer">PEA corporate news</a> and <a href="${PEA_FT_PDF_URL}" rel="noopener noreferrer">Ft surcharge Sep–Dec 2026 (PDF)</a>`
+
 export interface BlogPost {
   slug: string
   title: string
@@ -24,13 +28,13 @@ export const blogPosts: BlogPost[] = [
     category: 'Guide',
     excerpt: 'Everything you need to know about going solar on Ko Phangan — costs, system sizes, PEA permits, monsoon performance, and more.',
     content: `
-<p>If you live on Ko Phangan — or own property here — you have probably noticed that <strong>solar energy on Koh Phangan</strong> is becoming increasingly popular. And for good reason. The island enjoys roughly 1,800 hours of sunshine per year, electricity costs are among the highest in Thailand, and the grid can be unreliable. Solar is not just an eco-friendly choice here; it is a financially smart one.</p>
+<p>If you live on Ko Phangan — or own property here — you have probably noticed that <strong>solar energy on Koh Phangan</strong> is becoming increasingly popular. And for good reason. The island enjoys roughly 1,800 hours of sunshine per year, and the grid can be unreliable. Solar is not just an eco-friendly choice here; it is a financially smart one.</p>
 
 <p>This guide covers everything you need to know about going solar on Ko Phangan in 2026: what it costs, what size system you need, how the PEA permit process works, what happens during monsoon season, and how to choose the right installer.</p>
 
 <h2>Why Go Solar on Ko Phangan?</h2>
 
-<p>Ko Phangan is an island in the Gulf of Thailand, connected to the mainland grid via undersea cables. Because of its remote location, electricity on the island is expensive. Many properties — especially resorts, hotels, and villas — pay <strong>6 to 10+ THB per kilowatt-hour</strong>, significantly more than the mainland average of 3.5–4.5 THB/kWh.</p>
+<p>Ko Phangan is an island in the Gulf of Thailand, connected to the mainland grid via undersea cables. ${PEA_RESIDENTIAL_TARIFF} Island properties pay that same residential schedule. Sources: ${peaTariffSources}.</p>
 
 <p>At the same time, Ko Phangan sits near the equator with excellent solar irradiance. The island averages around <strong>5.1 peak sun hours per day</strong>, which means a well-designed solar system produces substantial energy year-round. Add in frequent power outages — especially during storms and peak tourist season — and solar with battery storage becomes not just a savings tool, but an <strong>energy security solution</strong>.</p>
 
@@ -49,7 +53,7 @@ export const blogPosts: BlogPost[] = [
 
 <p>These prices include Tier-1 equipment like LonGi Hi-MO 6 panels and Huawei SUN2000 inverters. Adding battery storage (Huawei LUNA2000) typically adds ฿150,000–฿300,000 depending on capacity.</p>
 
-<p>Island installations do cost slightly more than mainland ones due to shipping logistics, but the higher electricity tariffs on Ko Phangan mean your <strong>return on investment is actually faster</strong> than in Bangkok or Chiang Mai.</p>
+<p>Island installations do cost slightly more than mainland ones due to shipping logistics. The unit rate itself is the national PEA tariff, not a higher island price.</p>
 
 <h2>What Size System Do You Need?</h2>
 
@@ -248,7 +252,7 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Frequent power outages</strong> — The island experiences power cuts ranging from a few minutes to several hours, sometimes multiple times per week. Storms, overloaded transformers, and maintenance on the undersea cable all cause disruptions.</li>
   <li><strong>Unreliable grid in remote areas</strong> — Many properties in the northern, eastern, and hillside areas of Ko Phangan have weak grid connections with frequent voltage fluctuations that can damage appliances.</li>
   <li><strong>No grid access</strong> — Some new developments and remote properties simply cannot get a PEA connection, or the cost of running a power line to the property is prohibitively expensive (sometimes ฿500,000+ for a remote hillside connection).</li>
-  <li><strong>High electricity costs</strong> — Island electricity rates of 6–10+ THB/kWh make self-generation economically attractive, especially when you factor in the value of uninterrupted power.</li>
+  <li><strong>The national PEA tariff</strong> — ${PEA_RESIDENTIAL_TARIFF} Self-generation is still attractive when you factor in the value of uninterrupted power. Sources: ${peaTariffSources}.</li>
   <li><strong>Environmental values</strong> — Many Ko Phangan residents and businesses are deeply committed to sustainability. Off-grid solar eliminates dependence on fossil-fuel-generated grid electricity.</li>
 </ul>
 
@@ -261,7 +265,7 @@ export const blogPosts: BlogPost[] = [
 <ul>
   <li>Rated for more than 5,000 cycles (<a href="https://solar.huawei.com/download?p=%2F-%2Fmedia%2FSolarV4%2Fsolar-version2%2Feurope%2Fro%2Fprofessionals%2Fall-products%2Fproduct%2FLUNA2000-5-10-15-S0%2Fsupport%2FLUNA2000-5-10-15-S0-datasheet.pdf">Huawei datasheet</a>, at 35% depth of discharge), with a <a href="https://shop.krannich-solar.com/fr-ch/product-downloads/6359834/LUNA2000-5-S0-5-kWh/WarrantyTerms-EN.pdf">10-year manufacturer warranty</a></li>
   <li>Low maintenance: the battery management system handles charging automatically. Keep the system connected to FusionSolar for firmware updates and alerts.</li>
-  <li>Safe chemistry (no thermal runaway risk)</li>
+  <li>Safe chemistry (much lower thermal runaway risk)</li>
   <li>Compact, wall-mountable design</li>
   <li>Modular: start with 5 kWh, expand up to 30 kWh</li>
 </ul>
@@ -356,7 +360,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>Ready to Go Off-Grid?</h2>
 
-<p>Whether you want a hybrid system for outage protection or a full off-grid setup for true energy independence, Ko Phangan is one of the best places in Thailand to do it. The combination of high electricity costs, unreliable grid, and excellent solar irradiance makes the business case compelling.</p>
+<p>Whether you want a hybrid system for outage protection or a full off-grid setup for true energy independence, Ko Phangan is one of the best places in Thailand to do it. The combination of an unreliable grid and excellent solar irradiance makes the business case compelling. ${PEA_RESIDENTIAL_TARIFF} Sources: ${peaTariffSources}.</p>
 
 <p><strong><a href="/contact">Contact Bustan Energy for a free off-grid consultation.</a></strong> We will visit your property, assess your energy needs, and design a system that keeps your lights on — rain or shine, grid or no grid.</p>
 `,
@@ -565,9 +569,9 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Do not change the design after submission</strong> — Stick to the approved design. Changes trigger a re-submission and restart the review clock.</li>
 </ul>
 
-<h2>What About VSPP Licensing for Larger Systems?</h2>
+<h2>ERC Licensing by System Size</h2>
 
-<p>For commercial systems above 1 MW (MW, not kW), the process involves additional licensing from the Energy Regulatory Commission (ERC) under the VSPP (Very Small Power Producer) framework. For systems under 1 MW — which covers 99% of residential and most commercial installations — the standard PEA permit process described above is all you need.</p>
+<p>Systems under 200 kVA file a license exemption. Systems from 200 kVA to under 1,000 kVA also need a separate permit, in addition to the PEA grid-connection process described above. A system of 1,000 kVA (1 MW) or more needs the further Energy Regulatory Commission (ERC) generation license. Selling power to the grid at that scale can also fall under the VSPP (Very Small Power Producer) framework.</p>
 
 <h2>Let Us Handle It for You</h2>
 

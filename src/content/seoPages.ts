@@ -1052,9 +1052,9 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "h": "PEA Ko Phangan paperwork handled for you",
-          "p": "Connecting solar to the grid means dealing with the local PEA office, and the forms and net-metering approval can stall a project for weeks if you do it alone. We prepare the application, single-line diagram, and equipment documents, then follow it through with PEA Ko Phangan so your system is approved and connected properly — not running unregistered.",
+          "p": "Connecting solar to the grid means dealing with the local PEA office, and the forms and net billing paperwork (selling surplus back to PEA) can stall a project for weeks if you do it alone. We prepare the application, single-line diagram, and equipment documents, then follow it through with PEA Ko Phangan so your system is approved and connected properly — not running unregistered.",
           "bullets": [
-            "Full PEA application and net-metering paperwork prepared",
+            "Full PEA application and net billing paperwork (selling surplus back to PEA) prepared",
             "Single-line diagram and equipment certificates included",
             "We follow up directly with the PEA office",
             "Correct, registered grid connection — no shortcuts"
@@ -1090,7 +1090,7 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "q": "Do you handle the PEA approval on Ko Phangan?",
-          "a": "Yes. We prepare the full application, single-line diagram, and equipment documents, then deal with PEA Ko Phangan directly so your system is properly registered and net-metered. You do not need to navigate the office yourself."
+          "a": "Yes. We prepare the full application, single-line diagram, and equipment documents, then deal with PEA Ko Phangan directly so your system is properly registered for net billing (selling surplus back to PEA). You do not need to navigate the office yourself."
         }
       ],
       "linkLabel": "Solar Ko Phangan",
@@ -1128,9 +1128,9 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "h": "จัดการเอกสาร PEA เกาะพะงันให้ครบ",
-          "p": "การเชื่อมต่อโซลาร์เข้ากริดต้องติดต่อสำนักงาน PEA ในพื้นที่ และเอกสารกับการอนุมัติหักลบหน่วยไฟอาจทำให้งานล่าช้าหลายสัปดาห์หากทำเอง เราเตรียมคำขอ ไดอะแกรมเส้นเดียว และเอกสารอุปกรณ์ แล้วติดตามกับ PEA เกาะพะงันจนระบบได้รับอนุมัติและเชื่อมต่ออย่างถูกต้อง ไม่ใช่ใช้งานแบบไม่ขึ้นทะเบียน",
+          "p": "การเชื่อมต่อโซลาร์เข้ากริดต้องติดต่อสำนักงาน PEA ในพื้นที่ และเอกสารกับการอนุมัติ net billing (ขายไฟฟ้าส่วนเกินคืนให้ กฟภ.) อาจทำให้งานล่าช้าหลายสัปดาห์หากทำเอง เราเตรียมคำขอ ไดอะแกรมเส้นเดียว และเอกสารอุปกรณ์ แล้วติดตามกับ PEA เกาะพะงันจนระบบได้รับอนุมัติและเชื่อมต่ออย่างถูกต้อง ไม่ใช่ใช้งานแบบไม่ขึ้นทะเบียน",
           "bullets": [
-            "เตรียมคำขอ PEA และเอกสารหักลบหน่วยไฟครบถ้วน",
+            "เตรียมคำขอ PEA และเอกสาร net billing (ขายไฟฟ้าส่วนเกินคืนให้ กฟภ.) ครบถ้วน",
             "รวมไดอะแกรมเส้นเดียวและใบรับรองอุปกรณ์",
             "เราติดตามกับสำนักงาน PEA ให้โดยตรง",
             "เชื่อมต่อกริดถูกต้องขึ้นทะเบียน ไม่มีทางลัด"
@@ -1166,7 +1166,7 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "q": "คุณจัดการเรื่องอนุมัติ PEA บนเกาะพะงันให้ไหม?",
-          "a": "จัดการให้ เราเตรียมคำขอครบ ไดอะแกรมเส้นเดียว และเอกสารอุปกรณ์ แล้วติดต่อ PEA เกาะพะงันโดยตรงจนระบบขึ้นทะเบียนและหักลบหน่วยไฟถูกต้อง คุณไม่ต้องไปวุ่นกับสำนักงานเอง"
+          "a": "จัดการให้ เราเตรียมคำขอครบ ไดอะแกรมเส้นเดียว และเอกสารอุปกรณ์ แล้วติดต่อ PEA เกาะพะงันโดยตรงจนระบบขึ้นทะเบียนสำหรับ net billing (ขายไฟฟ้าส่วนเกินคืนให้ กฟภ.) ถูกต้อง คุณไม่ต้องไปวุ่นกับสำนักงานเอง"
         }
       ],
       "linkLabel": "โซลาร์เกาะพะงัน",
@@ -1225,9 +1225,9 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "h": "PEA Samui paperwork and reliable service",
-          "p": "Grid-connecting solar on Ko Samui means clearing the local PEA office's application and net-metering process, which is slow to navigate alone. We prepare and submit the documents and follow them through. After install, monitoring and maintenance keep your system honest, and our team makes the short trip for service rather than leaving you chasing a distant supplier.",
+          "p": "Grid-connecting solar on Ko Samui means clearing the local PEA office's application and net billing process (selling surplus back to PEA), which is slow to navigate alone. We prepare and submit the documents and follow them through. After install, monitoring and maintenance keep your system honest, and our team makes the short trip for service rather than leaving you chasing a distant supplier.",
           "bullets": [
-            "PEA Samui application and net-metering handled",
+            "PEA Samui application and net billing (selling surplus back to PEA) handled",
             "Single-line diagram and certificates prepared",
             "Production monitoring after handover",
             "Reachable team for service and warranty visits"
@@ -1253,7 +1253,7 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "q": "Do you arrange PEA approval on Ko Samui?",
-          "a": "Yes. We prepare the application, single-line diagram, and equipment documents and deal with the PEA Samui office directly, so your system is properly registered and net-metered without you handling the bureaucracy."
+          "a": "Yes. We prepare the application, single-line diagram, and equipment documents and deal with the PEA Samui office directly, so your system is properly registered for net billing (selling surplus back to PEA) without you handling the bureaucracy."
         }
       ],
       "linkLabel": "Solar Ko Samui",
@@ -1301,9 +1301,9 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "h": "เอกสาร PEA สมุยและบริการที่ไว้ใจได้",
-          "p": "การเชื่อมต่อโซลาร์เข้ากริดบนเกาะสมุยต้องผ่านคำขอและกระบวนการหักลบหน่วยไฟของสำนักงาน PEA ในพื้นที่ ซึ่งทำเองแล้วช้า เราเตรียมและยื่นเอกสารพร้อมติดตามให้จนจบ หลังติดตั้ง ระบบมอนิเตอร์และบำรุงรักษาช่วยให้ระบบทำงานตรงตามจริง และทีมเราเดินทางมาบริการได้ ไม่ปล่อยให้คุณตามซัพพลายเออร์ไกลๆ",
+          "p": "การเชื่อมต่อโซลาร์เข้ากริดบนเกาะสมุยต้องผ่านคำขอและกระบวนการ net billing (ขายไฟฟ้าส่วนเกินคืนให้ กฟภ.) ของสำนักงาน PEA ในพื้นที่ ซึ่งทำเองแล้วช้า เราเตรียมและยื่นเอกสารพร้อมติดตามให้จนจบ หลังติดตั้ง ระบบมอนิเตอร์และบำรุงรักษาช่วยให้ระบบทำงานตรงตามจริง และทีมเราเดินทางมาบริการได้ ไม่ปล่อยให้คุณตามซัพพลายเออร์ไกลๆ",
           "bullets": [
-            "ดูแลคำขอ PEA สมุยและการหักลบหน่วยไฟ",
+            "ดูแลคำขอ PEA สมุย และ net billing (ขายไฟฟ้าส่วนเกินคืนให้ กฟภ.)",
             "เตรียมไดอะแกรมเส้นเดียวและใบรับรอง",
             "มอนิเตอร์การผลิตไฟหลังส่งมอบ",
             "ทีมติดต่อได้สำหรับงานบริการและประกัน"
@@ -1329,7 +1329,7 @@ export const SEO_PAGES: SeoPage[] = [
         },
         {
           "q": "คุณจัดการขออนุมัติ PEA บนเกาะสมุยให้ไหม?",
-          "a": "จัดการให้ เราเตรียมคำขอ ไดอะแกรมเส้นเดียว และเอกสารอุปกรณ์ แล้วติดต่อสำนักงาน PEA สมุยโดยตรง ระบบของคุณจึงขึ้นทะเบียนและหักลบหน่วยไฟถูกต้อง โดยคุณไม่ต้องยุ่งกับเอกสารเอง"
+          "a": "จัดการให้ เราเตรียมคำขอ ไดอะแกรมเส้นเดียว และเอกสารอุปกรณ์ แล้วติดต่อสำนักงาน PEA สมุยโดยตรง ระบบของคุณจึงขึ้นทะเบียนสำหรับ net billing (ขายไฟฟ้าส่วนเกินคืนให้ กฟภ.) ถูกต้อง โดยคุณไม่ต้องยุ่งกับเอกสารเอง"
         }
       ],
       "linkLabel": "โซลาร์เกาะสมุย",

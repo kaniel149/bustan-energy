@@ -33,7 +33,6 @@ const en = {
     maintenance: 'O&M Services',
     contactTitle: 'Contact',
     whatsapp: 'WhatsApp',
-    line: 'LINE: @bustanenergy',
     email: 'Contact Bustan Energy',
     address: 'Ko Pha-ngan, Surat Thani 84280\nThailand',
     copyright: '© 2026 Bustan Energy Co., Ltd. All rights reserved.',
@@ -689,10 +688,15 @@ const en = {
         value: '+66 94 669 2011',
         cta: 'Chat with us instantly',
       },
-      line: {
-        label: 'LINE',
+      facebook: {
+        label: 'Facebook',
+        value: 'Bustan Energy',
+        cta: 'Visit our Facebook page',
+      },
+      instagram: {
+        label: 'Instagram',
         value: '@bustanenergy',
-        cta: 'Add us on LINE',
+        cta: 'Visit our Instagram profile',
       },
       email: {
         label: 'Contact Form',
@@ -751,7 +755,7 @@ const en = {
     contact: {
       title: 'Contact Bustan Energy — Free Solar Consultation Ko Phangan',
       description:
-        'Get a free solar consultation in Ko Phangan. Contact Bustan Energy via WhatsApp, LINE, or email. Office in Thong Sala, Surat Thani. Mon–Sat 8am–6pm.',
+        'Get a free solar consultation in Ko Phangan. Contact Bustan Energy via WhatsApp or email. Office in Thong Sala, Surat Thani. Mon–Sat 8am–6pm.',
     },
   },
 
@@ -869,7 +873,6 @@ const th = {
     maintenance: 'บริการซ่อมบำรุง',
     contactTitle: 'ติดต่อ',
     whatsapp: 'WhatsApp',
-    line: 'LINE: @bustanenergy',
     email: 'Contact Bustan Energy',
     address: 'ทองสาลา เกาะพะงัน\nสุราษฎร์ธานี 84280 ประเทศไทย',
     copyright: '© 2026 Bustan Energy Co., Ltd. สงวนลิขสิทธิ์ทุกประการ',
@@ -1562,10 +1565,15 @@ const th = {
         value: '+66 94 669 2011',
         cta: 'แชทกับเราได้ทันที',
       },
-      line: {
-        label: 'LINE',
+      facebook: {
+        label: 'Facebook',
+        value: 'Bustan Energy',
+        cta: 'ไปที่เพจ Facebook',
+      },
+      instagram: {
+        label: 'Instagram',
         value: '@bustanenergy',
-        cta: 'เพิ่มเราใน LINE',
+        cta: 'ไปที่โปรไฟล์ Instagram',
       },
       email: {
         label: 'แบบฟอร์มติดต่อ',
@@ -1626,7 +1634,7 @@ const th = {
     contact: {
       title: 'ติดต่อ Bustan Energy — ปรึกษาโซลาร์ฟรี เกาะพะงัน สุราษฎร์ธานี',
       description:
-        'ขอคำปรึกษาโซลาร์เซลล์ฟรีบนเกาะพะงัน ติดต่อ Bustan Energy ทาง WhatsApp LINE หรืออีเมล สำนักงานที่ทองสาลา สุราษฎร์ธานี จันทร์–เสาร์ 08:00–18:00 น.',
+        'ขอคำปรึกษาโซลาร์เซลล์ฟรีบนเกาะพะงัน ติดต่อ Bustan Energy ทาง WhatsApp หรืออีเมล สำนักงานที่ทองสาลา สุราษฎร์ธานี จันทร์–เสาร์ 08:00–18:00 น.',
     },
   },
   /** CRM / platform strings — Thai overrides (falls back to English for any missing key) */

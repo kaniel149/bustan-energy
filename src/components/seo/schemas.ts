@@ -8,6 +8,8 @@
  *       โซลาร์เซลล์ ราคา, โซลาร์ฟาร์ม ไทย
  */
 import type { Lang } from '../../i18n/translations'
+import { FACEBOOK_URL, INSTAGRAM_URL } from '../../lib/social'
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_RESIDENTIAL_TARIFF_TH, PEA_TARIFF_NEWS_URL } from '../../lib/pea-tariff'
 
 export const BASE_URL = 'https://bustan-energy.com'
 const BUSINESS_ID = `${BASE_URL}/#business`
@@ -67,10 +69,7 @@ export function localBusinessSchema(lang: Lang) {
       lang === 'th'
         ? 'โซลาร์เซลล์ เกาะพะงัน, ติดตั้งโซลาร์เซลล์, สุราษฎร์ธานี, โซลาร์ฟาร์ม'
         : 'solar koh phangan, solar surat thani, solar panel installation thailand, solar farm thailand',
-    sameAs: [
-      'https://www.facebook.com/bustanenergy.th',
-      'https://www.instagram.com/bustanenergy.th',
-    ],
+    sameAs: [FACEBOOK_URL, INSTAGRAM_URL],
   }
 }
 
@@ -214,7 +213,7 @@ export const PRICING_FAQS_EN = [
   {
     question: 'What is the payback period for solar in Ko Phangan?',
     answer:
-      "With Ko Phangan's high electricity tariffs (often 8–10+ THB/kWh for resorts on island rates), payback periods range from 4–7 years for commercial systems and 6–9 years for residential. After payback, energy is essentially free for 20+ years.",
+      `Payback periods range from 4–7 years for commercial systems and 6–9 years for residential. ${PEA_RESIDENTIAL_TARIFF} Sources: ${PEA_TARIFF_NEWS_URL} and ${PEA_FT_PDF_URL}. After payback, energy is essentially free for 20+ years.`,
   },
   {
     question: 'Do you offer PPA (Power Purchase Agreement) financing?',
@@ -247,7 +246,7 @@ export const PRICING_FAQS_TH = [
   {
     question: 'ระยะเวลาคืนทุนโซลาร์เซลล์ในเกาะพะงันกี่ปี?',
     answer:
-      'ด้วยค่าไฟฟ้าสูงของเกาะพะงัน (มักถึง 8–10+ บาท/kWh สำหรับรีสอร์ท) ระยะเวลาคืนทุนอยู่ที่ 4–7 ปีสำหรับระบบเชิงพาณิชย์ และ 6–9 ปีสำหรับที่อยู่อาศัย หลังจากนั้นพลังงานแทบฟรีเป็นเวลากว่า 20 ปี',
+      `ระยะเวลาคืนทุนอยู่ที่ 4–7 ปีสำหรับระบบเชิงพาณิชย์ และ 6–9 ปีสำหรับที่อยู่อาศัย ${PEA_RESIDENTIAL_TARIFF_TH} Sources: ${PEA_TARIFF_NEWS_URL} and ${PEA_FT_PDF_URL}. หลังจากนั้นพลังงานแทบฟรีเป็นเวลากว่า 20 ปี`,
   },
   {
     question: 'มีตัวเลือก PPA (สัญญาซื้อขายไฟฟ้า) ไหม?',
@@ -416,10 +415,7 @@ export function organizationSchema() {
         availableLanguage: ['English', 'Thai'],
       },
     ],
-    sameAs: [
-      'https://www.facebook.com/bustanenergy.th',
-      'https://www.instagram.com/bustanenergy.th',
-    ],
+    sameAs: [FACEBOOK_URL, INSTAGRAM_URL],
   }
 }
 
