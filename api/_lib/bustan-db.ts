@@ -25,10 +25,54 @@ function bustanHeaders(write = false): Record<string, string> {
   return h
 }
 
+// ── Resilient GET ─────────────────────────────────────────────────────────────
+// The shared Supabase project answers 502/503/504 after ~5s when PostgREST has
+// to open a cold DB connection (first request after an idle gap — exactly what
+// a cron tick is). Reads are idempotent, so retry them with a short backoff
+// instead of treating a gateway hiccup as "no rows".
+const RETRYABLE_STATUS = new Set([502, 503, 504])
+const GET_ATTEMPTS = 3
+const GET_BACKOFF_MS = [300, 900]
+const GET_TIMEOUT_MS = 15_000
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+export async function bFetchGet(path: string, extraHeaders: Record<string, string> = {}): Promise<Response> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < GET_ATTEMPTS; attempt++) {
+    if (attempt > 0) await sleep(GET_BACKOFF_MS[attempt - 1] ?? GET_BACKOFF_MS[GET_BACKOFF_MS.length - 1])
+    const isLast = attempt === GET_ATTEMPTS - 1
+    try {
+      const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, {
+        headers: { ...bustanHeaders(false), ...extraHeaders },
+        signal: AbortSignal.timeout(GET_TIMEOUT_MS),
+      })
+      if (isLast || !RETRYABLE_STATUS.has(r.status)) return r
+      lastError = new Error(`bustan upstream responded ${r.status}`)
+    } catch (e) {
+      if (isLast) throw e
+      lastError = e
+    }
+  }
+  throw lastError
+}
+
 /** GET all rows as array (empty array on any non-OK). */
 export async function bGet<T = Record<string, unknown>>(path: string): Promise<T[]> {
-  const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, { headers: bustanHeaders(false) })
-  return r.ok ? r.json() : []
+  const r = await bFetchGet(path).catch(() => null)
+  return r?.ok ? r.json() : []
+}
+
+/**
+ * GET that distinguishes "no rows" from "the request failed": throws on any
+ * non-OK response (after retries) instead of returning []. Use it where an
+ * empty result triggers a write (watermarks, first-run inserts) so a gateway
+ * timeout can never be mistaken for "nothing exists yet".
+ */
+export async function bGetOrThrow<T = Record<string, unknown>>(path: string): Promise<T[]> {
+  const r = await bFetchGet(path)
+  if (!r.ok) throw new Error(`bustan GET ${path.split('?')[0]} failed: ${r.status}`)
+  return r.json()
 }
 
 /** POST (insert) row(s); returns inserted rows or null on failure/conflict. */
@@ -75,8 +119,7 @@ export async function bPatchReturning<T = Record<string, unknown>>(
 
 /** Exact row count for a filter path without fetching rows (HEAD-style, Range 0-0). */
 export async function bCount(path: string): Promise<number> {
-  const r = await fetch(`${BUSTAN_URL}/rest/v1/${path}`, {
-    headers: { ...bustanHeaders(false), Prefer: 'count=exact', Range: '0-0', 'Range-Unit': 'items' },
-  })
+  const r = await bFetchGet(path, { Prefer: 'count=exact', Range: '0-0', 'Range-Unit': 'items' }).catch(() => null)
+  if (!r) return 0
   return r.ok || r.status === 206 ? (parseContentRange(r.headers.get('content-range')) ?? 0) : 0
 }

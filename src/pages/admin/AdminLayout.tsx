@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { LayoutDashboard, FilePlus, FileText, LogOut, Menu, X, Package, ShoppingCart, FileCheck, Tags, Building2, Activity, Send, ScanSearch, BookOpen } from 'lucide-react'
 import { onAuthChange, signOut, isAdmin } from '../../lib/admin-auth'
@@ -32,6 +32,7 @@ function LoadingScreen() {
 
 export default function AdminLayout() {
   const navigate = useNavigate()
+  const isScanPage = useLocation().pathname === '/admin/scan'
   const setAdminUser = useAdminStore((s) => s.setAdminUser)
   const adminUser = useAdminStore((s) => s.adminUser)
   const [authChecked, setAuthChecked] = useState(false)
@@ -88,11 +89,11 @@ export default function AdminLayout() {
         <div className="p-4 border-b border-[#FFF4E2]/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img
-              src="/assets/logo/bustan-energy.svg"
+              src="/bustan/bustan-energy-logo.png"
               alt="Bustan Energy"
               className="h-7 object-contain"
             />
-            <span className="text-xs font-semibold text-[#FFF4E2]/70">Admin</span>
+            <span className="text-xs font-semibold text-[#FFF4E2]/70">ניהול</span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -104,7 +105,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-1" aria-label="ניווט ראשי">
+        <nav className="min-h-0 flex-1 overflow-y-auto p-3 space-y-1" aria-label="ניווט ראשי">
           {NAV_ITEMS.filter((i) => !('internal' in i) || !i.internal).map(({ to, icon: Icon, label, end }) => (
             <NavLink
               key={to}
@@ -183,7 +184,7 @@ export default function AdminLayout() {
           >
             <Menu size={20} />
           </button>
-          <img src="/assets/logo/bustan-energy.svg" alt="Bustan Energy" className="h-6 object-contain" />
+          <img src="/bustan/bustan-energy-logo.png" alt="Bustan Energy" className="h-6 object-contain" />
           <button
             onClick={handleSignOut}
             className="text-[#27342F]/50 hover:text-[#27342F]/75 transition-colors"
@@ -194,7 +195,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Page content */}
-        <main className="bustan-admin-main flex-1 overflow-auto">
+        <main className={`bustan-admin-main min-h-0 flex-1 ${isScanPage ? 'overflow-hidden' : 'overflow-auto'}`}>
           <Outlet />
         </main>
       </div>

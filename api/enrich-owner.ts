@@ -115,7 +115,7 @@ function isNonEmptyString(v: unknown): v is string {
  */
 function cleanValue(raw: unknown): string | undefined {
   if (typeof raw !== 'string') return undefined
-  let s = raw
+  const s = raw
     .replace(/\*\*/g, '') // markdown bold
     .replace(/[`_]/g, '') // code / italic markers
     .replace(/^[\s\-•|>#]+/, '') // leading bullets / pipes / heading marks
@@ -124,6 +124,35 @@ function cleanValue(raw: unknown): string | undefined {
     .replace(/\s{2,}/g, ' ')
     .trim()
   return s.length ? s : undefined
+}
+
+/** Remove Markdown wrappers without changing punctuation inside contact values. */
+function cleanContactValue(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined
+  let value = raw.trim()
+  // Scrape matches may end just before a link destination's closing wrapper.
+  // Unlike cleanValue, preserve underscores in URL paths and fragments.
+  value = value.replace(/^["'“”‘’`*]+|["'“”‘’`*]+$/g, '').trim()
+  const pairs: Record<string, string> = { ')': '(', ']': '[', '}': '{', '>': '<' }
+  while (value) {
+    const closing = value[value.length - 1]
+    const opening = pairs[closing]
+    if (!opening) break
+    const opens = [...value].filter((character) => character === opening).length
+    const closes = [...value].filter((character) => character === closing).length
+    if (closes <= opens) break
+    value = value.slice(0, -1).trimEnd()
+  }
+  return value || undefined
+}
+
+function cleanWebsiteValue(raw: unknown): string | undefined {
+  const value = cleanContactValue(raw)
+  if (!value) return undefined
+  try {
+    const url = new URL(/^[a-z][a-z\d+.-]*:/i.test(value) ? value : `https://${value}`)
+    return ['https:', 'http:'].includes(url.protocol) ? value : undefined
+  } catch { return undefined }
 }
 
 /** Extract a 13-digit juristic ID from an arbitrary string, if present. */
@@ -387,8 +416,8 @@ function buildFromFirecrawl(resp: FirecrawlScrapeResponse): EnrichedCompanyData 
     const fromLlm: EnrichedCompanyData = {
       companyLegalName: cleanValue(extracted.companyLegalName),
       registeredAddress: cleanValue(extracted.registeredAddress),
-      businessPhone: cleanValue(extracted.businessPhone),
-      website: cleanValue(extracted.website),
+      businessPhone: cleanContactValue(extracted.businessPhone),
+      website: cleanWebsiteValue(extracted.website),
       registrationNo: cleanValue(extracted.registrationNo),
       businessType: cleanValue(extracted.businessType),
     }
@@ -404,7 +433,7 @@ function buildFromFirecrawl(resp: FirecrawlScrapeResponse): EnrichedCompanyData 
  * Regex fallback parser — juristic fields only, PDPA-safe (no individuals).
  * Used only when the LLM extract produced nothing usable.
  */
-function parseCompanyFields(markdown: string): EnrichedCompanyData {
+export function parseCompanyFields(markdown: string): EnrichedCompanyData {
   const result: EnrichedCompanyData = {}
 
   const nameMatch =
@@ -420,12 +449,12 @@ function parseCompanyFields(markdown: string): EnrichedCompanyData {
   const phoneMatch = markdown.match(
     /(?:โทรศัพท์|Phone|Tel|Telephone)[:\s]+([\d\s\-+()]{7,20})/i,
   )
-  if (phoneMatch?.[1]) result.businessPhone = cleanValue(phoneMatch[1])
+  if (phoneMatch?.[1]) result.businessPhone = cleanContactValue(phoneMatch[1])
 
   const websiteMatch =
-    markdown.match(/(?:Website|เว็บไซต์|Web)[:\s]+(https?:\/\/[^\s\n|]+)/i) ??
-    markdown.match(/\b(https?:\/\/(?!firecrawl|dbd\.go\.th)[a-z0-9.-]+\.[a-z]{2,}[^\s\n|]*)/i)
-  if (websiteMatch?.[1]) result.website = cleanValue(websiteMatch[1])
+    markdown.match(/(?:Website|เว็บไซต์|Web)[:\s]+(https?:\/\/[^\s\n|<>]+)/i) ??
+    markdown.match(/\b(https?:\/\/(?!firecrawl|dbd\.go\.th)[a-z0-9.-]+\.[a-z]{2,}[^\s\n|<>]*)/i)
+  if (websiteMatch?.[1]) result.website = cleanWebsiteValue(websiteMatch[1])
 
   const regNoMatch = markdown.match(
     /(?:เลขทะเบียน|Registration No|Reg\.? No|juristic_id)[:\s.]+(\d[\d-]{6,})/i,

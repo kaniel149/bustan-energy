@@ -6,7 +6,10 @@ import { LanguageProvider } from './i18n/LanguageContext'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { SEO_PAGES } from './content/seoPages'
 
-const HomePage = lazy(() => import('./pages/HomePage'))
+// Eager: the home route is prerendered, so its CSS must be in the main stylesheet
+// and the client render must not replace the hero with the loading screen.
+import HomePage from './pages/HomePage'
+
 const ServicesPage = lazy(() => import('./pages/ServicesPage'))
 const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))

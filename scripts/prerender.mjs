@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises'
 import { resolve, dirname } from 'node:path'
 import { render } from '../.prerender/entry-server.js'
 
@@ -11,11 +11,19 @@ const paths = [...new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, 
   if (parsed.origin !== origin) throw new Error(`Unexpected sitemap origin: ${url}`)
   return parsed.pathname.replace(/\/$/, '') || '/'
 }))]
+// Thai routes whose body is still English: prerendered (they canonicalise to the English URL)
+// but kept out of the sitemap so it lists canonical URLs only.
+const englishOnlyThaiPaths = [
+  '/th/services/residential', '/th/services/commercial', '/th/services/off-grid', '/th/services/maintenance',
+  '/th/resort-solar-assessment', '/th/factory-electricity-bill-solar-assessment',
+]
+for (const path of englishOnlyThaiPaths) if (!paths.includes(path)) paths.push(path)
 const privatePath = /^\/(?:th\/|he\/)?(?:admin|api|crm|platform|p|proposals|proposal-templates)(?:\/|$)/
 const report = []
 
 // Keep the SPA fallback for private and unknown routes, separate from the home snapshot.
 await writeFile('dist/spa.html', template)
+await unlink('dist/index.html')
 for (const path of paths) {
   if (privatePath.test(path)) throw new Error(`Private route cannot be prerendered: ${path}`)
   let body = await render(path)
@@ -32,7 +40,7 @@ for (const path of paths) {
   html = html.replace(/<html\b[^>]*>/, `<html lang="${lang}" dir="${lang === 'he' ? 'rtl' : 'ltr'}">`)
     .replace('</head>', `${routeHead}\n</head>`)
     .replace('<div id="root"></div>', `<div id="root">${body}</div>`)
-  const destination = path === '/' ? 'dist/index.html' : resolve('dist', `.${path}`, 'index.html')
+  const destination = path === '/' ? 'dist/prerendered/index.html' : resolve('dist/prerendered', `.${path}`, 'index.html')
   await mkdir(dirname(destination), { recursive: true })
   await writeFile(destination, html)
   report.push({ path, bytes: Buffer.byteLength(html), h1: (body.match(/<h1[\s>]/g) ?? []).length })

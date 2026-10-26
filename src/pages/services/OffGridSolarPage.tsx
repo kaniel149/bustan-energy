@@ -14,6 +14,7 @@ import {
 import { useLanguage } from '../../i18n/useLanguage'
 import { SEOHead } from '../../components/seo/SEOHead'
 import { breadcrumbSchema, serviceSchema } from '../../components/seo/schemas'
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_RESIDENTIAL_TARIFF_TH, PEA_TARIFF_NEWS_URL } from '../../lib/pea-tariff'
 import { Button } from '../../components/ui/Button'
 import { SectionHeader } from '../../components/ui/SectionHeader'
 import {
@@ -30,7 +31,12 @@ import {
 
 const BASE_URL = 'https://bustan-energy.com'
 
-const whyOffGrid = [
+const whyOffGrid: {
+  icon: typeof Zap
+  title: string
+  text: string
+  sources?: { href: string; label: string }[]
+}[] = [
   {
     icon: CloudOff,
     title: 'Frequent Power Outages',
@@ -49,7 +55,11 @@ const whyOffGrid = [
   {
     icon: Zap,
     title: 'Rising Electricity Costs',
-    text: 'Island electricity tariffs are among the highest in Thailand. Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.',
+    text: 'Generating and storing your own power locks in a predictable energy cost and shields you from future rate increases.',
+    sources: [
+      { href: PEA_TARIFF_NEWS_URL, label: 'PEA corporate news' },
+      { href: PEA_FT_PDF_URL, label: 'Ft surcharge Sep–Dec 2026 (PDF)' },
+    ],
   },
 ]
 
@@ -126,8 +136,9 @@ const systemTypeIcons = [Cable, Unplug, Sun]
 
 export default function OffGridSolarPage() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
-  const { langPath } = useLanguage()
+  const { langPath, lang: routeLang } = useLanguage()
   const lang = 'en'
+  const residentialTariff = routeLang === 'th' ? PEA_RESIDENTIAL_TARIFF_TH : PEA_RESIDENTIAL_TARIFF
 
   const breadcrumbs = [
     { name: 'Home', url: BASE_URL },
@@ -142,6 +153,7 @@ export default function OffGridSolarPage() {
         description="Off-grid solar systems and battery storage for Ko Phangan homes and businesses. Huawei LUNA2000 batteries, hybrid systems, and full off-grid solutions. No more blackouts."
         path="/services/off-grid"
         lang={lang}
+        englishOnly
         schema={[
           serviceSchema(lang),
           breadcrumbSchema(breadcrumbs),
@@ -188,7 +200,30 @@ export default function OffGridSolarPage() {
                       <item.icon size={24} strokeWidth={1.5} aria-hidden />
                     </IconTile>
                     <h3 className="text-xl font-semibold text-ink mb-3">{item.title}</h3>
-                    <p className="text-ink/72 text-sm leading-relaxed">{item.text}</p>
+                    <p className="text-ink/72 text-sm leading-relaxed">
+                      {item.sources ? `${residentialTariff} ` : null}
+                      {item.text}
+                      {item.sources && (
+                        <>
+                          {' '}
+                          Sources:{' '}
+                          {item.sources.map((source, index) => (
+                            <span key={source.href}>
+                              {index > 0 && ' and '}
+                              <a
+                                href={source.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-ocean underline underline-offset-2"
+                              >
+                                {source.label}
+                              </a>
+                            </span>
+                          ))}
+                          .
+                        </>
+                      )}
+                    </p>
                   </div>
                 </motion.div>
               ))}

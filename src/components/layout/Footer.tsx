@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { MessageCircle, Mail, MapPin, Phone } from 'lucide-react'
+import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react'
 import { useLanguage } from '../../i18n/useLanguage'
 import { useTranslation } from '../../i18n/useTranslation'
+import { FACEBOOK_URL, INSTAGRAM_URL } from '../../lib/social'
 
 // Shared link treatment — quiet ink that warms to ocean on hover.
 const footerLink =
@@ -11,7 +12,7 @@ const iconBox =
   'flex h-11 w-11 items-center justify-center rounded-sm bg-transparent border border-grove/20 text-grove/75 hover:text-ocean hover:border-ocean/30 hover:bg-mist/60 transition-colors duration-[var(--duration-fast)] ease-out-soft'
 
 export function Footer() {
-  const { langPath, lang } = useLanguage()
+  const { langPath } = useLanguage()
   const { t } = useTranslation()
 
   const QUICK_LINKS = [
@@ -22,7 +23,6 @@ export function Footer() {
     { label: t.nav.about, path: '/about' },
     { label: t.nav.blog, path: '/blog' },
     { label: t.nav.contact, path: '/contact' },
-    { label: lang === 'th' ? 'เครื่องมือโซลาร์' : lang === 'he' ? 'כלים סולאריים' : 'Solar Tools', path: '/tools' },
   ]
 
   const SERVICES = [
@@ -44,10 +44,13 @@ export function Footer() {
             {/* Logo */}
             <Link to={langPath('/')} className="inline-flex w-fit rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean focus-visible:ring-offset-4">
               <img
-                src="/bustan/bustan-energy-logo.png"
+                src="/bustan/bustan-energy-logo.webp"
+                width={520}
+                height={232}
                 alt="Bustan Energy"
                 className="h-14 w-[172px] object-contain object-left rtl:object-right"
                 loading="lazy"
+                decoding="async"
               />
             </Link>
 
@@ -68,13 +71,22 @@ export function Footer() {
                 <Phone size={15} />
               </a>
               <a
-                href="https://line.me/R/ti/p/@bustanenergy"
+                href={FACEBOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={iconBox}
-                aria-label="LINE"
+                aria-label="Facebook"
               >
-                <MessageCircle size={15} />
+                <Facebook size={15} />
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={iconBox}
+                aria-label="Instagram"
+              >
+                <Instagram size={15} />
               </a>
               <Link
                 to={langPath('/contact')}
@@ -137,13 +149,24 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://line.me/R/ti/p/@bustanenergy"
+                  href={FACEBOOK_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`group flex items-start gap-3 ${footerLink}`}
                 >
-                  <MessageCircle size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
-                  <span>LINE: @bustanenergy</span>
+                  <Facebook size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
+                  <span>Facebook</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group flex items-start gap-3 ${footerLink}`}
+                >
+                  <Instagram size={15} className="mt-0.5 shrink-0 text-ocean/60 group-hover:text-ocean transition-colors duration-[var(--duration-fast)]" />
+                  <span>Instagram</span>
                 </a>
               </li>
               <li>
@@ -175,20 +198,6 @@ export function Footer() {
           <p className="text-grove/75 text-xs">
             {t.footer.copyright}
           </p>
-          <div className="flex items-center gap-5">
-            <Link
-              to={langPath('/privacy')}
-              className="text-xs text-grove/75 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
-            >
-              {lang === 'he' ? 'מדיניות פרטיות' : lang === 'th' ? 'นโยบายความเป็นส่วนตัว' : 'Privacy Policy'}
-            </Link>
-            <Link
-              to={langPath('/terms')}
-              className="text-xs text-grove/75 hover:text-ocean transition-colors duration-[var(--duration-fast)] ease-out-soft"
-            >
-              {lang === 'he' ? 'תנאי שימוש' : lang === 'th' ? 'ข้อกำหนดการใช้งาน' : 'Terms of Service'}
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

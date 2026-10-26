@@ -2,6 +2,10 @@
 // Full blog post content for Bustan Energy (Ko Phangan, Thailand)
 // Each post uses Markdown-style HTML content rendered in BlogPostPage.tsx
 
+import { PEA_FT_PDF_URL, PEA_RESIDENTIAL_TARIFF, PEA_TARIFF_NEWS_URL } from '../lib/pea-tariff'
+
+const peaTariffSources = `<a href="${PEA_TARIFF_NEWS_URL}" rel="noopener noreferrer">PEA corporate news</a> and <a href="${PEA_FT_PDF_URL}" rel="noopener noreferrer">Ft surcharge Sep–Dec 2026 (PDF)</a>`
+
 export interface BlogPost {
   slug: string
   title: string
@@ -24,13 +28,13 @@ export const blogPosts: BlogPost[] = [
     category: 'Guide',
     excerpt: 'Everything you need to know about going solar on Ko Phangan — costs, system sizes, PEA permits, monsoon performance, and more.',
     content: `
-<p>If you live on Ko Phangan — or own property here — you have probably noticed that <strong>solar energy on Koh Phangan</strong> is becoming increasingly popular. And for good reason. The island enjoys roughly 1,800 hours of sunshine per year, electricity costs are among the highest in Thailand, and the grid can be unreliable. Solar is not just an eco-friendly choice here; it is a financially smart one.</p>
+<p>If you live on Ko Phangan — or own property here — you have probably noticed that <strong>solar energy on Koh Phangan</strong> is becoming increasingly popular. And for good reason. The island enjoys roughly 1,800 hours of sunshine per year, and the grid can be unreliable. Solar is not just an eco-friendly choice here; it is a financially smart one.</p>
 
 <p>This guide covers everything you need to know about going solar on Ko Phangan in 2026: what it costs, what size system you need, how the PEA permit process works, what happens during monsoon season, and how to choose the right installer.</p>
 
 <h2>Why Go Solar on Ko Phangan?</h2>
 
-<p>Ko Phangan is an island in the Gulf of Thailand, connected to the mainland grid via undersea cables. Because of its remote location, electricity on the island is expensive. Many properties — especially resorts, hotels, and villas — pay <strong>6 to 10+ THB per kilowatt-hour</strong>, significantly more than the mainland average of 3.5–4.5 THB/kWh.</p>
+<p>Ko Phangan is an island in the Gulf of Thailand, connected to the mainland grid via undersea cables. ${PEA_RESIDENTIAL_TARIFF} Island properties pay that same residential schedule. Sources: ${peaTariffSources}.</p>
 
 <p>At the same time, Ko Phangan sits near the equator with excellent solar irradiance. The island averages around <strong>5.1 peak sun hours per day</strong>, which means a well-designed solar system produces substantial energy year-round. Add in frequent power outages — especially during storms and peak tourist season — and solar with battery storage becomes not just a savings tool, but an <strong>energy security solution</strong>.</p>
 
@@ -49,7 +53,7 @@ export const blogPosts: BlogPost[] = [
 
 <p>These prices include Tier-1 equipment like LonGi Hi-MO 6 panels and Huawei SUN2000 inverters. Adding battery storage (Huawei LUNA2000) typically adds ฿150,000–฿300,000 depending on capacity.</p>
 
-<p>Island installations do cost slightly more than mainland ones due to shipping logistics, but the higher electricity tariffs on Ko Phangan mean your <strong>return on investment is actually faster</strong> than in Bangkok or Chiang Mai.</p>
+<p>Island installations do cost slightly more than mainland ones due to shipping logistics. The unit rate itself is the national PEA tariff, not a higher island price.</p>
 
 <h2>What Size System Do You Need?</h2>
 
@@ -248,7 +252,7 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Frequent power outages</strong> — The island experiences power cuts ranging from a few minutes to several hours, sometimes multiple times per week. Storms, overloaded transformers, and maintenance on the undersea cable all cause disruptions.</li>
   <li><strong>Unreliable grid in remote areas</strong> — Many properties in the northern, eastern, and hillside areas of Ko Phangan have weak grid connections with frequent voltage fluctuations that can damage appliances.</li>
   <li><strong>No grid access</strong> — Some new developments and remote properties simply cannot get a PEA connection, or the cost of running a power line to the property is prohibitively expensive (sometimes ฿500,000+ for a remote hillside connection).</li>
-  <li><strong>High electricity costs</strong> — Island electricity rates of 6–10+ THB/kWh make self-generation economically attractive, especially when you factor in the value of uninterrupted power.</li>
+  <li><strong>The national PEA tariff</strong> — ${PEA_RESIDENTIAL_TARIFF} Self-generation is still attractive when you factor in the value of uninterrupted power. Sources: ${peaTariffSources}.</li>
   <li><strong>Environmental values</strong> — Many Ko Phangan residents and businesses are deeply committed to sustainability. Off-grid solar eliminates dependence on fossil-fuel-generated grid electricity.</li>
 </ul>
 
@@ -257,12 +261,11 @@ export const blogPosts: BlogPost[] = [
 <p>Batteries are the heart of any off-grid or hybrid solar system. They store the energy your panels generate during the day so you can use it at night or during cloudy weather. Here are the main battery technologies available in 2026:</p>
 
 <h3>Lithium Iron Phosphate (LiFePO4)</h3>
-<p>This is the gold standard for solar batteries in 2026. LiFePO4 batteries — like the <strong>Huawei LUNA2000</strong> series we install — offer:</p>
+<p>LiFePO4 (lithium iron phosphate) is the battery chemistry we install, such as the <strong>Huawei LUNA2000</strong> series. It offers:</p>
 <ul>
-  <li>6,000+ charge cycles (15–20 year lifespan)</li>
-  <li>95% round-trip efficiency</li>
-  <li>No maintenance required</li>
-  <li>Safe chemistry (no thermal runaway risk)</li>
+  <li>Rated for more than 5,000 cycles (<a href="https://solar.huawei.com/download?p=%2F-%2Fmedia%2FSolarV4%2Fsolar-version2%2Feurope%2Fro%2Fprofessionals%2Fall-products%2Fproduct%2FLUNA2000-5-10-15-S0%2Fsupport%2FLUNA2000-5-10-15-S0-datasheet.pdf">Huawei datasheet</a>, at 35% depth of discharge), with a <a href="https://shop.krannich-solar.com/fr-ch/product-downloads/6359834/LUNA2000-5-S0-5-kWh/WarrantyTerms-EN.pdf">10-year manufacturer warranty</a></li>
+  <li>Low maintenance: the battery management system handles charging automatically. Keep the system connected to FusionSolar for firmware updates and alerts.</li>
+  <li>Safe chemistry (much lower thermal runaway risk)</li>
   <li>Compact, wall-mountable design</li>
   <li>Modular: start with 5 kWh, expand up to 30 kWh</li>
 </ul>
@@ -271,15 +274,11 @@ export const blogPosts: BlogPost[] = [
 <h3>Lead-Acid (Gel / AGM)</h3>
 <p>The traditional battery technology. Still used in some budget installations but increasingly obsolete for solar:</p>
 <ul>
-  <li>500–1,500 charge cycles (3–5 year lifespan)</li>
-  <li>80% round-trip efficiency</li>
   <li>Requires ventilation (produces hydrogen gas during charging)</li>
   <li>Heavy and bulky — requires dedicated battery room</li>
   <li>Should not be discharged below 50% (effective capacity is half the rated capacity)</li>
 </ul>
-<p><strong>Cost:</strong> ฿60,000–฿80,000 per 5 kWh — cheaper upfront, but 3–4x more expensive over 15 years when you factor in replacements.</p>
-
-<p><strong>Our recommendation:</strong> LiFePO4 every time. The upfront cost difference is paid back within 3–4 years through longer lifespan, higher efficiency, and zero maintenance. On Ko Phangan's humid, salty climate, lead-acid batteries degrade even faster than their rated specifications.</p>
+<p><strong>Our recommendation:</strong> LiFePO4 every time. It lasts longer and needs less maintenance than lead-acid, which matters in Ko Phangan's humid, salty climate.</p>
 
 <h2>Hybrid vs. Full Off-Grid</h2>
 
@@ -352,8 +351,8 @@ export const blogPosts: BlogPost[] = [
 
 <ul>
   <li><strong>Solar panels</strong> — Clean 2–4 times per year (more often on Ko Phangan due to tropical dust, pollen, and occasional sea salt spray). Annual inspection of mounting hardware and wiring. Lifespan: 25–30 years.</li>
-  <li><strong>LiFePO4 batteries</strong> — Zero user maintenance. The battery management system (BMS) handles charge/discharge optimization automatically. Lifespan: 15–20 years.</li>
-  <li><strong>Inverter</strong> — No user maintenance. Monitor via the Huawei FusionSolar app for any alerts. Lifespan: 10–15 years (one replacement expected during the system's life).</li>
+  <li><strong>LiFePO4 batteries</strong> — Low user maintenance. The battery management system (BMS) handles charge/discharge optimization automatically. <a href="https://shop.krannich-solar.com/fr-ch/product-downloads/6359834/LUNA2000-5-S0-5-kWh/WarrantyTerms-EN.pdf">10-year manufacturer warranty</a>.</li>
+  <li><strong>Inverter</strong> — Low user maintenance. Monitor via the Huawei FusionSolar app for any alerts.</li>
   <li><strong>Wiring and mounting</strong> — Annual visual inspection for corrosion (important on Ko Phangan due to salt air). Use marine-grade hardware and stainless steel fasteners.</li>
 </ul>
 
@@ -361,7 +360,7 @@ export const blogPosts: BlogPost[] = [
 
 <h2>Ready to Go Off-Grid?</h2>
 
-<p>Whether you want a hybrid system for outage protection or a full off-grid setup for true energy independence, Ko Phangan is one of the best places in Thailand to do it. The combination of high electricity costs, unreliable grid, and excellent solar irradiance makes the business case compelling.</p>
+<p>Whether you want a hybrid system for outage protection or a full off-grid setup for true energy independence, Ko Phangan is one of the best places in Thailand to do it. The combination of an unreliable grid and excellent solar irradiance makes the business case compelling. ${PEA_RESIDENTIAL_TARIFF} Sources: ${peaTariffSources}.</p>
 
 <p><strong><a href="/contact">Contact Bustan Energy for a free off-grid consultation.</a></strong> We will visit your property, assess your energy needs, and design a system that keeps your lights on — rain or shine, grid or no grid.</p>
 `,
@@ -570,9 +569,9 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Do not change the design after submission</strong> — Stick to the approved design. Changes trigger a re-submission and restart the review clock.</li>
 </ul>
 
-<h2>What About VSPP Licensing for Larger Systems?</h2>
+<h2>ERC Licensing by System Size</h2>
 
-<p>For commercial systems above 1 MW (MW, not kW), the process involves additional licensing from the Energy Regulatory Commission (ERC) under the VSPP (Very Small Power Producer) framework. For systems under 1 MW — which covers 99% of residential and most commercial installations — the standard PEA permit process described above is all you need.</p>
+<p>Systems under 200 kVA file a license exemption. Systems from 200 kVA to under 1,000 kVA also need a separate permit, in addition to the PEA grid-connection process described above. A system of 1,000 kVA (1 MW) or more needs the further Energy Regulatory Commission (ERC) generation license. Selling power to the grid at that scale can also fall under the VSPP (Very Small Power Producer) framework.</p>
 
 <h2>Let Us Handle It for You</h2>
 
@@ -732,158 +731,154 @@ export const blogPosts: BlogPost[] = [
   // ─── Post 7: Commercial Solar ROI in Thailand ─────────────────────────────
   {
     slug: 'commercial-solar-roi-thailand',
-    title: 'Commercial Solar ROI in Thailand: Case Study Analysis',
+    title: 'Commercial Solar ROI in Thailand: Illustrative Examples',
     date: '2026-04-10',
     dateDisplay: 'April 2026',
     readTime: '11 min read',
     category: 'Business',
-    excerpt: 'Real ROI analysis for hotels, resorts, and businesses in Thailand — with anonymized case studies, payback calculations, and before/after electricity bills.',
+    excerpt: 'Illustrative ROI analysis for hotels, resorts, and businesses in Thailand — with example system sizes, payback calculations, and modeled electricity bills.',
     content: `
-<p>When businesses on Ko Phangan ask us about solar, the first question is always the same: "What is my return on investment?" It is the right question. Unlike homeowners, who weigh solar partly on environmental values or grid independence, businesses need the numbers to work. And on Ko Phangan — with its high island electricity tariffs, year-round solar irradiance, and growing tourist demand for sustainability — <strong>commercial solar ROI in Thailand</strong> is often compelling beyond what owners expect.</p>
+<p>When businesses on Ko Phangan ask us about solar, the first question is always the same: "What is my return on investment?" It is the right question. Unlike homeowners, who weigh solar partly on environmental values or grid independence, businesses need the numbers to work. And Ko Phangan is on the national PEA tariff — with year-round solar irradiance and growing tourist demand for sustainability — <strong>commercial solar ROI in Thailand</strong> is often compelling beyond what owners expect.</p>
 
-<p>This article presents three anonymized case studies from real Bustan Energy commercial installations, with full before/after bill analysis, system specifications, and ROI calculations.</p>
+<p>This article presents three illustrative examples based on typical system sizes and load profiles on Ko Phangan, with modeled bill comparisons, system specifications, and ROI calculations.</p>
 
 <h2>The Commercial Solar Advantage in Thailand</h2>
 
-<p>Before the case studies, it is worth understanding why commercial solar often outperforms residential solar on ROI:</p>
+<p>Before the examples, it is worth understanding why commercial solar often outperforms residential solar on ROI:</p>
 
 <ul>
   <li><strong>Higher electricity consumption = bigger savings</strong> — A hotel using ฿150,000/month in electricity has far more to gain from solar than a home using ฿5,000/month. The economics scale up.</li>
   <li><strong>Daytime-heavy load profiles</strong> — Hotels, restaurants, dive shops, and spas use the most electricity during daylight hours (air conditioning, kitchens, pools, laundry). This aligns perfectly with solar production, maximizing self-consumption and minimizing storage requirements.</li>
-  <li><strong>Higher island tariffs</strong> — Commercial properties on Ko Phangan often pay 7–10+ THB/kWh, compared to mainland commercial rates of 4–5 THB/kWh. Every unit of solar-generated electricity is worth more.</li>
+  <li><strong>Same national PEA tariff as the mainland</strong> — Ko Phangan is on the national PEA tariff; there is no separate island rate. Small businesses (PEA Type 2, under 30 kW demand) pay <a href="https://www.pea.co.th/sites/default/files/users/user34/attachments/Electricity_Tariff_SEP_2026_3.pdf">3.2484–4.4217 THB/kWh</a> plus Ft (<a href="https://www.pea.co.th/sites/default/files/ft/2026/Ft%20surcharge%20SEP-DEC%202026_Final.pdf">0.1623 THB/kWh</a> for Sep–Dec 2026) and 7% VAT. Larger sites move to Type 3–5, which include demand charges.</li>
   <li><strong>PPA option available</strong> — Commercial properties can access our Power Purchase Agreement model, which requires zero upfront investment. The savings start from day one with no capital required.</li>
   <li><strong>Marketing value</strong> — Sustainability credentials increasingly influence booking decisions. Properties with solar can legitimately market themselves as "solar-powered" — which matters to the eco-conscious tourists who choose Ko Phangan.</li>
 </ul>
 
-<h2>Case Study 1: Boutique Beach Resort</h2>
+<p><em>The following are illustrative examples based on typical system sizes and load profiles on Ko Phangan, not specific Bustan Energy clients. Your results will depend on your bill, roof and usage. Savings assume an all-in PEA tariff of about 4.4 THB/kWh (<a href="https://www.pea.co.th/sites/default/files/users/user34/attachments/Electricity_Tariff_SEP_2026_3.pdf">Type 2 rate</a> + <a href="https://www.pea.co.th/sites/default/files/ft/2026/Ft%20surcharge%20SEP-DEC%202026_Final.pdf">Ft 0.1623 THB/kWh</a> + 7% VAT, September 2026).</em></p>
+<p>Monthly savings = self-consumed solar kWh × 4.4 THB/kWh; payback = installation cost ÷ annual savings.</p>
+
+<h2>Example 1: Boutique Beach Resort</h2>
 
 <h3>Property Profile</h3>
 <ul>
-  <li>18-room boutique resort on Ko Phangan's southern coast</li>
+  <li>18-room boutique resort on Ko Phangan</li>
   <li>Restaurant, two pools, spa, and dive center</li>
   <li>Average occupancy: 65–70%</li>
-  <li>Pre-solar electricity bill: ฿85,000–110,000/month</li>
-  <li>Electricity rate: approximately 8.2 THB/kWh (island commercial rate)</li>
+  <li>Typical electricity bill before solar: ฿85,000–110,000/month</li>
 </ul>
 
-<h3>Solar System Installed</h3>
+<h3>Example System</h3>
 <ul>
   <li><strong>System size:</strong> 60 kWp (kilowatt-peak)</li>
   <li><strong>Panels:</strong> 120 × LonGi Hi-MO 6 500W</li>
   <li><strong>Inverter:</strong> Huawei SUN2000-60KTL-M0</li>
   <li><strong>Battery:</strong> Huawei LUNA2000 — 30 kWh (for overnight essential loads and outage backup)</li>
   <li><strong>Installation cost:</strong> ฿2,450,000 (EPC, turnkey)</li>
-  <li><strong>Roof area used:</strong> 380 m² across three building roofs</li>
+  <li><strong>Roof area:</strong> 380 m² across three building roofs</li>
 </ul>
 
-<h3>Performance Data (12-Month Average)</h3>
+<h3>Illustrative Performance</h3>
 <ul>
-  <li><strong>Daily solar production:</strong> 285 kWh (5.1 peak sun hours × 56 kW effective)</li>
-  <li><strong>Monthly solar production:</strong> 8,550 kWh</li>
+  <li><strong>Daily solar production:</strong> 285.6 kWh (5.1 peak sun hours × 56 kW effective)</li>
+  <li><strong>Monthly solar production:</strong> 8,568 kWh (285.6 × 30 days)</li>
   <li><strong>Self-consumption rate:</strong> 88% (high daytime loads absorb most production)</li>
-  <li><strong>Monthly electricity offset:</strong> 7,524 kWh</li>
-  <li><strong>Monthly bill reduction:</strong> ฿61,700 (at 8.2 THB/kWh)</li>
+  <li><strong>Monthly electricity offset:</strong> 7,539.84 kWh (8,568 × 88%)</li>
 </ul>
 
-<h3>Financial Results</h3>
+<h3>Illustrative Comparison</h3>
 <table>
   <thead>
-    <tr><th>Metric</th><th>Before Solar</th><th>After Solar</th></tr>
+    <tr><th>Metric</th><th>Without Solar</th><th>With Solar</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly electricity bill</td><td>฿97,500 (avg)</td><td>฿35,800</td></tr>
-    <tr><td>Annual electricity cost</td><td>฿1,170,000</td><td>฿429,600</td></tr>
-    <tr><td>Annual savings</td><td>—</td><td><strong>฿740,400</strong></td></tr>
+    <tr><td>Monthly electricity bill</td><td>฿97,500 (avg)</td><td>฿64,325</td></tr>
+    <tr><td>Annual electricity cost</td><td>฿1,170,000</td><td>฿771,900</td></tr>
+    <tr><td>Annual savings</td><td>—</td><td><strong>฿398,100</strong></td></tr>
     <tr><td>System investment</td><td>—</td><td>฿2,450,000</td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>3.3 years</strong></td></tr>
-    <tr><td>25-year NPV (5% discount rate)</td><td>—</td><td><strong>฿7,800,000+</strong></td></tr>
+    <tr><td>Simple payback period</td><td>—</td><td><strong>6.2 years</strong></td></tr>
   </tbody>
 </table>
 
-<p>After installation, the resort now generates approximately 72% of its electricity from solar. The remaining 28% from the grid covers nighttime loads beyond battery capacity and peak demand spikes. The owner expects full payback within 3.5 years, accounting for system degradation (0.5% per year) and expected electricity rate increases of 3% per year.</p>
+<p>A resort like this could see solar cover most of the daytime load; the grid would cover nighttime loads beyond battery capacity and peak demand spikes.</p>
 
-<h2>Case Study 2: Mid-Size Hotel with Restaurant</h2>
+<h2>Example 2: Mid-Size Hotel with Restaurant</h2>
 
 <h3>Property Profile</h3>
 <ul>
   <li>32-room hotel with a 60-seat restaurant and rooftop bar</li>
-  <li>Located in Thong Sala — grid electricity, no major outage issues</li>
-  <li>Pre-solar electricity bill: ฿45,000–65,000/month</li>
-  <li>Electricity rate: approximately 7.1 THB/kWh</li>
+  <li>Grid-connected site on Ko Phangan — reliable supply, no major outage issues</li>
+  <li>Typical electricity bill before solar: ฿45,000–65,000/month</li>
 </ul>
 
-<h3>Solar System Installed</h3>
+<h3>Example System</h3>
 <ul>
   <li><strong>System size:</strong> 30 kWp</li>
   <li><strong>Panels:</strong> 60 × LonGi Hi-MO 6 500W</li>
   <li><strong>Inverter:</strong> 2 × Huawei SUN2000-15KTL-M2</li>
-  <li><strong>Battery:</strong> None (grid-tied only — reliable grid in Thong Sala)</li>
+  <li><strong>Battery:</strong> None (grid-tied only — reliable grid on this part of the island)</li>
   <li><strong>Installation cost:</strong> ฿980,000 (EPC, turnkey)</li>
 </ul>
 
-<h3>Performance Data</h3>
+<h3>Illustrative Performance</h3>
 <ul>
-  <li><strong>Monthly solar production:</strong> 4,370 kWh</li>
+  <li><strong>Monthly solar production:</strong> 4,590 kWh (30 kWp × 5.1 peak sun hours × 30 days)</li>
   <li><strong>Self-consumption rate:</strong> 91%</li>
-  <li><strong>Monthly bill reduction:</strong> ฿28,200 (at 7.1 THB/kWh)</li>
+  <li><strong>Monthly electricity offset:</strong> 4,176.9 kWh (4,590 × 91%)</li>
 </ul>
 
-<h3>Financial Results</h3>
+<h3>Illustrative Comparison</h3>
 <table>
   <thead>
-    <tr><th>Metric</th><th>Before Solar</th><th>After Solar</th></tr>
+    <tr><th>Metric</th><th>Without Solar</th><th>With Solar</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly electricity bill</td><td>฿55,000 (avg)</td><td>฿26,800</td></tr>
-    <tr><td>Annual savings</td><td>—</td><td><strong>฿338,400</strong></td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>2.9 years</strong></td></tr>
+    <tr><td>Monthly electricity bill</td><td>฿55,000 (avg)</td><td>฿36,622</td></tr>
+    <tr><td>Annual savings</td><td>—</td><td><strong>฿220,536</strong></td></tr>
+    <tr><td>Simple payback period</td><td>—</td><td><strong>4.4 years</strong></td></tr>
   </tbody>
 </table>
 
-<p>This hotel chose not to add batteries because Thong Sala's grid is relatively reliable. By eliminating the battery cost, the payback period dropped below 3 years — one of the fastest ROIs in our portfolio. The owner is now considering adding batteries in year 3, funded by the savings generated in years 1–3.</p>
+<p>A hotel like this could skip batteries where the local grid is relatively reliable, which lowers the upfront cost. Batteries could be added later, funded by the savings.</p>
 
-<h2>Case Study 3: Eco-Resort (Off-Grid)</h2>
+<h2>Example 3: Eco-Resort (Off-Grid)</h2>
 
 <h3>Property Profile</h3>
 <ul>
-  <li>8-bungalow eco-resort on Ko Phangan's north coast</li>
-  <li>No PEA grid connection available — had been running on diesel generators</li>
-  <li>Prior monthly diesel cost: ฿35,000–55,000 (generator fuel + maintenance)</li>
+  <li>8-bungalow eco-resort on Ko Phangan</li>
+  <li>No PEA grid connection available — a site like this would run on diesel generators</li>
   <li>Generator maintenance frequency: Every 250 operating hours</li>
 </ul>
 
-<h3>Solar System Installed</h3>
+<h3>Example System</h3>
 <ul>
   <li><strong>System size:</strong> 20 kWp solar + 60 kWh battery bank (LiFePO4)</li>
   <li><strong>Panels:</strong> 40 × LonGi Hi-MO 6 500W</li>
   <li><strong>Inverter/Charger:</strong> Huawei SUN2000 off-grid configuration</li>
-  <li><strong>Backup:</strong> 10 kVA diesel generator retained for extended monsoon periods</li>
+  <li><strong>Backup:</strong> 10 kVA diesel generator kept for extended monsoon periods</li>
   <li><strong>Installation cost:</strong> ฿2,100,000 (off-grid complete system)</li>
 </ul>
 
-<h3>Financial Results</h3>
+<h3>Illustrative Comparison</h3>
 <table>
   <thead>
-    <tr><th>Metric</th><th>Diesel Only</th><th>After Solar</th></tr>
+    <tr><th>Metric</th><th>Assumption</th></tr>
   </thead>
   <tbody>
-    <tr><td>Monthly energy cost</td><td>฿45,000 (avg)</td><td>฿4,200 (gen fuel, ~15h/month)</td></tr>
-    <tr><td>Annual energy cost</td><td>฿540,000</td><td>฿50,400</td></tr>
-    <tr><td>Annual savings vs. diesel</td><td>—</td><td><strong>฿489,600</strong></td></tr>
-    <tr><td>Simple payback period</td><td>—</td><td><strong>4.3 years</strong></td></tr>
+    <tr><td>Monthly diesel cost</td><td>฿45,000</td></tr>
+    <tr><td>Annual diesel cost</td><td>฿540,000</td></tr>
   </tbody>
 </table>
+<p>Assuming diesel costs of about ฿45,000/month. A backup generator stays for extended monsoon periods, so some fuel cost remains. Payback depends on local diesel cost.</p>
 
-<p>Beyond the financial case, the resort gained a major competitive advantage: it can now legitimately market itself as solar-powered. Guest reviews consistently mention the solar system as a positive, and the owner reports a measurable improvement in bookings from eco-conscious travelers. The quieter environment (no constant generator noise) has also improved guest satisfaction scores.</p>
+<p>Beyond the financial case, a resort like this could legitimately market itself as solar-powered, and replacing constant generator noise with a quieter site would support guest comfort.</p>
 
 <h2>PPA Option: Zero-Upfront Commercial Solar</h2>
 
-<p>Not all businesses have ฿1–2.5 million in capital to invest in solar, even when the ROI is excellent. That is why Bustan Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
+<p>Not all businesses have significant upfront capital to invest in solar, even when the ROI is excellent. That is why Bustan Energy offers the <strong>Power Purchase Agreement (PPA)</strong> model for commercial properties.</p>
 
 <p>How it works:</p>
 <ul>
   <li><strong>Zero upfront investment</strong> — Bustan Energy owns and installs the solar system at no cost to you.</li>
-  <li><strong>Fixed electricity rate</strong> — You buy the solar electricity at a rate 15–25% below your current PEA tariff, locked in for 10–15 years.</li>
   <li><strong>Immediate savings</strong> — Your electricity bill drops from day one, with no capital outlay.</li>
   <li><strong>Bustan Energy handles everything</strong> — Maintenance, monitoring, repairs, and insurance are all included.</li>
   <li><strong>Purchase option</strong> — You can buy the system at fair market value at the end of the agreement if you choose.</li>

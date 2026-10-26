@@ -33,7 +33,6 @@ const en = {
     maintenance: 'O&M Services',
     contactTitle: 'Contact',
     whatsapp: 'WhatsApp',
-    line: 'LINE: @bustanenergy',
     email: 'Contact Bustan Energy',
     address: 'Ko Pha-ngan, Surat Thani 84280\nThailand',
     copyright: '© 2026 Bustan Energy Co., Ltd. All rights reserved.',
@@ -526,7 +525,7 @@ const en = {
       tag: 'Solar Insights',
       title: 'Solar Insights & Resources',
       subtitle:
-        'Expert guides on solar energy in Thailand — regulations, finance, technology, and real-world results.',
+        'Expert guides on solar energy in Thailand — regulations, finance, technology, and illustrative examples.',
     },
     posts: [
       {
@@ -631,9 +630,9 @@ const en = {
       {
         slug: 'commercial-solar-roi-thailand',
         tag: 'Business',
-        title: 'Commercial Solar ROI in Thailand: Case Study Analysis',
+        title: 'Commercial Solar ROI in Thailand: Illustrative Examples',
         excerpt:
-          'Real ROI analysis for hotels, resorts, and businesses in Thailand — with anonymized case studies, payback calculations, and before/after electricity bills.',
+          'Illustrative ROI analysis for hotels, resorts, and businesses in Thailand — with example system sizes, payback calculations, and modeled electricity bills.',
         date: 'April 2026',
         readTime: '11 min read',
       },
@@ -689,10 +688,15 @@ const en = {
         value: '+66 94 669 2011',
         cta: 'Chat with us instantly',
       },
-      line: {
-        label: 'LINE',
+      facebook: {
+        label: 'Facebook',
+        value: 'Bustan Energy',
+        cta: 'Visit our Facebook page',
+      },
+      instagram: {
+        label: 'Instagram',
         value: '@bustanenergy',
-        cta: 'Add us on LINE',
+        cta: 'Visit our Instagram profile',
       },
       email: {
         label: 'Contact Form',
@@ -746,12 +750,12 @@ const en = {
     blog: {
       title: 'Solar Energy Guides & Insights | Bustan Energy Blog',
       description:
-        'Expert articles on solar energy in Thailand — VSPP regulations, EPC vs PPA comparison, battery storage, and real ROI data from Ko Phangan installations.',
+        'Expert articles on solar energy in Thailand — VSPP regulations, EPC vs PPA comparison, battery storage, and illustrative commercial ROI examples for Ko Phangan.',
     },
     contact: {
       title: 'Contact Bustan Energy — Free Solar Consultation Ko Phangan',
       description:
-        'Get a free solar consultation in Ko Phangan. Contact Bustan Energy via WhatsApp, LINE, or email. Office in Thong Sala, Surat Thani. Mon–Sat 8am–6pm.',
+        'Get a free solar consultation in Ko Phangan. Contact Bustan Energy via WhatsApp or email. Office in Thong Sala, Surat Thani. Mon–Sat 8am–6pm.',
     },
   },
 
@@ -869,7 +873,6 @@ const th = {
     maintenance: 'บริการซ่อมบำรุง',
     contactTitle: 'ติดต่อ',
     whatsapp: 'WhatsApp',
-    line: 'LINE: @bustanenergy',
     email: 'Contact Bustan Energy',
     address: 'ทองสาลา เกาะพะงัน\nสุราษฎร์ธานี 84280 ประเทศไทย',
     copyright: '© 2026 Bustan Energy Co., Ltd. สงวนลิขสิทธิ์ทุกประการ',
@@ -1399,7 +1402,7 @@ const th = {
       tag: 'ความรู้โซลาร์เซลล์',
       title: 'บทความและแหล่งข้อมูลโซลาร์',
       subtitle:
-        'คู่มือจากผู้เชี่ยวชาญเกี่ยวกับพลังงานแสงอาทิตย์ในประเทศไทย — กฎระเบียบ การเงิน เทคโนโลยี และผลลัพธ์จริง',
+        'คู่มือจากผู้เชี่ยวชาญเกี่ยวกับพลังงานแสงอาทิตย์ในประเทศไทย — กฎระเบียบ การเงิน เทคโนโลยี และตัวอย่างประกอบ',
     },
     posts: [
       {
@@ -1504,9 +1507,9 @@ const th = {
       {
         slug: 'commercial-solar-roi-thailand',
         tag: 'ธุรกิจ',
-        title: 'ROI โซลาร์เชิงพาณิชย์ในไทย: วิเคราะห์กรณีศึกษา',
+        title: 'ROI โซลาร์เชิงพาณิชย์ในไทย: ตัวอย่างประกอบ',
         excerpt:
-          'วิเคราะห์ ROI จริงสำหรับโรงแรม รีสอร์ท และธุรกิจในไทย พร้อมกรณีศึกษา การคำนวณระยะคืนทุน และบิลก่อน-หลังติดโซลาร์',
+          'วิเคราะห์ ROI เชิงตัวอย่างสำหรับโรงแรม รีสอร์ท และธุรกิจในไทย พร้อมขนาดระบบตัวอย่าง การคำนวณระยะคืนทุน และบิลค่าไฟจำลอง',
         date: 'เมษายน 2026',
         readTime: 'อ่าน 11 นาที',
       },
@@ -1562,10 +1565,15 @@ const th = {
         value: '+66 94 669 2011',
         cta: 'แชทกับเราได้ทันที',
       },
-      line: {
-        label: 'LINE',
+      facebook: {
+        label: 'Facebook',
+        value: 'Bustan Energy',
+        cta: 'ไปที่เพจ Facebook',
+      },
+      instagram: {
+        label: 'Instagram',
         value: '@bustanenergy',
-        cta: 'เพิ่มเราใน LINE',
+        cta: 'ไปที่โปรไฟล์ Instagram',
       },
       email: {
         label: 'แบบฟอร์มติดต่อ',
@@ -1621,12 +1629,12 @@ const th = {
     blog: {
       title: 'บทความโซลาร์เซลล์ คู่มือพลังงานแสงอาทิตย์ในไทย | Bustan Energy',
       description:
-        'บทความจากผู้เชี่ยวชาญเรื่องโซลาร์เซลล์ในประเทศไทย กฎระเบียบ VSPP เปรียบเทียบ EPC vs PPA แบตเตอรี่กักเก็บพลังงาน และข้อมูล ROI จริงจากเกาะพะงัน',
+        'บทความจากผู้เชี่ยวชาญเรื่องโซลาร์เซลล์ในประเทศไทย กฎระเบียบ VSPP เปรียบเทียบ EPC vs PPA แบตเตอรี่กักเก็บพลังงาน และตัวอย่าง ROI เชิงพาณิชย์บนเกาะพะงัน',
     },
     contact: {
       title: 'ติดต่อ Bustan Energy — ปรึกษาโซลาร์ฟรี เกาะพะงัน สุราษฎร์ธานี',
       description:
-        'ขอคำปรึกษาโซลาร์เซลล์ฟรีบนเกาะพะงัน ติดต่อ Bustan Energy ทาง WhatsApp LINE หรืออีเมล สำนักงานที่ทองสาลา สุราษฎร์ธานี จันทร์–เสาร์ 08:00–18:00 น.',
+        'ขอคำปรึกษาโซลาร์เซลล์ฟรีบนเกาะพะงัน ติดต่อ Bustan Energy ทาง WhatsApp หรืออีเมล สำนักงานที่ทองสาลา สุราษฎร์ธานี จันทร์–เสาร์ 08:00–18:00 น.',
     },
   },
   /** CRM / platform strings — Thai overrides (falls back to English for any missing key) */

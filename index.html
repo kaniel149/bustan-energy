@@ -35,9 +35,12 @@
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Hebrew:wght@400..700&display=swap" rel="stylesheet" />
     </noscript>
-    <!-- Home hero LCP image (optimized WebP) — preloaded only on home routes so
+    <!-- Home hero LCP image (responsive AVIF) — preloaded only on home routes so
          other pages don't pay for an unused image. Runs at parse time,
-         long before the JS bundle, so the preload benefit is preserved. -->
+         long before the JS bundle, so the preload benefit is preserved.
+         Browsers without AVIF ignore the typed preload and pick the WebP
+         source from the prerendered <picture>. Keep srcset/sizes in sync
+         with src/pages/HomePage.tsx. -->
     <script>
       ;(function () {
         var p = location.pathname.replace(/\/+$/, '') || '/'
@@ -45,7 +48,9 @@
           var l = document.createElement('link')
           l.rel = 'preload'
           l.as = 'image'
-          l.href = '/assets/images/home-island.webp'
+          l.type = 'image/avif'
+          l.setAttribute('imagesrcset', '/assets/images/home-island-480.avif 480w, /assets/images/home-island-768.avif 768w, /assets/images/home-island-1024.avif 1024w')
+          l.setAttribute('imagesizes', '(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) 50vw, 640px')
           l.fetchPriority = 'high'
           document.head.appendChild(l)
         }
